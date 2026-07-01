@@ -19,14 +19,19 @@
 
     <!-- Tailwind & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        /* Zettbos Glassmorphism & Neon Theme */
+        /* Zettbos Glassmorphism & DENTISTRY Theme */
         :root {
-            --neon-green: #00ff66;
-            --dark-bg: #050a07;
+            /* Clinical/Dentistry Colors */
+            --dentist-cyan: #06b6d4; /* Primary Highlight */
+            --dentist-teal: #2dd4bf; /* Secondary Highlight */
+            --dentist-blue: #0ea5e9;
+            --dark-bg: #0f172a; /* Deep Slate Blue */
+            --panel-bg: #1e293b;
+            
             --glass-border: rgba(255, 255, 255, 0.08);
             --glass-bg: rgba(255, 255, 255, 0.03);
         }
@@ -39,18 +44,36 @@
             scroll-behavior: smooth;
         }
 
+        /* MEDICAL GRID BACKGROUND ANIMATION */
+        .medical-grid {
+            position: fixed;
+            inset: 0;
+            z-index: -15;
+            background-image: 
+                linear-gradient(to right, rgba(6, 182, 212, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, #000 10%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, #000 10%, transparent 80%);
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(40px); }
+        }
+
         /* AMBIENT BACKGROUNDS */
         .ambient-glow {
             position: fixed;
             border-radius: 50%;
             filter: blur(120px);
             z-index: -10;
-            opacity: 0.25;
+            opacity: 0.15;
             animation: pulse-glow 8s infinite alternate;
         }
-        .glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background-color: var(--neon-green); }
-        .glow-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background-color: #0088ff; }
-        @keyframes pulse-glow { 0% { transform: scale(1); opacity: 0.2; } 100% { transform: scale(1.2); opacity: 0.35; } }
+        .glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background-color: var(--dentist-cyan); }
+        .glow-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background-color: var(--dentist-blue); }
+        @keyframes pulse-glow { 0% { transform: scale(1); opacity: 0.1; } 100% { transform: scale(1.2); opacity: 0.2; } }
 
         /* LOADING SCREEN AESTHETIC */
         #loader-screen {
@@ -58,49 +81,68 @@
             z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: opacity 0.8s ease, visibility 0.8s ease;
         }
-        .neon-spinner {
-            width: 60px; height: 60px; border: 4px solid rgba(0, 255, 102, 0.1);
-            border-top: 4px solid var(--neon-green); border-radius: 50%;
-            animation: spin-loader 1s linear infinite; box-shadow: 0 0 20px rgba(0,255,102,0.4);
+        .medical-spinner {
+            width: 60px; height: 60px; border: 4px solid rgba(6, 182, 212, 0.1);
+            border-top: 4px solid var(--dentist-cyan); border-radius: 50%;
+            animation: spin-loader 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
+            box-shadow: 0 0 20px rgba(6,182,212,0.4);
         }
         @keyframes spin-loader { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* COMPONENTS */
         .glass-panel {
-            background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border); border-radius: 1.5rem; transition: all 0.3s ease;
         }
-        .glass-panel:hover { border-color: rgba(0, 255, 102, 0.3); box-shadow: 0 10px 40px -10px rgba(0, 255, 102, 0.15); transform: translateY(-5px); }
-        .text-gradient-neon { background: linear-gradient(135deg, #ffffff 0%, var(--neon-green) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass-panel:hover { border-color: rgba(6, 182, 212, 0.3); box-shadow: 0 10px 40px -10px rgba(6, 182, 212, 0.15); transform: translateY(-3px); }
         
-        .animate-on-scroll { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .text-gradient-dentist { 
+            background: linear-gradient(135deg, #ffffff 0%, var(--dentist-cyan) 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        
+        .animate-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
         .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
         
-        .timeline-line::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--neon-green), transparent); opacity: 0.3; }
+        .timeline-line::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--dentist-cyan), transparent); opacity: 0.3; }
         @media (min-width: 768px) { .timeline-line::before { left: 50%; transform: translateX(-50%); } }
         
-        .profile-img-container::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; background: conic-gradient(from 0deg, transparent, var(--neon-green), transparent); animation: spin 4s linear infinite; z-index: -1; }
+        .profile-img-container::after { 
+            content: ''; position: absolute; inset: -4px; border-radius: 50%; 
+            background: conic-gradient(from 0deg, transparent, var(--dentist-cyan), transparent); 
+            animation: spin 4s linear infinite; z-index: -1; 
+        }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* UI ORG & PUB */
-        .card-org-pub { background: rgba(0, 255, 102, 0.03); border: 1px solid rgba(0, 255, 102, 0.1); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1rem; transition: all 0.3s ease; }
-        .card-org-pub:hover { background: rgba(0, 255, 102, 0.08); border-color: rgba(0, 255, 102, 0.3); }
-        .glow-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 10px var(--neon-green); flex-shrink: 0; margin-top: 6px;}
-        .glow-dot.active { background-color: var(--neon-green); }
+        .card-org-pub { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1rem; transition: all 0.3s ease; }
+        .card-org-pub:hover { background: rgba(6, 182, 212, 0.05); border-color: rgba(6, 182, 212, 0.3); }
+        .glow-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 10px var(--dentist-cyan); flex-shrink: 0; margin-top: 6px;}
+        .glow-dot.active { background-color: var(--dentist-cyan); }
         .glow-dot.inactive { background-color: rgba(255,255,255,0.3); box-shadow: none; }
-        .pub-year-badge { position: absolute; top: -1px; right: -1px; background: var(--neon-green); color: black; font-weight: bold; font-size: 0.75rem; padding: 4px 12px; border-bottom-left-radius: 0.75rem; border-top-right-radius: 1rem; }
+        .pub-year-badge { position: absolute; top: -1px; right: -1px; background: var(--dentist-cyan); color: #0f172a; font-weight: bold; font-size: 0.75rem; padding: 4px 12px; border-bottom-left-radius: 0.75rem; border-top-right-radius: 1rem; }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(6, 182, 212, 0.3); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(6, 182, 212, 0.6); }
     </style>
 </head>
 <body class="relative min-h-screen">
 
+    <!-- CSS3 MEDICAL GRID BACKGROUND -->
+    <div class="medical-grid"></div>
+
     <!-- LOADING SCREEN AESTHETIC DENGAN HANDLER ERROR -->
     <div id="loader-screen">
-        <div id="loader-spinner" class="neon-spinner mb-4"></div>
-        <h2 id="loader-title" class="text-xl font-bold tracking-widest text-[#00ff66] animate-pulse">MEMUAT DATABASE...</h2>
-        <p id="loader-text" class="text-xs text-gray-500 mt-2 text-center max-w-sm px-4">Connecting to Google Servers</p>
+        <div id="loader-spinner" class="medical-spinner mb-4"></div>
+        <h2 id="loader-title" class="text-xl font-bold tracking-widest text-[#06b6d4] animate-pulse">MEMUAT DATABASE...</h2>
+        <p id="loader-text" class="text-xs text-gray-500 mt-2 text-center max-w-sm px-4">Securely connecting to Clinical Servers</p>
     </div>
 
-    <!-- Safe Layering Backgrounds -->
+    <!-- Safe Layering Ambient Backgrounds -->
     <div class="ambient-glow glow-1"></div>
     <div class="ambient-glow glow-2"></div>
 
@@ -109,19 +151,19 @@
         <!-- HEADER SECTION -->
         <header class="text-center mb-20 animate-on-scroll is-visible">
             <div class="relative w-40 h-40 mx-auto mb-8 profile-img-container">
-                <img id="ui-foto" src="axalogo.png" alt="Profile" onerror="this.src='https://ui-avatars.com/api/?name=Aksa+Arsyad&background=00ff66&color=000&size=256'" class="w-full h-full object-cover rounded-full border-4 border-[#050a07] relative z-10 bg-gray-800">
+                <img id="ui-foto" src="axalogo.png" alt="Profile" onerror="this.src='https://ui-avatars.com/api/?name=Aksa+Arsyad&background=06b6d4&color=fff&size=256'" class="w-full h-full object-cover rounded-full border-4 border-[#0f172a] relative z-10 bg-slate-800">
             </div>
             <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
-                <span id="ui-namaDepan">Memuat</span> <span class="text-gradient-neon" id="ui-namaBelakang">Data...</span>
+                <span id="ui-namaDepan">Memuat</span> <span class="text-gradient-dentist" id="ui-namaBelakang">Data...</span>
             </h1>
-            <div class="inline-block glass-panel px-6 py-2 border-[#00ff66]/30 bg-[#00ff66]/10 mb-2">
-                <p class="text-[#00ff66] font-bold tracking-widest text-sm md:text-base">
+            <div class="inline-block glass-panel px-6 py-2 border-[#06b6d4]/30 bg-[#06b6d4]/10 mb-2">
+                <p class="text-[#06b6d4] font-bold tracking-widest text-sm md:text-base">
                     <i class="ph ph-stethoscope text-lg align-middle mr-2"></i>
                     <span id="ui-gelar">...</span>
                 </p>
             </div>
             <div>
-                <span class="text-gray-400 font-semibold tracking-wider text-xs md:text-sm uppercase" id="ui-subGelar">...</span>
+                <span class="text-slate-400 font-semibold tracking-wider text-xs md:text-sm uppercase" id="ui-subGelar">...</span>
             </div>
         </header>
 
@@ -133,15 +175,15 @@
                     <div class="p-3 bg-white/5 rounded-xl text-white"><i class="ph ph-user text-2xl"></i></div>
                     <h2 class="text-xl font-bold">Data Pribadi</h2>
                 </div>
-                <ul class="space-y-4 text-gray-300 text-sm">
-                    <li class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">Lahir</span><span class="text-right whitespace-pre-line" id="ui-lahir">...</span></li>
-                    <li class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">Gender</span><span id="ui-gender">...</span></li>
-                    <li class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">Agama</span><span id="ui-agama">...</span></li>
-                    <li class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">Kewarganegaraan</span><span id="ui-warga">...</span></li>
-                    <li class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">Status</span><span class="text-[#00ff66] font-semibold" id="ui-status">...</span></li>
+                <ul class="space-y-4 text-slate-300 text-sm">
+                    <li class="flex justify-between border-b border-white/5 pb-2"><span class="text-slate-500">Lahir</span><span class="text-right whitespace-pre-line font-medium" id="ui-lahir">...</span></li>
+                    <li class="flex justify-between border-b border-white/5 pb-2"><span class="text-slate-500">Gender</span><span class="font-medium" id="ui-gender">...</span></li>
+                    <li class="flex justify-between border-b border-white/5 pb-2"><span class="text-slate-500">Agama</span><span class="font-medium" id="ui-agama">...</span></li>
+                    <li class="flex justify-between border-b border-white/5 pb-2"><span class="text-slate-500">Kewarganegaraan</span><span class="font-medium" id="ui-warga">...</span></li>
+                    <li class="flex justify-between border-b border-white/5 pb-2"><span class="text-slate-500">Status</span><span class="text-[#06b6d4] font-semibold" id="ui-status">...</span></li>
                 </ul>
                 <div class="mt-5 pt-4 border-t border-white/5">
-                    <span class="text-xs text-gray-500 mb-2 block">Hobi:</span>
+                    <span class="text-xs text-slate-500 mb-2 block font-medium">Hobi:</span>
                     <div class="flex flex-wrap gap-2" id="ui-hobi-container"></div>
                 </div>
             </div>
@@ -152,17 +194,17 @@
                     <div class="p-3 bg-white/5 rounded-xl text-white"><i class="ph ph-address-book text-2xl"></i></div>
                     <h2 class="text-xl font-bold">Informasi Kontak</h2>
                 </div>
-                <ul class="space-y-4 text-gray-300 text-sm">
-                    <li class="flex items-center gap-3"><i class="ph ph-envelope-simple text-gray-500 text-xl"></i><div><p class="text-xs text-gray-500">Email</p><p id="ui-email">...</p></div></li>
-                    <li class="flex items-center gap-3"><i class="ph ph-whatsapp-logo text-[#00ff66] text-xl drop-shadow-[0_0_5px_#00ff66]"></i><div><p class="text-xs text-gray-500">WhatsApp / HP</p><p id="ui-hp">...</p></div></li>
-                    <li class="flex items-center gap-3"><i class="ph ph-map-pin text-gray-500 text-xl"></i><div><p class="text-xs text-gray-500">Alamat</p><p id="ui-alamat">...</p></div></li>
-                    <li class="flex items-center gap-3"><i class="ph ph-graduation-cap text-gray-500 text-xl"></i>
+                <ul class="space-y-4 text-slate-300 text-sm">
+                    <li class="flex items-center gap-3"><i class="ph ph-envelope-simple text-slate-500 text-xl"></i><div><p class="text-xs text-slate-500">Email</p><p class="font-medium" id="ui-email">...</p></div></li>
+                    <li class="flex items-center gap-3"><i class="ph ph-phone text-[#06b6d4] text-xl drop-shadow-[0_0_5px_rgba(6,182,212,0.5)]"></i><div><p class="text-xs text-slate-500">WhatsApp / HP</p><p class="font-medium" id="ui-hp">...</p></div></li>
+                    <li class="flex items-center gap-3"><i class="ph ph-map-pin text-slate-500 text-xl"></i><div><p class="text-xs text-slate-500">Alamat</p><p class="font-medium" id="ui-alamat">...</p></div></li>
+                    <li class="flex items-center gap-3"><i class="ph ph-graduation-cap text-slate-500 text-xl"></i>
                         <div class="flex flex-col gap-1 w-full">
-                            <a id="ui-scholar" href="#" target="_blank" class="flex justify-between items-center bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 transition"><span class="text-xs font-semibold text-blue-300">Google Scholar</span><i class="ph ph-arrow-up-right text-xs"></i></a>
-                            <a id="ui-orcid" href="#" target="_blank" class="flex justify-between items-center bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 transition"><span class="text-xs font-semibold text-[#a6ce39]">ORCID iD</span><i class="ph ph-arrow-up-right text-xs"></i></a>
+                            <a id="ui-scholar" href="#" target="_blank" class="flex justify-between items-center bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 transition border border-transparent hover:border-white/10"><span class="text-xs font-semibold text-blue-300">Google Scholar</span><i class="ph ph-arrow-up-right text-xs"></i></a>
+                            <a id="ui-orcid" href="#" target="_blank" class="flex justify-between items-center bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 transition border border-transparent hover:border-white/10"><span class="text-xs font-semibold text-[#a6ce39]">ORCID iD</span><i class="ph ph-arrow-up-right text-xs"></i></a>
                         </div>
                     </li>
-                    <li class="flex items-center gap-3"><i class="ph ph-at text-gray-500 text-xl"></i><div><p class="text-xs text-gray-500">Sosial Media</p><p id="ui-sosmed">...</p></div></li>
+                    <li class="flex items-center gap-3"><i class="ph ph-at text-slate-500 text-xl"></i><div><p class="text-xs text-slate-500">Sosial Media</p><p class="font-medium" id="ui-sosmed">...</p></div></li>
                 </ul>
             </div>
 
@@ -179,7 +221,7 @@
         <!-- TIMELINE: PENDIDIKAN -->
         <section class="mb-20">
             <div class="text-center mb-12 animate-on-scroll">
-                <h2 class="text-3xl font-bold">Riwayat <span class="text-[#00ff66]">Pendidikan</span></h2>
+                <h2 class="text-3xl font-bold">Riwayat <span class="text-[#06b6d4]">Pendidikan</span></h2>
             </div>
             <div class="relative timeline-line" id="ui-pendidikan-container"></div>
         </section>
@@ -190,117 +232,116 @@
             <!-- Organisasi -->
             <section class="animate-on-scroll">
                 <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-                    <i class="ph ph-users-three text-[#00ff66]"></i> Pengalaman Organisasi
+                    <i class="ph ph-users-three text-[#06b6d4]"></i> Pengalaman Organisasi
                 </h2>
-                <div class="glass-panel p-6 bg-gradient-to-br from-[#00ff66]/10 to-transparent border-[#00ff66]/20" id="ui-organisasi-container">
+                <div class="glass-panel p-6 bg-gradient-to-br from-[#06b6d4]/5 to-transparent border-[#06b6d4]/20" id="ui-organisasi-container">
                 </div>
             </section>
 
             <!-- Publikasi Ilmiah -->
             <section class="animate-on-scroll" style="transition-delay: 200ms;">
                 <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
-                    <i class="ph ph-book-open-text text-[#00ff66]"></i> Publikasi & Karya Ilmiah
+                    <i class="ph ph-book-open-text text-[#06b6d4]"></i> Publikasi & Karya Ilmiah
                 </h2>
                 <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar" id="ui-publikasi-container">
                 </div>
             </section>
         </div>
 
-        <!-- FORM KONTAK -->
+        <!-- FORM KONTAK (NO WA REDIRECT) -->
         <section class="max-w-2xl mx-auto animate-on-scroll mb-10">
             <div class="glass-panel p-8 md:p-10 text-center relative overflow-hidden">
-                <div class="absolute -top-20 -right-20 w-40 h-40 bg-[#00ff66] rounded-full blur-[80px] opacity-10 pointer-events-none"></div>
+                <div class="absolute -top-20 -right-20 w-40 h-40 bg-[#06b6d4] rounded-full blur-[80px] opacity-10 pointer-events-none"></div>
                 
                 <h2 class="text-3xl font-bold mb-2">Mari Terhubung</h2>
-                <p class="text-gray-400 mb-8 text-sm">Hubungi saya. Pesan akan tersimpan di sistem dan otomatis dialihkan ke WhatsApp pribadi saya.</p>
+                <p class="text-slate-400 mb-8 text-sm">Tinggalkan pesan Anda di bawah ini untuk diskusi klinis, kolaborasi riset, atau konsultasi. Pesan akan langsung masuk ke database sistem.</p>
                 
                 <form id="formKontak" onsubmit="event.preventDefault(); prosesPesan();" class="space-y-5 text-left relative z-10">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1 ml-2 uppercase tracking-wider">Nama Lengkap / Instansi</label>
-                        <input type="text" id="inputNama" required class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-[#00ff66] focus:ring-1 focus:ring-[#00ff66]" placeholder="Nama Anda (Instansi)">
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 ml-2 uppercase tracking-wider">Nama Lengkap / Instansi</label>
+                        <input type="text" id="inputNama" required class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] transition-colors" placeholder="Nama Anda (Instansi)">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1 ml-2 uppercase tracking-wider">No. WhatsApp Anda</label>
-                        <input type="text" id="inputKontak" required class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-[#00ff66] focus:ring-1 focus:ring-[#00ff66]" placeholder="Contoh: 08123456789">
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 ml-2 uppercase tracking-wider">No. WhatsApp / HP</label>
+                        <input type="text" id="inputKontak" required class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] transition-colors" placeholder="Contoh: 08123456789">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1 ml-2 uppercase tracking-wider">Pesan</label>
-                        <textarea id="inputPesan" required rows="4" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-[#00ff66] focus:ring-1 focus:ring-[#00ff66] resize-none" placeholder="Tulis keperluan Anda..."></textarea>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1 ml-2 uppercase tracking-wider">Pesan</label>
+                        <textarea id="inputPesan" required rows="4" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] resize-none transition-colors" placeholder="Tulis keperluan Anda..."></textarea>
                     </div>
-                    <button type="submit" id="btnSubmit" class="w-full bg-[#00ff66] hover:bg-[#00cc52] text-black font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(0,255,102,0.3)] transition-all transform hover:-translate-y-1 mt-4">
-                        <i class="ph ph-whatsapp-logo align-middle mr-2 text-xl"></i> Kirim Pesan via WhatsApp
+                    
+                    <!-- TOMBOL UPDATE -->
+                    <button type="submit" id="btnSubmit" class="w-full bg-[#06b6d4] hover:bg-[#0891b2] text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all transform hover:-translate-y-1 mt-4">
+                        <i class="ph ph-paper-plane-tilt align-middle mr-2 text-xl"></i> Kirim Pesan Anda
                     </button>
-                    <p id="pesanStatus" class="text-center text-sm font-semibold mt-2 hidden"></p>
+                    
                 </form>
             </div>
         </section>
 
         <!-- FOOTER DENGAN ADMIN TRIGGER TERSEMBUNYI -->
-        <footer class="text-center mt-20 pb-8 text-gray-600 text-sm">
+        <footer class="text-center mt-20 pb-8 text-slate-500 text-sm">
             <p>&copy; 2026 drg. M. Aksa Arsyad. All rights reserved.</p>
             <p class="text-xs mt-1">
-                Designed by <span class="text-[#00ff66]/50">Zettbos System</span>
+                Designed by <span class="text-[#06b6d4]/70">Zettbos System</span>
                 <!-- Tombol Admin Tersembunyi -->
-                <button onclick="bukaLoginAdmin()" class="ml-2 hover:text-[#00ff66] transition-colors"><i class="ph ph-lock-key"></i></button>
+                <button onclick="bukaLoginAdmin()" class="ml-2 hover:text-[#06b6d4] transition-colors"><i class="ph ph-lock-key"></i></button>
             </p>
         </footer>
     </main>
 
     <!-- MODAL ADMIN DASHBOARD -->
-    <div id="admin-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[9999] hidden flex items-center justify-center p-4">
-        <div id="admin-login" class="glass-panel p-8 max-w-sm w-full text-center">
-            <h2 class="text-2xl font-bold text-[#00ff66] mb-4"><i class="ph ph-shield-check"></i> Admin Access</h2>
-            <input type="text" id="adminUser" placeholder="Username" class="w-full mb-3 bg-white/10 rounded px-4 py-2 text-white">
-            <input type="password" id="adminPass" placeholder="Password" class="w-full mb-4 bg-white/10 rounded px-4 py-2 text-white">
-            <button onclick="cekLogin()" class="w-full bg-[#00ff66] text-black font-bold py-2 rounded">LOGIN</button>
-            <button onclick="tutupAdmin()" class="w-full mt-2 text-gray-400 text-sm">Batal</button>
-            <p id="loginErr" class="text-red-500 text-xs mt-2 hidden">Kredensial Salah!</p>
+    <div id="admin-modal" class="fixed inset-0 bg-[#0f172a]/95 backdrop-blur-md z-[9999] hidden flex items-center justify-center p-4">
+        <div id="admin-login" class="glass-panel p-8 max-w-sm w-full text-center border-[#06b6d4]/30">
+            <h2 class="text-2xl font-bold text-[#06b6d4] mb-4"><i class="ph ph-shield-check"></i> Admin Access</h2>
+            <input type="text" id="adminUser" placeholder="Username" class="w-full mb-3 bg-slate-800 border border-slate-700 rounded px-4 py-2 text-white focus:border-[#06b6d4] outline-none">
+            <input type="password" id="adminPass" placeholder="Password" class="w-full mb-4 bg-slate-800 border border-slate-700 rounded px-4 py-2 text-white focus:border-[#06b6d4] outline-none">
+            <button onclick="cekLogin()" class="w-full bg-[#06b6d4] hover:bg-[#0891b2] text-white font-bold py-2 rounded transition-colors">LOGIN</button>
+            <button onclick="tutupAdmin()" class="w-full mt-3 text-slate-400 hover:text-white text-sm transition-colors">Batal</button>
+            <p id="loginErr" class="text-red-400 text-xs mt-3 hidden">Kredensial Salah!</p>
         </div>
-        <div id="admin-dashboard" class="glass-panel p-6 max-w-4xl w-full h-[90vh] flex flex-col hidden">
+        <div id="admin-dashboard" class="glass-panel p-6 max-w-4xl w-full h-[90vh] flex flex-col hidden border-[#06b6d4]/30">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-[#00ff66]">Dashboard CMS (Database Setup)</h2>
-                <button onclick="tutupAdmin()" class="text-white hover:text-red-500"><i class="ph ph-x text-2xl"></i></button>
+                <h2 class="text-xl font-bold text-[#06b6d4]">Dashboard CMS (Database Setup)</h2>
+                <button onclick="tutupAdmin()" class="text-white hover:text-red-400 transition-colors"><i class="ph ph-x text-2xl"></i></button>
             </div>
-            <p class="text-xs text-gray-400 mb-2">Edit struktur data CV dalam format JSON.</p>
-            <textarea id="jsonEditor" class="flex-grow w-full bg-[#050a07] border border-white/20 rounded p-4 text-[#00ff66] font-mono text-xs focus:outline-none resize-none"></textarea>
-            <div class="mt-4 flex gap-3">
-                <button onclick="simpanCV()" id="btnSimpanCV" class="bg-[#00ff66] text-black font-bold px-6 py-2 rounded shadow-[0_0_15px_rgba(0,255,102,0.4)]">
+            <p class="text-xs text-slate-400 mb-3">Edit struktur data CV dalam format JSON.</p>
+            <textarea id="jsonEditor" class="flex-grow w-full bg-[#0f172a] border border-slate-700 rounded p-4 text-[#06b6d4] font-mono text-xs focus:outline-none focus:border-[#06b6d4] resize-none custom-scrollbar"></textarea>
+            <div class="mt-4 flex items-center gap-4">
+                <button onclick="simpanCV()" id="btnSimpanCV" class="bg-[#06b6d4] hover:bg-[#0891b2] text-white font-bold px-6 py-3 rounded shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all">
                     <i class="ph ph-floppy-disk align-middle mr-1"></i> Simpan ke Database
                 </button>
-                <span id="adminNotif" class="py-2 text-sm text-yellow-400 hidden">Menyimpan...</span>
+                <span id="adminNotif" class="py-2 text-sm text-yellow-400 font-medium hidden">Menyimpan...</span>
             </div>
         </div>
     </div>
 
-    <!-- FUNGSI JAVASCRIPT UTAMA (DIUPGRADE DENGAN ERROR HANDLING CANGGIH) -->
+    <!-- FUNGSI JAVASCRIPT UTAMA (DIUPGRADE DENGAN ERROR HANDLING CANGGIH & FIX UI) -->
     <script>
-        // URL GAS ANDA
+        // URL GAS ANDA (TETAP SAMA)
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxv7LpGFB37qXUvpPYapXUIaaMv0nV06AnGbwQ_CRBSj4zIoxo7N3NwAn9WSsphDrtR/exec";
         let globalCVData = {}; 
 
         // 1. SISTEM INIT (LOAD DATA DARI DATABASE)
         document.addEventListener("DOMContentLoaded", () => {
-            fetch(GAS_URL + "?endpoint=cv", { redirect: "follow" }) // Handle 302 Redirect dari GAS
+            fetch(GAS_URL + "?endpoint=cv", { redirect: "follow" })
             .then(response => {
                 if (!response.ok) throw new Error("Jaringan bermasalah atau URL salah.");
-                return response.text(); // Baca sebagai Teks dulu untuk mencegah JSON Parse Crash
+                return response.text();
             })
             .then(text => {
                 try {
-                    const res = JSON.parse(text); // Jika ini bukan JSON (tapi error HTML Google), akan masuk ke blok Catch
-                    
+                    const res = JSON.parse(text); 
                     if(res.status === 'success') {
                         globalCVData = res.data;
                         renderSeluruhUI(globalCVData);
                         
-                        // Sukses! Buka Layar
                         setTimeout(() => {
                             document.getElementById('loader-screen').style.opacity = '0';
                             document.getElementById('loader-screen').style.visibility = 'hidden';
                             const mainContent = document.getElementById('main-content');
                             mainContent.classList.remove('hidden');
                             
-                            // Timeout tipis agar transisi opacity jalan
                             setTimeout(() => {
                                 mainContent.classList.remove('opacity-0');
                                 initObserver();
@@ -320,14 +361,14 @@
             });
         });
 
-        // FUNGSI TAMPILKAN ERROR DI LAYAR (ANTI-STUCK)
+        // FUNGSI TAMPILKAN ERROR DI LAYAR
         function tampilkanLayarError(pesanError) {
             document.getElementById('loader-spinner').style.display = 'none';
             document.getElementById('loader-title').textContent = "SYSTEM ERROR";
-            document.getElementById('loader-title').classList.replace('text-[#00ff66]', 'text-red-500');
+            document.getElementById('loader-title').classList.replace('text-[#06b6d4]', 'text-red-400');
             document.getElementById('loader-title').classList.remove('animate-pulse');
             document.getElementById('loader-text').innerHTML = pesanError;
-            document.getElementById('loader-text').classList.add('text-red-400', 'mt-4');
+            document.getElementById('loader-text').classList.add('text-red-300', 'mt-4');
         }
 
         // 2. FUNGSI RENDER UI
@@ -350,12 +391,27 @@
             document.getElementById('ui-orcid').href = data.kontak.orcid;
             document.getElementById('ui-sosmed').textContent = data.kontak.sosmed;
 
-            const hobiHTML = data.dataPribadi.hobi.map(h => `<span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs text-gray-300">${h}</span>`).join('');
+            const hobiHTML = data.dataPribadi.hobi.map(h => `<span class="px-3 py-1 bg-slate-800 border border-slate-700 rounded-full text-xs text-slate-300">${h}</span>`).join('');
             document.getElementById('ui-hobi-container').innerHTML = hobiHTML;
 
+            // FIX: PERSENTASE KEAHLIAN TERSTABILO (Warna BG dihilangkan pada text span)
             const keahlianHTML = data.keahlian.map((k, i) => {
-                const colorClass = i === data.keahlian.length - 1 ? "bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)] text-yellow-400" : "bg-[#00ff66] shadow-[0_0_10px_rgba(0,255,102,0.6)] text-[#00ff66]";
-                return `<div><div class="flex justify-between text-sm mb-1.5 font-semibold"><span class="text-gray-300">${k.nama}</span><span class="${colorClass.split(' ')[0]} font-mono">${k.nilai}%</span></div><div class="w-full bg-white/10 rounded-full h-2"><div class="${colorClass} h-2 rounded-full" style="width: ${k.nilai}%"></div></div></div>`;
+                const isLast = i === data.keahlian.length - 1;
+                const barColor = isLast ? "bg-amber-400" : "bg-[#06b6d4]";
+                const textColor = isLast ? "text-amber-400" : "text-[#06b6d4]";
+                const shadow = isLast ? "shadow-[0_0_10px_rgba(251,191,36,0.5)]" : "shadow-[0_0_10px_rgba(6,182,212,0.5)]";
+                
+                return `
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1.5 font-semibold">
+                        <span class="text-slate-200">${k.nama}</span>
+                        <!-- SPAN INI HANYA PAKAI CLASS TEXT COLOR (BUKAN BACKGROUND) -->
+                        <span class="${textColor} font-mono">${k.nilai}%</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                        <div class="${barColor} ${shadow} h-full rounded-full transition-all duration-1000 ease-out" style="width: ${k.nilai}%"></div>
+                    </div>
+                </div>`;
             }).join('');
             document.getElementById('ui-keahlian-container').innerHTML = keahlianHTML;
 
@@ -363,23 +419,26 @@
                 const isLeft = i % 2 === 0;
                 const posClass = isLeft ? "md:pr-12 ml-10 md:ml-0 md:text-right" : "md:pl-12 ml-10 md:ml-[50%]";
                 const dotPos = isLeft ? "left-[-28px] md:left-auto md:right-[-8px]" : "left-[-28px] md:left-[-8px]";
-                let dotClass = "bg-[#00ff66] shadow-[0_0_10px_#00ff66]";
-                if(i > 0) dotClass = "bg-white/20 border border-[#00ff66]";
-                if(i > 2) dotClass = "bg-white/20 border border-gray-500";
-                let boxOp = i === 0 ? "border-[#00ff66]/30" : i < 3 ? "" : `border-white/5 opacity-${80 - (i*10)}`;
-                return `<div class="relative w-full md:w-1/2 ${posClass} mb-12 animate-on-scroll"><div class="absolute w-4 h-4 ${dotClass} rounded-full ${dotPos} top-6"></div><div class="glass-panel p-6 ${boxOp}"><span class="${i<3 ? 'text-[#00ff66]' : 'text-gray-400'} font-mono text-sm font-bold">${p.tahun}</span><h3 class="text-lg font-bold ${i<3 ? 'text-white' : 'text-gray-300'} mt-1">${p.jurusan}</h3><p class="text-gray-400 text-sm">${p.institusi}</p></div></div>`;
+                
+                let dotClass = "bg-[#06b6d4] shadow-[0_0_10px_#06b6d4]";
+                if(i > 0) dotClass = "bg-slate-700 border border-[#06b6d4]";
+                if(i > 2) dotClass = "bg-slate-800 border border-slate-500";
+                
+                let boxOp = i === 0 ? "border-[#06b6d4]/30 bg-[#06b6d4]/5" : i < 3 ? "" : `border-slate-700 opacity-${80 - (i*10)}`;
+                
+                return `<div class="relative w-full md:w-1/2 ${posClass} mb-12 animate-on-scroll"><div class="absolute w-4 h-4 ${dotClass} rounded-full ${dotPos} top-6"></div><div class="glass-panel p-6 ${boxOp}"><span class="${i<3 ? 'text-[#06b6d4]' : 'text-slate-400'} font-mono text-sm font-bold">${p.tahun}</span><h3 class="text-lg font-bold ${i<3 ? 'text-white' : 'text-slate-300'} mt-1">${p.jurusan}</h3><p class="text-slate-400 text-sm mt-1">${p.institusi}</p></div></div>`;
             }).join('');
             document.getElementById('ui-pendidikan-container').innerHTML = pendHTML;
 
             const orgHTML = data.organisasi.map(o => {
                 const dotStatus = o.aktif ? "active" : "inactive";
-                return `<div class="flex gap-4 mb-4"><div class="glow-dot ${dotStatus}"></div><div><p class="font-bold text-white text-base">${o.nama}</p><p class="text-sm font-normal text-gray-400 mt-0.5">${o.deskripsi}</p></div></div>`;
+                return `<div class="flex gap-4 mb-4"><div class="glow-dot ${dotStatus}"></div><div><p class="font-bold text-white text-base leading-tight">${o.nama}</p><p class="text-sm font-normal text-slate-400 mt-1">${o.deskripsi}</p></div></div>`;
             }).join('');
             document.getElementById('ui-organisasi-container').innerHTML = orgHTML;
 
             const pubHTML = data.publikasi.map(pub => {
-                const linkHTML = pub.link ? `<a href="${pub.link}" target="_blank" class="text-blue-400/80 hover:underline break-all text-xs block mt-1">Doi: ${pub.link.split('org/')[1] || pub.link}</a>` : "";
-                return `<div class="card-org-pub relative overflow-hidden"><div class="pub-year-badge">${pub.tahun}</div><p class="font-semibold text-gray-200 text-sm mb-1.5 pr-8 leading-snug">${pub.judul}</p><p class="text-xs text-gray-400">${pub.authors} ${pub.jurnal}</p>${linkHTML}</div>`;
+                const linkHTML = pub.link ? `<a href="${pub.link}" target="_blank" class="inline-block mt-2 text-[#06b6d4] hover:text-[#2dd4bf] hover:underline break-all text-xs transition-colors">Doi: ${pub.link.split('org/')[1] || pub.link}</a>` : "";
+                return `<div class="card-org-pub relative overflow-hidden"><div class="pub-year-badge">${pub.tahun}</div><p class="font-semibold text-slate-200 text-sm mb-2 pr-8 leading-relaxed">${pub.judul}</p><p class="text-xs text-slate-400 leading-relaxed">${pub.authors} <span class="italic">${pub.jurnal}</span></p>${linkHTML}</div>`;
             }).join('');
             document.getElementById('ui-publikasi-container').innerHTML = pubHTML;
         }
@@ -396,19 +455,19 @@
             document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
         }
 
-        // 3. LOGIKA FORM
+        // 3. LOGIKA FORM FIX (TANPA WHATSAPP REDIRECT)
         function prosesPesan() {
             const nama = document.getElementById('inputNama').value.trim();
             const kontak = document.getElementById('inputKontak').value.trim();
             const pesan = document.getElementById('inputPesan').value.trim();
             
             const btn = document.getElementById('btnSubmit');
-            btn.innerHTML = '<i class="ph ph-spinner animate-spin mr-2 text-xl"></i> Memproses...';
+            btn.innerHTML = '<i class="ph ph-spinner animate-spin mr-2 text-xl"></i> Sedang Mengirim...';
             btn.disabled = true;
+            btn.classList.add('opacity-80', 'cursor-not-allowed');
 
             const payload = { action: 'submitPesan', nama: nama, kontak: kontak, pesan: pesan };
 
-            // ZETTBOT FIX: Mengirim body sebagai plain text untuk menembus CORS Preflight
             fetch(GAS_URL, {
                 method: 'POST',
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -417,25 +476,33 @@
             .then(res => res.json())
             .then(res => {
                 if(res.status === 'success') {
-                    const noWA = "6281242055145"; 
-                    const textWA = `Halo drg. Aksa,%0A%0APerkenalkan saya *${nama}* (Kontak: ${kontak}).%0A%0A${pesan}`;
-                    window.open(`https://wa.me/${noWA}?text=${textWA}`, '_blank');
-                    
-                    btn.innerHTML = '<i class="ph ph-check-circle mr-2 text-xl"></i> Dialihkan ke WA';
-                    btn.classList.replace('bg-[#00ff66]', 'bg-white');
+                    // Hanya merubah tombol menjadi status Sukses & Clear Form
+                    btn.innerHTML = '<i class="ph ph-check-circle mr-2 text-xl"></i> Pesan Terkirim!';
+                    btn.classList.replace('bg-[#06b6d4]', 'bg-white');
+                    btn.classList.replace('text-white', 'text-black');
                     document.getElementById('formKontak').reset();
                     
+                    // Kembalikan tombol seperti semula setelah 4 detik
                     setTimeout(() => {
-                        btn.innerHTML = '<i class="ph ph-whatsapp-logo align-middle mr-2 text-xl"></i> Kirim Pesan via WhatsApp';
-                        btn.classList.replace('bg-white', 'bg-[#00ff66]');
+                        btn.innerHTML = '<i class="ph ph-paper-plane-tilt align-middle mr-2 text-xl"></i> Kirim Pesan Anda';
+                        btn.classList.replace('bg-white', 'bg-[#06b6d4]');
+                        btn.classList.replace('text-black', 'text-white');
+                        btn.classList.remove('opacity-80', 'cursor-not-allowed');
                         btn.disabled = false;
                     }, 4000);
                 }
             })
             .catch(err => {
                 console.error(err);
-                btn.innerHTML = 'Koneksi Error, Ulangi Lagi';
-                btn.disabled = false;
+                btn.innerHTML = '<i class="ph ph-warning-circle align-middle mr-2 text-xl"></i> Koneksi Error, Coba Lagi';
+                btn.classList.replace('bg-[#06b6d4]', 'bg-red-500');
+                
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="ph ph-paper-plane-tilt align-middle mr-2 text-xl"></i> Kirim Pesan Anda';
+                    btn.classList.replace('bg-red-500', 'bg-[#06b6d4]');
+                    btn.classList.remove('opacity-80', 'cursor-not-allowed');
+                    btn.disabled = false;
+                }, 3000);
             });
         }
 
@@ -461,11 +528,11 @@
             let newData;
             
             try { newData = JSON.parse(document.getElementById('jsonEditor').value); } 
-            catch(e) { alert("Format JSON tidak valid!"); return; }
+            catch(e) { alert("Format JSON tidak valid! Perhatikan tanda kutip dan koma."); return; }
 
             btn.disabled = true;
-            notif.textContent = "Menyimpan ke Database...";
-            notif.classList.remove('hidden');
+            btn.innerHTML = '<i class="ph ph-spinner animate-spin align-middle mr-1"></i> Menyimpan...';
+            notif.classList.add('hidden');
 
             const payload = { action: 'updateCV', user: document.getElementById('adminUser').value, pass: document.getElementById('adminPass').value, newData: newData };
 
@@ -477,18 +544,24 @@
             .then(res => res.json())
             .then(res => {
                 if(res.status === 'success') {
-                    notif.textContent = "Berhasil! Refresh web.";
-                    notif.classList.replace('text-yellow-400', 'text-[#00ff66]');
+                    notif.textContent = "Data Berhasil Disimpan! Refresh (F5) halaman web untuk melihat hasil.";
+                    notif.classList.remove('hidden');
+                    notif.classList.replace('text-yellow-400', 'text-[#06b6d4]');
                     globalCVData = newData; 
                 } else {
                     notif.textContent = "Error: " + res.message;
-                    notif.classList.replace('text-yellow-400', 'text-red-500');
+                    notif.classList.remove('hidden');
+                    notif.classList.replace('text-yellow-400', 'text-red-400');
                 }
             })
             .catch(err => {
-                notif.textContent = "Koneksi Gagal.";
-                notif.classList.replace('text-yellow-400', 'text-red-500');
-            }).finally(() => { btn.disabled = false; });
+                notif.textContent = "Koneksi Gagal/Timeout.";
+                notif.classList.remove('hidden');
+                notif.classList.replace('text-yellow-400', 'text-red-400');
+            }).finally(() => { 
+                btn.disabled = false; 
+                btn.innerHTML = '<i class="ph ph-floppy-disk align-middle mr-1"></i> Simpan ke Database';
+            });
         }
     </script>
 </body>
