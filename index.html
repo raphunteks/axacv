@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV | drg. M. Aksa Arsyad</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* Zettbos Glassmorphism & Neon Theme */
+        :root {
+            --neon-green: #00ff66;
+            --dark-bg: #050a07;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--dark-bg);
+            color: #e2e8f0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Ambient Backgrounds dengan z-index negatif */
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -10;
+            opacity: 0.25;
+            animation: pulse-glow 8s infinite alternate;
+        }
+        .glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background-color: var(--neon-green); }
+        .glow-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background-color: #0088ff; }
+
+        @keyframes pulse-glow {
+            0% { transform: scale(1); opacity: 0.2; }
+            100% { transform: scale(1.2); opacity: 0.35; }
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .glass-panel:hover {
+            border-color: rgba(0, 255, 102, 0.3);
+            box-shadow: 0 10px 40px -10px rgba(0, 255, 102, 0.15);
+            transform: translateY(-5px);
+        }
+
+        /* Text Gradient Neon */
+        .text-gradient-neon {
+            background: linear-gradient(135deg, #ffffff 0%, var(--neon-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Scroll Animations via Intersection Observer */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Timeline Custom CSS */
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--neon-green), transparent);
+            opacity: 0.3;
+        }
+        @media (min-width: 768px) {
+            .timeline-line::before { left: 50%; transform: translateX(-50%); }
+        }
+        
+        /* Profile Image Glow */
+        .profile-img-container::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, transparent, var(--neon-green), transparent);
+            animation: spin 4s linear infinite;
+            z-index: -1;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="relative min-h-screen">
+
+    <!-- Safe Layering Backgrounds -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <main class="relative z-10 container mx-auto px-4 py-16 max-w-6xl">
+        
+        <!-- HEADER SECTION & FOTO PROFIL -->
+        <header class="text-center mb-20 animate-on-scroll is-visible">
+            
+            <!-- Aesthetic Profile Picture -->
+            <div class="relative w-40 h-40 mx-auto mb-8 profile-img-container">
+                <img src="axalogo.png" alt="M. Aksa Arsyad" onerror="this.src='https://ui-avatars.com/api/?name=Aksa+Arsyad&background=00ff66&color=000&size=256'" class="w-full h-full object-cover rounded-full border-4 border-[#050a07] relative z-10 bg-gray-800">
+            </div>
+
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
+                M. AKSA <span class="text-gradient-neon">ARSYAD</span>
+            </h1>
+            <div class="inline-block glass-panel px-6 py-2 border-[#00ff66]/30 bg-[#00ff66]/10 mb-2">
+                <p class="text-[#00ff66] font-bold tracking-widest text-sm md:text-base">
+                    <i class="ph ph-stethoscope text-lg align-middle mr-2"></i>
+                    DOKTER GIGI
+                </p>
+            </div>
+            <div>
+                <span class="text-gray-400 font-semibold tracking-wider text-xs md:text-sm uppercase">General Practitioner (GP)</span>
+            </div>
+        </header>
+
+        <!-- BENTO BOX GRID SECTION -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+            <!-- Box 1: Data Pribadi -->
+            <div class="glass-panel p-8 animate-on-scroll">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-3 bg-white/5 rounded-xl text-white"><i class="ph ph-user text-2xl"></i></div>
+                    <h2 class="text-xl font-bold">Data Pribadi</h2>
+                </div>
+                <ul class="space-y-4 text-gray-300 text-sm">
+                    <li class="flex justify-between border-b border-white/5 pb-2">
+                        <span class="text-gray-500">Lahir</span>
+                        <span class="text-right">Makassar,<br>29 September 2002</span>
+                    </li>
+                    <li class="flex justify-between border-b border-white/5 pb-2">
+                        <span class="text-gray-500">Gender</span>
+                        <span>Laki-laki</span>
+                    </li>
+                    <li class="flex justify-between border-b border-white/5 pb-2">
+                        <span class="text-gray-500">Agama</span>
+                        <span>Islam</span>
+                    </li>
+                    <li class="flex justify-between border-b border-white/5 pb-2">
+                        <span class="text-gray-500">Kewarganegaraan</span>
+                        <span>Indonesia</span>
+                    </li>
+                    <li class="flex justify-between border-b border-white/5 pb-2">
+                        <span class="text-gray-500">Status</span>
+                        <span class="text-[#00ff66] font-semibold">Belum Menikah</span>
+                    </li>
+                </ul>
+                
+                <div class="mt-5 pt-4 border-t border-white/5">
+                    <span class="text-xs text-gray-500 mb-2 block">Hobi:</span>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs text-gray-300"><i class="ph ph-book-open align-middle mr-1"></i> Membaca</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs text-gray-300"><i class="ph ph-airplane-tilt align-middle mr-1"></i> Traveling</span>
+                        <span class="px-3 py-1 bg-[#00ff66]/10 border border-[#00ff66]/30 rounded-full text-xs text-[#00ff66]"><i class="ph ph-code align-middle mr-1"></i> Coding</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Box 2: Kontak -->
+            <div class="glass-panel p-8 animate-on-scroll" style="transition-delay: 100ms;">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-3 bg-white/5 rounded-xl text-white"><i class="ph ph-address-book text-2xl"></i></div>
+                    <h2 class="text-xl font-bold">Informasi Kontak</h2>
+                </div>
+                <ul class="space-y-4 text-gray-300 text-sm">
+                    <li class="flex items-center gap-3">
+                        <i class="ph ph-envelope-simple text-gray-500 text-xl"></i>
+                        <div>
+                            <p class="text-xs text-gray-500">Email</p>
+                            <p>itsmeaxaa@gmail.com</p>
+                        </div>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i class="ph ph-whatsapp-logo text-[#00ff66] text-xl drop-shadow-[0_0_5px_#00ff66]"></i>
+                        <div>
+                            <p class="text-xs text-gray-500">WhatsApp / HP</p>
+                            <p>+62 812-4205-5145</p>
+                        </div>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i class="ph ph-map-pin text-gray-500 text-xl"></i>
+                        <div>
+                            <p class="text-xs text-gray-500">Alamat</p>
+                            <p>Jl. Kumala No. 70 A, Makassar</p>
+                        </div>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i class="ph ph-graduation-cap text-gray-500 text-xl"></i>
+                        <div class="flex flex-col gap-1 w-full">
+                            <a href="https://scholar.google.com/citations?user=hQlIsLoAAAAJ&hl=id" target="_blank" class="flex justify-between items-center bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 transition">
+                                <span class="text-xs font-semibold text-blue-300">Google Scholar</span>
+                                <i class="ph ph-arrow-up-right text-xs"></i>
+                            </a>
+                            <a href="https://orcid.org/0009-0003-2658-3320" target="_blank" class="flex justify-between items-center bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 transition">
+                                <span class="text-xs font-semibold text-[#a6ce39]">ORCID iD</span>
+                                <i class="ph ph-arrow-up-right text-xs"></i>
+                            </a>
+                        </div>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i class="ph ph-at text-gray-500 text-xl"></i>
+                        <div>
+                            <p class="text-xs text-gray-500">Sosial Media</p>
+                            <p>@axaaxyz01 / @thisaxaxyz</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Box 3: Keahlian (Percentage Bars) -->
+            <div class="glass-panel p-8 animate-on-scroll" style="transition-delay: 200ms;">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-3 bg-white/5 rounded-xl text-white"><i class="ph ph-chart-bar text-2xl"></i></div>
+                    <h2 class="text-xl font-bold">Keahlian & Softskill</h2>
+                </div>
+                
+                <div class="space-y-5">
+                    <!-- Skill 1 -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-1.5 font-semibold">
+                            <span class="text-gray-300">Microsoft Word</span>
+                            <span class="text-[#00ff66] font-mono">95%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2">
+                            <div class="bg-[#00ff66] h-2 rounded-full shadow-[0_0_10px_rgba(0,255,102,0.8)]" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Skill 2 -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-1.5 font-semibold">
+                            <span class="text-gray-300">Programmer</span>
+                            <span class="text-[#00ff66] font-mono">85%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2">
+                            <div class="bg-[#00ff66] h-2 rounded-full shadow-[0_0_10px_rgba(0,255,102,0.6)]" style="width: 85%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skill 3 -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-1.5 font-semibold">
+                            <span class="text-gray-300">Desain Canva</span>
+                            <span class="text-[#00ff66] font-mono">85%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2">
+                            <div class="bg-[#00ff66] h-2 rounded-full shadow-[0_0_10px_rgba(0,255,102,0.6)]" style="width: 85%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skill 4 -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-1.5 font-semibold">
+                            <span class="text-gray-300">Power Point</span>
+                            <span class="text-[#00ff66] font-mono">80%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2">
+                            <div class="bg-[#00ff66] h-2 rounded-full shadow-[0_0_10px_rgba(0,255,102,0.5)]" style="width: 80%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skill 5 -->
+                    <div>
+                        <div class="flex justify-between text-sm mb-1.5 font-semibold">
+                            <span class="text-gray-300">Microsoft Excel</span>
+                            <span class="text-yellow-400 font-mono">70%</span>
+                        </div>
+                        <div class="w-full bg-white/10 rounded-full h-2">
+                            <div class="bg-yellow-400 h-2 rounded-full shadow-[0_0_10px_rgba(250,204,21,0.5)]" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TIMELINE: PENDIDIKAN -->
+        <section class="mb-20">
+            <div class="text-center mb-12 animate-on-scroll">
+                <h2 class="text-3xl font-bold">Riwayat <span class="text-[#00ff66]">Pendidikan</span></h2>
+                <p class="text-gray-400 mt-2">Jejak perjalanan akademis</p>
+            </div>
+
+            <div class="relative timeline-line">
+                <!-- Timeline Item 1 -->
+                <div class="relative w-full md:w-1/2 md:pr-12 ml-10 md:ml-0 md:text-right mb-12 animate-on-scroll">
+                    <div class="absolute w-4 h-4 bg-[#00ff66] rounded-full left-[-28px] md:left-auto md:right-[-8px] top-6 shadow-[0_0_10px_#00ff66]"></div>
+                    <div class="glass-panel p-6 border-[#00ff66]/30">
+                        <span class="text-[#00ff66] font-mono text-sm font-bold">2024 - SAAT INI</span>
+                        <h3 class="text-lg font-bold text-white mt-1">Magister Ilmu Kedokteran Gigi</h3>
+                        <p class="text-gray-400 text-sm">Universitas Hasanuddin</p>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 2 -->
+                <div class="relative w-full md:w-1/2 md:pl-12 ml-10 md:ml-[50%] mb-12 animate-on-scroll">
+                    <div class="absolute w-4 h-4 bg-white/20 border border-[#00ff66] rounded-full left-[-28px] md:left-[-8px] top-6"></div>
+                    <div class="glass-panel p-6">
+                        <span class="text-[#00ff66] font-mono text-sm font-bold">2020 - 2025</span>
+                        <h3 class="text-lg font-bold text-white mt-1">S.Kg & Profesi Dokter Gigi</h3>
+                        <p class="text-gray-400 text-sm">Universitas Muslim Indonesia</p>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 3 -->
+                <div class="relative w-full md:w-1/2 md:pr-12 ml-10 md:ml-0 md:text-right mb-12 animate-on-scroll">
+                    <div class="absolute w-4 h-4 bg-white/20 border border-gray-500 rounded-full left-[-28px] md:left-auto md:right-[-8px] top-6"></div>
+                    <div class="glass-panel p-6 border-white/5 opacity-80">
+                        <span class="text-gray-400 font-mono text-sm font-bold">2017 - 2020</span>
+                        <h3 class="text-lg font-bold text-gray-300 mt-1">Pendidikan Menengah Atas</h3>
+                        <p class="text-gray-400 text-sm">SMA Negeri 3 Makassar</p>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 4 -->
+                <div class="relative w-full md:w-1/2 md:pl-12 ml-10 md:ml-[50%] mb-12 animate-on-scroll">
+                    <div class="absolute w-4 h-4 bg-white/20 border border-gray-500 rounded-full left-[-28px] md:left-[-8px] top-6"></div>
+                    <div class="glass-panel p-6 border-white/5 opacity-70">
+                        <span class="text-gray-400 font-mono text-sm font-bold">2014 - 2017</span>
+                        <h3 class="text-lg font-bold text-gray-300 mt-1">Pendidikan Menengah Pertama</h3>
+                        <p class="text-gray-400 text-sm">SMP Negeri 2 Majene</p>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 5 -->
+                <div class="relative w-full md:w-1/2 md:pr-12 ml-10 md:ml-0 md:text-right mb-12 animate-on-scroll">
+                    <div class="absolute w-4 h-4 bg-white/20 border border-gray-500 rounded-full left-[-28px] md:left-auto md:right-[-8px] top-6"></div>
+                    <div class="glass-panel p-6 border-white/5 opacity-60">
+                        <span class="text-gray-400 font-mono text-sm font-bold">2008 - 2014</span>
+                        <h3 class="text-lg font-bold text-gray-300 mt-1">Pendidikan Dasar</h3>
+                        <p class="text-gray-400 text-sm">SD Negeri Labuang Baji 1 Makassar</p>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 6 -->
+                <div class="relative w-full md:w-1/2 md:pl-12 ml-10 md:ml-[50%] mb-12 animate-on-scroll">
+                    <div class="absolute w-4 h-4 bg-white/20 border border-gray-500 rounded-full left-[-28px] md:left-[-8px] top-6"></div>
+                    <div class="glass-panel p-6 border-white/5 opacity-50">
+                        <span class="text-gray-500 font-mono text-sm font-bold">2007 - 2008</span>
+                        <h3 class="text-base font-bold text-gray-400 mt-1">Taman Kanak-Kanak</h3>
+                        <p class="text-gray-500 text-sm">TK Pembina Majene</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ORGANISASI & PUBLIKASI -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-20">
+            
+            <!-- Organisasi -->
+            <section class="animate-on-scroll">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <i class="ph ph-users-three text-[#00ff66]"></i> Pengalaman Organisasi
+                </h2>
+                <div class="glass-panel p-6">
+                    <ul class="space-y-6">
+                        <li class="flex gap-4">
+                            <div class="mt-1.5 w-2.5 h-2.5 rounded-full bg-[#00ff66] shadow-[0_0_8px_#00ff66] flex-shrink-0"></div>
+                            <div>
+                                <p class="font-bold text-white text-base">Anggota HMI Komisariat Kedokteran Gigi</p>
+                                <p class="text-sm font-normal text-gray-400 mt-1">Universitas Muslim Indonesia (Angkatan Ke-II)</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <div class="mt-1.5 w-2.5 h-2.5 rounded-full bg-white/40 flex-shrink-0"></div>
+                            <div>
+                                <p class="font-semibold text-gray-200 text-base">Anggota BEM Department of Information and Communication</p>
+                                <p class="text-sm font-normal text-gray-400 mt-1">Periode 2022</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Publikasi Ilmiah -->
+            <section class="animate-on-scroll" style="transition-delay: 200ms;">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <i class="ph ph-book-open-text text-[#00ff66]"></i> Publikasi & Karya Ilmiah
+                </h2>
+                <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                    
+                    <!-- 2025 Group -->
+                    <div class="glass-panel p-5 border-[#00ff66]/20 bg-[#00ff66]/5 relative overflow-hidden">
+                        <div class="absolute right-0 top-0 bg-[#00ff66] text-black text-xs font-bold px-3 py-1 rounded-bl-lg">2025</div>
+                        <ul class="space-y-4 mt-2 text-sm text-gray-300">
+                            <li class="border-b border-white/5 pb-3">
+                                <span class="font-bold text-white block mb-1">1. Analysis of four periapical inflammatory lesions findings on periapical radiographs: a case report.</span>
+                                Muchlis MRE, Arsyad MA, Annisa NA. Jurnal Radiologi Dentomaksilofasial Indonesia 2025;9(1)37. <a href="https://doi.org/10.32793/jrdi.v9i1.1291" target="_blank" class="text-blue-400 hover:underline break-all">Doi: 10.32793/jrdi.v9i1.1291</a>
+                            </li>
+                            <li class="border-b border-white/5 pb-3">
+                                <span class="font-bold text-white block mb-1">2. Edukasi Menyikat Gigi Berdasarkan Ajaran Rasulullah bagi Siswa SDN 99 Kampung Beru, Kabupaten Takalar.</span>
+                                Abdi MJ, Aldilawati S, Chotimah C, Arsyad MA., et al. Jurnal Abdi Masyarakat Indonesia. 2025; 5(4): 1571-1578. <a href="https://doi.org/10.54082/jamsi.2012" target="_blank" class="text-blue-400 hover:underline break-all">Doi: 10.54082/jamsi.2012</a>
+                            </li>
+                            <li>
+                                <span class="font-bold text-white block mb-1">3. Upaya Promosi Kesehatan Gigi dan Mulut Dalam Meningkatkan Nilai-Nilai Keislaman Pada Guru SDN 99 Kampung Beru.</span>
+                                Abdi MJ, Aldilawati S, Setiawati N, Lauddin T, Arsyad MA, et al. Indonesian Journal of Public Health. 2025: 11(3): 829-35.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 2024 Group -->
+                    <div class="glass-panel p-5 border-white/10 relative overflow-hidden">
+                        <div class="absolute right-0 top-0 bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">2024</div>
+                        <ul class="space-y-4 mt-2 text-sm text-gray-400">
+                            <li class="border-b border-white/5 pb-3">
+                                <span class="font-semibold text-gray-300 block mb-1">1. Comparison of Shear Bond Strength Between HEMA-Based and Non-HEMA Bonding Agents on Dentin Surface.</span>
+                                Asmah N, Mattulada IK, Aslan S, Anas R, Arsyad MA. J Syiah Kuala Dent Soc. 2024; 9(2): 153–159. <a href="https://doi.org/10.24815/jds.v9i2.41703" target="_blank" class="text-blue-400/80 hover:underline break-all">Doi: 10.24815/jds.v9i2.41703</a>
+                            </li>
+                            <li>
+                                <span class="font-semibold text-gray-300 block mb-1">2. Analysis of Impacted Mandibular Second Premolar Finding Trough Panoramic Radiograph: A Case Report.</span>
+                                Arsyad MA, Muchlis MRE. e-GiGi. 2024; 13(1): 247-52. <a href="https://doi.org/10.35790/eg.v13i1.58487" target="_blank" class="text-blue-400/80 hover:underline break-all">Doi: 10.35790/eg.v13i1.58487</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- FORM KONTAK (Redirection ke WhatsApp untuk Hosting Vercel Static) -->
+        <section class="max-w-2xl mx-auto animate-on-scroll">
+            <div class="glass-panel p-8 md:p-10 text-center relative overflow-hidden">
+                <!-- Background Accent inside Form -->
+                <div class="absolute -top-20 -right-20 w-40 h-40 bg-[#00ff66] rounded-full blur-[80px] opacity-10 pointer-events-none"></div>
+                
+                <h2 class="text-3xl font-bold mb-2">Mari Terhubung</h2>
+                <p class="text-gray-400 mb-8 text-sm">Hubungi saya untuk diskusi klinis, kolaborasi riset, atau konsultasi. Pesan akan langsung diarahkan ke WhatsApp pribadi saya.</p>
+                
+                <!-- ZETTBOT: Form Action diubah ke JS WhatsApp Redirection untuk kompabilitas Vercel -->
+                <form id="formKontak" onsubmit="event.preventDefault(); kirimKeWhatsApp();" class="space-y-5 text-left relative z-10">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1 ml-2 uppercase tracking-wider">Nama Lengkap</label>
+                        <input type="text" id="inputNama" required class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#00ff66] focus:ring-1 focus:ring-[#00ff66] transition-all" placeholder="Masukkan nama Anda">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1 ml-2 uppercase tracking-wider">Instansi / Perusahaan (Opsional)</label>
+                        <input type="text" id="inputInstansi" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#00ff66] focus:ring-1 focus:ring-[#00ff66] transition-all" placeholder="Nama instansi Anda">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1 ml-2 uppercase tracking-wider">Pesan</label>
+                        <textarea id="inputPesan" required rows="4" class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#00ff66] focus:ring-1 focus:ring-[#00ff66] transition-all resize-none" placeholder="Tuliskan pesan atau keperluan Anda..."></textarea>
+                    </div>
+                    
+                    <button type="submit" id="btnSubmit" class="w-full bg-[#00ff66] hover:bg-[#00cc52] text-black font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(0,255,102,0.3)] hover:shadow-[0_0_30px_rgba(0,255,102,0.5)] transition-all transform hover:-translate-y-1 mt-4">
+                        <i class="ph ph-whatsapp-logo align-middle mr-2 text-xl"></i> Kirim Pesan via WhatsApp
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="text-center mt-20 pb-8 text-gray-600 text-sm">
+            <p>&copy; 2026 drg. M. Aksa Arsyad. All rights reserved.</p>
+            <p class="text-xs mt-1">Designed by <span class="text-[#00ff66]/50">Zettbos System</span></p>
+        </footer>
+
+    </main>
+
+    <!-- FUNGSI JAVASCRIPT -->
+    <script>
+        // 1. Intersection Observer untuk Animasi Scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // 2. Logika Form -> WhatsApp API (Khusus Vercel Static Deploy)
+        function kirimKeWhatsApp() {
+            const nama = document.getElementById('inputNama').value.trim();
+            const instansi = document.getElementById('inputInstansi').value.trim() || "-";
+            const pesan = document.getElementById('inputPesan').value.trim();
+            
+            // Nomor WhatsApp tujuan (Format Internasional tanpa '+')
+            const noWA = "6281242055145"; 
+            
+            // Format Pesan
+            const textWA = `Halo drg. Aksa,%0A%0APerkenalkan saya *${nama}* dari Instansi: ${instansi}.%0A%0A${pesan}`;
+            
+            // Redirect ke API WhatsApp
+            const urlWA = `https://wa.me/${noWA}?text=${textWA}`;
+            window.open(urlWA, '_blank');
+            
+            // Reset Form dan beri efek animasi
+            const btn = document.getElementById('btnSubmit');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="ph ph-check-circle align-middle mr-2 text-xl"></i> Membuka WhatsApp...';
+            btn.classList.replace('bg-[#00ff66]', 'bg-white');
+            
+            setTimeout(() => {
+                document.getElementById('formKontak').reset();
+                btn.innerHTML = originalText;
+                btn.classList.replace('bg-white', 'bg-[#00ff66]');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
