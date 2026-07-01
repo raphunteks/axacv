@@ -25,9 +25,9 @@
     <style>
         /* Axa Xyz Glassmorphism & DENTISTRY Theme */
         :root {
-            var(--dentist-cyan): #06b6d4;
-            var(--dentist-teal): #2dd4bf;
-            var(--dentist-blue): #0ea5e9;
+            --dentist-cyan: #06b6d4;
+            --dentist-teal: #2dd4bf;
+            --dentist-blue: #0ea5e9;
             --dark-bg: #0f172a;
             --glass-border: rgba(255, 255, 255, 0.08);
             --glass-bg: rgba(255, 255, 255, 0.03);
@@ -251,10 +251,10 @@
         <!-- FOOTER & VISITOR COUNTER -->
         <footer class="mt-20 pb-8">
             
-            <!-- Statistic Badges (Axa Xyz Fitur Baru) -->
+            <!-- Statistic Badges (Axa Xyz IP Tracker) -->
             <div class="flex flex-wrap justify-center gap-3 mb-6 animate-on-scroll">
                 <div class="bg-slate-800/40 border border-slate-700/50 px-4 py-2.5 rounded-xl text-center min-w-[110px] backdrop-blur-sm">
-                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-0.5">Views Today</p>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-0.5">Unique Views Today</p>
                     <div class="flex items-center justify-center gap-2 text-[#06b6d4] font-bold font-mono">
                         <i class="ph ph-eye"></i> <span id="view-today">-</span>
                     </div>
@@ -311,12 +311,12 @@
 
     <!-- FUNGSI JAVASCRIPT (AXA XYZ SYSTEMS) -->
     <script>
-        // URL GAS ANDA (JANGAN LUPA DEPLOY ULANG DAN UPDATE LINK INI JIKA BERUBAH)
+        // PASTIKAN INI ADALAH URL DARI HASIL "NEW DEPLOYMENT" TERBARU ANDA
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxv7LpGFB37qXUvpPYapXUIaaMv0nV06AnGbwQ_CRBSj4zIoxo7N3NwAn9WSsphDrtR/exec";
         let globalCVData = {}; 
 
         document.addEventListener("DOMContentLoaded", () => {
-            // 1. Fetch Data CV
+            // 1. Fetch Data CV Utama
             fetch(GAS_URL + "?endpoint=cv", { redirect: "follow" })
             .then(res => { if (!res.ok) throw new Error("Jaringan bermasalah."); return res.text(); })
             .then(text => {
@@ -334,8 +334,8 @@
                             setTimeout(() => { mainContent.classList.remove('opacity-0'); initObserver(); }, 50);
                         }, 1000);
                         
-                        // 2. Fetch/Record View Statistik (Berjalan di background)
-                        catatViewPengunjung();
+                        // 2. Fetch IP Klien & Record View (IP Unique Tracker)
+                        catatViewPengunjungDenganIP();
                         
                     } else { throw new Error(res.message || "Unknown Backend Error"); }
                 } catch (e) {
@@ -348,22 +348,31 @@
             });
         });
 
-        // FUNGSI PENCATATAN VISITOR KE SPREADSHEET
-        function catatViewPengunjung() {
-            fetch(GAS_URL, {
-                method: 'POST',
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: 'recordView' })
+        // FUNGSI PENCATATAN VISITOR BERDASARKAN IP UNIK (Anti Spam-Refresh)
+        function catatViewPengunjungDenganIP() {
+            // Ambil alamat IP publik pengguna via ipify API
+            fetch('https://api.ipify.org?format=json')
+            .then(res => res.json())
+            .then(data => {
+                const clientIP = data.ip;
+                
+                // Setelah IP didapat, kirim ke Backend GAS
+                return fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: 'recordView', ip: clientIP })
+                });
             })
             .then(res => res.json())
             .then(res => {
                 if(res.status === 'success') {
-                    // Update UI Badge Visitor
+                    // Update UI Badge Visitor dengan angka asli
                     document.getElementById('view-today').textContent = res.data.today;
                     document.getElementById('view-week').textContent = res.data.week;
                     document.getElementById('view-total').textContent = res.data.total;
                 }
-            }).catch(e => console.log("Gagal hitung view:", e));
+            })
+            .catch(e => console.log("Gagal hitung view / ambil IP:", e));
         }
 
         function tampilkanLayarError(pesanError) {
@@ -375,7 +384,6 @@
             document.getElementById('loader-text').classList.add('text-red-300', 'mt-4');
         }
 
-        // FUNGSI RENDER UI DENGAN LOGIKA LINK INTERAKTIF
         function renderSeluruhUI(data) {
             document.getElementById('ui-namaDepan').textContent = data.profil.namaDepan;
             document.getElementById('ui-namaBelakang').textContent = data.profil.namaBelakang;
@@ -389,17 +397,13 @@
             document.getElementById('ui-warga').textContent = data.dataPribadi.kewarganegaraan;
             document.getElementById('ui-status').textContent = data.dataPribadi.status;
             
-            // LOGIKA PEMBUATAN LINK OTOMATIS (Email, WA, IG)
             const rawEmail = data.kontak.email;
             const rawHp = data.kontak.hp;
             const rawSosmed = data.kontak.sosmed;
 
-            // Bersihkan nomor WA (Ubah ke format 62...)
-            let cleanHp = rawHp.replace(/\D/g, ''); // Hapus semua karakter kecuali angka
+            let cleanHp = rawHp.replace(/\D/g, ''); 
             if (cleanHp.startsWith('0')) cleanHp = '62' + cleanHp.substring(1);
-            
-            // Bersihkan IG Username (Hapus @ atau url jika ada)
-            let cleanIg = rawSosmed.replace(/[@ ]/g, '').split('/')[0]; // Ambil handle pertama sebelum tanda slash
+            let cleanIg = rawSosmed.replace(/[@ ]/g, '').split('/')[0]; 
 
             document.getElementById('ui-email-container').innerHTML = `<a href="mailto:${rawEmail}" class="link-interaktif">${rawEmail}</a>`;
             document.getElementById('ui-hp-container').innerHTML = `<a href="https://wa.me/${cleanHp}" target="_blank" class="link-interaktif">${rawHp}</a>`;
@@ -458,7 +462,6 @@
             document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
         }
 
-        // LOGIKA KIRIM PESAN KE DATABASE
         function prosesPesan() {
             const btn = document.getElementById('btnSubmit');
             btn.innerHTML = '<i class="ph ph-spinner animate-spin mr-2 text-xl"></i> Sedang Mengirim...';
