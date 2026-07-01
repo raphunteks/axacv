@@ -23,111 +23,74 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        /* Zettbos Glassmorphism & DENTISTRY Theme */
+        /* Axa Xyz Glassmorphism & DENTISTRY Theme */
         :root {
-            /* Clinical/Dentistry Colors */
-            --dentist-cyan: #06b6d4; /* Primary Highlight */
-            --dentist-teal: #2dd4bf; /* Secondary Highlight */
-            --dentist-blue: #0ea5e9;
-            --dark-bg: #0f172a; /* Deep Slate Blue */
-            --panel-bg: #1e293b;
-            
+            var(--dentist-cyan): #06b6d4;
+            var(--dentist-teal): #2dd4bf;
+            var(--dentist-blue): #0ea5e9;
+            --dark-bg: #0f172a;
             --glass-border: rgba(255, 255, 255, 0.08);
             --glass-bg: rgba(255, 255, 255, 0.03);
         }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--dark-bg);
-            color: #e2e8f0;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--dark-bg); color: #e2e8f0; overflow-x: hidden; scroll-behavior: smooth; }
 
         /* MEDICAL GRID BACKGROUND ANIMATION */
         .medical-grid {
-            position: fixed;
-            inset: 0;
-            z-index: -15;
-            background-image: 
-                linear-gradient(to right, rgba(6, 182, 212, 0.03) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+            position: fixed; inset: 0; z-index: -15;
+            background-image: linear-gradient(to right, rgba(6, 182, 212, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
             background-size: 40px 40px;
             mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, #000 10%, transparent 80%);
             -webkit-mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, #000 10%, transparent 80%);
             animation: gridMove 20s linear infinite;
         }
-        @keyframes gridMove {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(40px); }
-        }
+        @keyframes gridMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
 
         /* AMBIENT BACKGROUNDS */
-        .ambient-glow {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(120px);
-            z-index: -10;
-            opacity: 0.15;
-            animation: pulse-glow 8s infinite alternate;
-        }
-        .glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background-color: var(--dentist-cyan); }
-        .glow-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background-color: var(--dentist-blue); }
+        .ambient-glow { position: fixed; border-radius: 50%; filter: blur(120px); z-index: -10; opacity: 0.15; animation: pulse-glow 8s infinite alternate; }
+        .glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background-color: #06b6d4; }
+        .glow-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background-color: #0ea5e9; }
         @keyframes pulse-glow { 0% { transform: scale(1); opacity: 0.1; } 100% { transform: scale(1.2); opacity: 0.2; } }
 
-        /* LOADING SCREEN AESTHETIC */
-        #loader-screen {
-            position: fixed; inset: 0; background-color: var(--dark-bg);
-            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
-        }
-        .medical-spinner {
-            width: 60px; height: 60px; border: 4px solid rgba(6, 182, 212, 0.1);
-            border-top: 4px solid var(--dentist-cyan); border-radius: 50%;
-            animation: spin-loader 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
-            box-shadow: 0 0 20px rgba(6,182,212,0.4);
-        }
+        /* LOADING SCREEN */
+        #loader-screen { position: fixed; inset: 0; background-color: var(--dark-bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; }
+        .medical-spinner { width: 60px; height: 60px; border: 4px solid rgba(6, 182, 212, 0.1); border-top: 4px solid #06b6d4; border-radius: 50%; animation: spin-loader 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; box-shadow: 0 0 20px rgba(6,182,212,0.4); }
         @keyframes spin-loader { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* COMPONENTS */
-        .glass-panel {
-            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 1.5rem; transition: all 0.3s ease;
-        }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 1.5rem; transition: all 0.3s ease; }
         .glass-panel:hover { border-color: rgba(6, 182, 212, 0.3); box-shadow: 0 10px 40px -10px rgba(6, 182, 212, 0.15); transform: translateY(-3px); }
         
-        .text-gradient-dentist { 
-            background: linear-gradient(135deg, #ffffff 0%, var(--dentist-cyan) 100%); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-        }
+        .text-gradient-dentist { background: linear-gradient(135deg, #ffffff 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
         .animate-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
         .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
         
-        .timeline-line::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--dentist-cyan), transparent); opacity: 0.3; }
+        .timeline-line::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #06b6d4, transparent); opacity: 0.3; }
         @media (min-width: 768px) { .timeline-line::before { left: 50%; transform: translateX(-50%); } }
         
-        .profile-img-container::after { 
-            content: ''; position: absolute; inset: -4px; border-radius: 50%; 
-            background: conic-gradient(from 0deg, transparent, var(--dentist-cyan), transparent); 
-            animation: spin 4s linear infinite; z-index: -1; 
-        }
+        .profile-img-container::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; background: conic-gradient(from 0deg, transparent, #06b6d4, transparent); animation: spin 4s linear infinite; z-index: -1; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* UI ORG & PUB */
         .card-org-pub { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1rem; transition: all 0.3s ease; }
         .card-org-pub:hover { background: rgba(6, 182, 212, 0.05); border-color: rgba(6, 182, 212, 0.3); }
-        .glow-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 10px var(--dentist-cyan); flex-shrink: 0; margin-top: 6px;}
-        .glow-dot.active { background-color: var(--dentist-cyan); }
+        .glow-dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 10px #06b6d4; flex-shrink: 0; margin-top: 6px;}
+        .glow-dot.active { background-color: #06b6d4; }
         .glow-dot.inactive { background-color: rgba(255,255,255,0.3); box-shadow: none; }
-        .pub-year-badge { position: absolute; top: -1px; right: -1px; background: var(--dentist-cyan); color: #0f172a; font-weight: bold; font-size: 0.75rem; padding: 4px 12px; border-bottom-left-radius: 0.75rem; border-top-right-radius: 1rem; }
+        .pub-year-badge { position: absolute; top: -1px; right: -1px; background: #06b6d4; color: #0f172a; font-weight: bold; font-size: 0.75rem; padding: 4px 12px; border-bottom-left-radius: 0.75rem; border-top-right-radius: 1rem; }
 
         /* Custom Scrollbar */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(6, 182, 212, 0.3); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(6, 182, 212, 0.6); }
+
+        /* Interaktif Link Styling */
+        .link-interaktif { position: relative; transition: color 0.2s ease; display: inline-block; }
+        .link-interaktif::after { content: ''; position: absolute; width: 0; height: 1px; bottom: -2px; left: 0; background-color: #06b6d4; transition: width 0.2s ease; }
+        .link-interaktif:hover { color: #06b6d4; }
+        .link-interaktif:hover::after { width: 100%; }
     </style>
 </head>
 <body class="relative min-h-screen">
@@ -135,11 +98,11 @@
     <!-- CSS3 MEDICAL GRID BACKGROUND -->
     <div class="medical-grid"></div>
 
-    <!-- LOADING SCREEN AESTHETIC DENGAN HANDLER ERROR -->
+    <!-- LOADING SCREEN -->
     <div id="loader-screen">
         <div id="loader-spinner" class="medical-spinner mb-4"></div>
         <h2 id="loader-title" class="text-xl font-bold tracking-widest text-[#06b6d4] animate-pulse">MEMUAT DATABASE...</h2>
-        <p id="loader-text" class="text-xs text-gray-500 mt-2 text-center max-w-sm px-4">Securely connecting to Clinical Servers</p>
+        <p id="loader-text" class="text-xs text-slate-500 mt-2 text-center max-w-sm px-4">Securely connecting to Axa Xyz Systems</p>
     </div>
 
     <!-- Safe Layering Ambient Backgrounds -->
@@ -195,16 +158,29 @@
                     <h2 class="text-xl font-bold">Informasi Kontak</h2>
                 </div>
                 <ul class="space-y-4 text-slate-300 text-sm">
-                    <li class="flex items-center gap-3"><i class="ph ph-envelope-simple text-slate-500 text-xl"></i><div><p class="text-xs text-slate-500">Email</p><p class="font-medium" id="ui-email">...</p></div></li>
-                    <li class="flex items-center gap-3"><i class="ph ph-phone text-[#06b6d4] text-xl drop-shadow-[0_0_5px_rgba(6,182,212,0.5)]"></i><div><p class="text-xs text-slate-500">WhatsApp / HP</p><p class="font-medium" id="ui-hp">...</p></div></li>
-                    <li class="flex items-center gap-3"><i class="ph ph-map-pin text-slate-500 text-xl"></i><div><p class="text-xs text-slate-500">Alamat</p><p class="font-medium" id="ui-alamat">...</p></div></li>
-                    <li class="flex items-center gap-3"><i class="ph ph-graduation-cap text-slate-500 text-xl"></i>
+                    <li class="flex items-start gap-3">
+                        <i class="ph ph-envelope-simple text-slate-500 text-xl mt-0.5"></i>
+                        <div><p class="text-xs text-slate-500">Email</p><div class="font-medium mt-1" id="ui-email-container">...</div></div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="ph ph-phone text-[#06b6d4] text-xl mt-0.5 drop-shadow-[0_0_5px_rgba(6,182,212,0.5)]"></i>
+                        <div><p class="text-xs text-slate-500">WhatsApp / HP</p><div class="font-medium mt-1" id="ui-hp-container">...</div></div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="ph ph-map-pin text-slate-500 text-xl mt-0.5"></i>
+                        <div><p class="text-xs text-slate-500">Alamat</p><p class="font-medium mt-1" id="ui-alamat">...</p></div>
+                    </li>
+                    <li class="flex items-center gap-3 pt-2">
+                        <i class="ph ph-graduation-cap text-slate-500 text-xl"></i>
                         <div class="flex flex-col gap-1 w-full">
                             <a id="ui-scholar" href="#" target="_blank" class="flex justify-between items-center bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 transition border border-transparent hover:border-white/10"><span class="text-xs font-semibold text-blue-300">Google Scholar</span><i class="ph ph-arrow-up-right text-xs"></i></a>
                             <a id="ui-orcid" href="#" target="_blank" class="flex justify-between items-center bg-white/5 px-3 py-1.5 rounded-lg hover:bg-white/10 transition border border-transparent hover:border-white/10"><span class="text-xs font-semibold text-[#a6ce39]">ORCID iD</span><i class="ph ph-arrow-up-right text-xs"></i></a>
                         </div>
                     </li>
-                    <li class="flex items-center gap-3"><i class="ph ph-at text-slate-500 text-xl"></i><div><p class="text-xs text-slate-500">Sosial Media</p><p class="font-medium" id="ui-sosmed">...</p></div></li>
+                    <li class="flex items-start gap-3 pt-2">
+                        <i class="ph ph-at text-slate-500 text-xl mt-0.5"></i>
+                        <div><p class="text-xs text-slate-500">Sosial Media</p><div class="font-medium mt-1" id="ui-sosmed-container">...</div></div>
+                    </li>
                 </ul>
             </div>
 
@@ -228,27 +204,23 @@
 
         <!-- ORGANISASI & PUBLIKASI -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-20">
-            
             <!-- Organisasi -->
             <section class="animate-on-scroll">
                 <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
                     <i class="ph ph-users-three text-[#06b6d4]"></i> Pengalaman Organisasi
                 </h2>
-                <div class="glass-panel p-6 bg-gradient-to-br from-[#06b6d4]/5 to-transparent border-[#06b6d4]/20" id="ui-organisasi-container">
-                </div>
+                <div class="glass-panel p-6 bg-gradient-to-br from-[#06b6d4]/5 to-transparent border-[#06b6d4]/20" id="ui-organisasi-container"></div>
             </section>
-
             <!-- Publikasi Ilmiah -->
             <section class="animate-on-scroll" style="transition-delay: 200ms;">
                 <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
                     <i class="ph ph-book-open-text text-[#06b6d4]"></i> Publikasi & Karya Ilmiah
                 </h2>
-                <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar" id="ui-publikasi-container">
-                </div>
+                <div class="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar" id="ui-publikasi-container"></div>
             </section>
         </div>
 
-        <!-- FORM KONTAK (NO WA REDIRECT) -->
+        <!-- FORM KONTAK -->
         <section class="max-w-2xl mx-auto animate-on-scroll mb-10">
             <div class="glass-panel p-8 md:p-10 text-center relative overflow-hidden">
                 <div class="absolute -top-20 -right-20 w-40 h-40 bg-[#06b6d4] rounded-full blur-[80px] opacity-10 pointer-events-none"></div>
@@ -269,24 +241,45 @@
                         <label class="block text-xs font-semibold text-slate-400 mb-1 ml-2 uppercase tracking-wider">Pesan</label>
                         <textarea id="inputPesan" required rows="4" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-5 py-3 text-white focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] resize-none transition-colors" placeholder="Tulis keperluan Anda..."></textarea>
                     </div>
-                    
-                    <!-- TOMBOL UPDATE -->
                     <button type="submit" id="btnSubmit" class="w-full bg-[#06b6d4] hover:bg-[#0891b2] text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all transform hover:-translate-y-1 mt-4">
                         <i class="ph ph-paper-plane-tilt align-middle mr-2 text-xl"></i> Kirim Pesan Anda
                     </button>
-                    
                 </form>
             </div>
         </section>
 
-        <!-- FOOTER DENGAN ADMIN TRIGGER TERSEMBUNYI -->
-        <footer class="text-center mt-20 pb-8 text-slate-500 text-sm">
-            <p>&copy; 2026 drg. M. Aksa Arsyad. All rights reserved.</p>
-            <p class="text-xs mt-1">
-                Designed by <span class="text-[#06b6d4]/70">Zettbos System</span>
-                <!-- Tombol Admin Tersembunyi -->
-                <button onclick="bukaLoginAdmin()" class="ml-2 hover:text-[#06b6d4] transition-colors"><i class="ph ph-lock-key"></i></button>
-            </p>
+        <!-- FOOTER & VISITOR COUNTER -->
+        <footer class="mt-20 pb-8">
+            
+            <!-- Statistic Badges (Axa Xyz Fitur Baru) -->
+            <div class="flex flex-wrap justify-center gap-3 mb-6 animate-on-scroll">
+                <div class="bg-slate-800/40 border border-slate-700/50 px-4 py-2.5 rounded-xl text-center min-w-[110px] backdrop-blur-sm">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-0.5">Views Today</p>
+                    <div class="flex items-center justify-center gap-2 text-[#06b6d4] font-bold font-mono">
+                        <i class="ph ph-eye"></i> <span id="view-today">-</span>
+                    </div>
+                </div>
+                <div class="bg-slate-800/40 border border-slate-700/50 px-4 py-2.5 rounded-xl text-center min-w-[110px] backdrop-blur-sm">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-0.5">Views Week</p>
+                    <div class="flex items-center justify-center gap-2 text-[#2dd4bf] font-bold font-mono">
+                        <i class="ph ph-trend-up"></i> <span id="view-week">-</span>
+                    </div>
+                </div>
+                <div class="bg-slate-800/40 border border-slate-700/50 px-4 py-2.5 rounded-xl text-center min-w-[110px] backdrop-blur-sm">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-0.5">Views All</p>
+                    <div class="flex items-center justify-center gap-2 text-[#0ea5e9] font-bold font-mono">
+                        <i class="ph ph-globe"></i> <span id="view-total">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center text-slate-500 text-sm">
+                <p>&copy; 2026 drg. M. Aksa Arsyad. All rights reserved.</p>
+                <p class="text-xs mt-1">
+                    Designed by <span class="text-[#06b6d4]/70">Axa Xyz Systems</span>
+                    <button onclick="bukaLoginAdmin()" class="ml-2 hover:text-[#06b6d4] transition-colors"><i class="ph ph-lock-key"></i></button>
+                </p>
+            </div>
         </footer>
     </main>
 
@@ -316,19 +309,16 @@
         </div>
     </div>
 
-    <!-- FUNGSI JAVASCRIPT UTAMA (DIUPGRADE DENGAN ERROR HANDLING CANGGIH & FIX UI) -->
+    <!-- FUNGSI JAVASCRIPT (AXA XYZ SYSTEMS) -->
     <script>
-        // URL GAS ANDA (TETAP SAMA)
+        // URL GAS ANDA (JANGAN LUPA DEPLOY ULANG DAN UPDATE LINK INI JIKA BERUBAH)
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxv7LpGFB37qXUvpPYapXUIaaMv0nV06AnGbwQ_CRBSj4zIoxo7N3NwAn9WSsphDrtR/exec";
         let globalCVData = {}; 
 
-        // 1. SISTEM INIT (LOAD DATA DARI DATABASE)
         document.addEventListener("DOMContentLoaded", () => {
+            // 1. Fetch Data CV
             fetch(GAS_URL + "?endpoint=cv", { redirect: "follow" })
-            .then(response => {
-                if (!response.ok) throw new Error("Jaringan bermasalah atau URL salah.");
-                return response.text();
-            })
+            .then(res => { if (!res.ok) throw new Error("Jaringan bermasalah."); return res.text(); })
             .then(text => {
                 try {
                     const res = JSON.parse(text); 
@@ -341,27 +331,41 @@
                             document.getElementById('loader-screen').style.visibility = 'hidden';
                             const mainContent = document.getElementById('main-content');
                             mainContent.classList.remove('hidden');
-                            
-                            setTimeout(() => {
-                                mainContent.classList.remove('opacity-0');
-                                initObserver();
-                            }, 50);
+                            setTimeout(() => { mainContent.classList.remove('opacity-0'); initObserver(); }, 50);
                         }, 1000);
-                    } else {
-                        throw new Error(res.message || "Unknown Backend Error");
-                    }
+                        
+                        // 2. Fetch/Record View Statistik (Berjalan di background)
+                        catatViewPengunjung();
+                        
+                    } else { throw new Error(res.message || "Unknown Backend Error"); }
                 } catch (e) {
-                    console.error("ZettBOT Error:", e.message, "\nIsi Response API:", text);
-                    tampilkanLayarError("Koneksi API Gagal / Format Tidak Valid.<br><br><span class='text-white font-normal text-sm block mt-2'><b>Solusi:</b><br>1. Pastikan Anda sudah menjalankan fungsi <b>setupDatabase()</b> di Apps Script.<br>2. WAJIB lakukan <b>Deploy > New Deployment</b> di Apps Script.</span>");
+                    console.error("Axa Xyz Error:", e.message);
+                    tampilkanLayarError("Koneksi API Gagal / Format Tidak Valid.<br><span class='text-white font-normal text-sm block mt-2'><b>Solusi:</b> Deploy > New Deployment di Apps Script.</span>");
                 }
             })
             .catch(err => {
-                console.error("ZettBOT Error:", err);
-                tampilkanLayarError("Sistem Gagal Menghubungi Server Google.<br><br><span class='text-white font-normal text-sm block mt-2'><b>Cek:</b> Pastikan URL Apps Script di dalam index.html sudah benar.</span>");
+                tampilkanLayarError("Sistem Gagal Menghubungi Server Google.<br><span class='text-white font-normal text-sm block mt-2'><b>Cek URL Apps Script</b>.</span>");
             });
         });
 
-        // FUNGSI TAMPILKAN ERROR DI LAYAR
+        // FUNGSI PENCATATAN VISITOR KE SPREADSHEET
+        function catatViewPengunjung() {
+            fetch(GAS_URL, {
+                method: 'POST',
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: 'recordView' })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    // Update UI Badge Visitor
+                    document.getElementById('view-today').textContent = res.data.today;
+                    document.getElementById('view-week').textContent = res.data.week;
+                    document.getElementById('view-total').textContent = res.data.total;
+                }
+            }).catch(e => console.log("Gagal hitung view:", e));
+        }
+
         function tampilkanLayarError(pesanError) {
             document.getElementById('loader-spinner').style.display = 'none';
             document.getElementById('loader-title').textContent = "SYSTEM ERROR";
@@ -371,7 +375,7 @@
             document.getElementById('loader-text').classList.add('text-red-300', 'mt-4');
         }
 
-        // 2. FUNGSI RENDER UI
+        // FUNGSI RENDER UI DENGAN LOGIKA LINK INTERAKTIF
         function renderSeluruhUI(data) {
             document.getElementById('ui-namaDepan').textContent = data.profil.namaDepan;
             document.getElementById('ui-namaBelakang').textContent = data.profil.namaBelakang;
@@ -384,34 +388,36 @@
             document.getElementById('ui-agama').textContent = data.dataPribadi.agama;
             document.getElementById('ui-warga').textContent = data.dataPribadi.kewarganegaraan;
             document.getElementById('ui-status').textContent = data.dataPribadi.status;
-            document.getElementById('ui-email').textContent = data.kontak.email;
-            document.getElementById('ui-hp').textContent = data.kontak.hp;
+            
+            // LOGIKA PEMBUATAN LINK OTOMATIS (Email, WA, IG)
+            const rawEmail = data.kontak.email;
+            const rawHp = data.kontak.hp;
+            const rawSosmed = data.kontak.sosmed;
+
+            // Bersihkan nomor WA (Ubah ke format 62...)
+            let cleanHp = rawHp.replace(/\D/g, ''); // Hapus semua karakter kecuali angka
+            if (cleanHp.startsWith('0')) cleanHp = '62' + cleanHp.substring(1);
+            
+            // Bersihkan IG Username (Hapus @ atau url jika ada)
+            let cleanIg = rawSosmed.replace(/[@ ]/g, '').split('/')[0]; // Ambil handle pertama sebelum tanda slash
+
+            document.getElementById('ui-email-container').innerHTML = `<a href="mailto:${rawEmail}" class="link-interaktif">${rawEmail}</a>`;
+            document.getElementById('ui-hp-container').innerHTML = `<a href="https://wa.me/${cleanHp}" target="_blank" class="link-interaktif">${rawHp}</a>`;
+            document.getElementById('ui-sosmed-container').innerHTML = `<a href="https://www.instagram.com/${cleanIg}" target="_blank" class="link-interaktif">${rawSosmed}</a>`;
+
             document.getElementById('ui-alamat').textContent = data.kontak.alamat;
             document.getElementById('ui-scholar').href = data.kontak.scholar;
             document.getElementById('ui-orcid').href = data.kontak.orcid;
-            document.getElementById('ui-sosmed').textContent = data.kontak.sosmed;
 
             const hobiHTML = data.dataPribadi.hobi.map(h => `<span class="px-3 py-1 bg-slate-800 border border-slate-700 rounded-full text-xs text-slate-300">${h}</span>`).join('');
             document.getElementById('ui-hobi-container').innerHTML = hobiHTML;
 
-            // FIX: PERSENTASE KEAHLIAN TERSTABILO (Warna BG dihilangkan pada text span)
             const keahlianHTML = data.keahlian.map((k, i) => {
                 const isLast = i === data.keahlian.length - 1;
                 const barColor = isLast ? "bg-amber-400" : "bg-[#06b6d4]";
                 const textColor = isLast ? "text-amber-400" : "text-[#06b6d4]";
                 const shadow = isLast ? "shadow-[0_0_10px_rgba(251,191,36,0.5)]" : "shadow-[0_0_10px_rgba(6,182,212,0.5)]";
-                
-                return `
-                <div class="mb-4">
-                    <div class="flex justify-between text-sm mb-1.5 font-semibold">
-                        <span class="text-slate-200">${k.nama}</span>
-                        <!-- SPAN INI HANYA PAKAI CLASS TEXT COLOR (BUKAN BACKGROUND) -->
-                        <span class="${textColor} font-mono">${k.nilai}%</span>
-                    </div>
-                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
-                        <div class="${barColor} ${shadow} h-full rounded-full transition-all duration-1000 ease-out" style="width: ${k.nilai}%"></div>
-                    </div>
-                </div>`;
+                return `<div class="mb-4"><div class="flex justify-between text-sm mb-1.5 font-semibold"><span class="text-slate-200">${k.nama}</span><span class="${textColor} font-mono">${k.nilai}%</span></div><div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden"><div class="${barColor} ${shadow} h-full rounded-full transition-all duration-1000 ease-out" style="width: ${k.nilai}%"></div></div></div>`;
             }).join('');
             document.getElementById('ui-keahlian-container').innerHTML = keahlianHTML;
 
@@ -419,13 +425,10 @@
                 const isLeft = i % 2 === 0;
                 const posClass = isLeft ? "md:pr-12 ml-10 md:ml-0 md:text-right" : "md:pl-12 ml-10 md:ml-[50%]";
                 const dotPos = isLeft ? "left-[-28px] md:left-auto md:right-[-8px]" : "left-[-28px] md:left-[-8px]";
-                
                 let dotClass = "bg-[#06b6d4] shadow-[0_0_10px_#06b6d4]";
                 if(i > 0) dotClass = "bg-slate-700 border border-[#06b6d4]";
                 if(i > 2) dotClass = "bg-slate-800 border border-slate-500";
-                
                 let boxOp = i === 0 ? "border-[#06b6d4]/30 bg-[#06b6d4]/5" : i < 3 ? "" : `border-slate-700 opacity-${80 - (i*10)}`;
-                
                 return `<div class="relative w-full md:w-1/2 ${posClass} mb-12 animate-on-scroll"><div class="absolute w-4 h-4 ${dotClass} rounded-full ${dotPos} top-6"></div><div class="glass-panel p-6 ${boxOp}"><span class="${i<3 ? 'text-[#06b6d4]' : 'text-slate-400'} font-mono text-sm font-bold">${p.tahun}</span><h3 class="text-lg font-bold ${i<3 ? 'text-white' : 'text-slate-300'} mt-1">${p.jurusan}</h3><p class="text-slate-400 text-sm mt-1">${p.institusi}</p></div></div>`;
             }).join('');
             document.getElementById('ui-pendidikan-container').innerHTML = pendHTML;
@@ -455,18 +458,19 @@
             document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
         }
 
-        // 3. LOGIKA FORM FIX (TANPA WHATSAPP REDIRECT)
+        // LOGIKA KIRIM PESAN KE DATABASE
         function prosesPesan() {
-            const nama = document.getElementById('inputNama').value.trim();
-            const kontak = document.getElementById('inputKontak').value.trim();
-            const pesan = document.getElementById('inputPesan').value.trim();
-            
             const btn = document.getElementById('btnSubmit');
             btn.innerHTML = '<i class="ph ph-spinner animate-spin mr-2 text-xl"></i> Sedang Mengirim...';
             btn.disabled = true;
             btn.classList.add('opacity-80', 'cursor-not-allowed');
 
-            const payload = { action: 'submitPesan', nama: nama, kontak: kontak, pesan: pesan };
+            const payload = { 
+                action: 'submitPesan', 
+                nama: document.getElementById('inputNama').value.trim(), 
+                kontak: document.getElementById('inputKontak').value.trim(), 
+                pesan: document.getElementById('inputPesan').value.trim() 
+            };
 
             fetch(GAS_URL, {
                 method: 'POST',
@@ -476,13 +480,11 @@
             .then(res => res.json())
             .then(res => {
                 if(res.status === 'success') {
-                    // Hanya merubah tombol menjadi status Sukses & Clear Form
                     btn.innerHTML = '<i class="ph ph-check-circle mr-2 text-xl"></i> Pesan Terkirim!';
                     btn.classList.replace('bg-[#06b6d4]', 'bg-white');
                     btn.classList.replace('text-white', 'text-black');
                     document.getElementById('formKontak').reset();
                     
-                    // Kembalikan tombol seperti semula setelah 4 detik
                     setTimeout(() => {
                         btn.innerHTML = '<i class="ph ph-paper-plane-tilt align-middle mr-2 text-xl"></i> Kirim Pesan Anda';
                         btn.classList.replace('bg-white', 'bg-[#06b6d4]');
@@ -493,10 +495,8 @@
                 }
             })
             .catch(err => {
-                console.error(err);
                 btn.innerHTML = '<i class="ph ph-warning-circle align-middle mr-2 text-xl"></i> Koneksi Error, Coba Lagi';
                 btn.classList.replace('bg-[#06b6d4]', 'bg-red-500');
-                
                 setTimeout(() => {
                     btn.innerHTML = '<i class="ph ph-paper-plane-tilt align-middle mr-2 text-xl"></i> Kirim Pesan Anda';
                     btn.classList.replace('bg-red-500', 'bg-[#06b6d4]');
@@ -506,7 +506,7 @@
             });
         }
 
-        // 4. SISTEM DASHBOARD ADMIN
+        // SISTEM DASHBOARD ADMIN
         function bukaLoginAdmin() {
             document.getElementById('admin-modal').classList.remove('hidden');
             document.getElementById('admin-login').classList.remove('hidden');
@@ -528,7 +528,7 @@
             let newData;
             
             try { newData = JSON.parse(document.getElementById('jsonEditor').value); } 
-            catch(e) { alert("Format JSON tidak valid! Perhatikan tanda kutip dan koma."); return; }
+            catch(e) { alert("Format JSON tidak valid!"); return; }
 
             btn.disabled = true;
             btn.innerHTML = '<i class="ph ph-spinner animate-spin align-middle mr-1"></i> Menyimpan...';
@@ -544,7 +544,7 @@
             .then(res => res.json())
             .then(res => {
                 if(res.status === 'success') {
-                    notif.textContent = "Data Berhasil Disimpan! Refresh (F5) halaman web untuk melihat hasil.";
+                    notif.textContent = "Data Berhasil Disimpan! Refresh (F5).";
                     notif.classList.remove('hidden');
                     notif.classList.replace('text-yellow-400', 'text-[#06b6d4]');
                     globalCVData = newData; 
