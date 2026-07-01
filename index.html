@@ -350,13 +350,14 @@
 
         // FUNGSI PENCATATAN VISITOR BERDASARKAN IP UNIK (Anti Spam-Refresh)
         function catatViewPengunjungDenganIP() {
-            // Ambil alamat IP publik pengguna via ipify API
-            fetch('https://api.ipify.org?format=json')
-            .then(res => res.json())
-            .then(data => {
-                const clientIP = data.ip;
-                
-                // Setelah IP didapat, kirim ke Backend GAS
+            // Menyiapkan Fallback IP jika pengunjung pakai AdBlock / VPN Strict
+            const fetchIP = fetch('https://api.ipify.org?format=json')
+                .then(res => res.json())
+                .then(data => data.ip)
+                .catch(() => 'HIDDEN_IP_' + Math.random().toString(36).substr(2, 5));
+
+            fetchIP.then(clientIP => {
+                // Kirim IP ke Backend GAS
                 return fetch(GAS_URL, {
                     method: 'POST',
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -366,13 +367,33 @@
             .then(res => res.json())
             .then(res => {
                 if(res.status === 'success') {
-                    // Update UI Badge Visitor dengan angka asli
-                    document.getElementById('view-today').textContent = res.data.today;
-                    document.getElementById('view-week').textContent = res.data.week;
-                    document.getElementById('view-total').textContent = res.data.total;
+                    // Animasi Counter saat angka sukses didapat dari server
+                    animasiCounter('view-today', res.data.today);
+                    animasiCounter('view-week', res.data.week);
+                    animasiCounter('view-total', res.data.total);
                 }
             })
             .catch(e => console.log("Gagal hitung view / ambil IP:", e));
+        }
+
+        // FUNGSI ANIMASI NUMERIC COUNTER (AXA XYZ UPGRADE)
+        function animasiCounter(id, targetValue) {
+            const el = document.getElementById(id);
+            let start = 0;
+            const duration = 1500; // 1.5 detik
+            const increment = targetValue / (duration / 16); // Estimasi 60fps
+            
+            if (targetValue === 0) { el.textContent = "0"; return; }
+
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= targetValue) {
+                    clearInterval(timer);
+                    el.textContent = targetValue;
+                } else {
+                    el.textContent = Math.floor(start);
+                }
+            }, 16);
         }
 
         function tampilkanLayarError(pesanError) {
