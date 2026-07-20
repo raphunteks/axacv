@@ -2,48 +2,42 @@
 <html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <!-- Viewport Responsif Maksimal untuk Mobile & Desktop -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#030712">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 
-    <!-- PERFORMANCE PRECONNECTS (LCP Optimization) -->
     <link rel="preconnect" href="https://script.google.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link rel="dns-prefetch" href="https://script.google.com">
     <link rel="dns-prefetch" href="https://ui-avatars.com">
+    <link rel="preload" href="axalogo.png" as="image" type="image/png">
 
-    <!-- GOOGLE SITE VERIFICATION (GSC) -->
     <meta name="google-site-verification" content="AAKLVErwuFUspLpKD6XZwRxIZ5XqaTwy1BEK6-Rl0Ig" />
 
-    <!-- SUPER UPGRADE SEO 100% (META TAGS) -->
     <title>CV & Portofolio | drg. M. Aksa Arsyad, S.KG</title>
     <meta name="description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum / General Practitioner. Lihat riwayat medis, publikasi ilmiah, dan hubungi langsung.">
     <meta name="keywords" content="Dokter Gigi Umum, drg. M. Aksa Arsyad, Aksa Arsyad, S.KG, Makassar, UMI, Dokter Gigi Makassar, Kedokteran Gigi, Klinik Gigi">
     <meta name="author" content="drg. M. Aksa Arsyad, S.KG">
     <link rel="canonical" href="https://maksaarsyad.xyz/">
 
-    <!-- MOBILE WEB APP OPTIMIZATION -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Axa CV">
     <meta name="application-name" content="Axa CV">
 
-    <!-- OPEN GRAPH (UNTUK PREVIEW WHATSAPP, FACEBOOK, LINKEDIN) -->
     <meta property="og:site_name" content="Portofolio drg. M. Aksa Arsyad">
     <meta property="og:type" content="profile">
     <meta property="og:locale" content="id_ID">
     <meta property="og:url" content="https://maksaarsyad.xyz/">
     <meta property="og:title" content="drg. M. Aksa Arsyad, S.KG | Dokter Gigi Umum">
     <meta property="og:description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG. Lihat pengalaman klinis, akademik, dan publikasi ilmiah.">
-    <!-- URL gambar WAJIB absolut (lengkap) agar preview WhatsApp muncul -->
     <meta property="og:image" content="https://maksaarsyad.xyz/axalogo.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Logo Portofolio drg. M. Aksa Arsyad">
 
-    <!-- TWITTER CARDS -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@axaaxyz_01">
     <meta name="twitter:creator" content="@axaaxyz_01">
@@ -52,7 +46,6 @@
     <meta name="twitter:image" content="https://maksaarsyad.xyz/axalogo.png">
     <meta name="twitter:image:alt" content="Logo Portofolio drg. M. Aksa Arsyad">
 
-    <!-- ENTERPRISE STRUCTURED DATA JSON-LD -->
     <script type="application/ld+json">
     [
       {
@@ -104,17 +97,15 @@
     ]
     </script>
     
-    <!-- FAVICON -->
     <link rel="icon" type="image/png" href="/axalogo.png">
     <link rel="apple-touch-icon" href="/axalogo.png">
     
-    <!-- Tailwind CSS & Fonts -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
-    <!-- Konfigurasi Tailwind Kustom -->
     <script>
         tailwind.config = {
             theme: {
@@ -175,7 +166,7 @@
         .pulse-ring::before { content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border-radius: 50%; border: 2px solid transparent; border-left-color: #6366F1; border-right-color: #00E5FF; animation: spin-ring 0.8s linear infinite reverse;}
         @keyframes spin-ring { 100% { transform: rotate(360deg); } }
 
-        /* 3. PREMIUM CARD / BENTO BOX (UPGRADED GLASSMORPHISM) */
+        /* 3. PREMIUM CARD / BENTO BOX */
         .premium-card {
             background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.2) 100%);
             border: 1px solid var(--tw-colors-medical-border);
@@ -198,7 +189,7 @@
         .premium-card:hover { transform: translateY(-4px); border-color: rgba(0, 229, 255, 0.4); box-shadow: 0 20px 40px -10px rgba(0, 229, 255, 0.2); }
         .premium-card:hover::before { transform: translateX(100%); }
 
-        /* 4. RADIOLOGY SCANNER EFFECT (ON PROFILE PIC) */
+        /* 4. RADIOLOGY SCANNER EFFECT */
         .scanner-container { position: relative; overflow: hidden; border-radius: 50%; background-color: #1f2937; } /* CLS Guard */
         .scanner-line { position: absolute; width: 100%; height: 2px; background: #00E5FF; box-shadow: 0 0 15px 3px #00E5FF; z-index: 20; animation: scan-anim 3s infinite linear; opacity: 0.7;}
         @keyframes scan-anim { 0% { top: -10%; opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { top: 110%; opacity: 0; } }
@@ -207,7 +198,7 @@
         .text-gradient { background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 50%, #00E5FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 5s linear infinite;}
         @keyframes shine { to { background-position: 200% center; } }
 
-        /* 6. TIMELINE CIRCUIT (MOBILE FIXED COORDINATES) */
+        /* 6. TIMELINE CIRCUIT */
         .circuit-line { position: relative; width: 100%; }
         .circuit-line::before { content: ''; position: absolute; left: 21px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #00E5FF, #6366F1, transparent); opacity: 0.5; }
         @media (min-width: 768px) { .circuit-line::before { left: 50%; transform: translateX(-50%); } }
@@ -216,7 +207,7 @@
         .animate-on-scroll { opacity: 0; transform: translateY(40px) scale(0.98); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
         .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0) scale(1); }
 
-        /* 8. SCROLLBAR UPGRADED */
+        /* 8. SCROLLBAR */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #030712; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; border: 1px solid #030712;}
@@ -229,7 +220,6 @@
         .link-hover:hover::after, .link-hover:focus-visible::after { width: 100%; }
     </style>
 
-    <!-- VERCEL SPEED INSIGHTS -->
     <script>
         window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
     </script>
@@ -238,31 +228,25 @@
 </head>
 <body class="antialiased selection:bg-[#00E5FF] selection:text-gray-900 relative">
 
-    <!-- ENTERPRISE A11Y: Skip to Content Link -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-[#00E5FF] focus:text-black focus:font-bold focus:rounded-br-lg outline-none ring-2 ring-black">Langsung ke konten utama</a>
 
-    <!-- DECORATIVE BACKGROUNDS -->
     <div class="bg-dots" aria-hidden="true"></div>
     <div class="glow-orb orb-1" aria-hidden="true"></div>
     <div class="glow-orb orb-2" aria-hidden="true"></div>
 
-    <!-- LOADING SCREEN -->
     <div id="loader-screen" role="status" aria-live="polite">
         <div class="pulse-ring mb-6" aria-hidden="true"></div>
         <h2 id="loader-title" class="text-xl font-bold tracking-[0.3em] text-[#00E5FF] uppercase text-center px-4">Initializing</h2>
         <p id="loader-text" class="text-xs text-slate-500 mt-2 text-center max-w-sm px-4">Connecting to Database System</p>
     </div>
 
-    <!-- MAIN CONTENT -->
     <main class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 max-w-[1200px] opacity-0 transition-opacity duration-1000 hidden" id="main-content" role="main">
         
-        <!-- HEADER SECTION -->
         <header class="text-center mb-16 md:mb-24 animate-on-scroll is-visible flex flex-col items-center" role="banner">
             <div class="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mx-auto mb-6 md:mb-8 rounded-full p-1 bg-gradient-to-tr from-[#00E5FF] to-[#6366F1] shadow-[0_0_30px_rgba(0,229,255,0.4)] transition-transform duration-700 hover:scale-105">
                 <div class="scanner-container w-full h-full rounded-full bg-[#050B14]">
                     <div class="scanner-line" aria-hidden="true"></div>
-                    <!-- LCP Optimization: fetchpriority="high", loading="eager", decoding="sync" -->
-                    <img id="ui-foto" src="axalogo.png" alt="Foto Profil drg. M. Aksa Arsyad" fetchpriority="high" loading="eager" decoding="sync" onerror="this.src='https://ui-avatars.com/api/?name=M+Aksa+Arsyad&background=00E5FF&color=fff&size=256'" class="w-full h-full object-cover rounded-full">
+                    <img id="ui-foto" src="axalogo.png" alt="Foto Profil drg. M. Aksa Arsyad" width="192" height="192" fetchpriority="high" loading="eager" decoding="sync" onerror="this.src='https://ui-avatars.com/api/?name=M+Aksa+Arsyad&background=00E5FF&color=fff&size=256'" class="w-full h-full object-cover rounded-full">
                 </div>
             </div>
             
@@ -283,10 +267,8 @@
             </div>
         </header>
 
-        <!-- BENTO GRID: INFO, KONTAK, KEAHLIAN -->
         <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-16 md:mb-24 w-full" aria-label="Informasi Dasar">
             
-            <!-- Box 1: Data Pribadi (Col Span 4) -->
             <article class="premium-card p-6 md:p-8 lg:col-span-4 animate-on-scroll w-full">
                 <header class="flex items-center gap-4 mb-6 md:mb-8">
                     <div class="p-3 bg-gradient-to-br from-[#00E5FF]/20 to-transparent rounded-xl border border-[#00E5FF]/30 text-[#00E5FF] shrink-0 shadow-inner">
@@ -307,7 +289,6 @@
                 </div>
             </article>
 
-            <!-- Box 2: Kontak (Col Span 4) -->
             <article class="premium-card p-6 md:p-8 lg:col-span-4 animate-on-scroll w-full" style="transition-delay: 100ms;">
                 <header class="flex items-center gap-4 mb-6 md:mb-8">
                     <div class="p-3 bg-gradient-to-br from-[#6366F1]/20 to-transparent rounded-xl border border-[#6366F1]/30 text-[#6366F1] shrink-0 shadow-inner">
@@ -345,7 +326,6 @@
                 </div>
             </article>
 
-            <!-- Box 3: Keahlian Klinis (Col Span 4) -->
             <article class="premium-card p-6 md:p-8 lg:col-span-4 animate-on-scroll w-full" style="transition-delay: 200ms;">
                 <header class="flex items-center gap-4 mb-6 md:mb-8">
                     <div class="p-3 bg-gradient-to-br from-[#3B82F6]/20 to-transparent rounded-xl border border-[#3B82F6]/30 text-[#3B82F6] shrink-0 shadow-inner">
@@ -353,13 +333,11 @@
                     </div>
                     <h2 class="text-lg md:text-xl font-bold text-white truncate">Keahlian Klinis</h2>
                 </header>
-                <div class="space-y-5 md:space-y-6" id="ui-keahlian-container" aria-label="Daftar Keahlian Klinis">
-                    <!-- Dynamic Skills -->
-                </div>
+                <div class="space-y-5 md:space-y-6" id="ui-keahlian-container" aria-label="Daftar Keahlian Klinis" role="list">
+                    </div>
             </article>
         </section>
 
-        <!-- PENGALAMAN KERJA -->
         <section class="mb-16 md:mb-24 animate-on-scroll w-full" aria-labelledby="heading-pengalaman">
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-10 gap-4">
                 <div class="w-full">
@@ -370,11 +348,9 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full" id="ui-pengalaman-container" role="list">
-                <!-- Dynamic Work Experience -->
-            </div>
+                </div>
         </section>
 
-        <!-- TIMELINE: PENDIDIKAN -->
         <section class="mb-16 md:mb-24 w-full" aria-labelledby="heading-pendidikan">
             <header class="flex flex-col items-center text-center mb-12 md:mb-16 animate-on-scroll">
                 <div class="p-3 md:p-4 bg-gradient-to-b from-[#00E5FF]/10 to-transparent rounded-full mb-4 border border-[#00E5FF]/30 shadow-[0_0_15px_rgba(0,229,255,0.1)]">
@@ -383,34 +359,27 @@
                 <h2 id="heading-pendidikan" class="text-2xl md:text-3xl font-extrabold text-white truncate px-2">Riwayat Pendidikan</h2>
             </header>
             <div class="relative circuit-line flex flex-wrap" id="ui-pendidikan-container" role="list">
-                <!-- Dynamic Education -->
-            </div>
+                </div>
         </section>
 
-        <!-- ORGANISASI & PUBLIKASI -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-16 md:mb-24 w-full">
-            <!-- Organisasi -->
             <section class="animate-on-scroll premium-card p-6 md:p-8 w-full" aria-labelledby="heading-organisasi">
                 <h2 id="heading-organisasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-white border-b border-white/10 pb-4">
                     <i class="ph ph-users-three text-[#6366F1] p-2 bg-[#6366F1]/10 border border-[#6366F1]/20 rounded-lg shrink-0" aria-hidden="true"></i> <span class="truncate">Organisasi</span>
                 </h2>
                 <div class="space-y-1 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar w-full" id="ui-organisasi-container" role="list">
-                    <!-- Dynamic Org -->
-                </div>
+                    </div>
             </section>
 
-            <!-- Publikasi Ilmiah -->
             <section class="animate-on-scroll premium-card p-6 md:p-8 w-full" style="transition-delay: 150ms;" aria-labelledby="heading-publikasi">
                 <h2 id="heading-publikasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-white border-b border-white/10 pb-4">
                     <i class="ph ph-books text-[#00E5FF] p-2 bg-[#00E5FF]/10 border border-[#00E5FF]/20 rounded-lg shrink-0" aria-hidden="true"></i> <span class="truncate">Publikasi Ilmiah</span>
                 </h2>
                 <div class="space-y-4 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 md:pr-4 custom-scrollbar w-full" id="ui-publikasi-container" role="list">
-                    <!-- Dynamic Pub -->
-                </div>
+                    </div>
             </section>
         </div>
 
-        <!-- FORM KONTAK -->
         <section class="max-w-3xl mx-auto animate-on-scroll mb-12 md:mb-16 w-full" aria-labelledby="heading-pesan">
             <div class="premium-card p-6 sm:p-8 md:p-12 text-center relative overflow-hidden group w-full">
                 <div class="absolute -top-32 -right-32 w-64 h-64 bg-[#00E5FF] rounded-full blur-[100px] opacity-10 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none" aria-hidden="true"></div>
@@ -441,9 +410,7 @@
             </div>
         </section>
 
-        <!-- FOOTER & VISITOR COUNTER -->
         <footer class="mt-16 md:mt-20 pb-8 md:pb-10 border-t border-white/5 pt-8 md:pt-10 w-full" role="contentinfo">
-            <!-- Statistic Badges (Axa Xyz IP Tracker) -->
             <div class="flex flex-wrap justify-center gap-3 md:gap-4 mb-6 md:mb-8 animate-on-scroll px-2" aria-label="Statistik Pengunjung">
                 <div class="bg-slate-800/30 border border-slate-700/50 px-4 md:px-5 py-2 md:py-3 rounded-2xl text-center flex-1 sm:flex-none min-w-[100px] md:min-w-[120px] backdrop-blur-md shadow-lg">
                     <p class="text-[8px] md:text-[9px] text-slate-500 uppercase tracking-widest mb-1 font-bold">Views Today</p>
@@ -469,7 +436,6 @@
         </footer>
     </main>
 
-    <!-- MODAL ADMIN DASHBOARD (A11Y VALID) -->
     <div id="admin-modal" class="fixed inset-0 bg-[#030712]/95 backdrop-blur-xl z-[9999] hidden flex items-center justify-center p-4 transition-all" role="dialog" aria-modal="true" aria-labelledby="admin-title">
         <div id="admin-login" class="premium-card p-6 md:p-8 max-w-sm w-full text-center border-[#00E5FF]/40 mx-auto shadow-[0_0_40px_rgba(0,229,255,0.15)]">
             <div class="w-14 h-14 md:w-16 md:h-16 mx-auto bg-gradient-to-br from-[#00E5FF]/20 to-transparent rounded-full flex items-center justify-center mb-4 text-[#00E5FF] border border-[#00E5FF]/30"><i class="ph ph-shield-check text-2xl md:text-3xl" aria-hidden="true"></i></div>
@@ -496,8 +462,6 @@
         </div>
     </div>
 
-    <!-- FUNGSI JAVASCRIPT (AXA XYZ SYSTEMS) -->
-    <!-- MURNI 100% UTUH UNTUK FETCH DATA DARI GOOGLE APPS SCRIPT -->
     <script>
         // API URL 
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxv7LpGFB37qXUvpPYapXUIaaMv0nV06AnGbwQ_CRBSj4zIoxo7N3NwAn9WSsphDrtR/exec";
