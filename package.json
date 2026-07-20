@@ -1,0 +1,28 @@
+{
+  "name": "axa-cv-enterprise",
+  "version": "3.0.0",
+  "description": "CV & Portofolio drg. M. Aksa Arsyad SEO Optimized",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "cv",
+    "portofolio",
+    "dokter gigi",
+    "m. aksa arsyad",
+    "ma arsyad",
+    "m. axa arsyad",
+    "aksa arsyad",
+    "seo optimized"
+  ],
+  "author": "Axa Xyz",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "serve": "^14.2.1"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}
