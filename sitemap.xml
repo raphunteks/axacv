@@ -2,12 +2,26 @@
 <urlset
       xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd
+            http://www.google.com/schemas/sitemap-image/1.1
+            http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd">
+  
+  <!-- ROOT URL: CV Portofolio drg. M. Aksa Arsyad -->
   <url>
     <loc>https://maksaarsyad.xyz/</loc>
-    <lastmod>2026-07-20T12:00:00+00:00</lastmod>
+    <lastmod>2026-07-21T12:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
+    
+    <!-- ENTERPRISE UPGRADE: Image Sitemap Integration -->
+    <!-- Memaksa Google Images mengindeks foto profil sebagai entitas resmi -->
+    <image:image>
+      <image:loc>https://maksaarsyad.xyz/axalogo.png</image:loc>
+      <image:title>Foto Profil drg. M. Aksa Arsyad, S.KG</image:title>
+      <image:caption>Curriculum Vitae dan Portofolio Resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum (General Practitioner) di Makassar.</image:caption>
+    </image:image>
   </url>
+
 </urlset>
