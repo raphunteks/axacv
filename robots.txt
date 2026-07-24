@@ -1,4 +1,61 @@
+# ========================================================================
+# SUPER BIG UPGRADE: ROBOTS.TXT (SEO CHIEF EXPERT ENTERPRISE EDITION)
+# Optimized for Single Page Application (SPA) Portfolio
+# ========================================================================
+
+# 1. OPTIMASI GOOGLEBOT (Prioritas Utama)
+# Memastikan Googlebot dapat merender seluruh halaman, CSS, JS, dan Gambar
+User-agent: Googlebot
+Allow: /
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.svg$
+Allow: /*.webp$
+# Memblokir URL dengan parameter pencarian/query agar terhindar dari Duplicate Content
+Disallow: /*?*
+Disallow: /*&*
+
+# 2. OPTIMASI GOOGLE IMAGE BOT
+# Memaksa Google mendeteksi dan memprioritaskan aset visual (Foto Profil)
+User-agent: Googlebot-Image
+Allow: /
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /axalogo.png
+
+# 3. OPTIMASI BING, YAHOO, DUCKDUCKGO & SEARCH ENGINE GLOBAL
+User-agent: Bingbot
+User-agent: Slurp
+User-agent: DuckDuckBot
+User-agent: Baiduspider
+User-agent: YandexBot
+Allow: /
+# Mencegah server overload dari bot yang terlalu agresif (Hemat Resource)
+Crawl-delay: 1
+
+# 4. BLOKIR BOT SPAM & ANALYTICS CRAWLER PIHAK KETIGA
+# Menghemat "Crawl Budget" server Vercel Anda agar fokus 100% hanya ke Google
+User-agent: AhrefsBot
+User-agent: SemrushBot
+User-agent: MJ12bot
+User-agent: DotBot
+User-agent: PetalBot
+User-agent: MegaIndex.ru
+User-agent: BLEXBot
+User-agent: Rogerbot
+Disallow: /
+
+# 5. ATURAN UMUM UNTUK BOT LAINNYA
 User-agent: *
 Allow: /
+# Pencegahan ekstra untuk rute admin/login (Virtual) dan parameter acak
+Disallow: /*?*
+Disallow: /admin
+Disallow: /login
 
+# ========================================================================
+# SITEMAP AUTODISCOVERY (WAJIB ADA & TERDETEKSI GSC)
+# ========================================================================
 Sitemap: https://maksaarsyad.xyz/sitemap.xml
