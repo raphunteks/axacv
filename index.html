@@ -17,10 +17,13 @@
     <link rel="preload" href="/axalogo.png" as="image" type="image/png">
 
     <!-- ======================================================================= -->
-    <!-- SITEMAP AUTODISCOVERY (100% VALID GSC INSPECTION)                       -->
-    <!-- Memaksa Google Search Console mendeteksi sitemap saat inspeksi URL      -->
+    <!-- SUPER BIG UPGRADE: SITEMAP AUTODISCOVERY, PREFETCH & ALTERNATE          -->
+    <!-- Memaksa Google Search Console mendeteksi sitemap & mengatasi "Error     -->
+    <!-- pemrosesan sementara" dengan memberikan sinyal prioritas tinggi.        -->
     <!-- ======================================================================= -->
     <link rel="sitemap" type="application/xml" title="Sitemap" href="https://maksaarsyad.xyz/sitemap.xml">
+    <link rel="alternate" type="application/xml" title="XML Sitemap" href="https://maksaarsyad.xyz/sitemap.xml">
+    <link rel="prefetch" href="/sitemap.xml" as="fetch" crossorigin="anonymous">
 
     <meta name="google-site-verification" content="AAKLVErwuFUspLpKD6XZwRxIZ5XqaTwy1BEK6-Rl0Ig" />
 
@@ -58,7 +61,7 @@
 
     <!-- ======================================================================= -->
     <!-- ADVANCED JSON-LD Schema.org (@graph Format - DYNAMIC SITELINKS GENERATOR) -->
-    <!-- UPGRADE: Menggunakan 'ProfilePage' dan 'WebPageElement' (hasPart)       -->
+    <!-- Menggunakan 'ProfilePage' dan 'WebPageElement' (hasPart)                -->
     <!-- Memaksa Google menganggap setiap Anchor (#) sebagai sub-halaman         -->
     <!-- ======================================================================= -->
     <script type="application/ld+json">
@@ -181,7 +184,7 @@
           ]
         },
 
-        /* BREADCRUMBS UNTUK MEMPERKUAT SITELINKS */
+        /* BREADCRUMBS UNTUK MEMPERKUAT SITELINKS & PERUJUK */
         {
           "@type": "BreadcrumbList",
           "@id": "https://maksaarsyad.xyz/#breadcrumbs",
@@ -683,6 +686,15 @@
                         SYSTEM BY <span class="text-[var(--color-primary)] font-bold">AXA XYZ</span>
                         <button onclick="bukaLoginAdmin()" aria-label="Buka Dashboard Admin" class="ml-2 text-slate-600 hover:text-[var(--color-primary)] transition-colors p-2 -m-2 outline-none focus-visible:text-[var(--color-primary)]"><i class="ph-fill ph-lock-key text-lg align-middle" aria-hidden="true"></i></button>
                     </p>
+                </div>
+
+                <!-- ======================================================================= -->
+                <!-- PHYSICAL SITEMAP LINK (MENGATASI "Halaman Perujuk: Tidak Ada")          -->
+                <!-- Dengan adanya link ini, Googlebot yang merayapi beranda akan "mengklik" -->
+                <!-- link ini, menjadikan index.html sebagai "Halaman Perujuk" resmi.        -->
+                <!-- ======================================================================= -->
+                <div class="text-center mt-4">
+                    <a href="https://maksaarsyad.xyz/sitemap.xml" target="_blank" aria-label="Peta Situs XML" class="text-[9px] text-[var(--border-heavy)] hover:text-[var(--color-primary)] transition-colors">Sitemap XML</a>
                 </div>
             </footer>
         </div>
