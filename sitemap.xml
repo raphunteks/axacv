@@ -3,55 +3,80 @@
       xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+      xmlns:xhtml="http://www.w3.org/1999/xhtml"
+      xsi:schemaLocation="
+            http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd
             http://www.google.com/schemas/sitemap-image/1.1
-            http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd">
+            http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd
+            http://www.w3.org/1999/xhtml
+            http://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd">
   
-  <!-- 1. ROOT URL & BERANDA (Prioritas Tertinggi) -->
+  <!-- ========================================================= -->
+  <!-- 1. ROOT URL & BERANDA (Prioritas 1.00 - Tertinggi)        -->
+  <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/</loc>
-    <lastmod>2026-07-24T20:50:00+08:00</lastmod>
+    <lastmod>2026-07-24T21:10:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
-    <!-- ENTERPRISE UPGRADE: Image Sitemap Integration -->
+    
+    <!-- ENTERPRISE UPGRADE: Localization / Hreflang Tags -->
+    <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://maksaarsyad.xyz/" />
+
+    <!-- ENTERPRISE UPGRADE: Advanced Image SEO -->
     <image:image>
       <image:loc>https://maksaarsyad.xyz/axalogo.png</image:loc>
       <image:title>Foto Profil drg. M. Aksa Arsyad, S.KG</image:title>
-      <image:caption>Curriculum Vitae dan Portofolio Resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum (General Practitioner) di Makassar.</image:caption>
+      <image:caption>Curriculum Vitae dan Portofolio Resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum (General Practitioner).</image:caption>
+      <image:geo_location>Makassar, Indonesia</image:geo_location>
+      <image:license>https://maksaarsyad.xyz/</image:license>
     </image:image>
   </url>
 
-  <!-- 2. PENGALAMAN KERJA -->
+  <!-- ========================================================= -->
+  <!-- 2. PENGALAMAN KERJA (Prioritas 0.80)                      -->
+  <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/#pengalaman</loc>
-    <lastmod>2026-07-24T20:50:00+08:00</lastmod>
+    <lastmod>2026-07-24T21:10:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#pengalaman" />
   </url>
 
-  <!-- 3. RIWAYAT PENDIDIKAN -->
+  <!-- ========================================================= -->
+  <!-- 3. RIWAYAT PENDIDIKAN (Prioritas 0.80)                    -->
+  <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/#pendidikan</loc>
-    <lastmod>2026-07-24T20:50:00+08:00</lastmod>
+    <lastmod>2026-07-24T21:10:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#pendidikan" />
   </url>
 
-  <!-- 4. RIWAYAT ORGANISASI -->
+  <!-- ========================================================= -->
+  <!-- 4. RIWAYAT ORGANISASI (Prioritas 0.80)                    -->
+  <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/#organisasi</loc>
-    <lastmod>2026-07-24T20:50:00+08:00</lastmod>
+    <lastmod>2026-07-24T21:10:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#organisasi" />
   </url>
 
-  <!-- 5. PUBLIKASI ILMIAH -->
+  <!-- ========================================================= -->
+  <!-- 5. PUBLIKASI ILMIAH (Prioritas 0.80)                      -->
+  <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/#publikasi</loc>
-    <lastmod>2026-07-24T20:50:00+08:00</lastmod>
+    <lastmod>2026-07-24T21:10:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#publikasi" />
   </url>
 
 </urlset>
