@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+========================================================================
+SUPER BIG UPGRADE: SITEMAP.XML (SEO CHIEF EXPERT ENTERPRISE EDITION)
+========================================================================
+INFO PENTING TAMPILAN BROWSER:
+Jika Anda melihat file ini di browser dan tag-nya menghilang (hanya teks),
+JANGAN PANIK. Itu adalah perilaku normal browser. 
+Tekan CTRL + U (View Page Source) di keyboard Anda untuk melihat kode aslinya.
+Googlebot membaca "Source Code" XML ini dengan sempurna 100%.
+
+- Menggunakan Namespace XHTML untuk Hreflang (Internasional/Lokal).
+- Menggunakan Geo-Location & License pada Image Sitemap.
+- Struktur Anchor URLs untuk SPA (Beranda, Pengalaman, Pendidikan, dll).
+========================================================================
+-->
 <urlset
       xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -17,7 +32,7 @@
   <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/</loc>
-    <lastmod>2026-07-24T21:10:00+08:00</lastmod>
+    <lastmod>2026-07-24T21:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
     
@@ -40,7 +55,7 @@
   <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/#pengalaman</loc>
-    <lastmod>2026-07-24T21:10:00+08:00</lastmod>
+    <lastmod>2026-07-24T21:20:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
     <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#pengalaman" />
@@ -51,7 +66,7 @@
   <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/#pendidikan</loc>
-    <lastmod>2026-07-24T21:10:00+08:00</lastmod>
+    <lastmod>2026-07-24T21:20:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
     <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#pendidikan" />
@@ -62,7 +77,7 @@
   <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/#organisasi</loc>
-    <lastmod>2026-07-24T21:10:00+08:00</lastmod>
+    <lastmod>2026-07-24T21:20:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
     <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#organisasi" />
@@ -73,7 +88,7 @@
   <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/#publikasi</loc>
-    <lastmod>2026-07-24T21:10:00+08:00</lastmod>
+    <lastmod>2026-07-24T21:20:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
     <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#publikasi" />
