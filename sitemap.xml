@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+========================================================================
+SUPER BIG UPGRADE: SITEMAP.XML (SEO CHIEF EXPERT EDITION - SITELINKS)
+========================================================================
+
+PENJELASAN UPGRADE KALI INI:
+Untuk memaksa Google memunculkan 5 Sitelinks secara spesifik di hasil 
+pencarian, kita memasukkan URL Anchor (#) ke dalam Sitemap. Dikombinasikan 
+dengan Schema.org dan tag <nav> di index.html, ini adalah sinyal terkuat 
+bahwa website Anda memiliki 5 sub-halaman penting walaupun secara fisik 
+berada di satu halaman (Single Page).
+
+LANGKAH SELANJUTNYA AGAR WORK 100%:
+- Commit sitemap.xml ini ke Github Anda.
+- Buka GSC, pastikan sitemap lama sudah dihapus, lalu "Tambahkan peta 
+  situs baru" dengan mengetik "sitemap.xml" dan klik KIRIM.
+- Harap bersabar, Google membutuhkan waktu beberapa hari hingga minggu 
+  untuk merayapi (crawling) dan memutuskan menampilkan sitelinks di SERP.
+========================================================================
+-->
 <urlset
       xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -8,20 +28,50 @@
             http://www.google.com/schemas/sitemap-image/1.1
             http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd">
   
-  <!-- ROOT URL: CV Portofolio drg. M. Aksa Arsyad -->
+  <!-- 1. ROOT URL & BERANDA (Prioritas Tertinggi) -->
   <url>
     <loc>https://maksaarsyad.xyz/</loc>
-    <lastmod>2026-07-21T12:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-07-24T20:50:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.00</priority>
-    
     <!-- ENTERPRISE UPGRADE: Image Sitemap Integration -->
-    <!-- Memaksa Google Images mengindeks foto profil sebagai entitas resmi -->
     <image:image>
       <image:loc>https://maksaarsyad.xyz/axalogo.png</image:loc>
       <image:title>Foto Profil drg. M. Aksa Arsyad, S.KG</image:title>
       <image:caption>Curriculum Vitae dan Portofolio Resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum (General Practitioner) di Makassar.</image:caption>
     </image:image>
+  </url>
+
+  <!-- 2. PENGALAMAN KERJA -->
+  <url>
+    <loc>https://maksaarsyad.xyz/#pengalaman</loc>
+    <lastmod>2026-07-24T20:50:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- 3. RIWAYAT PENDIDIKAN -->
+  <url>
+    <loc>https://maksaarsyad.xyz/#pendidikan</loc>
+    <lastmod>2026-07-24T20:50:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- 4. RIWAYAT ORGANISASI -->
+  <url>
+    <loc>https://maksaarsyad.xyz/#organisasi</loc>
+    <lastmod>2026-07-24T20:50:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- 5. PUBLIKASI ILMIAH -->
+  <url>
+    <loc>https://maksaarsyad.xyz/#publikasi</loc>
+    <lastmod>2026-07-24T20:50:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
   </url>
 
 </urlset>
