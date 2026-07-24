@@ -1,24 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-========================================================================
-SUPER BIG UPGRADE: SITEMAP.XML (SEO CHIEF EXPERT EDITION - SITELINKS)
-========================================================================
-
-PENJELASAN UPGRADE KALI INI:
-Untuk memaksa Google memunculkan 5 Sitelinks secara spesifik di hasil 
-pencarian, kita memasukkan URL Anchor (#) ke dalam Sitemap. Dikombinasikan 
-dengan Schema.org dan tag <nav> di index.html, ini adalah sinyal terkuat 
-bahwa website Anda memiliki 5 sub-halaman penting walaupun secara fisik 
-berada di satu halaman (Single Page).
-
-LANGKAH SELANJUTNYA AGAR WORK 100%:
-- Commit sitemap.xml ini ke Github Anda.
-- Buka GSC, pastikan sitemap lama sudah dihapus, lalu "Tambahkan peta 
-  situs baru" dengan mengetik "sitemap.xml" dan klik KIRIM.
-- Harap bersabar, Google membutuhkan waktu beberapa hari hingga minggu 
-  untuk merayapi (crawling) dan memutuskan menampilkan sitelinks di SERP.
-========================================================================
--->
 <urlset
       xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
