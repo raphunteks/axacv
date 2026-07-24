@@ -16,13 +16,19 @@
     
     <link rel="preload" href="/axalogo.png" as="image" type="image/png">
 
+    <!-- ======================================================================= -->
+    <!-- SITEMAP AUTODISCOVERY (100% VALID GSC INSPECTION)                       -->
+    <!-- Memaksa Google Search Console mendeteksi sitemap saat inspeksi URL      -->
+    <!-- ======================================================================= -->
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://maksaarsyad.xyz/sitemap.xml">
+
     <meta name="google-site-verification" content="AAKLVErwuFUspLpKD6XZwRxIZ5XqaTwy1BEK6-Rl0Ig" />
 
     <title>CV & Portofolio | drg. M. Aksa Arsyad, S.KG</title>
     
     <!-- ================= SEO EXPERT 100% UPGRADE (SITELINKS MASTERPIECE) ================= -->
     <meta name="description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum. Lihat pengalaman kerja, riwayat pendidikan, riwayat organisasi, publikasi ilmiah, dan hubungi langsung.">
-    <meta name="keywords" content="Dokter Gigi Umum, drg. M. Aksa Arsyad, Aksa Arsyad, S.KG, Makassar, UMI, Dokter Gigi Makassar, Kedokteran Gigi, Klinik Gigi, Publikasi Ilmiah">
+    <meta name="keywords" content="Riwayat Pendidikan drg. M. Aksa Arsyad, Pengalaman Kerja drg. M. Aksa Arsyad, Dokter Gigi Umum, Aksa Arsyad, S.KG, Makassar, UMI, Dokter Gigi Makassar, Kedokteran Gigi, Klinik Gigi, Publikasi Ilmiah">
     <meta name="author" content="drg. M. Aksa Arsyad, S.KG">
     <link rel="canonical" href="https://maksaarsyad.xyz/">
 
@@ -50,18 +56,55 @@
     <meta name="twitter:image" content="https://maksaarsyad.xyz/axalogo.png">
     <meta name="twitter:image:alt" content="Logo Portofolio drg. M. Aksa Arsyad">
 
+    <!-- ======================================================================= -->
     <!-- ADVANCED JSON-LD Schema.org (@graph Format - DYNAMIC SITELINKS GENERATOR) -->
+    <!-- UPGRADE: Menggunakan 'ProfilePage' dan 'WebPageElement' (hasPart)       -->
+    <!-- Memaksa Google menganggap setiap Anchor (#) sebagai sub-halaman         -->
+    <!-- ======================================================================= -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "WebSite",
-          "@id": "https://maksaarsyad.xyz/#website",
-          "name": "CV drg. M. Aksa Arsyad",
+          "@type": "ProfilePage",
+          "@id": "https://maksaarsyad.xyz/#webpage",
           "url": "https://maksaarsyad.xyz/",
+          "name": "CV & Portofolio | drg. M. Aksa Arsyad, S.KG",
           "description": "Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG.",
-          "inLanguage": "id-ID"
+          "inLanguage": "id-ID",
+          "mainEntity": {
+            "@id": "https://maksaarsyad.xyz/#person"
+          },
+          "hasPart": [
+            {
+              "@type": "WebPageElement",
+              "@id": "https://maksaarsyad.xyz/#pengalaman",
+              "name": "Pengalaman Kerja drg. M. Aksa Arsyad",
+              "description": "Riwayat karir klinis, pekerjaan, dan pengalaman profesional di klinik serta rumah sakit.",
+              "url": "https://maksaarsyad.xyz/#pengalaman"
+            },
+            {
+              "@type": "WebPageElement",
+              "@id": "https://maksaarsyad.xyz/#pendidikan",
+              "name": "Riwayat Pendidikan drg. M. Aksa Arsyad",
+              "description": "Latar belakang pendidikan, institusi, dan almamater Universitas Muslim Indonesia & Hasanuddin.",
+              "url": "https://maksaarsyad.xyz/#pendidikan"
+            },
+            {
+              "@type": "WebPageElement",
+              "@id": "https://maksaarsyad.xyz/#organisasi",
+              "name": "Riwayat Organisasi drg. M. Aksa Arsyad",
+              "description": "Pengalaman keanggotaan dan aktivitas dalam organisasi profesi maupun kemahasiswaan.",
+              "url": "https://maksaarsyad.xyz/#organisasi"
+            },
+            {
+              "@type": "WebPageElement",
+              "@id": "https://maksaarsyad.xyz/#publikasi",
+              "name": "Publikasi Ilmiah drg. M. Aksa Arsyad",
+              "description": "Kumpulan jurnal, penelitian, dan publikasi ilmiah di bidang kedokteran gigi.",
+              "url": "https://maksaarsyad.xyz/#publikasi"
+            }
+          ]
         },
         {
           "@type": ["Person", "Physician"],
