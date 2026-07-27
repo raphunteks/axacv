@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#030712">
+    
+    <!-- ======================================================================= -->
+    <!-- SUPER BIG UPGRADE SEO: CRAWLING BOTS DIRECTIVES                         -->
+    <!-- Mengamankan indeksasi dari berbagai agen mesin pencari (GSC 100% Valid) -->
+    <!-- ======================================================================= -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 
     <!-- PERFORMANCE PRECONNECTS & LCP OPTIMIZATION -->
     <link rel="preconnect" href="https://script.google.com" crossorigin>
@@ -474,12 +481,13 @@
              ============================================================================== -->
         <nav aria-label="Navigasi Utama Portofolio" class="sticky top-0 z-[100] bg-[var(--bg-card-heavy)]/90 backdrop-blur-xl border-b border-[var(--border-color)] shadow-sm w-full mb-8" itemscope itemtype="https://schema.org/SiteNavigationElement">
             <div class="container mx-auto px-4 max-w-[1200px]">
+                <!-- UPGRADE: Penambahan atribut "title" dan "aria-label" yang spesifik untuk memperkuat pemahaman konteks Googlebot terhadap Anchor Sitelinks -->
                 <ul class="flex overflow-x-auto py-4 gap-6 md:gap-10 text-[11px] md:text-sm font-bold text-[var(--text-muted)] no-scrollbar items-center md:justify-center whitespace-nowrap scroll-smooth">
-                    <li><a itemprop="url" href="#beranda" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Beranda</span></a></li>
-                    <li><a itemprop="url" href="#pengalaman" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Pengalaman Kerja</span></a></li>
-                    <li><a itemprop="url" href="#pendidikan" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Riwayat Pendidikan</span></a></li>
-                    <li><a itemprop="url" href="#organisasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Riwayat Organisasi</span></a></li>
-                    <li><a itemprop="url" href="#publikasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Publikasi Ilmiah</span></a></li>
+                    <li><a itemprop="url" href="#beranda" title="Halaman Utama Profil" aria-label="Beranda" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Beranda</span></a></li>
+                    <li><a itemprop="url" href="#pengalaman" title="Riwayat Pengalaman Kerja" aria-label="Pengalaman Kerja" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Pengalaman Kerja</span></a></li>
+                    <li><a itemprop="url" href="#pendidikan" title="Riwayat Pendidikan Akademis" aria-label="Riwayat Pendidikan" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Riwayat Pendidikan</span></a></li>
+                    <li><a itemprop="url" href="#organisasi" title="Riwayat Organisasi" aria-label="Riwayat Organisasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Riwayat Organisasi</span></a></li>
+                    <li><a itemprop="url" href="#publikasi" title="Kumpulan Publikasi Ilmiah" aria-label="Publikasi Ilmiah" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Publikasi Ilmiah</span></a></li>
                 </ul>
             </div>
         </nav>
@@ -916,10 +924,34 @@
         }
 
         function initObserver() {
+            // Observer untuk Animasi CSS
             const observer = new IntersectionObserver((entries, obs) => {
                 entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); obs.unobserve(entry.target); } });
             }, { root: null, rootMargin: '0px', threshold: 0.1 });
             document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+            /* ==============================================================================
+               SEO SITELINKS HACK: SCROLLSPY DYNAMIC URL UPDATER
+               Memaksa Google Search Console merekam Hash Fragment (#) sebagai URL valid
+               karena URL akan berubah secara live tanpa me-reload halaman saat user scroll.
+               ============================================================================== */
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.target.id) {
+                        const hash = '#' + entry.target.id;
+                        // Ganti state URL di browser tanpa reload (Tidak menyebabkan halaman melompat)
+                        if (history.replaceState && window.location.hash !== hash) {
+                            history.replaceState(null, null, hash);
+                        }
+                    }
+                });
+            }, { root: null, rootMargin: '-40% 0px -40% 0px', threshold: 0.1 }); // Memicu update URL saat section berada tepat di tengah layar
+            
+            // Daftarkan ke-5 ID Tab Sitelinks Anda ke dalam Observer
+            ['beranda', 'pengalaman', 'pendidikan', 'organisasi', 'publikasi'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) sectionObserver.observe(el);
+            });
         }
 
         function prosesPesan() {
