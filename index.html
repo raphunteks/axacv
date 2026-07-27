@@ -126,7 +126,8 @@
           "sameAs": [
             "https://www.instagram.com/axaaxyz_01",
             "https://scholar.google.com/citations?user=hQlIsLoAAAAJ&hl=id",
-            "https://orcid.org/0009-0003-2658-3320"
+            "https://orcid.org/0009-0003-2658-3320",
+            "https://sciprofiles.com/profile/aksaarsyad"
           ],
           "alumniOf": [
             {
@@ -569,14 +570,23 @@
                             <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-red-400 group-hover:bg-red-400/10 transition-colors shrink-0"><i class="ph ph-map-pin text-lg md:text-xl" aria-hidden="true"></i></div>
                             <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">Domisili</p><address class="text-[var(--text-main)] leading-relaxed break-words not-italic" id="ui-alamat">...</address></div>
                         </div>
-                        <div class="pt-4 mt-2 border-t border-[var(--border-color)] grid grid-cols-2 gap-2 md:gap-3 w-full">
-                            <a id="ui-scholar" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil Google Scholar" class="flex flex-col items-center justify-center gap-1 p-2 md:p-3 bg-[var(--bg-overlay)] rounded-xl hover:bg-[var(--bg-card)] border border-transparent hover:border-blue-400/50 transition-all text-center w-full min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
-                                <i class="ph ph-graduation-cap text-blue-400 text-lg md:text-xl mb-1" aria-hidden="true"></i>
-                                <span class="text-[9px] md:text-[10px] font-bold text-[var(--text-main)] truncate w-full">Google Scholar</span>
+                        
+                        <div class="pt-4 mt-2 border-t border-[var(--border-color)] grid grid-cols-3 gap-1.5 md:gap-2 w-full">
+                            <a id="ui-scholar" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil Google Scholar" class="flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl hover:bg-[var(--bg-card)] border border-transparent hover:border-blue-400/50 transition-all text-center w-full min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+                                <i class="ph ph-graduation-cap text-blue-400 text-[18px] md:text-[22px] mb-1" aria-hidden="true"></i>
+                                <span class="text-[8px] md:text-[10px] font-bold text-[var(--text-main)] truncate w-full">Google Scholar</span>
                             </a>
-                            <a id="ui-orcid" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil ORCID iD" class="flex flex-col items-center justify-center gap-1 p-2 md:p-3 bg-[var(--bg-overlay)] rounded-xl hover:bg-[var(--bg-card)] border border-transparent hover:border-[#a6ce39]/50 transition-all text-center w-full min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-[#a6ce39]">
-                                <i class="ph ph-identification-card text-[#a6ce39] text-lg md:text-xl mb-1" aria-hidden="true"></i>
-                                <span class="text-[9px] md:text-[10px] font-bold text-[var(--text-main)] truncate w-full">ORCID iD</span>
+                            <a id="ui-orcid" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil ORCID iD" class="flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl hover:bg-[var(--bg-card)] border border-transparent hover:border-[#a6ce39]/50 transition-all text-center w-full min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-[#a6ce39]">
+                                <i class="ph ph-identification-card text-[#a6ce39] text-[18px] md:text-[22px] mb-1" aria-hidden="true"></i>
+                                <span class="text-[8px] md:text-[10px] font-bold text-[var(--text-main)] truncate w-full">ORCID iD</span>
+                            </a>
+                            <a id="ui-sciprofiles" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil SciProfiles" class="flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl hover:bg-[var(--bg-card)] border border-transparent hover:border-[#3bc6e8]/50 transition-all text-center w-full min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-[#3bc6e8]">
+                                <svg viewBox="0 0 100 100" class="w-[18px] h-[18px] md:w-[22px] md:h-[22px] mb-1 drop-shadow-md shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path d="M7 44.5C2 22 17 5 39 12C61 19 82 8 91 29C100 50 99 74 81 87C63 100 24 100 13 83C2 66 12 67 7 44.5Z" fill="#327c8e" opacity="0.9"/>
+                                    <path d="M21 21C38 3 71 -4 87 14C103 32 94 65 83 83C72 101 32 96 16 83C0 70 4 39 21 21Z" fill="#3bc6e8" opacity="0.95"/>
+                                    <text x="50" y="66" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="44" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="-1">Sci</text>
+                                </svg>
+                                <span class="text-[8px] md:text-[10px] font-bold text-[var(--text-main)] truncate w-full">SciProfiles</span>
                             </a>
                         </div>
                     </div>
@@ -874,6 +884,10 @@
             document.getElementById('ui-alamat').textContent = data.kontak.alamat;
             document.getElementById('ui-scholar').href = data.kontak.scholar;
             document.getElementById('ui-orcid').href = data.kontak.orcid;
+            
+            if (document.getElementById('ui-sciprofiles') && data.kontak.sciprofiles) {
+                document.getElementById('ui-sciprofiles').href = data.kontak.sciprofiles;
+            }
 
             // UI HOBI
             const hobiHTML = data.dataPribadi.hobi.map(h => `<span class="px-3 py-1 bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-full text-[10px] md:text-[11px] font-bold text-[var(--text-main)] shadow-sm whitespace-nowrap">${h}</span>`).join('');
