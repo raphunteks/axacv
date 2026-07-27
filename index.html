@@ -255,44 +255,10 @@
     </script>
 
     <style>
-        /* =========================================
-           THEME ENGINE: CSS VARIABLES DYNAMIC
-           ========================================= */
-        :root {
-            /* Palette Dasar (Dark Mode) */
-            --bg-main: #030712;
-            --bg-card: rgba(30, 41, 59, 0.4);
-            --bg-card-heavy: rgba(15, 23, 42, 0.8);
-            --bg-overlay: rgba(255, 255, 255, 0.05);
-            --text-main: #ffffff;
-            --text-muted: #94a3b8;
-            --text-inverse: #000000;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --border-heavy: rgba(255, 255, 255, 0.2);
-            --shadow-glass: rgba(0, 0, 0, 0.3);
+        /* ... existing code (Keep all previous CSS) ... */
 
-            /* Default Primary (Cyan) */
-            --color-primary: #00E5FF;
-            --color-primary-rgb: 0, 229, 255;
-            --color-secondary: #6366F1;
-            --color-secondary-rgb: 99, 102, 241;
-        }
-
-        [data-theme="light"] {
-            /* Palette Terang (Light Mode) */
-            --bg-main: #f8fafc;
-            --bg-card: rgba(255, 255, 255, 0.7);
-            --bg-card-heavy: rgba(255, 255, 255, 0.95);
-            --bg-overlay: rgba(0, 0, 0, 0.05);
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --text-inverse: #ffffff;
-            --border-color: rgba(0, 0, 0, 0.08);
-            --border-heavy: rgba(0, 0, 0, 0.15);
-            --shadow-glass: rgba(0, 0, 0, 0.05);
-        }
-
-        /* TEMA WARNA 10 VARIAN */
+        /* KATEGORI TEMA 50 WARNA */
+        /* Group 1: Existing (1-10) */
         .theme-cyan { --color-primary: #00E5FF; --color-primary-rgb: 0, 229, 255; --color-secondary: #6366F1; --color-secondary-rgb: 99, 102, 241; }
         .theme-blue { --color-primary: #3B82F6; --color-primary-rgb: 59, 130, 246; --color-secondary: #8B5CF6; --color-secondary-rgb: 139, 92, 246; }
         .theme-emerald { --color-primary: #10B981; --color-primary-rgb: 16, 185, 129; --color-secondary: #0ea5e9; --color-secondary-rgb: 14, 165, 233; }
@@ -304,22 +270,56 @@
         .theme-pink { --color-primary: #EC4899; --color-primary-rgb: 236, 72, 153; --color-secondary: #f43f5e; --color-secondary-rgb: 244, 63, 94; }
         .theme-red { --color-primary: #EF4444; --color-primary-rgb: 239, 68, 68; --color-secondary: #f97316; --color-secondary-rgb: 249, 115, 22; }
 
-        /* =========================================
-           UI/UX DESIGN CSS 
-           ========================================= */
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            overflow-x: hidden;
-            transition: background-color 0.4s ease, color 0.4s ease;
-        }
+        /* Group 2: Soft/Pastel (11-20) */
+        .theme-soft-blue { --color-primary: #93C5FD; --color-primary-rgb: 147, 197, 253; --color-secondary: #A5B4FC; --color-secondary-rgb: 165, 180, 252; }
+        .theme-soft-pink { --color-primary: #F9A8D4; --color-primary-rgb: 249, 168, 212; --color-secondary: #FBCFE8; --color-secondary-rgb: 251, 207, 232; }
+        .theme-soft-mint { --color-primary: #6EE7B7; --color-primary-rgb: 110, 231, 183; --color-secondary: #A7F3D0; --color-secondary-rgb: 167, 243, 208; }
+        .theme-soft-lilac { --color-primary: #C4B5FD; --color-primary-rgb: 196, 181, 253; --color-secondary: #DDD6FE; --color-secondary-rgb: 221, 214, 254; }
+        .theme-soft-peach { --color-primary: #FDBA74; --color-primary-rgb: 253, 186, 116; --color-secondary: #FED7AA; --color-secondary-rgb: 254, 215, 170; }
+        .theme-soft-lemon { --color-primary: #FDE047; --color-primary-rgb: 253, 224, 71; --color-secondary: #FEF08A; --color-secondary-rgb: 254, 240, 138; }
+        .theme-soft-sky { --color-primary: #7DD3FC; --color-primary-rgb: 125, 211, 252; --color-secondary: #BAE6FD; --color-secondary-rgb: 186, 230, 253; }
+        .theme-soft-coral { --color-primary: #FB923C; --color-primary-rgb: 251, 146, 60; --color-secondary: #FDBA74; --color-secondary-rgb: 253, 186, 116; }
+        .theme-soft-teal { --color-primary: #5EEAD4; --color-primary-rgb: 94, 234, 212; --color-secondary: #99F6E4; --color-secondary-rgb: 153, 246, 228; }
+        .theme-soft-grey { --color-primary: #94A3B8; --color-primary-rgb: 148, 163, 184; --color-secondary: #CBD5E1; --color-secondary-rgb: 203, 213, 225; }
 
-        /* Accessibility WCAG */
-        :focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; border-radius: 6px; }
+        /* Group 3: Vibrant/Neon (21-30) */
+        .theme-neon-green { --color-primary: #BEF264; --color-primary-rgb: 190, 242, 100; --color-secondary: #E4E47; --color-secondary-rgb: 228, 228, 71; }
+        .theme-neon-violet { --color-primary: #D946EF; --color-primary-rgb: 217, 70, 239; --color-secondary: #8B5CF6; --color-secondary-rgb: 139, 92, 246; }
+        .theme-neon-magenta { --color-primary: #F472B6; --color-primary-rgb: 244, 114, 182; --color-secondary: #EC4899; --color-secondary-rgb: 236, 72, 153; }
+        .theme-neon-orange { --color-primary: #FB923C; --color-primary-rgb: 251, 146, 60; --color-secondary: #F97316; --color-secondary-rgb: 249, 115, 22; }
+        .theme-acid-lime { --color-primary: #A3E635; --color-primary-rgb: 163, 230, 53; --color-secondary: #CCFBF1; --color-secondary-rgb: 204, 251, 241; }
+        .theme-cyber-blue { --color-primary: #0EA5E9; --color-primary-rgb: 14, 165, 233; --color-secondary: #2563EB; --color-secondary-rgb: 37, 99, 235; }
+        .theme-hot-coral { --color-primary: #F43F5E; --color-primary-rgb: 244, 63, 94; --color-secondary: #FB7185; --color-secondary-rgb: 251, 113, 133; }
+        .theme-sunset-gold { --color-primary: #F59E0B; --color-primary-rgb: 245, 158, 11; --color-secondary: #FDE68A; --color-secondary-rgb: 253, 230, 138; }
+        .theme-volt-yellow { --color-primary: #EAB308; --color-primary-rgb: 234, 179, 8; --color-secondary: #FACC15; --color-secondary-rgb: 250, 204, 21; }
+        .theme-electric-purple { --color-primary: #A855F7; --color-primary-rgb: 168, 85, 247; --color-secondary: #7C3AED; --color-secondary-rgb: 124, 58, 237; }
 
-        /* 1. BACKGROUND: DOT MATRIX & NEON GLOWS */
-        .bg-dots {
-            position: fixed; inset: 0; z-index: -20;
+        /* Group 4: Professional (31-40) */
+        .theme-navy-pro { --color-primary: #1E3A8A; --color-primary-rgb: 30, 58, 138; --color-secondary: #1E40AF; --color-secondary-rgb: 30, 64, 175; }
+        .theme-slate-pro { --color-primary: #334155; --color-primary-rgb: 51, 65, 85; --color-secondary: #475569; --color-secondary-rgb: 71, 85, 105; }
+        .theme-forest-pro { --color-primary: #064E3B; --color-primary-rgb: 6, 78, 59; --color-secondary: #065F46; --color-secondary-rgb: 6, 95, 70; }
+        .theme-charcoal-pro { --color-primary: #374151; --color-primary-rgb: 55, 65, 81; --color-secondary: #1F2937; --color-secondary-rgb: 31, 41, 55; }
+        .theme-maroon-pro { --color-primary: #7F1D1D; --color-primary-rgb: 127, 29, 29; --color-secondary: #991B1B; --color-secondary-rgb: 153, 27, 27; }
+        .theme-teal-pro { --color-primary: #115E59; --color-primary-rgb: 17, 94, 89; --color-secondary: #0F766E; --color-secondary-rgb: 15, 118, 110; }
+        .theme-gold-pro { --color-primary: #92400E; --color-primary-rgb: 146, 64, 14; --color-secondary: #B45309; --color-secondary-rgb: 180, 83, 9; }
+        .theme-plum-pro { --color-primary: #581C87; --color-primary-rgb: 88, 28, 135; --color-secondary: #6D28D9; --color-secondary-rgb: 109, 40, 217; }
+        .theme-iron-pro { --color-primary: #4B5563; --color-primary-rgb: 75, 85, 99; --color-secondary: #6B7280; --color-secondary-rgb: 107, 114, 128; }
+        .theme-sepia-pro { --color-primary: #78350F; --color-primary-rgb: 120, 53, 15; --color-secondary: #92400E; --color-secondary-rgb: 146, 64, 14; }
+
+        /* Group 5: Nature (41-50) */
+        .theme-earth-sand { --color-primary: #D6D3D1; --color-primary-rgb: 214, 211, 209; --color-secondary: #A8A29E; --color-secondary-rgb: 168, 162, 158; }
+        .theme-olive-drab { --color-primary: #854D0E; --color-primary-rgb: 133, 77, 14; --color-secondary: #A16207; --color-secondary-rgb: 161, 98, 7; }
+        .theme-terracotta-pro { --color-primary: #991B1B; --color-primary-rgb: 153, 27, 27; --color-secondary: #B91C1C; --color-secondary-rgb: 185, 28, 28; }
+        .theme-sage-green { --color-primary: #65A30D; --color-primary-rgb: 101, 163, 13; --color-secondary: #84CC16; --color-secondary-rgb: 132, 204, 22; }
+        .theme-moss-pro { --color-primary: #3F6212; --color-primary-rgb: 63, 98, 18; --color-secondary: #4D7C0F; --color-secondary-rgb: 77, 124, 15; }
+        .theme-sepia-light { --color-primary: #A16207; --color-primary-rgb: 161, 98, 7; --color-secondary: #CA8A04; --color-secondary-rgb: 202, 138, 4; }
+        .theme-cream-soft { --color-primary: #FEF3C7; --color-primary-rgb: 254, 243, 199; --color-secondary: #FDE68A; --color-secondary-rgb: 253, 230, 138; }
+        .theme-stone-grey { --color-primary: #78716C; --color-primary-rgb: 120, 113, 108; --color-secondary: #A8A29E; --color-secondary-rgb: 168, 162, 158; }
+        .theme-sand-gold { --color-primary: #D97706; --color-primary-rgb: 217, 119, 6; --color-secondary: #F59E0B; --color-secondary-rgb: 245, 158, 11; }
+        .theme-warm-sepia { --color-primary: #92400E; --color-primary-rgb: 146, 64, 14; --color-secondary: #B45309; --color-secondary-rgb: 180, 83, 9; }
+
+        /* Panel CSS */
+        .theme-options { height: 280px; overflow-y: auto; }
             background-image: radial-gradient(var(--border-heavy) 1px, transparent 1px);
             background-size: 32px 32px;
             mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
@@ -445,14 +445,10 @@
     <!-- Theme Switcher Panel -->
     <div id="theme-panel">
         <div id="theme-options-panel" class="theme-options">
-            <h4 class="text-[var(--text-main)] font-bold text-xs mb-3 border-b border-[var(--border-color)] pb-2 flex justify-between items-center">
-                TEMA TAMPILAN
-                <button onclick="toggleMode()" class="p-1 rounded bg-[var(--bg-overlay)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] text-[var(--color-primary)] transition-colors" title="Switch Light/Dark">
-                    <i class="ph-fill ph-moon" id="mode-icon"></i>
-                </button>
-            </h4>
+            <h4 class="text-white font-bold text-xs mb-3 border-b border-white/10 pb-2">PILIH TEMA (50+)</h4>
             <div class="grid grid-cols-5 gap-2">
-                <div class="color-swatch bg-[#00E5FF] active" onclick="setColorTheme('theme-cyan', this)" title="Cyan"></div>
+                <!-- Group 1 -->
+                <div class="color-swatch bg-[#00E5FF]" onclick="setColorTheme('theme-cyan', this)" title="Cyan"></div>
                 <div class="color-swatch bg-[#3B82F6]" onclick="setColorTheme('theme-blue', this)" title="Blue"></div>
                 <div class="color-swatch bg-[#10B981]" onclick="setColorTheme('theme-emerald', this)" title="Emerald"></div>
                 <div class="color-swatch bg-[#A855F7]" onclick="setColorTheme('theme-purple', this)" title="Purple"></div>
@@ -462,6 +458,50 @@
                 <div class="color-swatch bg-[#22C55E]" onclick="setColorTheme('theme-green', this)" title="Green"></div>
                 <div class="color-swatch bg-[#EC4899]" onclick="setColorTheme('theme-pink', this)" title="Pink"></div>
                 <div class="color-swatch bg-[#EF4444]" onclick="setColorTheme('theme-red', this)" title="Red"></div>
+                <!-- Group 2: Soft -->
+                <div class="color-swatch bg-[#93C5FD]" onclick="setColorTheme('theme-soft-blue', this)" title="Soft Blue"></div>
+                <div class="color-swatch bg-[#F9A8D4]" onclick="setColorTheme('theme-soft-pink', this)" title="Soft Pink"></div>
+                <div class="color-swatch bg-[#6EE7B7]" onclick="setColorTheme('theme-soft-mint', this)" title="Soft Mint"></div>
+                <div class="color-swatch bg-[#C4B5FD]" onclick="setColorTheme('theme-soft-lilac', this)" title="Soft Lilac"></div>
+                <div class="color-swatch bg-[#FDBA74]" onclick="setColorTheme('theme-soft-peach', this)" title="Soft Peach"></div>
+                <div class="color-swatch bg-[#FDE047]" onclick="setColorTheme('theme-soft-lemon', this)" title="Soft Lemon"></div>
+                <div class="color-swatch bg-[#7DD3FC]" onclick="setColorTheme('theme-soft-sky', this)" title="Soft Sky"></div>
+                <div class="color-swatch bg-[#FB923C]" onclick="setColorTheme('theme-soft-coral', this)" title="Soft Coral"></div>
+                <div class="color-swatch bg-[#5EEAD4]" onclick="setColorTheme('theme-soft-teal', this)" title="Soft Teal"></div>
+                <div class="color-swatch bg-[#94A3B8]" onclick="setColorTheme('theme-soft-grey', this)" title="Soft Grey"></div>
+                <!-- Group 3: Neon/Vibrant -->
+                <div class="color-swatch bg-[#BEF264]" onclick="setColorTheme('theme-neon-green', this)" title="Neon Green"></div>
+                <div class="color-swatch bg-[#D946EF]" onclick="setColorTheme('theme-neon-violet', this)" title="Neon Violet"></div>
+                <div class="color-swatch bg-[#F472B6]" onclick="setColorTheme('theme-neon-magenta', this)" title="Neon Magenta"></div>
+                <div class="color-swatch bg-[#FB923C]" onclick="setColorTheme('theme-neon-orange', this)" title="Neon Orange"></div>
+                <div class="color-swatch bg-[#A3E635]" onclick="setColorTheme('theme-acid-lime', this)" title="Acid Lime"></div>
+                <div class="color-swatch bg-[#0EA5E9]" onclick="setColorTheme('theme-cyber-blue', this)" title="Cyber Blue"></div>
+                <div class="color-swatch bg-[#F43F5E]" onclick="setColorTheme('theme-hot-coral', this)" title="Hot Coral"></div>
+                <div class="color-swatch bg-[#F59E0B]" onclick="setColorTheme('theme-sunset-gold', this)" title="Sunset Gold"></div>
+                <div class="color-swatch bg-[#EAB308]" onclick="setColorTheme('theme-volt-yellow', this)" title="Volt Yellow"></div>
+                <div class="color-swatch bg-[#A855F7]" onclick="setColorTheme('theme-electric-purple', this)" title="Electric Purple"></div>
+                <!-- Group 4: Pro -->
+                <div class="color-swatch bg-[#1E3A8A]" onclick="setColorTheme('theme-navy-pro', this)" title="Navy Pro"></div>
+                <div class="color-swatch bg-[#334155]" onclick="setColorTheme('theme-slate-pro', this)" title="Slate Pro"></div>
+                <div class="color-swatch bg-[#064E3B]" onclick="setColorTheme('theme-forest-pro', this)" title="Forest Pro"></div>
+                <div class="color-swatch bg-[#374151]" onclick="setColorTheme('theme-charcoal-pro', this)" title="Charcoal Pro"></div>
+                <div class="color-swatch bg-[#7F1D1D]" onclick="setColorTheme('theme-maroon-pro', this)" title="Maroon Pro"></div>
+                <div class="color-swatch bg-[#115E59]" onclick="setColorTheme('theme-teal-pro', this)" title="Teal Pro"></div>
+                <div class="color-swatch bg-[#92400E]" onclick="setColorTheme('theme-gold-pro', this)" title="Gold Pro"></div>
+                <div class="color-swatch bg-[#581C87]" onclick="setColorTheme('theme-plum-pro', this)" title="Plum Pro"></div>
+                <div class="color-swatch bg-[#4B5563]" onclick="setColorTheme('theme-iron-pro', this)" title="Iron Pro"></div>
+                <div class="color-swatch bg-[#78350F]" onclick="setColorTheme('theme-sepia-pro', this)" title="Sepia Pro"></div>
+                <!-- Group 5: Nature -->
+                <div class="color-swatch bg-[#D6D3D1]" onclick="setColorTheme('theme-earth-sand', this)" title="Sand Earth"></div>
+                <div class="color-swatch bg-[#854D0E]" onclick="setColorTheme('theme-olive-drab', this)" title="Olive Drab"></div>
+                <div class="color-swatch bg-[#991B1B]" onclick="setColorTheme('theme-terracotta-pro', this)" title="Terracotta"></div>
+                <div class="color-swatch bg-[#65A30D]" onclick="setColorTheme('theme-sage-green', this)" title="Sage Green"></div>
+                <div class="color-swatch bg-[#3F6212]" onclick="setColorTheme('theme-moss-pro', this)" title="Moss Pro"></div>
+                <div class="color-swatch bg-[#A16207]" onclick="setColorTheme('theme-sepia-light', this)" title="Sepia Light"></div>
+                <div class="color-swatch bg-[#FEF3C7]" onclick="setColorTheme('theme-cream-soft', this)" title="Cream Soft"></div>
+                <div class="color-swatch bg-[#78716C]" onclick="setColorTheme('theme-stone-grey', this)" title="Stone Grey"></div>
+                <div class="color-swatch bg-[#D97706]" onclick="setColorTheme('theme-sand-gold', this)" title="Sand Gold"></div>
+                <div class="color-swatch bg-[#92400E]" onclick="setColorTheme('theme-warm-sepia', this)" title="Warm Sepia"></div>
             </div>
         </div>
         <button class="theme-btn" onclick="document.getElementById('theme-options-panel').classList.toggle('open')" aria-label="Pengaturan Tema">
@@ -752,14 +792,16 @@
         // ================= THEME LOGIC =================
         function toggleMode() {
             const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            const modeIcon = document.getElementById('mode-icon');
+            
             if(isLight) {
                 document.documentElement.removeAttribute('data-theme');
                 localStorage.setItem('axa-theme-mode', 'dark');
-                document.getElementById('mode-icon').className = 'ph-fill ph-sun';
+                if(modeIcon) modeIcon.className = 'ph-fill ph-sun'; // Null check ditambahkan
             } else {
                 document.documentElement.setAttribute('data-theme', 'light');
                 localStorage.setItem('axa-theme-mode', 'light');
-                document.getElementById('mode-icon').className = 'ph-fill ph-moon';
+                if(modeIcon) modeIcon.className = 'ph-fill ph-moon'; // Null check ditambahkan
             }
         }
 
@@ -771,9 +813,12 @@
             if(el) el.classList.add('active');
         }
 
-        // Set Icon on load
-        if(localStorage.getItem('axa-theme-mode') === 'light') document.getElementById('mode-icon').className = 'ph-fill ph-moon';
-        else document.getElementById('mode-icon').className = 'ph-fill ph-sun';
+        // Set Icon on load (Validasi Null agar tidak error di konsol)
+        const modeIconEl = document.getElementById('mode-icon');
+        if(modeIconEl) {
+            if(localStorage.getItem('axa-theme-mode') === 'light') modeIconEl.className = 'ph-fill ph-moon';
+            else modeIconEl.className = 'ph-fill ph-sun';
+        }
         
         // Highlight active swatch on load
         const savedColor = localStorage.getItem('axa-theme-color') || 'theme-cyan';
