@@ -354,7 +354,7 @@
         .theme-warm-sepia { --color-primary: #92400E; --color-primary-rgb: 146, 64, 14; --color-secondary: #B45309; --color-secondary-rgb: 180, 83, 9; }
 
         /* =========================================
-           UI/UX DESIGN CSS 
+           UI/UX DESIGN CSS & CSS3 MICRO-INTERACTIONS
            ========================================= */
         body {
             background-color: var(--bg-main);
@@ -362,6 +362,9 @@
             overflow-x: hidden;
             transition: background-color 0.4s ease, color 0.4s ease;
         }
+
+        /* UPGRADE 11: Text Selection Cyber-Glow */
+        ::selection { background: rgba(var(--color-primary-rgb), 0.3); color: var(--text-main); text-shadow: 0 0 8px rgba(var(--color-primary-rgb), 0.5); }
 
         /* Accessibility WCAG */
         :focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; border-radius: 6px; }
@@ -374,85 +377,124 @@
             mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
         }
+        
+        /* UPGRADE 16: Dynamic Orb Breathing */
         .glow-orb {
             position: fixed; border-radius: 50%; filter: blur(140px); z-index: -10; opacity: 0.15;
-            animation: orb-float 10s ease-in-out infinite alternate; will-change: transform;
+            animation: orb-float 10s ease-in-out infinite alternate, orb-breathe 6s ease-in-out infinite alternate; 
+            will-change: transform, opacity; /* UPGRADE 20: Hardware Acceleration */
         }
         .orb-1 { top: -10%; left: -5%; width: 50vw; height: 50vw; background-color: var(--color-primary); }
-        .orb-2 { bottom: -10%; right: -5%; width: 40vw; height: 40vw; background-color: var(--color-secondary); animation-delay: -5s;}
+        .orb-2 { bottom: -10%; right: -5%; width: 40vw; height: 40vw; background-color: var(--color-secondary); animation-delay: -5s, -3s;}
         
         [data-theme="light"] .glow-orb { opacity: 0.3; filter: blur(100px); }
 
         @keyframes orb-float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(30px, -50px) scale(1.1); } }
+        @keyframes orb-breathe { 0% { opacity: 0.1; } 100% { opacity: 0.25; } }
 
-        /* 2. LOADING SCREEN */
+        /* 2. LOADING SCREEN & SKELETON */
         #loader-screen { position: fixed; inset: 0; background-color: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; }
         .pulse-ring { width: 80px; height: 80px; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--color-primary); border-bottom-color: var(--color-secondary); animation: spin-ring 1.2s linear infinite; position: relative;}
         .pulse-ring::before { content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--color-secondary); border-right-color: var(--color-primary); animation: spin-ring 0.8s linear infinite reverse;}
         @keyframes spin-ring { 100% { transform: rotate(360deg); } }
 
+        /* UPGRADE 2: Skeleton Shimmer Loading */
+        .skeleton-shimmer {
+            background: linear-gradient(90deg, var(--bg-overlay) 25%, var(--border-heavy) 50%, var(--bg-overlay) 75%);
+            background-size: 200% 100%; animation: skeleton-loading 1.5s infinite linear; border-radius: 4px; color: transparent !important;
+        }
+        @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
         /* 3. PREMIUM CARD / GLASSMORPHISM */
         .premium-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 1.5rem;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 4px 30px var(--shadow-glass);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            width: 100%;
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 1.5rem;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px var(--shadow-glass); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; overflow: hidden; width: 100%; content-visibility: auto; /* UPGRADE 19: Content Visibility */
         }
+        /* UPGRADE 6: Advanced Glare Reflection */
         .premium-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(var(--color-primary-rgb), 0.08), transparent);
-            transform: translateX(-100%); transition: 0.6s; pointer-events: none;
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+            transform: skewX(-20deg); transition: 0.7s ease; pointer-events: none; z-index: 10;
         }
-        .premium-card:hover { 
-            transform: translateY(-4px); 
-            border-color: rgba(var(--color-primary-rgb), 0.4); 
-            box-shadow: 0 20px 40px -10px rgba(var(--color-primary-rgb), 0.15); 
-        }
-        .premium-card:hover::before { transform: translateX(100%); }
+        .premium-card:hover { transform: translateY(-4px) scale(1.01); border-color: rgba(var(--color-primary-rgb), 0.4); box-shadow: 0 20px 40px -10px rgba(var(--color-primary-rgb), 0.15); }
+        .premium-card:hover::before { left: 150%; }
+
+        /* UPGRADE 14: Live Stat Card Breathing */
+        .stat-card { animation: stat-breathe 4s infinite alternate; }
+        @keyframes stat-breathe { 0% { box-shadow: 0 0 10px rgba(0,0,0,0.2); } 100% { box-shadow: 0 0 25px rgba(var(--color-primary-rgb), 0.15); } }
 
         /* 4. RADIOLOGY SCANNER EFFECT */
         .scanner-container { position: relative; overflow: hidden; border-radius: 50%; background-color: var(--bg-card-heavy); } 
-        .scanner-line { position: absolute; width: 100%; height: 2px; background: var(--color-primary); box-shadow: 0 0 15px 3px var(--color-primary); z-index: 20; animation: scan-anim 3s infinite linear; opacity: 0.7;}
-        @keyframes scan-anim { 0% { top: -10%; opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { top: 110%; opacity: 0; } }
+        /* UPGRADE 17: Scanner Line Comet Trail */
+        .scanner-line { 
+            position: absolute; width: 100%; height: 3px; background: var(--color-primary); 
+            box-shadow: 0 0 20px 5px var(--color-primary), 0 -20px 20px -10px rgba(var(--color-primary-rgb), 0.5); 
+            z-index: 20; animation: scan-anim 3s infinite linear; opacity: 0.7;
+        }
+        @keyframes scan-anim { 0% { top: -20%; opacity: 0; } 10% { opacity: 0.9; } 90% { opacity: 0.9; } 100% { top: 120%; opacity: 0; } }
+        /* UPGRADE 8: Image Deep-Zoom Integration */
+        #ui-foto { transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .scanner-container:hover #ui-foto { transform: scale(1.15); }
 
         /* 5. TYPOGRAPHY & GRADIENTS */
         .text-gradient { 
             background: linear-gradient(135deg, var(--text-main) 0%, var(--color-secondary) 50%, var(--color-primary) 100%); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-            background-size: 200% auto; animation: shine 5s linear infinite;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 5s linear infinite;
         }
         @keyframes shine { to { background-position: 200% center; } }
 
         /* 6. TIMELINE CIRCUIT */
+        /* UPGRADE 9: Cyber-Flow Timeline */
         .circuit-line { position: relative; width: 100%; }
-        .circuit-line::before { content: ''; position: absolute; left: 21px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--color-primary), var(--color-secondary), transparent); opacity: 0.5; }
+        .circuit-line::before { 
+            content: ''; position: absolute; left: 21px; top: 0; bottom: 0; width: 2px; 
+            background: linear-gradient(to bottom, transparent, var(--color-primary), var(--color-secondary), transparent); 
+            background-size: 100% 200%; animation: flow-down 3s linear infinite; opacity: 0.6; 
+        }
+        @keyframes flow-down { 0% { background-position: 0 -100%; } 100% { background-position: 0 100%; } }
         @media (min-width: 768px) { .circuit-line::before { left: 50%; transform: translateX(-50%); } }
         
         /* 7. ANIMATION ON SCROLL */
-        .animate-on-scroll { opacity: 0; transform: translateY(40px) scale(0.98); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+        .animate-on-scroll { opacity: 0; transform: translateY(40px) scale(0.98); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); will-change: opacity, transform; }
         .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0) scale(1); }
 
         /* 8. SCROLLBAR (termasuk .no-scrollbar untuk Menu Sitelinks) */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-main); }
-        ::-webkit-scrollbar-thumb { background: var(--border-heavy); border-radius: 10px; border: 1px solid var(--bg-main);}
+        /* UPGRADE 18: Custom Scrollbar Transition */
+        ::-webkit-scrollbar-thumb { background: var(--border-heavy); border-radius: 10px; border: 1px solid var(--bg-main); transition: background 0.3s;}
         ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
         
-        /* Utilitas Sembunyikan Scrollbar untuk navigasi */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         /* Link Interaktif */
-        .link-hover { position: relative; color: var(--text-main); transition: color 0.3s; word-break: break-all; outline: none; }
-        .link-hover::after { content: ''; position: absolute; width: 0; height: 1px; bottom: -2px; left: 0; background-color: var(--color-primary); transition: width 0.3s ease; }
+        /* UPGRADE 15: Link Underline Sweep */
+        .link-hover { position: relative; color: var(--text-main); transition: color 0.3s; word-break: break-all; outline: none; padding-bottom: 2px;}
+        .link-hover::after { content: ''; position: absolute; width: 0; height: 1px; bottom: 0; left: 0; background-color: var(--color-primary); transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .link-hover:hover, .link-hover:focus-visible { color: var(--color-primary); }
         .link-hover:hover::after, .link-hover:focus-visible::after { width: 100%; }
+
+        /* UPGRADE 4: Heartbeat CTA Button (Pulse) */
+        .btn-pulse { position: relative; }
+        .btn-pulse::after {
+            content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 0 rgba(var(--color-primary-rgb), 0.7);
+            animation: pulse-ring-btn 2s infinite cubic-bezier(0.66, 0, 0, 1); z-index: -1;
+        }
+        @keyframes pulse-ring-btn { to { box-shadow: 0 0 0 15px rgba(var(--color-primary-rgb), 0); } }
+
+        /* UPGRADE 5: Icon Micro-Bouncing */
+        .icon-bounce-container:hover .icon-bounce { animation: bounce-slight 0.4s ease; }
+        @keyframes bounce-slight { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+        /* UPGRADE 7: Input Focus Ripple Ring */
+        .input-ripple:focus { box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.15), 0 0 15px rgba(var(--color-primary-rgb), 0.1); border-color: var(--color-primary); }
+
+        /* UPGRADE 13: Floating Badges Lift */
+        .badge-lift { transition: all 0.3s ease; }
+        .group:hover .badge-lift { transform: translateY(-2px); box-shadow: 0 5px 10px rgba(var(--color-primary-rgb), 0.2); }
 
         /* ================= THEME SWITCHER UI ================= */
         #theme-panel {
@@ -463,29 +505,33 @@
             width: 45px; height: 45px; border-radius: 50%; background: var(--bg-card-heavy);
             border: 1px solid var(--border-color); color: var(--text-main);
             display: flex; justify-content: center; align-items: center; font-size: 1.2rem;
-            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px);
-            transition: 0.3s;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); backdrop-filter: blur(10px); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .theme-btn:hover { border-color: var(--color-primary); transform: scale(1.1); color: var(--color-primary); }
+        .theme-btn:hover { border-color: var(--color-primary); transform: scale(1.1) rotate(15deg); color: var(--color-primary); }
         
         .theme-options {
-            background: var(--bg-card-heavy); border: 1px solid var(--border-color);
-            padding: 15px; border-radius: 16px; backdrop-filter: blur(20px);
-            display: none; opacity: 0; transform: translateY(10px); transition: 0.3s;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 220px;
+            background: var(--bg-card-heavy); border: 1px solid var(--border-color); padding: 15px; border-radius: 16px; 
+            backdrop-filter: blur(20px); display: none; opacity: 0; transform: translateY(20px) scale(0.95); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy entrance */
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4); width: 220px; transform-origin: bottom right;
         }
-        .theme-options.open { display: block; opacity: 1; transform: translateY(0); }
+        .theme-options.open { display: block; opacity: 1; transform: translateY(0) scale(1); }
         
-        .color-swatch {
-            width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s;
-        }
-        .color-swatch:hover, .color-swatch.active { transform: scale(1.2); border-color: var(--text-main); }
+        /* UPGRADE 12: Swatch Hover Spring */
+        .color-swatch { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .color-swatch:hover, .color-swatch.active { transform: scale(1.3); border-color: var(--text-main); z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
+        
+        /* UPGRADE 10: Spring-Pop Modal Entrance */
+        .modal-pop { opacity: 0; transform: scale(0.9); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .modal-pop.open { opacity: 1; transform: scale(1); }
     </style>
 
 </head>
 <body class="antialiased selection:bg-[var(--color-primary)] selection:text-[var(--text-inverse)] relative">
 
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-[var(--color-primary)] focus:text-[var(--text-inverse)] focus:font-bold focus:rounded-br-lg outline-none ring-2 ring-[var(--text-main)]">Langsung ke konten utama</a>
+
+    <!-- UPGRADE 1: Top Scroll Progress Bar -->
+    <div id="scroll-progress" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] z-[9999] transition-all duration-75 shadow-[0_0_10px_var(--color-primary)]" style="width: 0%"></div>
 
     <div class="bg-dots" aria-hidden="true"></div>
     <div class="glow-orb orb-1" aria-hidden="true"></div>
@@ -559,7 +605,7 @@
             </div>
         </div>
         <button class="theme-btn" onclick="document.getElementById('theme-options-panel').classList.toggle('open')" aria-label="Pengaturan Tema">
-            <i class="ph-fill ph-palette"></i>
+            <i class="ph-fill ph-palette icon-bounce"></i>
         </button>
     </div>
 
@@ -571,28 +617,24 @@
 
     <main class="relative z-10 opacity-0 transition-opacity duration-1000 hidden" id="main-content" role="main">
         
-        <!-- ============================================================================== 
-             MENU NAVIGASI SITELINKS (TRIGGER UTAMA GOOGLE UNTUK MEMBENTUK 5 SITELINKS)
-             ============================================================================== -->
-        <nav aria-label="Navigasi Utama Portofolio" class="sticky top-0 z-[100] bg-[var(--bg-card-heavy)]/90 backdrop-blur-xl border-b border-[var(--border-color)] shadow-sm w-full mb-8" itemscope itemtype="https://schema.org/SiteNavigationElement">
+        <!-- UPGRADE 3: Glassmorphism Saturation added via backdrop-saturate-150 -->
+        <nav aria-label="Navigasi Utama Portofolio" class="sticky top-0 z-[100] bg-[var(--bg-card-heavy)]/90 backdrop-blur-xl backdrop-saturate-150 border-b border-[var(--border-color)] shadow-sm w-full mb-8" itemscope itemtype="https://schema.org/SiteNavigationElement">
             <div class="container mx-auto px-4 max-w-[1200px]">
-                <!-- UPGRADE: Penambahan atribut "title" dan "aria-label" yang spesifik untuk memperkuat pemahaman konteks Googlebot terhadap Anchor Sitelinks -->
                 <ul class="flex overflow-x-auto py-4 gap-6 md:gap-10 text-[11px] md:text-sm font-bold text-[var(--text-muted)] no-scrollbar items-center md:justify-center whitespace-nowrap scroll-smooth">
-                    <li><a itemprop="url" href="#beranda" title="Halaman Utama Profil" aria-label="Beranda" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Beranda</span></a></li>
-                    <li><a itemprop="url" href="#pengalaman" title="Riwayat Pengalaman Kerja" aria-label="Pengalaman Kerja" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Pengalaman Kerja</span></a></li>
-                    <li><a itemprop="url" href="#pendidikan" title="Riwayat Pendidikan Akademis" aria-label="Riwayat Pendidikan" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Riwayat Pendidikan</span></a></li>
-                    <li><a itemprop="url" href="#organisasi" title="Riwayat Organisasi" aria-label="Riwayat Organisasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Riwayat Organisasi</span></a></li>
-                    <li><a itemprop="url" href="#publikasi" title="Kumpulan Publikasi Ilmiah" aria-label="Publikasi Ilmiah" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block"><span itemprop="name">Publikasi Ilmiah</span></a></li>
+                    <!-- UPGRADE 7: Sitelink Active Indicator via group-hover and pseudo elements -->
+                    <li><a itemprop="url" href="#beranda" title="Halaman Utama Profil" aria-label="Beranda" class="group hover:text-[var(--color-primary)] transition-colors inline-block relative py-1"><span itemprop="name">Beranda</span><span class="absolute bottom-0 left-0 w-0 h-0.5 bg-[var(--color-primary)] transition-all duration-300 group-hover:w-full"></span></a></li>
+                    <li><a itemprop="url" href="#pengalaman" title="Riwayat Pengalaman Kerja" aria-label="Pengalaman Kerja" class="group hover:text-[var(--color-primary)] transition-colors inline-block relative py-1"><span itemprop="name">Pengalaman Kerja</span><span class="absolute bottom-0 left-0 w-0 h-0.5 bg-[var(--color-primary)] transition-all duration-300 group-hover:w-full"></span></a></li>
+                    <li><a itemprop="url" href="#pendidikan" title="Riwayat Pendidikan Akademis" aria-label="Riwayat Pendidikan" class="group hover:text-[var(--color-primary)] transition-colors inline-block relative py-1"><span itemprop="name">Riwayat Pendidikan</span><span class="absolute bottom-0 left-0 w-0 h-0.5 bg-[var(--color-primary)] transition-all duration-300 group-hover:w-full"></span></a></li>
+                    <li><a itemprop="url" href="#organisasi" title="Riwayat Organisasi" aria-label="Riwayat Organisasi" class="group hover:text-[var(--color-primary)] transition-colors inline-block relative py-1"><span itemprop="name">Riwayat Organisasi</span><span class="absolute bottom-0 left-0 w-0 h-0.5 bg-[var(--color-primary)] transition-all duration-300 group-hover:w-full"></span></a></li>
+                    <li><a itemprop="url" href="#publikasi" title="Kumpulan Publikasi Ilmiah" aria-label="Publikasi Ilmiah" class="group hover:text-[var(--color-primary)] transition-colors inline-block relative py-1"><span itemprop="name">Publikasi Ilmiah</span><span class="absolute bottom-0 left-0 w-0 h-0.5 bg-[var(--color-primary)] transition-all duration-300 group-hover:w-full"></span></a></li>
                 </ul>
             </div>
         </nav>
-        <!-- ============================================================================== -->
 
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 pb-12 md:pb-16 max-w-[1200px]">
             
-            <!-- 1. BAGIAN BERANDA (PROFIL & KONTAK) -->
             <header id="beranda" class="text-center mb-16 md:mb-24 animate-on-scroll is-visible flex flex-col items-center pt-4" role="banner" itemscope itemtype="https://schema.org/Person">
-                <div class="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mx-auto mb-6 md:mb-8 rounded-full p-1 bg-gradient-to-tr from-[var(--color-primary)] to-[var(--color-secondary)] shadow-[0_0_30px_rgba(var(--color-primary-rgb),0.4)] transition-transform duration-700 hover:scale-105">
+                <div class="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mx-auto mb-6 md:mb-8 rounded-full p-1 bg-gradient-to-tr from-[var(--color-primary)] to-[var(--color-secondary)] shadow-[0_0_30px_rgba(var(--color-primary-rgb),0.4)] transition-transform duration-700 hover:scale-105 group">
                     <div class="scanner-container w-full h-full rounded-full bg-[var(--bg-card-heavy)]">
                         <div class="scanner-line" aria-hidden="true"></div>
                         <img id="ui-foto" itemprop="image" src="/axalogo.png" alt="Foto Profil drg. M. Aksa Arsyad" width="192" height="192" fetchpriority="high" loading="eager" decoding="sync" onerror="this.src='https://ui-avatars.com/api/?name=M+Aksa+Arsyad&background=00E5FF&color=fff&size=256'" class="w-full h-full object-cover rounded-full">
@@ -600,18 +642,18 @@
                 </div>
                 
                 <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 px-2 w-full max-w-4xl mx-auto break-words leading-tight" itemprop="name">
-                    <span id="ui-namaDepan" class="text-[var(--text-main)]">Memuat</span> <br class="md:hidden" />
-                    <span class="text-gradient" id="ui-namaBelakang">Data...</span>
+                    <span id="ui-namaDepan" class="text-[var(--text-main)] skeleton-shimmer">Memuat</span> <br class="md:hidden" />
+                    <span class="text-gradient skeleton-shimmer" id="ui-namaBelakang">Data...</span>
                 </h1>
                 
-                <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 mt-4 md:mt-6 max-w-2xl mx-auto w-full">
+                <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 mt-4 md:mt-6 max-w-2xl mx-auto w-full icon-bounce-container">
                     <div class="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-[rgba(var(--color-primary-rgb),0.1)] border border-[rgba(var(--color-primary-rgb),0.3)] backdrop-blur-md text-[var(--color-primary)] font-bold tracking-widest text-[10px] sm:text-xs md:text-sm shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.2)] text-center break-words" itemprop="jobTitle">
-                        <i class="ph-fill ph-shield-check text-lg shrink-0" aria-hidden="true"></i>
-                        <span id="ui-gelar">...</span>
+                        <i class="ph-fill ph-shield-check text-lg shrink-0 icon-bounce" aria-hidden="true"></i>
+                        <span id="ui-gelar" class="skeleton-shimmer">...</span>
                     </div>
                     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-main)] font-medium tracking-wide text-[10px] sm:text-xs text-center break-words max-w-[90%] backdrop-blur-md">
-                        <i class="ph ph-scan text-base shrink-0" aria-hidden="true"></i>
-                        <span id="ui-subGelar" class="break-words">...</span>
+                        <i class="ph ph-scan text-base shrink-0 icon-bounce" aria-hidden="true"></i>
+                        <span id="ui-subGelar" class="break-words skeleton-shimmer">...</span>
                     </div>
                 </div>
             </header>
@@ -619,19 +661,19 @@
             <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-16 md:mb-24 w-full" aria-label="Informasi Dasar">
                 
                 <!-- DATA PRIBADI -->
-                <article class="premium-card p-6 md:p-8 lg:col-span-4 animate-on-scroll w-full">
+                <article class="premium-card p-6 md:p-8 lg:col-span-4 animate-on-scroll w-full icon-bounce-container">
                     <header class="flex items-center gap-4 mb-6 md:mb-8">
                         <div class="p-3 bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.2)] to-transparent rounded-xl border border-[rgba(var(--color-primary-rgb),0.3)] text-[var(--color-primary)] shrink-0 shadow-inner">
-                            <i class="ph ph-fingerprint text-xl md:text-2xl" aria-hidden="true"></i>
+                            <i class="ph ph-fingerprint text-xl md:text-2xl icon-bounce" aria-hidden="true"></i>
                         </div>
                         <h2 class="text-lg md:text-xl font-bold text-[var(--text-main)] truncate">Data Pribadi</h2>
                     </header>
                     <div class="space-y-4 text-xs md:text-sm">
-                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4"><span class="text-[var(--text-muted)] shrink-0">Lahir</span><span class="text-right text-[var(--text-main)] font-medium whitespace-pre-line break-words" id="ui-lahir">...</span></div>
-                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4"><span class="text-[var(--text-muted)] shrink-0">Gender</span><span class="text-right text-[var(--text-main)] font-medium break-words" id="ui-gender">...</span></div>
-                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4"><span class="text-[var(--text-muted)] shrink-0">Agama</span><span class="text-right text-[var(--text-main)] font-medium break-words" id="ui-agama">...</span></div>
-                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4"><span class="text-[var(--text-muted)] shrink-0">Negara</span><span class="text-right text-[var(--text-main)] font-medium break-words" id="ui-warga">...</span></div>
-                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4"><span class="text-[var(--text-muted)] shrink-0">Status</span><span class="text-right text-[var(--color-primary)] font-bold break-words" id="ui-status">...</span></div>
+                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4"><span class="text-[var(--text-muted)] shrink-0">Lahir</span><span class="text-right text-[var(--text-main)] font-medium whitespace-pre-line break-words skeleton-shimmer" id="ui-lahir">...</span></div>
+                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4"><span class="text-[var(--text-muted)] shrink-0">Gender</span><span class="text-right text-[var(--text-main)] font-medium break-words skeleton-shimmer" id="ui-gender">...</span></div>
+                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4"><span class="text-[var(--text-muted)] shrink-0">Agama</span><span class="text-right text-[var(--text-main)] font-medium break-words skeleton-shimmer" id="ui-agama">...</span></div>
+                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4"><span class="text-[var(--text-muted)] shrink-0">Negara</span><span class="text-right text-[var(--text-main)] font-medium break-words skeleton-shimmer" id="ui-warga">...</span></div>
+                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4"><span class="text-[var(--text-muted)] shrink-0">Status</span><span class="text-right text-[var(--color-primary)] font-bold break-words skeleton-shimmer" id="ui-status">...</span></div>
                     </div>
                     <div class="mt-6 pt-4">
                         <span class="text-[10px] md:text-xs text-[var(--text-muted)] mb-3 block font-bold uppercase tracking-wider">Hobi</span>
@@ -640,45 +682,45 @@
                 </article>
 
                 <!-- KONTAK -->
-                <article class="premium-card p-6 md:p-8 lg:col-span-4 animate-on-scroll w-full" style="transition-delay: 100ms;">
+                <article class="premium-card p-6 md:p-8 lg:col-span-4 animate-on-scroll w-full icon-bounce-container" style="transition-delay: 100ms;">
                     <header class="flex items-center gap-4 mb-6 md:mb-8">
                         <div class="p-3 bg-gradient-to-br from-[rgba(var(--color-secondary-rgb),0.2)] to-transparent rounded-xl border border-[rgba(var(--color-secondary-rgb),0.3)] text-[var(--color-secondary)] shrink-0 shadow-inner">
-                            <i class="ph ph-address-book text-xl md:text-2xl" aria-hidden="true"></i>
+                            <i class="ph ph-address-book text-xl md:text-2xl icon-bounce" aria-hidden="true"></i>
                         </div>
                         <h2 class="text-lg md:text-xl font-bold text-[var(--text-main)] truncate">Hubungi Saya</h2>
                     </header>
                     <div class="space-y-5 text-xs md:text-sm">
                         <div class="group flex items-start gap-3 md:gap-4 overflow-hidden">
-                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-[var(--color-primary)] group-hover:bg-[rgba(var(--color-primary-rgb),0.1)] transition-colors shrink-0"><i class="ph ph-envelope-simple text-lg md:text-xl" aria-hidden="true"></i></div>
-                            <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">Email</p><div class="font-medium text-[var(--text-main)]" id="ui-email-container">...</div></div>
+                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-[var(--color-primary)] group-hover:bg-[rgba(var(--color-primary-rgb),0.1)] transition-colors shrink-0"><i class="ph ph-envelope-simple text-lg md:text-xl icon-bounce" aria-hidden="true"></i></div>
+                            <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">Email</p><div class="font-medium text-[var(--text-main)] skeleton-shimmer" id="ui-email-container">...</div></div>
                         </div>
                         <div class="group flex items-start gap-3 md:gap-4 overflow-hidden">
-                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-[#2dd4bf] group-hover:bg-[#2dd4bf]/10 transition-colors shrink-0"><i class="ph ph-whatsapp-logo text-lg md:text-xl" aria-hidden="true"></i></div>
-                            <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">WhatsApp</p><div class="font-medium text-[var(--text-main)]" id="ui-hp-container">...</div></div>
+                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-[#2dd4bf] group-hover:bg-[#2dd4bf]/10 transition-colors shrink-0"><i class="ph ph-whatsapp-logo text-lg md:text-xl icon-bounce" aria-hidden="true"></i></div>
+                            <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">WhatsApp</p><div class="font-medium text-[var(--text-main)] skeleton-shimmer" id="ui-hp-container">...</div></div>
                         </div>
                         <div class="group flex items-start gap-3 md:gap-4 overflow-hidden">
-                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-pink-400 group-hover:bg-pink-400/10 transition-colors shrink-0"><i class="ph ph-instagram-logo text-lg md:text-xl" aria-hidden="true"></i></div>
-                            <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">Sosial Media</p><div class="font-medium text-[var(--text-main)]" id="ui-sosmed-container">...</div></div>
+                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-pink-400 group-hover:bg-pink-400/10 transition-colors shrink-0"><i class="ph ph-instagram-logo text-lg md:text-xl icon-bounce" aria-hidden="true"></i></div>
+                            <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">Sosial Media</p><div class="font-medium text-[var(--text-main)] skeleton-shimmer" id="ui-sosmed-container">...</div></div>
                         </div>
                         <div class="group flex items-start gap-3 md:gap-4 overflow-hidden">
-                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-red-400 group-hover:bg-red-400/10 transition-colors shrink-0"><i class="ph ph-map-pin text-lg md:text-xl" aria-hidden="true"></i></div>
-                            <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">Domisili</p><address class="text-[var(--text-main)] leading-relaxed break-words not-italic" id="ui-alamat">...</address></div>
+                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-red-400 group-hover:bg-red-400/10 transition-colors shrink-0"><i class="ph ph-map-pin text-lg md:text-xl icon-bounce" aria-hidden="true"></i></div>
+                            <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">Domisili</p><address class="text-[var(--text-main)] leading-relaxed break-words not-italic skeleton-shimmer" id="ui-alamat">...</address></div>
                         </div>
                         
                         <div class="pt-4 mt-2 border-t border-[var(--border-color)] grid grid-cols-3 gap-1.5 md:gap-2 w-full">
-                            <a id="ui-scholar" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil Google Scholar" class="flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl hover:bg-[var(--bg-card)] border border-transparent hover:border-blue-400/50 transition-all text-center w-full min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
-                                <i class="ph ph-graduation-cap text-blue-400 text-[18px] md:text-[22px] mb-1" aria-hidden="true"></i>
+                            <a id="ui-scholar" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil Google Scholar" class="group/btn flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl hover:bg-[var(--bg-card)] border border-transparent hover:border-blue-400/50 transition-all text-center w-full min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+                                <i class="ph ph-graduation-cap text-blue-400 text-[18px] md:text-[22px] mb-1 group-hover/btn:-translate-y-1 transition-transform" aria-hidden="true"></i>
                                 <span class="text-[8px] md:text-[10px] font-bold text-[var(--text-main)] truncate w-full">Google Scholar</span>
                             </a>
-                            <a id="ui-orcid" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil ORCID iD" class="flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl hover:bg-[var(--bg-card)] border border-transparent hover:border-[#a6ce39]/50 transition-all text-center w-full min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-[#a6ce39]">
-                                <svg viewBox="0 0 256 256" class="w-[18px] h-[18px] md:w-[22px] md:h-[22px] mb-1 drop-shadow-md shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <a id="ui-orcid" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil ORCID iD" class="group/btn flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl hover:bg-[var(--bg-card)] border border-transparent hover:border-[#a6ce39]/50 transition-all text-center w-full min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-[#a6ce39]">
+                                <svg viewBox="0 0 256 256" class="w-[18px] h-[18px] md:w-[22px] md:h-[22px] mb-1 drop-shadow-md shrink-0 group-hover/btn:-translate-y-1 transition-transform" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <circle cx="128" cy="128" r="128" fill="#a6ce39"/>
                                     <path d="M86.3 186.2H70.9V79.1h15.4v107.1zM108.9 79.1h41.6c39.6 0 57 28.3 57 53.6 0 27.5-21.5 53.6-56.8 53.6h-41.8V79.1zm15.4 93.3h24.5c34.9 0 42.9-26.5 42.9-39.7 0-21.5-13.7-39.7-43.7-39.7h-23.7v79.4zM88.7 56.8c0 5.5-4.5 10.1-10.1 10.1-5.6 0-10.1-4.6-10.1-10.1 0-5.6 4.5-10.1 10.1-10.1 5.5 0 10.1 4.6 10.1 10.1z" fill="#ffffff"/>
                                 </svg>
                                 <span class="text-[8px] md:text-[10px] font-bold text-[var(--text-main)] truncate w-full">ORCID iD</span>
                             </a>
-                            <a id="ui-sciprofiles" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil SciProfiles" class="flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl hover:bg-[var(--bg-card)] border border-transparent hover:border-[#3bc6e8]/50 transition-all text-center w-full min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-[#3bc6e8]">
-                                <svg viewBox="0 0 100 100" class="w-[18px] h-[18px] md:w-[22px] md:h-[22px] mb-1 drop-shadow-md shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <a id="ui-sciprofiles" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil SciProfiles" class="group/btn flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl hover:bg-[var(--bg-card)] border border-transparent hover:border-[#3bc6e8]/50 transition-all text-center w-full min-w-0 outline-none focus-visible:ring-2 focus-visible:ring-[#3bc6e8]">
+                                <svg viewBox="0 0 100 100" class="w-[18px] h-[18px] md:w-[22px] md:h-[22px] mb-1 drop-shadow-md shrink-0 group-hover/btn:-translate-y-1 transition-transform" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <path d="M7 44.5C2 22 17 5 39 12C61 19 82 8 91 29C100 50 99 74 81 87C63 100 24 100 13 83C2 66 12 67 7 44.5Z" fill="#327c8e" opacity="0.9"/>
                                     <path d="M21 21C38 3 71 -4 87 14C103 32 94 65 83 83C72 101 32 96 16 83C0 70 4 39 21 21Z" fill="#3bc6e8" opacity="0.95"/>
                                     <text x="50" y="66" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="44" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="-1">Sci</text>
@@ -690,10 +732,10 @@
                 </article>
 
                 <!-- KEAHLIAN KLINIS -->
-                <article id="keahlian" class="premium-card p-6 md:p-8 lg:col-span-4 animate-on-scroll w-full" style="transition-delay: 200ms;">
+                <article id="keahlian" class="premium-card p-6 md:p-8 lg:col-span-4 animate-on-scroll w-full icon-bounce-container" style="transition-delay: 200ms;">
                     <header class="flex items-center gap-4 mb-6 md:mb-8">
                         <div class="p-3 bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.2)] to-transparent rounded-xl border border-[rgba(var(--color-primary-rgb),0.3)] text-[var(--color-primary)] shrink-0 shadow-inner">
-                            <i class="ph ph-crosshair text-xl md:text-2xl" aria-hidden="true"></i>
+                            <i class="ph ph-crosshair text-xl md:text-2xl icon-bounce" aria-hidden="true"></i>
                         </div>
                         <h2 class="text-lg md:text-xl font-bold text-[var(--text-main)] truncate">Keahlian Klinis</h2>
                     </header>
@@ -718,9 +760,9 @@
 
             <!-- 3. BAGIAN PENDIDIKAN -->
             <section id="pendidikan" class="mb-16 md:mb-24 w-full pt-6 scroll-mt-24" aria-labelledby="heading-pendidikan">
-                <header class="flex flex-col items-center text-center mb-12 md:mb-16 animate-on-scroll">
+                <header class="flex flex-col items-center text-center mb-12 md:mb-16 animate-on-scroll icon-bounce-container">
                     <div class="p-3 md:p-4 bg-gradient-to-b from-[rgba(var(--color-primary-rgb),0.1)] to-transparent rounded-full mb-4 border border-[rgba(var(--color-primary-rgb),0.3)] shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.1)]">
-                        <i class="ph ph-student text-2xl md:text-3xl text-[var(--color-primary)]" aria-hidden="true"></i>
+                        <i class="ph ph-student text-2xl md:text-3xl text-[var(--color-primary)] icon-bounce" aria-hidden="true"></i>
                     </div>
                     <h2 id="heading-pendidikan" class="text-2xl md:text-3xl font-extrabold text-[var(--text-main)] truncate px-2">Riwayat Pendidikan</h2>
                 </header>
@@ -730,19 +772,18 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-16 md:mb-24 w-full">
                 <!-- 4. ORGANISASI -->
-                <!-- ID ORGANISASI ditambahkan agar menu sitelink berfungsi langsung kemari -->
-                <section id="organisasi" class="animate-on-scroll premium-card p-6 md:p-8 w-full scroll-mt-24" aria-labelledby="heading-organisasi">
+                <section id="organisasi" class="animate-on-scroll premium-card p-6 md:p-8 w-full scroll-mt-24 icon-bounce-container" aria-labelledby="heading-organisasi">
                     <h2 id="heading-organisasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-[var(--text-main)] border-b border-[var(--border-color)] pb-4">
-                        <i class="ph ph-users-three text-[var(--color-secondary)] p-2 bg-[rgba(var(--color-secondary-rgb),0.1)] border border-[rgba(var(--color-secondary-rgb),0.2)] rounded-lg shrink-0" aria-hidden="true"></i> <span class="truncate">Riwayat Organisasi</span>
+                        <i class="ph ph-users-three text-[var(--color-secondary)] p-2 bg-[rgba(var(--color-secondary-rgb),0.1)] border border-[rgba(var(--color-secondary-rgb),0.2)] rounded-lg shrink-0 icon-bounce" aria-hidden="true"></i> <span class="truncate">Riwayat Organisasi</span>
                     </h2>
                     <div class="space-y-1 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar w-full" id="ui-organisasi-container" role="list">
                         </div>
                 </section>
 
                 <!-- 5. PUBLIKASI -->
-                <section id="publikasi" class="animate-on-scroll premium-card p-6 md:p-8 w-full scroll-mt-24" style="transition-delay: 150ms;" aria-labelledby="heading-publikasi">
+                <section id="publikasi" class="animate-on-scroll premium-card p-6 md:p-8 w-full scroll-mt-24 icon-bounce-container" style="transition-delay: 150ms;" aria-labelledby="heading-publikasi">
                     <h2 id="heading-publikasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-[var(--text-main)] border-b border-[var(--border-color)] pb-4">
-                        <i class="ph ph-books text-[var(--color-primary)] p-2 bg-[rgba(var(--color-primary-rgb),0.1)] border border-[rgba(var(--color-primary-rgb),0.2)] rounded-lg shrink-0" aria-hidden="true"></i> <span class="truncate">Publikasi Ilmiah</span>
+                        <i class="ph ph-books text-[var(--color-primary)] p-2 bg-[rgba(var(--color-primary-rgb),0.1)] border border-[rgba(var(--color-primary-rgb),0.2)] rounded-lg shrink-0 icon-bounce" aria-hidden="true"></i> <span class="truncate">Publikasi Ilmiah</span>
                     </h2>
                     <div class="space-y-4 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 md:pr-4 custom-scrollbar w-full" id="ui-publikasi-container" role="list">
                         </div>
@@ -761,18 +802,18 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 w-full">
                             <div class="w-full">
                                 <label for="inputNama" class="block text-[10px] md:text-[11px] font-bold text-[var(--text-muted)] mb-1.5 md:mb-2 ml-1 uppercase tracking-widest">Nama Lengkap</label>
-                                <input type="text" id="inputNama" required class="w-full bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl px-4 md:px-5 py-3 md:py-3.5 text-xs md:text-sm text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[rgba(var(--color-primary-rgb),0.2)] transition-all backdrop-blur-md" placeholder="John Doe">
+                                <input type="text" id="inputNama" required class="w-full bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl px-4 md:px-5 py-3 md:py-3.5 text-xs md:text-sm text-[var(--text-main)] focus:outline-none input-ripple transition-all backdrop-blur-md" placeholder="John Doe">
                             </div>
                             <div class="w-full">
                                 <label for="inputKontak" class="block text-[10px] md:text-[11px] font-bold text-[var(--text-muted)] mb-1.5 md:mb-2 ml-1 uppercase tracking-widest">No. WhatsApp</label>
-                                <input type="tel" id="inputKontak" required class="w-full bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl px-4 md:px-5 py-3 md:py-3.5 text-xs md:text-sm text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[rgba(var(--color-primary-rgb),0.2)] transition-all backdrop-blur-md" placeholder="0812...">
+                                <input type="tel" id="inputKontak" required class="w-full bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl px-4 md:px-5 py-3 md:py-3.5 text-xs md:text-sm text-[var(--text-main)] focus:outline-none input-ripple transition-all backdrop-blur-md" placeholder="0812...">
                             </div>
                         </div>
                         <div class="w-full">
                             <label for="inputPesan" class="block text-[10px] md:text-[11px] font-bold text-[var(--text-muted)] mb-1.5 md:mb-2 ml-1 uppercase tracking-widest">Pesan / Keperluan</label>
-                            <textarea id="inputPesan" required rows="4" class="w-full bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl px-4 md:px-5 py-3 md:py-4 text-xs md:text-sm text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[rgba(var(--color-primary-rgb),0.2)] resize-none transition-all backdrop-blur-md" placeholder="Tuliskan detail keperluan Anda..."></textarea>
+                            <textarea id="inputPesan" required rows="4" class="w-full bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl px-4 md:px-5 py-3 md:py-4 text-xs md:text-sm text-[var(--text-main)] focus:outline-none input-ripple resize-none transition-all backdrop-blur-md" placeholder="Tuliskan detail keperluan Anda..."></textarea>
                         </div>
-                        <button type="submit" id="btnSubmit" class="w-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] hover:brightness-110 text-white font-bold py-3.5 md:py-4 rounded-xl shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.3)] transition-all transform hover:-translate-y-1 text-sm md:text-base border border-white/10 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-primary)]">
+                        <button type="submit" id="btnSubmit" class="btn-pulse w-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] hover:brightness-110 text-white font-bold py-3.5 md:py-4 rounded-xl shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.3)] transition-all transform hover:-translate-y-1 text-sm md:text-base border border-white/10 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-primary)]">
                             Kirim Pesan Sekarang
                         </button>
                     </form>
@@ -781,15 +822,15 @@
 
             <footer class="mt-16 md:mt-20 pb-8 md:pb-10 border-t border-[var(--border-color)] pt-8 md:pt-10 w-full" role="contentinfo">
                 <div class="flex flex-wrap justify-center gap-3 md:gap-4 mb-6 md:mb-8 animate-on-scroll px-2" aria-label="Statistik Pengunjung">
-                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] px-4 md:px-5 py-2 md:py-3 rounded-2xl text-center flex-1 sm:flex-none min-w-[100px] md:min-w-[120px] backdrop-blur-md shadow-lg">
+                    <div class="stat-card bg-[var(--bg-card)] border border-[var(--border-color)] px-4 md:px-5 py-2 md:py-3 rounded-2xl text-center flex-1 sm:flex-none min-w-[100px] md:min-w-[120px] backdrop-blur-md">
                         <p class="text-[8px] md:text-[9px] text-[var(--text-muted)] uppercase tracking-widest mb-1 font-bold">Views Today</p>
                         <div class="flex items-center justify-center gap-2 text-[var(--color-primary)] font-black font-mono text-base md:text-lg"><span id="view-today" aria-live="polite">-</span></div>
                     </div>
-                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] px-4 md:px-5 py-2 md:py-3 rounded-2xl text-center flex-1 sm:flex-none min-w-[100px] md:min-w-[120px] backdrop-blur-md shadow-lg">
+                    <div class="stat-card bg-[var(--bg-card)] border border-[var(--border-color)] px-4 md:px-5 py-2 md:py-3 rounded-2xl text-center flex-1 sm:flex-none min-w-[100px] md:min-w-[120px] backdrop-blur-md" style="animation-delay: -1s;">
                         <p class="text-[8px] md:text-[9px] text-[var(--text-muted)] uppercase tracking-widest mb-1 font-bold">This Week</p>
                         <div class="flex items-center justify-center gap-2 text-[var(--color-secondary)] font-black font-mono text-base md:text-lg"><span id="view-week" aria-live="polite">-</span></div>
                     </div>
-                    <div class="bg-[var(--bg-card)] border border-[var(--border-color)] px-4 md:px-5 py-2 md:py-3 rounded-2xl text-center flex-1 sm:flex-none min-w-[100px] md:min-w-[120px] backdrop-blur-md shadow-lg">
+                    <div class="stat-card bg-[var(--bg-card)] border border-[var(--border-color)] px-4 md:px-5 py-2 md:py-3 rounded-2xl text-center flex-1 sm:flex-none min-w-[100px] md:min-w-[120px] backdrop-blur-md" style="animation-delay: -2s;">
                         <p class="text-[8px] md:text-[9px] text-[var(--text-muted)] uppercase tracking-widest mb-1 font-bold">Total Views</p>
                         <div class="flex items-center justify-center gap-2 text-[var(--text-main)] font-black font-mono text-base md:text-lg"><span id="view-total" aria-live="polite">-</span></div>
                     </div>
@@ -803,11 +844,6 @@
                     </p>
                 </div>
 
-                <!-- ======================================================================= -->
-                <!-- PHYSICAL SITEMAP LINK (MENGATASI "Halaman Perujuk: Tidak Ada")          -->
-                <!-- Dengan adanya link ini, Googlebot yang merayapi beranda akan "mengklik" -->
-                <!-- link ini, menjadikan index.html sebagai "Halaman Perujuk" resmi.        -->
-                <!-- ======================================================================= -->
                 <div class="text-center mt-4">
                     <a href="https://maksaarsyad.xyz/sitemap.xml" target="_blank" aria-label="Peta Situs XML" class="text-[9px] text-[var(--border-heavy)] hover:text-[var(--color-primary)] transition-colors">Sitemap XML</a>
                 </div>
@@ -817,7 +853,7 @@
 
     <!-- ADMIN MODAL (UPDATED COLORS) -->
     <div id="admin-modal" class="fixed inset-0 bg-[var(--bg-main)]/95 backdrop-blur-xl z-[9999] hidden flex items-center justify-center p-4 transition-all" role="dialog" aria-modal="true" aria-labelledby="admin-title">
-        <div id="admin-login" class="premium-card p-6 md:p-8 max-w-sm w-full text-center mx-auto">
+        <div id="admin-login" class="premium-card modal-pop p-6 md:p-8 max-w-sm w-full text-center mx-auto">
             <div class="w-14 h-14 md:w-16 md:h-16 mx-auto bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.2)] to-transparent rounded-full flex items-center justify-center mb-4 text-[var(--color-primary)] border border-[rgba(var(--color-primary-rgb),0.3)]"><i class="ph ph-shield-check text-2xl md:text-3xl" aria-hidden="true"></i></div>
             <h2 id="admin-title" class="text-xl md:text-2xl font-bold text-[var(--text-main)] mb-5 md:mb-6">Admin Access</h2>
             <input type="text" id="adminUser" placeholder="Username" aria-label="Username" class="w-full mb-3 md:mb-4 bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base text-[var(--text-main)] focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[rgba(var(--color-primary-rgb),0.5)] outline-none transition-all">
@@ -826,7 +862,7 @@
             <button onclick="tutupAdmin()" class="w-full mt-3 md:mt-4 text-[var(--text-muted)] hover:text-[var(--text-main)] text-xs md:text-sm transition-colors font-semibold py-2 outline-none focus-visible:text-[var(--text-main)]">Cancel</button>
             <p id="loginErr" class="text-red-500 text-[11px] md:text-xs mt-3 md:mt-4 hidden bg-red-500/10 border border-red-500/20 py-2 rounded break-words" aria-live="assertive">Invalid Credentials!</p>
         </div>
-        <div id="admin-dashboard" class="premium-card p-4 sm:p-6 max-w-5xl w-full h-[95vh] md:h-[90vh] flex flex-col hidden mx-auto">
+        <div id="admin-dashboard" class="premium-card modal-pop p-4 sm:p-6 max-w-5xl w-full h-[95vh] md:h-[90vh] flex flex-col hidden mx-auto">
             <div class="flex justify-between items-center mb-3 md:mb-4 border-b border-[var(--border-color)] pb-3 md:pb-4 gap-2">
                 <h2 class="text-lg md:text-xl font-bold text-[var(--text-main)] flex items-center gap-2 truncate"><i class="ph ph-database text-[var(--color-primary)] shrink-0" aria-hidden="true"></i> <span class="truncate">Database Editor</span></h2>
                 <button onclick="tutupAdmin()" aria-label="Tutup Editor" class="text-[var(--text-muted)] hover:text-red-500 transition-colors bg-[var(--bg-overlay)] hover:bg-red-500/10 p-1.5 md:p-2 rounded-lg shrink-0 border border-transparent hover:border-red-500/30 outline-none focus-visible:border-red-500"><i class="ph ph-x text-lg md:text-xl" aria-hidden="true"></i></button>
@@ -843,17 +879,27 @@
     </div>
 
     <script>
+        // UPGRADE 1: Logika Scroll Progress Bar
+        window.addEventListener('scroll', () => { 
+            const scrollPx = document.documentElement.scrollTop;
+            const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = `${scrollPx / winHeightPx * 100}%`;
+            document.getElementById('scroll-progress').style.width = scrolled;
+        });
+
         // ================= THEME LOGIC =================
         function toggleMode() {
             const isLight = document.documentElement.getAttribute('data-theme') === 'light';
             if(isLight) {
                 document.documentElement.removeAttribute('data-theme');
                 localStorage.setItem('axa-theme-mode', 'dark');
-                document.getElementById('mode-icon').className = 'ph-fill ph-sun';
+                const icon = document.getElementById('mode-icon');
+                if(icon) icon.className = 'ph-fill ph-sun icon-bounce';
             } else {
                 document.documentElement.setAttribute('data-theme', 'light');
                 localStorage.setItem('axa-theme-mode', 'light');
-                document.getElementById('mode-icon').className = 'ph-fill ph-moon';
+                const icon = document.getElementById('mode-icon');
+                if(icon) icon.className = 'ph-fill ph-moon icon-bounce';
             }
         }
 
@@ -866,8 +912,11 @@
         }
 
         // Set Icon on load
-        if(localStorage.getItem('axa-theme-mode') === 'light') document.getElementById('mode-icon').className = 'ph-fill ph-moon';
-        else document.getElementById('mode-icon').className = 'ph-fill ph-sun';
+        const savedModeIcon = document.getElementById('mode-icon');
+        if(savedModeIcon) {
+            if(localStorage.getItem('axa-theme-mode') === 'light') savedModeIcon.className = 'ph-fill ph-moon icon-bounce';
+            else savedModeIcon.className = 'ph-fill ph-sun icon-bounce';
+        }
         
         // Highlight active swatch on load
         const savedColor = localStorage.getItem('axa-theme-color') || 'theme-cyan';
@@ -954,6 +1003,9 @@
         }
 
         function renderSeluruhUI(data) {
+            // Hapus efek skeleton-shimmer saat data berhasil di-load
+            document.querySelectorAll('.skeleton-shimmer').forEach(el => el.classList.remove('skeleton-shimmer'));
+
             // UI HEADER & DATA PRIBADI
             document.getElementById('ui-namaDepan').textContent = data.profil.namaDepan;
             document.getElementById('ui-namaBelakang').textContent = data.profil.namaBelakang;
@@ -987,7 +1039,7 @@
             }
 
             // UI HOBI
-            const hobiHTML = data.dataPribadi.hobi.map(h => `<span class="px-3 py-1 bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-full text-[10px] md:text-[11px] font-bold text-[var(--text-main)] shadow-sm whitespace-nowrap">${h}</span>`).join('');
+            const hobiHTML = data.dataPribadi.hobi.map(h => `<span class="px-3 py-1 bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-full text-[10px] md:text-[11px] font-bold text-[var(--text-main)] shadow-sm whitespace-nowrap badge-lift">${h}</span>`).join('');
             document.getElementById('ui-hobi-container').innerHTML = hobiHTML;
 
             // UI KEAHLIAN
@@ -1001,7 +1053,7 @@
             // UI PENGALAMAN KERJA 
             const pengHTML = (data.pengalamanKerja || []).map((p, i) => {
                 const delay = i * 100;
-                return `<article role="listitem" class="premium-card p-5 md:p-6 border-l-4 border-l-[var(--color-primary)] group animate-on-scroll h-full flex flex-col justify-center" style="transition-delay: ${delay}ms;"><div class="absolute top-0 right-0 w-20 h-20 md:w-24 md:h-24 bg-gradient-to-bl from-[rgba(var(--color-primary-rgb),0.1)] to-transparent rounded-bl-full transition-opacity duration-500 opacity-50 group-hover:opacity-100 pointer-events-none" aria-hidden="true"></div><div class="relative z-10"><span class="inline-block bg-[rgba(var(--color-primary-rgb),0.1)] text-[var(--color-primary)] border border-[rgba(var(--color-primary-rgb),0.2)] text-[9px] md:text-[10px] uppercase font-bold tracking-widest px-2.5 md:px-3 py-1 rounded-full mb-2.5 md:mb-3">${p.tahun}</span><h3 class="text-base md:text-lg font-extrabold text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition-colors leading-tight mb-2 break-words">${p.posisi}</h3><p class="text-[var(--text-muted)] text-xs md:text-sm font-medium leading-snug"><i class="ph-fill ph-buildings text-[var(--text-muted)] mr-1 md:mr-1.5 shrink-0 align-middle" aria-hidden="true"></i> <span class="align-middle">${p.institusi}</span></p></div></article>`;
+                return `<article role="listitem" class="premium-card p-5 md:p-6 border-l-4 border-l-[var(--color-primary)] group animate-on-scroll h-full flex flex-col justify-center" style="transition-delay: ${delay}ms;"><div class="absolute top-0 right-0 w-20 h-20 md:w-24 md:h-24 bg-gradient-to-bl from-[rgba(var(--color-primary-rgb),0.1)] to-transparent rounded-bl-full transition-opacity duration-500 opacity-50 group-hover:opacity-100 pointer-events-none" aria-hidden="true"></div><div class="relative z-10"><span class="inline-block bg-[rgba(var(--color-primary-rgb),0.1)] text-[var(--color-primary)] border border-[rgba(var(--color-primary-rgb),0.2)] text-[9px] md:text-[10px] uppercase font-bold tracking-widest px-2.5 md:px-3 py-1 rounded-full mb-2.5 md:mb-3 badge-lift">${p.tahun}</span><h3 class="text-base md:text-lg font-extrabold text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition-colors leading-tight mb-2 break-words">${p.posisi}</h3><p class="text-[var(--text-muted)] text-xs md:text-sm font-medium leading-snug icon-bounce-container"><i class="ph-fill ph-buildings text-[var(--text-muted)] mr-1 md:mr-1.5 shrink-0 align-middle icon-bounce" aria-hidden="true"></i> <span class="align-middle">${p.institusi}</span></p></div></article>`;
             }).join('');
             document.getElementById('ui-pengalaman-container').innerHTML = pengHTML;
 
@@ -1014,7 +1066,7 @@
                 let dotClass = i === 0 ? "bg-[var(--color-primary)] shadow-[0_0_15px_var(--color-primary)] border-2 border-white" : "bg-[var(--bg-main)] border-2 border-[var(--color-secondary)]";
                 let boxOp = i === 0 ? "border-[rgba(var(--color-primary-rgb),0.3)] bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.1)] to-transparent" : "";
                 
-                return `<article itemscope itemtype="https://schema.org/EducationalOrganization" role="listitem" class="relative mb-8 md:mb-12 animate-on-scroll flex ${posClass}"><div class="absolute w-4 h-4 ${dotClass} rounded-full ${dotPos} top-6 md:top-7 z-10 shrink-0" aria-hidden="true"></div><div class="premium-card p-5 md:p-7 ${boxOp} w-full"><span class="${i===0 ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)]'} font-mono text-[9px] md:text-[11px] uppercase tracking-widest font-bold block mb-1.5 md:mb-2 break-words">${p.tahun}</span><h3 itemprop="name" class="text-base md:text-lg font-bold ${i===0 ? 'text-[var(--text-main)]' : 'text-[var(--text-main)]'} leading-snug break-words">${p.jurusan}</h3><p itemprop="description" class="text-[var(--text-muted)] text-xs md:text-sm mt-1.5 md:mt-2 font-medium break-words">${p.institusi}</p></div></article>`;
+                return `<article itemscope itemtype="https://schema.org/EducationalOrganization" role="listitem" class="relative mb-8 md:mb-12 animate-on-scroll flex ${posClass} group"><div class="absolute w-4 h-4 ${dotClass} rounded-full ${dotPos} top-6 md:top-7 z-10 shrink-0 group-hover:scale-125 transition-transform duration-300" aria-hidden="true"></div><div class="premium-card p-5 md:p-7 ${boxOp} w-full"><span class="${i===0 ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)]'} font-mono text-[9px] md:text-[11px] uppercase tracking-widest font-bold block mb-1.5 md:mb-2 break-words badge-lift origin-left inline-block">${p.tahun}</span><h3 itemprop="name" class="text-base md:text-lg font-bold ${i===0 ? 'text-[var(--text-main)]' : 'text-[var(--text-main)]'} leading-snug break-words">${p.jurusan}</h3><p itemprop="description" class="text-[var(--text-muted)] text-xs md:text-sm mt-1.5 md:mt-2 font-medium break-words">${p.institusi}</p></div></article>`;
             }).join('');
             document.getElementById('ui-pendidikan-container').innerHTML = pendHTML;
 
@@ -1022,14 +1074,14 @@
             const orgHTML = data.organisasi.map(o => {
                 const iconColor = o.aktif ? "text-[var(--color-primary)]" : "text-[var(--text-muted)]";
                 const bgIcon = o.aktif ? "bg-[rgba(var(--color-primary-rgb),0.1)] border border-[rgba(var(--color-primary-rgb),0.2)]" : "bg-[var(--bg-overlay)] border border-[var(--border-color)]";
-                return `<article role="listitem" class="flex gap-3 md:gap-4 p-3 md:p-4 hover:bg-[var(--bg-overlay)] rounded-xl transition-colors group"><div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center ${bgIcon} ${iconColor} transition-all group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.2)]"><i class="ph-fill ph-users text-base md:text-lg" aria-hidden="true"></i></div><div class="min-w-0"><h3 class="font-bold text-[var(--text-main)] text-sm md:text-[15px] leading-tight mb-0.5 md:mb-1 break-words">${o.nama}</h3><p class="text-xs md:text-[13px] font-medium text-[var(--text-muted)] break-words leading-relaxed">${o.deskripsi}</p></div></article>`;
+                return `<article role="listitem" class="flex gap-3 md:gap-4 p-3 md:p-4 hover:bg-[var(--bg-overlay)] rounded-xl transition-colors group"><div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center ${bgIcon} ${iconColor} transition-all group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.2)] icon-bounce-container"><i class="ph-fill ph-users text-base md:text-lg icon-bounce" aria-hidden="true"></i></div><div class="min-w-0"><h3 class="font-bold text-[var(--text-main)] text-sm md:text-[15px] leading-tight mb-0.5 md:mb-1 break-words">${o.nama}</h3><p class="text-xs md:text-[13px] font-medium text-[var(--text-muted)] break-words leading-relaxed">${o.deskripsi}</p></div></article>`;
             }).join('');
             document.getElementById('ui-organisasi-container').innerHTML = orgHTML;
 
             // UI PUBLIKASI (DILENGKAPI MICRODATA SEO)
             const pubHTML = data.publikasi.map(pub => {
-                const linkHTML = pub.link ? `<a itemprop="url" href="${pub.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2.5 md:mt-3 text-[var(--color-primary)] hover:text-[var(--color-secondary)] text-[10px] md:text-xs font-bold transition-colors truncate w-full outline-none focus-visible:ring-1 focus-visible:ring-white"><i class="ph-bold ph-link text-xs md:text-sm shrink-0" aria-hidden="true"></i> <span class="truncate">Baca Selengkapnya</span></a>` : "";
-                return `<article itemscope itemtype="https://schema.org/ScholarlyArticle" role="listitem" class="p-4 md:p-5 border border-[var(--border-color)] bg-[var(--bg-card)] rounded-xl hover:border-[rgba(var(--color-secondary-rgb),0.5)] hover:bg-[var(--bg-overlay)] transition-all group relative overflow-hidden w-full"><div class="absolute top-0 right-0 bg-[rgba(var(--color-secondary-rgb),0.2)] text-[var(--color-secondary)] text-[9px] md:text-[10px] font-black px-2.5 md:px-3 py-1 rounded-bl-lg" aria-label="Tahun Publikasi" itemprop="datePublished">${pub.tahun}</div><h3 itemprop="headline" class="font-bold text-[var(--text-main)] text-xs md:text-sm mb-1.5 md:mb-2 pr-8 md:pr-10 leading-snug group-hover:text-[var(--color-primary)] transition-colors break-words">${pub.judul}</h3><p class="text-[10px] md:text-xs text-[var(--text-muted)] leading-relaxed font-medium break-words"><i class="ph-fill ph-pencil-simple text-[var(--text-muted)] mr-1 shrink-0 align-middle" aria-hidden="true"></i><span itemprop="author" class="align-middle">${pub.authors}</span> <br><span itemprop="publisher" class="italic text-[var(--text-muted)] mt-1 inline-block break-words w-full">${pub.jurnal}</span></p>${linkHTML}</article>`;
+                const linkHTML = pub.link ? `<a itemprop="url" href="${pub.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2.5 md:mt-3 text-[var(--color-primary)] hover:text-[var(--color-secondary)] text-[10px] md:text-xs font-bold transition-colors truncate w-full outline-none focus-visible:ring-1 focus-visible:ring-white group-hover:underline decoration-[var(--color-primary)] underline-offset-2"><i class="ph-bold ph-link text-xs md:text-sm shrink-0" aria-hidden="true"></i> <span class="truncate">Baca Selengkapnya</span></a>` : "";
+                return `<article itemscope itemtype="https://schema.org/ScholarlyArticle" role="listitem" class="p-4 md:p-5 border border-[var(--border-color)] bg-[var(--bg-card)] rounded-xl hover:border-[rgba(var(--color-secondary-rgb),0.5)] hover:bg-[var(--bg-overlay)] transition-all group relative overflow-hidden w-full icon-bounce-container"><div class="absolute top-0 right-0 bg-[rgba(var(--color-secondary-rgb),0.2)] text-[var(--color-secondary)] text-[9px] md:text-[10px] font-black px-2.5 md:px-3 py-1 rounded-bl-lg badge-lift" aria-label="Tahun Publikasi" itemprop="datePublished">${pub.tahun}</div><h3 itemprop="headline" class="font-bold text-[var(--text-main)] text-xs md:text-sm mb-1.5 md:mb-2 pr-8 md:pr-10 leading-snug group-hover:text-[var(--color-primary)] transition-colors break-words">${pub.judul}</h3><p class="text-[10px] md:text-xs text-[var(--text-muted)] leading-relaxed font-medium break-words"><i class="ph-fill ph-pencil-simple text-[var(--text-muted)] mr-1 shrink-0 align-middle icon-bounce" aria-hidden="true"></i><span itemprop="author" class="align-middle">${pub.authors}</span> <br><span itemprop="publisher" class="italic text-[var(--text-muted)] mt-1 inline-block break-words w-full">${pub.jurnal}</span></p>${linkHTML}</article>`;
             }).join('');
             document.getElementById('ui-publikasi-container').innerHTML = pubHTML;
         }
@@ -1070,6 +1122,7 @@
             const originalHTML = btn.innerHTML;
             btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin mr-2 text-lg md:text-xl" aria-hidden="true"></i> Mengirim...';
             btn.disabled = true; btn.classList.add('opacity-70', 'cursor-not-allowed');
+            btn.classList.remove('btn-pulse'); // Hapus efek pulse saat loading
 
             const payload = { action: 'submitPesan', nama: document.getElementById('inputNama').value.trim(), kontak: document.getElementById('inputKontak').value.trim(), pesan: document.getElementById('inputPesan').value.trim() };
 
@@ -1084,6 +1137,7 @@
                         btn.innerHTML = originalHTML;
                         btn.classList.replace('from-green-500', 'from-[var(--color-primary)]'); btn.classList.replace('to-green-700', 'to-[var(--color-secondary)]');
                         btn.classList.remove('opacity-70', 'cursor-not-allowed'); btn.disabled = false;
+                        btn.classList.add('btn-pulse'); // Kembalikan pulse
                     }, 4000);
                 }
             })
@@ -1094,6 +1148,7 @@
                     btn.innerHTML = originalHTML;
                     btn.classList.replace('from-red-500', 'from-[var(--color-primary)]'); btn.classList.replace('to-red-700', 'to-[var(--color-secondary)]');
                     btn.classList.remove('opacity-70', 'cursor-not-allowed'); btn.disabled = false;
+                    btn.classList.add('btn-pulse'); // Kembalikan pulse
                 }, 3000);
             });
         }
@@ -1101,12 +1156,23 @@
         // SISTEM DASHBOARD ADMIN
         function bukaLoginAdmin() { 
             document.getElementById('admin-modal').classList.remove('hidden'); 
-            document.getElementById('admin-login').classList.remove('hidden'); 
-            document.getElementById('admin-dashboard').classList.add('hidden'); 
-            setTimeout(() => document.getElementById('adminUser').focus(), 100);
+            
+            // Animasi Spring
+            setTimeout(() => {
+                document.getElementById('admin-login').classList.add('open');
+                document.getElementById('admin-login').classList.remove('hidden'); 
+                document.getElementById('admin-dashboard').classList.add('hidden'); 
+                document.getElementById('admin-dashboard').classList.remove('open');
+                document.getElementById('adminUser').focus();
+            }, 10);
         }
+        
         function tutupAdmin() { 
-            document.getElementById('admin-modal').classList.add('hidden'); 
+            document.getElementById('admin-login').classList.remove('open');
+            document.getElementById('admin-dashboard').classList.remove('open');
+            setTimeout(() => {
+                document.getElementById('admin-modal').classList.add('hidden'); 
+            }, 300); // Tunggu animasi tutup selesai
         }
         
         function cekLogin() {
@@ -1114,11 +1180,17 @@
             const p = document.getElementById('adminPass').value.trim();
             
             if(u === 'axaaxyz_01' && p === 'axaxyz999') {
-                document.getElementById('admin-login').classList.add('hidden'); 
-                document.getElementById('admin-dashboard').classList.remove('hidden');
-                document.getElementById('jsonEditor').value = JSON.stringify(globalCVData, null, 4);
-                document.getElementById('loginErr').classList.add('hidden');
-                document.getElementById('jsonEditor').focus();
+                document.getElementById('admin-login').classList.remove('open');
+                
+                setTimeout(() => {
+                    document.getElementById('admin-login').classList.add('hidden'); 
+                    document.getElementById('admin-dashboard').classList.remove('hidden');
+                    setTimeout(() => document.getElementById('admin-dashboard').classList.add('open'), 10);
+                    
+                    document.getElementById('jsonEditor').value = JSON.stringify(globalCVData, null, 4);
+                    document.getElementById('loginErr').classList.add('hidden');
+                    document.getElementById('jsonEditor').focus();
+                }, 300);
             } else { 
                 document.getElementById('loginErr').classList.remove('hidden'); 
             }
@@ -1127,12 +1199,11 @@
         function simpanCV() {
             const btn = document.getElementById('btnSimpanCV'); const notif = document.getElementById('adminNotif');
             let newData; 
-            try { 
-                newData = JSON.parse(document.getElementById('jsonEditor').value); 
-            } catch(e) { 
-                notif.textContent = "Format JSON tidak valid! Pastikan koma dan tanda kutip benar."; 
+            try { newData = JSON.parse(document.getElementById('jsonEditor').value); } 
+            catch(e) { 
+                notif.textContent = "Format JSON tidak valid! Pastikan koma dan tanda kutip benar.";
                 notif.classList.remove('hidden', 'bg-green-500/20', 'text-green-500'); 
-                notif.classList.add('bg-red-500/20', 'text-red-500'); 
+                notif.classList.add('bg-red-500/20', 'text-red-500');
                 return; 
             }
             
