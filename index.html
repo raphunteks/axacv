@@ -1068,6 +1068,7 @@
         // ================= API URL =================
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxv7LpGFB37qXUvpPYapXUIaaMv0nV06AnGbwQ_CRBSj4zIoxo7N3NwAn9WSsphDrtR/exec";
         let globalCVData = {}; 
+        let globalSheetData = {}; // NEW STATE FOR DYNAMIC SHEETS
         
         document.addEventListener("DOMContentLoaded", () => {
             const urlWithCacheBuster = GAS_URL + "?endpoint=cv&t=" + new Date().getTime();
@@ -1082,7 +1083,8 @@
                     const res = JSON.parse(text); 
                     if(res.status === 'success') {
                         globalCVData = res.data;
-                        renderSeluruhUI(globalCVData);
+                        globalSheetData = res.sheets || {}; // TANGKAP SHEET BARU
+                        renderSeluruhUI(globalCVData, globalSheetData);
                         
                         setTimeout(() => {
                             document.getElementById('loader-screen').style.opacity = '0';
@@ -1142,7 +1144,7 @@
             text.innerHTML = pesanError; text.classList.add('text-red-400', 'mt-4', 'break-words');
         }
 
-        function renderSeluruhUI(data) {
+        function renderSeluruhUI(data, sheetData = {}) {
             document.getElementById('ui-namaDepan').textContent = data.profil.namaDepan;
             document.getElementById('ui-namaBelakang').textContent = data.profil.namaBelakang;
             document.getElementById('ui-gelar').textContent = data.profil.gelar;
@@ -1171,6 +1173,56 @@
             
             if (document.getElementById('ui-sciprofiles') && data.kontak.sciprofiles) {
                 document.getElementById('ui-sciprofiles').href = data.kontak.sciprofiles;
+            }
+
+            // ================== HELPER FILTER GOOGLE DRIVE IMAGE ==================
+            // Memastikan link GDrive public render langsung di tag <img src="">
+            const convertDriveLink = (url) => {
+                if(!url) return 'https://ui-avatars.com/api/?name=No+Image&background=1e293b&color=fff';
+                const match = url.match(/\/d\/(.+?)\//);
+                if(match && match[1]) return `https://drive.google.com/uc?id=${match[1]}`;
+                return url; // Biarkan jika url langsung (.jpg, .png dll)
+            };
+
+            // ================== RENDER PROYEK WEB ==================
+            if(sheetData.proyek && document.getElementById('ui-proyek-container')) {
+                const proyekHTML = sheetData.proyek.map((p, i) => `
+                    <article class="premium-card overflow-hidden group hover:-translate-y-2 transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.5)] animate-on-scroll flex flex-col" style="transition-delay: ${i*100}ms">
+                        <div class="h-48 md:h-56 w-full overflow-hidden bg-[var(--bg-main)] border-b border-[var(--border-color)]">
+                            <img src="${convertDriveLink(p.Gambar)}" alt="${p.Judul}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="p-5 md:p-6 flex flex-col flex-grow">
+                            <h3 class="text-lg font-bold text-[var(--text-main)] mb-2 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2">${p.Judul}</h3>
+                            <p class="text-[var(--text-muted)] text-xs md:text-sm mb-6 line-clamp-3 leading-relaxed flex-grow">${p.Deskripsi}</p>
+                            ${p.Link ? `<a href="${p.Link}" target="_blank" rel="noopener noreferrer" class="mt-auto inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-[rgba(var(--color-primary-rgb),0.1)] text-[var(--color-primary)] font-bold text-sm border border-[rgba(var(--color-primary-rgb),0.3)] hover:bg-[var(--color-primary)] hover:text-[var(--bg-main)] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"><i class="ph-bold ph-eye text-lg"></i> Lihat</a>` : ''}
+                        </div>
+                    </article>
+                `).join('');
+                document.getElementById('ui-proyek-container').innerHTML = proyekHTML || `<p class="text-[var(--text-muted)] text-center col-span-full py-8 border border-dashed border-[var(--border-color)] rounded-xl">Belum ada proyek ditambahkan.</p>`;
+            }
+
+            // ================== RENDER SERTIFIKASI ==================
+            const generateSertifHTML = (arr) => {
+                if(!arr || arr.length === 0) return `<p class="text-[var(--text-muted)] text-center col-span-full py-8 border border-dashed border-[var(--border-color)] rounded-xl">Data sertifikasi kosong.</p>`;
+                return arr.map((s, i) => `
+                    <article class="premium-card p-4 group hover:-translate-y-2 transition-all duration-300 shadow-[0_10px_25px_rgba(0,0,0,0.5)] animate-on-scroll flex flex-col h-full" style="transition-delay: ${i*100}ms">
+                        <div class="h-40 md:h-48 w-full rounded-lg overflow-hidden border border-[var(--border-color)] mb-4 bg-[#0d1117] relative">
+                            <img src="${convertDriveLink(s.Gambar)}" alt="${s.Judul}" loading="lazy" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="flex-grow flex flex-col justify-center text-center">
+                            <h3 class="text-sm md:text-base font-bold text-[var(--text-main)] mb-1 group-hover:text-[var(--color-secondary)] transition-colors line-clamp-2">${s.Judul}</h3>
+                            <p class="text-[var(--text-muted)] text-xs md:text-sm font-medium mb-4 line-clamp-2">${s.Subjudul}</p>
+                            <span class="inline-block mt-auto bg-[var(--bg-overlay)] text-[var(--text-main)] text-[10px] md:text-xs px-3 py-1.5 rounded-md font-bold border border-[var(--border-color)] shadow-inner"><i class="ph-fill ph-calendar text-[var(--color-primary)] align-middle mb-0.5"></i> ${s.Tanggal}</span>
+                        </div>
+                    </article>
+                `).join('');
+            };
+
+            if(sheetData.sertifHobi && document.getElementById('ui-sertif-hobi-container')) {
+                document.getElementById('ui-sertif-hobi-container').innerHTML = generateSertifHTML(sheetData.sertifHobi);
+            }
+            if(sheetData.sertifPDGI && document.getElementById('ui-sertif-pdgi-container')) {
+                document.getElementById('ui-sertif-pdgi-container').innerHTML = generateSertifHTML(sheetData.sertifPDGI);
             }
 
             const hobiHTML = data.dataPribadi.hobi.map(h => `<span class="px-3 py-1 bg-[var(--bg-overlay)] border border-[var(--border-color)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:-translate-y-1 transition-all rounded-full text-[10px] md:text-[11px] font-bold text-[var(--text-main)] shadow-sm whitespace-nowrap cursor-default">${h}</span>`).join('');
@@ -1315,7 +1367,7 @@
                     notif.classList.remove('hidden', 'bg-red-500/20', 'text-red-500'); 
                     notif.classList.add('bg-green-500/20', 'text-green-500');
                     globalCVData = newData; 
-                    renderSeluruhUI(globalCVData);
+                    renderSeluruhUI(globalCVData, globalSheetData); // PASTIKAN SHEET TERBARU TETAP TER-RENDER SAAT SAVE
                 } else {
                     notif.textContent = "Error: " + res.message;
                     notif.classList.remove('hidden', 'bg-green-500/20', 'text-green-500'); 
