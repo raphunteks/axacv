@@ -37,8 +37,8 @@
     <title>CV & Portofolio | drg. M. Aksa Arsyad, S.KG</title>
     
     <!-- ================= SEO EXPERT 100% UPGRADE (SITELINKS MASTERPIECE) ================= -->
-    <meta name="description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum. Lihat pengalaman kerja, riwayat pendidikan, riwayat organisasi, publikasi ilmiah, proyek web, dan sertifikasi.">
-    <meta name="keywords" content="Riwayat Pendidikan drg. M. Aksa Arsyad, Pengalaman Kerja drg. M. Aksa Arsyad, Dokter Gigi Umum, Aksa Arsyad, S.KG, Makassar, UMI, Dokter Gigi Makassar, Kedokteran Gigi, Klinik Gigi, Publikasi Ilmiah, Sertifikasi, Proyek Web">
+    <meta name="description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum. Lihat pengalaman kerja, riwayat pendidikan, riwayat organisasi, publikasi ilmiah, dan hubungi langsung.">
+    <meta name="keywords" content="Riwayat Pendidikan drg. M. Aksa Arsyad, Pengalaman Kerja drg. M. Aksa Arsyad, Dokter Gigi Umum, Aksa Arsyad, S.KG, Makassar, UMI, Dokter Gigi Makassar, Kedokteran Gigi, Klinik Gigi, Publikasi Ilmiah">
     <meta name="author" content="drg. M. Aksa Arsyad, S.KG">
     <link rel="canonical" href="https://maksaarsyad.xyz/">
 
@@ -52,7 +52,7 @@
     <meta property="og:locale" content="id_ID">
     <meta property="og:url" content="https://maksaarsyad.xyz/">
     <meta property="og:title" content="drg. M. Aksa Arsyad, S.KG | Dokter Gigi Umum">
-    <meta property="og:description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG. Lihat pengalaman klinis, akademik, publikasi ilmiah, dan proyek.">
+    <meta property="og:description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG. Lihat pengalaman klinis, akademik, dan publikasi ilmiah.">
     <meta property="og:image" content="https://maksaarsyad.xyz/axalogo.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -240,7 +240,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
-    <!-- Script Theming (Dipanggil paling awal agar tidak berkedip/Flash) -->
     <script>
         function initThemeSettings() {
             const savedMode = localStorage.getItem('axa-theme-mode') || 'dark';
@@ -604,6 +603,10 @@
         #scrollToTopBtn.show::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--color-primary); animation: radar-pulse 2s infinite; opacity: 0; z-index: -1; }
         #scrollToTopBtn:hover { background: var(--color-primary); color: #fff; transform: translateY(-5px) scale(1.15); box-shadow: 0 10px 25px rgba(var(--color-primary-rgb), 0.5); }
         @keyframes radar-pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.5); opacity: 0; } }
+
+        /* Admin UI Extensions */
+        .admin-item-card { background: var(--bg-overlay); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; }
+        .admin-item-card:hover { border-color: var(--color-primary); }
     </style>
 </head>
 <body class="antialiased selection:bg-[var(--color-primary)] selection:text-black relative">
@@ -717,7 +720,6 @@
         <i class="ph-bold ph-caret-up"></i>
     </button>
 
-    <!-- Shimmering Loading Screen -->
     <div id="loader-screen" role="status" aria-live="polite">
         <div class="pulse-ring mb-6" aria-hidden="true"></div>
         <h2 id="loader-title" class="text-xl font-bold tracking-[0.3em] shimmer-text uppercase text-center px-4">Initializing</h2>
@@ -732,12 +734,17 @@
             <div class="container mx-auto px-4 max-w-[1200px]">
                 <ul class="flex overflow-x-auto py-4 gap-6 md:gap-10 text-[11px] md:text-sm font-bold text-[var(--text-muted)] no-scrollbar items-center md:justify-center whitespace-nowrap scroll-smooth">
                     <li><a itemprop="url" href="#beranda" title="Halaman Utama Profil" aria-label="Beranda" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Beranda</span></a></li>
+                    <!-- NAVIGASI BARU: KEAHLIAN & TECH -->
                     <li><a itemprop="url" href="#keahlian-tech" title="Keahlian & Kemampuan" aria-label="Keahlian" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Keahlian & Tech</span></a></li>
+                    <!-- NAVIGASI BARU: PROYEK WEB -->
                     <li><a itemprop="url" href="#proyek" title="Proyek Web" aria-label="Proyek" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Proyek Web</span></a></li>
+                    
                     <li><a itemprop="url" href="#pengalaman" title="Riwayat Pengalaman Kerja" aria-label="Pengalaman Kerja" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Pengalaman Kerja</span></a></li>
                     <li><a itemprop="url" href="#pendidikan" title="Riwayat Pendidikan Akademis" aria-label="Riwayat Pendidikan" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Riwayat Pendidikan</span></a></li>
                     <li><a itemprop="url" href="#organisasi" title="Riwayat Organisasi" aria-label="Riwayat Organisasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Riwayat Organisasi</span></a></li>
                     <li><a itemprop="url" href="#publikasi" title="Kumpulan Publikasi Ilmiah" aria-label="Publikasi Ilmiah" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Publikasi Ilmiah</span></a></li>
+                    
+                    <!-- NAVIGASI BARU: SERTIFIKASI -->
                     <li><a itemprop="url" href="#sertifikasi" title="Sertifikasi & Pelatihan" aria-label="Sertifikasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Sertifikasi</span></a></li>
                 </ul>
             </div>
@@ -933,18 +940,17 @@
                 </h2>
 
                 <!-- GitHub Contribution Graph -->
-                <div class="premium-card p-4 md:p-6 mb-8 flex justify-center items-center overflow-x-auto bg-[#0d1117]/80">
-                    <!-- Menggunakan layanan ghchart untuk SVG Kalender Kontribusi -->
-                    <img src="https://ghchart.rshah.org/00E5FF/itsmeaxaa" alt="GitHub Contributions Graph" class="min-w-[700px] w-full max-w-4xl object-contain opacity-90 hover:opacity-100 transition-opacity drop-shadow-md">
+                <div class="premium-card p-4 md:p-6 mb-8 flex justify-center items-center overflow-x-auto bg-[#0d1117]/80 group">
+                    <img id="gh-graph" src="https://ghchart.rshah.org/00E5FF/torvalds" alt="GitHub Contributions Graph" class="min-w-[700px] w-full max-w-4xl object-contain opacity-90 group-hover:opacity-100 transition-opacity drop-shadow-md" onerror="this.src='https://placehold.co/800x200/0d1117/00E5FF?text=GitHub+Username+Tidak+Valid+atau+Private'">
                 </div>
 
                 <!-- GitHub Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                     <div class="premium-card p-2 flex justify-center bg-[#0d1117]/80 hover:border-[var(--color-primary)] transition-colors">
-                        <img src="https://github-readme-stats.vercel.app/api?username=itsmeaxaa&show_icons=true&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8&icon_color=6366F1" alt="GitHub Stats" class="w-full object-contain max-w-md">
+                        <img id="gh-stats" src="https://github-readme-stats.vercel.app/api?username=torvalds&show_icons=true&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8&icon_color=6366F1" alt="GitHub Stats" class="w-full object-contain max-w-md" onerror="this.style.display='none'">
                     </div>
                     <div class="premium-card p-2 flex justify-center bg-[#0d1117]/80 hover:border-[var(--color-secondary)] transition-colors">
-                        <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=itsmeaxaa&layout=compact&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8" alt="Top Languages" class="w-full object-contain max-w-md">
+                        <img id="gh-langs" src="https://github-readme-stats.vercel.app/api/top-langs/?username=torvalds&layout=compact&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8" alt="Top Languages" class="w-full object-contain max-w-md" onerror="this.style.display='none'">
                     </div>
                 </div>
             </section>
@@ -1044,6 +1050,8 @@
 
     <!-- ADMIN MODAL -->
     <div id="admin-modal" class="fixed inset-0 bg-[var(--bg-main)]/95 backdrop-blur-xl z-[9999] hidden flex items-center justify-center p-4 transition-all" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+        
+        <!-- LOGIN ADMIN -->
         <div id="admin-login" class="premium-card p-6 md:p-8 max-w-sm w-full text-center mx-auto">
             <div class="w-14 h-14 md:w-16 md:h-16 mx-auto bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.2)] to-transparent rounded-full flex items-center justify-center mb-4 text-[var(--color-primary)] border border-[rgba(var(--color-primary-rgb),0.3)] shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.2)]"><i class="ph ph-shield-check text-2xl md:text-3xl" aria-hidden="true"></i></div>
             <h2 id="admin-title" class="text-xl md:text-2xl font-bold text-[var(--text-main)] mb-5 md:mb-6">Admin Access</h2>
@@ -1054,28 +1062,84 @@
             <p id="loginErr" class="text-red-500 text-[11px] md:text-xs mt-3 md:mt-4 hidden bg-red-500/10 border border-red-500/20 py-2 rounded break-words" aria-live="assertive">Invalid Credentials!</p>
         </div>
         
-        <div id="admin-dashboard" class="premium-card p-4 sm:p-6 max-w-5xl w-full h-[95vh] md:h-[90vh] flex flex-col hidden mx-auto">
-            <div class="flex justify-between items-center mb-2 border-b border-[var(--border-color)] pb-3 gap-2">
+        <!-- DASHBOARD ADMIN TABS -->
+        <div id="admin-dashboard" class="premium-card p-4 sm:p-6 max-w-5xl w-full h-[95vh] md:h-[90vh] flex flex-col hidden mx-auto relative overflow-hidden">
+            <div class="flex justify-between items-center mb-3 md:mb-4 border-b border-[var(--border-color)] pb-3 md:pb-4 gap-2">
                 <h2 class="text-lg md:text-xl font-bold text-[var(--text-main)] flex items-center gap-2 truncate"><i class="ph ph-database text-[var(--color-primary)] shrink-0" aria-hidden="true"></i> <span class="truncate">Master Database Editor</span></h2>
                 <button onclick="tutupAdmin()" aria-label="Tutup Editor" class="text-[var(--text-muted)] hover:text-red-500 transition-colors bg-[var(--bg-overlay)] hover:bg-red-500/10 p-1.5 md:p-2 rounded-lg shrink-0 border border-transparent hover:border-red-500/30 outline-none focus-visible:border-red-500"><i class="ph ph-x text-lg md:text-xl" aria-hidden="true"></i></button>
             </div>
             
-            <!-- MULTI TAB UNTUK CRUD JSON -->
+            <!-- MULTI TAB SELECTION -->
             <div class="flex gap-2 mb-3 overflow-x-auto custom-scrollbar pb-2 shrink-0">
                 <button onclick="switchAdminTab('cv')" id="tab-cv" class="admin-tab active bg-[var(--color-primary)] text-[var(--bg-main)] px-4 py-2 rounded-lg font-bold text-[10px] md:text-xs transition-colors shrink-0 shadow-md">Data CV & Kontak</button>
-                <button onclick="switchAdminTab('proyek')" id="tab-proyek" class="admin-tab bg-[var(--bg-overlay)] text-[var(--text-main)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] px-4 py-2 rounded-lg font-bold text-[10px] md:text-xs transition-colors shrink-0 border border-[var(--border-color)]">Proyek Web (Array)</button>
-                <button onclick="switchAdminTab('hobi')" id="tab-hobi" class="admin-tab bg-[var(--bg-overlay)] text-[var(--text-main)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] px-4 py-2 rounded-lg font-bold text-[10px] md:text-xs transition-colors shrink-0 border border-[var(--border-color)]">Sertif Hobi (Array)</button>
-                <button onclick="switchAdminTab('pdgi')" id="tab-pdgi" class="admin-tab bg-[var(--bg-overlay)] text-[var(--text-main)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] px-4 py-2 rounded-lg font-bold text-[10px] md:text-xs transition-colors shrink-0 border border-[var(--border-color)]">Sertif PDGI (Array)</button>
+                <button onclick="switchAdminTab('proyek')" id="tab-proyek" class="admin-tab bg-[var(--bg-overlay)] text-[var(--text-main)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] px-4 py-2 rounded-lg font-bold text-[10px] md:text-xs transition-colors shrink-0 border border-[var(--border-color)]">Proyek Web</button>
+                <button onclick="switchAdminTab('hobi')" id="tab-hobi" class="admin-tab bg-[var(--bg-overlay)] text-[var(--text-main)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] px-4 py-2 rounded-lg font-bold text-[10px] md:text-xs transition-colors shrink-0 border border-[var(--border-color)]">Sertif Hobi</button>
+                <button onclick="switchAdminTab('pdgi')" id="tab-pdgi" class="admin-tab bg-[var(--bg-overlay)] text-[var(--text-main)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] px-4 py-2 rounded-lg font-bold text-[10px] md:text-xs transition-colors shrink-0 border border-[var(--border-color)]">Sertif PDGI</button>
             </div>
 
-            <p class="text-[9px] md:text-[10px] text-[var(--color-primary)] mb-2 shrink-0 italic">*Hati-hati mengedit JSON. Pastikan struktur Kurawal {}, Kurung Siku [], Koma (,), dan Tanda Kutip "" formatnya valid.</p>
+            <!-- VIEW 1: JSON EDITOR (Untuk CV & Konfigurasi Lanjutan) -->
+            <div id="admin-json-view" class="flex flex-col flex-grow min-h-0">
+                <p class="text-[9px] md:text-[10px] text-[var(--color-primary)] mb-2 shrink-0 italic">*Hati-hati mengedit JSON. Pastikan struktur Kurawal {}, Koma (,), dan Tanda Kutip "" formatnya valid.</p>
+                <textarea id="jsonEditor" class="flex-grow w-full bg-[#0d1117] border border-[var(--border-color)] rounded-xl p-3 md:p-5 text-[var(--color-primary)] font-mono text-[10px] md:text-[11px] focus:outline-none focus:border-[var(--color-primary)] resize-none custom-scrollbar leading-relaxed shadow-inner"></textarea>
+            </div>
+
+            <!-- VIEW 2: FORM GUI (Untuk Proyek & Sertifikasi) -->
+            <div id="admin-gui-view" class="hidden flex-col flex-grow min-h-0 relative">
+                <div id="admin-item-list" class="flex-grow overflow-y-auto space-y-3 pr-2 custom-scrollbar pb-16">
+                    <!-- List Item Hasil Render JS -->
+                </div>
+                
+                <div class="absolute bottom-0 left-0 right-0 pt-2 bg-gradient-to-t from-[var(--bg-card-heavy)] to-transparent">
+                    <button onclick="bukaFormItem(-1)" class="w-full py-3 bg-[rgba(var(--color-primary-rgb),0.1)] border border-dashed border-[var(--color-primary)] text-[var(--color-primary)] font-bold rounded-xl hover:bg-[var(--color-primary)] hover:text-[var(--bg-main)] transition-colors shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]">
+                        + Tambah Data Baru
+                    </button>
+                </div>
+
+                <!-- SUB-MODAL FORM INPUT (MUNCUL OVERLAY DI DALAM TAB) -->
+                <div id="admin-item-form" class="hidden absolute inset-0 bg-[var(--bg-card-heavy)] backdrop-blur-xl p-4 sm:p-6 flex flex-col z-20 rounded-xl border border-[var(--color-primary)] overflow-y-auto shadow-2xl">
+                    <h3 id="form-item-title" class="font-bold text-lg mb-4 text-[var(--text-main)] border-b border-[var(--border-color)] pb-2">Tambah Data</h3>
+                    
+                    <div class="space-y-3 flex-grow">
+                        <div>
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Judul *</label>
+                            <input type="text" id="adm-judul" placeholder="Masukkan Judul..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Link Gambar (URL Public / GDrive Link) *</label>
+                            <input type="text" id="adm-gambar" placeholder="https://..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
+                        </div>
+                        
+                        <!-- Dynamic Fields -->
+                        <div id="field-deskripsi">
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Deskripsi Singkat (Proyek)</label>
+                            <textarea id="adm-deskripsi" rows="3" placeholder="Deskripsi..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none resize-none"></textarea>
+                        </div>
+                        <div id="field-link">
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Link URL (Proyek)</label>
+                            <input type="text" id="adm-link" placeholder="https://..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
+                        </div>
+                        
+                        <div id="field-subjudul" class="hidden">
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Subjudul (Penyelenggara Sertifikat)</label>
+                            <input type="text" id="adm-subjudul" placeholder="e.g. Kementerian Kominfo" class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
+                        </div>
+                        <div id="field-tanggal" class="hidden">
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Tanggal (Sertifikasi)</label>
+                            <input type="text" id="adm-tanggal" placeholder="e.g. 20 Agustus 2026" class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 mt-6 pt-4 border-t border-[var(--border-color)]">
+                        <button onclick="simpanFormItem()" class="flex-1 bg-[var(--color-primary)] hover:brightness-110 text-[var(--bg-main)] font-bold py-2.5 rounded-lg transition-colors text-sm shadow-md">Simpan Data</button>
+                        <button onclick="tutupFormItem()" class="flex-1 bg-transparent border border-[var(--text-muted)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-[var(--text-main)] font-bold py-2.5 rounded-lg transition-colors text-sm">Batal</button>
+                    </div>
+                </div>
+            </div>
             
-            <label for="jsonEditor" class="sr-only">Editor JSON Database</label>
-            <textarea id="jsonEditor" class="flex-grow w-full bg-[#0d1117] border border-[var(--border-color)] rounded-xl p-3 md:p-5 text-[var(--color-primary)] font-mono text-[10px] md:text-[11px] focus:outline-none focus:border-[var(--color-primary)] resize-none custom-scrollbar leading-relaxed shadow-inner"></textarea>
-            
+            <!-- MASTER SAVE BUTTON -->
             <div class="mt-4 md:mt-5 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
                 <span id="adminNotif" class="text-[10px] md:text-xs font-bold hidden px-3 md:px-4 py-2 rounded-lg text-center w-full sm:w-auto break-words" aria-live="polite"></span>
-                <button onclick="simpanDatabase()" id="btnSimpanCV" class="w-full sm:w-auto bg-[var(--color-primary)] hover:brightness-110 text-[var(--bg-main)] font-bold px-6 md:px-8 py-2.5 md:py-3 rounded-xl shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.5)] transition-all flex items-center justify-center gap-2 text-sm md:text-base shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-white">
+                <button onclick="simpanDatabaseMain()" id="btnSimpanCV" class="w-full sm:w-auto bg-[var(--color-primary)] hover:brightness-110 text-[var(--bg-main)] font-bold px-6 md:px-8 py-2.5 md:py-3 rounded-xl shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.5)] transition-all flex items-center justify-center gap-2 text-sm md:text-base shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-white">
                     <i class="ph-fill ph-cloud-arrow-up text-base md:text-lg" aria-hidden="true"></i> Push Data ke Sheet
                 </button>
             </div>
@@ -1157,7 +1221,7 @@
         // ================= API URL =================
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxv7LpGFB37qXUvpPYapXUIaaMv0nV06AnGbwQ_CRBSj4zIoxo7N3NwAn9WSsphDrtR/exec";
         let globalCVData = {}; 
-        let globalSheetData = {}; // NEW STATE FOR DYNAMIC SHEETS
+        let globalSheetData = {}; 
         
         document.addEventListener("DOMContentLoaded", () => {
             const urlWithCacheBuster = GAS_URL + "?endpoint=cv&t=" + new Date().getTime();
@@ -1172,7 +1236,8 @@
                     const res = JSON.parse(text); 
                     if(res.status === 'success') {
                         globalCVData = res.data;
-                        globalSheetData = res.sheets || {}; // TANGKAP SHEET BARU
+                        globalSheetData = res.sheets || { proyek: [], sertifHobi: [], sertifPDGI: [] }; 
+                        
                         renderSeluruhUI(globalCVData, globalSheetData);
                         
                         setTimeout(() => {
@@ -1181,7 +1246,7 @@
                             // Konten sudah dirender browser, opacity akan menyala
                             document.getElementById('main-content').classList.remove('opacity-0');
                             initObserver();
-                        }, 500); // Waktu loader dipercepat untuk FCP yang instan
+                        }, 500); 
                         
                         catatViewPengunjungDenganIP();
                     } else { throw new Error(res.message || "Unknown Backend Error"); }
@@ -1201,6 +1266,7 @@
             });
         });
 
+        // ================= TRACKING IP =================
         function catatViewPengunjungDenganIP() {
             const fetchIP = fetch('https://api.ipify.org?format=json').then(res => res.json()).then(data => data.ip).catch(() => 'HIDDEN_IP_' + Math.random().toString(36).substr(2, 5));
             fetchIP.then(clientIP => {
@@ -1233,6 +1299,7 @@
             text.innerHTML = pesanError; text.classList.add('text-red-400', 'mt-4', 'break-words');
         }
 
+        // ================= RENDER UI UTAMA =================
         function renderSeluruhUI(data, sheetData = {}) {
             document.getElementById('ui-namaDepan').textContent = data.profil.namaDepan;
             document.getElementById('ui-namaBelakang').textContent = data.profil.namaBelakang;
@@ -1264,38 +1331,43 @@
                 document.getElementById('ui-sciprofiles').href = data.kontak.sciprofiles;
             }
 
-            // ================== HELPER FILTER GOOGLE DRIVE IMAGE ==================
-            // Memastikan link GDrive public render langsung di tag <img src="">
+            // GITHUB API RENDER
+            const ghUsername = data.kontak.github || 'torvalds'; // Fallback jika username kosong/belum diset
+            document.getElementById('gh-graph').src = `https://ghchart.rshah.org/00E5FF/${ghUsername}`;
+            document.getElementById('gh-stats').src = `https://github-readme-stats.vercel.app/api?username=${ghUsername}&show_icons=true&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8&icon_color=6366F1`;
+            document.getElementById('gh-langs').src = `https://github-readme-stats.vercel.app/api/top-langs/?username=${ghUsername}&layout=compact&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8`;
+
+            // HELPER FILTER GOOGLE DRIVE IMAGE
             const convertDriveLink = (url) => {
                 if(!url) return 'https://ui-avatars.com/api/?name=No+Image&background=1e293b&color=fff';
                 const match = url.match(/\/d\/(.+?)\//);
                 if(match && match[1]) return `https://drive.google.com/uc?id=${match[1]}`;
-                return url; // Biarkan jika url langsung (.jpg, .png dll)
+                return url; 
             };
 
-            // ================== RENDER PROYEK WEB ==================
+            // RENDER PROYEK WEB DARI SHEET
             if(sheetData.proyek && document.getElementById('ui-proyek-container')) {
                 const proyekHTML = sheetData.proyek.map((p, i) => `
-                    <article class="premium-card overflow-hidden group hover:-translate-y-2 transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.5)] animate-on-scroll flex flex-col" style="transition-delay: ${i*100}ms">
-                        <div class="h-48 md:h-56 w-full overflow-hidden bg-[var(--bg-main)] border-b border-[var(--border-color)] flex items-center justify-center p-2">
-                            <img src="${convertDriveLink(p.Gambar)}" alt="${p.Judul}" loading="lazy" class="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500">
+                    <article class="premium-card overflow-hidden group hover:-translate-y-2 transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.5)] animate-on-scroll flex flex-col bg-[#0d1117]/80" style="transition-delay: ${i*100}ms">
+                        <div class="h-48 md:h-56 w-full overflow-hidden bg-white/5 border-b border-[var(--border-color)]">
+                            <img src="${convertDriveLink(p.Gambar)}" alt="${p.Judul}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                         </div>
                         <div class="p-5 md:p-6 flex flex-col flex-grow">
                             <h3 class="text-lg font-bold text-[var(--text-main)] mb-2 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2 drop-shadow-sm">${p.Judul}</h3>
                             <p class="text-[var(--text-muted)] text-xs md:text-sm mb-6 line-clamp-3 leading-relaxed flex-grow">${p.Deskripsi}</p>
-                            ${p.Link ? `<a href="${p.Link}" target="_blank" rel="noopener noreferrer" class="mt-auto inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-[rgba(var(--color-primary-rgb),0.1)] text-[var(--color-primary)] font-bold text-sm border border-[rgba(var(--color-primary-rgb),0.3)] hover:bg-[var(--color-primary)] hover:text-[var(--bg-main)] transition-all shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.2)] hover:shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.5)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"><i class="ph-bold ph-eye text-lg"></i> Lihat</a>` : ''}
+                            ${p.Link ? `<a href="${p.Link}" target="_blank" rel="noopener noreferrer" class="mt-auto inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-[var(--color-primary)] text-black font-bold text-sm hover:brightness-110 transition-all shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.3)] hover:shadow-[0_0_25px_rgba(var(--color-primary-rgb),0.6)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--text-main)]"><i class="ph-bold ph-eye text-lg"></i> Lihat Proyek</a>` : ''}
                         </div>
                     </article>
                 `).join('');
                 document.getElementById('ui-proyek-container').innerHTML = proyekHTML || `<p class="text-[var(--text-muted)] text-center col-span-full py-8 border border-dashed border-[var(--border-color)] rounded-xl">Belum ada proyek ditambahkan.</p>`;
             }
 
-            // ================== RENDER SERTIFIKASI ==================
+            // RENDER SERTIFIKASI DARI SHEET
             const generateSertifHTML = (arr) => {
                 if(!arr || arr.length === 0) return `<p class="text-[var(--text-muted)] text-center col-span-full py-8 border border-dashed border-[var(--border-color)] rounded-xl">Data sertifikasi kosong.</p>`;
                 return arr.map((s, i) => `
-                    <article class="premium-card p-4 group hover:-translate-y-2 transition-all duration-300 shadow-[0_10px_25px_rgba(0,0,0,0.5)] animate-on-scroll flex flex-col h-full" style="transition-delay: ${i*100}ms">
-                        <div class="h-40 md:h-48 w-full rounded-lg overflow-hidden border border-[var(--border-color)] mb-4 bg-[#0d1117] relative">
+                    <article class="premium-card p-4 group hover:-translate-y-2 transition-all duration-300 shadow-[0_10px_25px_rgba(0,0,0,0.5)] animate-on-scroll flex flex-col h-full bg-[#0d1117]/80" style="transition-delay: ${i*100}ms">
+                        <div class="h-40 md:h-48 w-full rounded-lg overflow-hidden border border-[var(--border-color)] mb-4 bg-white/5 relative">
                             <img src="${convertDriveLink(s.Gambar)}" alt="${s.Judul}" loading="lazy" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500">
                         </div>
                         <div class="flex-grow flex flex-col justify-center text-center">
@@ -1412,33 +1484,8 @@
             });
         }
 
-        // SISTEM DASHBOARD ADMIN MULTI-TAB CRUD
         let currentAdminTab = 'cv';
-
-        function switchAdminTab(tab) {
-            currentAdminTab = tab;
-            
-            // Update Styling Tabs
-            document.querySelectorAll('.admin-tab').forEach(el => {
-                el.classList.remove('bg-[var(--color-primary)]', 'text-[var(--bg-main)]', 'shadow-md');
-                el.classList.add('bg-[var(--bg-overlay)]', 'text-[var(--text-main)]', 'border', 'border-[var(--border-color)]');
-            });
-            const activeEl = document.getElementById('tab-' + tab);
-            activeEl.classList.remove('bg-[var(--bg-overlay)]', 'text-[var(--text-main)]', 'border');
-            activeEl.classList.add('bg-[var(--color-primary)]', 'text-[var(--bg-main)]', 'shadow-md');
-            
-            // Populate JSON Berdasarkan Tab yang Aktif
-            const editor = document.getElementById('jsonEditor');
-            if(tab === 'cv') {
-                editor.value = JSON.stringify(globalCVData, null, 4);
-            } else if (tab === 'proyek') {
-                editor.value = JSON.stringify(globalSheetData.proyek || [], null, 4);
-            } else if (tab === 'hobi') {
-                editor.value = JSON.stringify(globalSheetData.sertifHobi || [], null, 4);
-            } else if (tab === 'pdgi') {
-                editor.value = JSON.stringify(globalSheetData.sertifPDGI || [], null, 4);
-            }
-        }
+        let currentEditIndex = -1; // -1 for Add New
 
         function bukaLoginAdmin() { 
             document.getElementById('admin-modal').classList.remove('hidden'); 
@@ -1459,62 +1506,211 @@
                 document.getElementById('admin-login').classList.add('hidden'); 
                 document.getElementById('admin-dashboard').classList.remove('hidden');
                 
-                // Set default tab on login
+                // Initialize default tab
                 switchAdminTab('cv');
-                
                 document.getElementById('loginErr').classList.add('hidden');
-                document.getElementById('jsonEditor').focus();
             } else { 
                 document.getElementById('loginErr').classList.remove('hidden'); 
             }
         }
+
+        function switchAdminTab(tab) {
+            currentAdminTab = tab;
+            
+            // Tab Buttons Styling
+            document.querySelectorAll('.admin-tab').forEach(el => {
+                el.classList.remove('bg-[var(--color-primary)]', 'text-[var(--bg-main)]', 'shadow-md');
+                el.classList.add('bg-[var(--bg-overlay)]', 'text-[var(--text-main)]', 'border', 'border-[var(--border-color)]');
+            });
+            const activeEl = document.getElementById('tab-' + tab);
+            activeEl.classList.remove('bg-[var(--bg-overlay)]', 'text-[var(--text-main)]', 'border');
+            activeEl.classList.add('bg-[var(--color-primary)]', 'text-[var(--bg-main)]', 'shadow-md');
+            
+            // View Toggling
+            if(tab === 'cv') {
+                document.getElementById('admin-json-view').classList.remove('hidden');
+                document.getElementById('admin-json-view').classList.add('flex');
+                document.getElementById('admin-gui-view').classList.add('hidden');
+                document.getElementById('admin-gui-view').classList.remove('flex');
+                
+                // Load JSON to editor
+                // Ensure default structure mapping just in case
+                if(!globalCVData.kontak) globalCVData.kontak = {};
+                if(!globalCVData.kontak.github) globalCVData.kontak.github = "itsmeaxaa";
+                document.getElementById('jsonEditor').value = JSON.stringify(globalCVData, null, 4);
+                
+            } else {
+                document.getElementById('admin-json-view').classList.add('hidden');
+                document.getElementById('admin-json-view').classList.remove('flex');
+                document.getElementById('admin-gui-view').classList.remove('hidden');
+                document.getElementById('admin-gui-view').classList.add('flex');
+                
+                renderAdminGUIList();
+            }
+        }
+
+        function renderAdminGUIList() {
+            let dataArray = [];
+            if(currentAdminTab === 'proyek') dataArray = globalSheetData.proyek || [];
+            if(currentAdminTab === 'hobi') dataArray = globalSheetData.sertifHobi || [];
+            if(currentAdminTab === 'pdgi') dataArray = globalSheetData.sertifPDGI || [];
+
+            const listContainer = document.getElementById('admin-item-list');
+            if(dataArray.length === 0) {
+                listContainer.innerHTML = `<div class="text-center py-6 text-[var(--text-muted)] text-sm border border-dashed border-[var(--border-color)] rounded-xl">Belum ada data. Silakan tambah data baru.</div>`;
+                return;
+            }
+
+            listContainer.innerHTML = dataArray.map((item, index) => `
+                <div class="admin-item-card group">
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <img src="${item.Gambar || 'https://placehold.co/100'}" class="w-10 h-10 rounded object-cover bg-[#0d1117] shrink-0" onerror="this.src='https://placehold.co/100'">
+                        <div class="min-w-0">
+                            <h4 class="text-sm font-bold text-[var(--text-main)] truncate">${item.Judul || 'Tanpa Judul'}</h4>
+                            <p class="text-[10px] text-[var(--text-muted)] truncate">${currentAdminTab === 'proyek' ? (item.Deskripsi || '') : (item.Subjudul || item.Tanggal || '')}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 shrink-0 ml-2">
+                        <button onclick="bukaFormItem(${index})" class="p-2 bg-[rgba(var(--color-primary-rgb),0.1)] text-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary)] hover:text-black transition-colors" title="Edit"><i class="ph-bold ph-pencil-simple"></i></button>
+                        <button onclick="hapusItem(${index})" class="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors" title="Hapus"><i class="ph-bold ph-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function bukaFormItem(index) {
+            currentEditIndex = index;
+            document.getElementById('admin-item-form').classList.remove('hidden');
+            document.getElementById('form-item-title').textContent = index === -1 ? 'Tambah Data Baru' : 'Edit Data';
+
+            // Show/Hide Fields based on current tab
+            const isProyek = currentAdminTab === 'proyek';
+            document.getElementById('field-deskripsi').style.display = isProyek ? 'block' : 'none';
+            document.getElementById('field-link').style.display = isProyek ? 'block' : 'none';
+            document.getElementById('field-subjudul').style.display = !isProyek ? 'block' : 'none';
+            document.getElementById('field-tanggal').style.display = !isProyek ? 'block' : 'none';
+
+            // Clear inputs
+            const ids = ['adm-judul', 'adm-gambar', 'adm-deskripsi', 'adm-link', 'adm-subjudul', 'adm-tanggal'];
+            ids.forEach(id => document.getElementById(id).value = '');
+
+            // Populate if edit
+            if(index !== -1) {
+                let dataArray = [];
+                if(currentAdminTab === 'proyek') dataArray = globalSheetData.proyek;
+                if(currentAdminTab === 'hobi') dataArray = globalSheetData.sertifHobi;
+                if(currentAdminTab === 'pdgi') dataArray = globalSheetData.sertifPDGI;
+                
+                const item = dataArray[index];
+                document.getElementById('adm-judul').value = item.Judul || '';
+                document.getElementById('adm-gambar').value = item.Gambar || '';
+                
+                if(isProyek) {
+                    document.getElementById('adm-deskripsi').value = item.Deskripsi || '';
+                    document.getElementById('adm-link').value = item.Link || '';
+                } else {
+                    document.getElementById('adm-subjudul').value = item.Subjudul || '';
+                    document.getElementById('adm-tanggal').value = item.Tanggal || '';
+                }
+            }
+        }
+
+        function tutupFormItem() {
+            document.getElementById('admin-item-form').classList.add('hidden');
+        }
+
+        function simpanFormItem() {
+            let dataArray = [];
+            if(currentAdminTab === 'proyek') dataArray = globalSheetData.proyek || [];
+            if(currentAdminTab === 'hobi') dataArray = globalSheetData.sertifHobi || [];
+            if(currentAdminTab === 'pdgi') dataArray = globalSheetData.sertifPDGI || [];
+
+            const newItem = {
+                Judul: document.getElementById('adm-judul').value.trim(),
+                Gambar: document.getElementById('adm-gambar').value.trim()
+            };
+
+            if(currentAdminTab === 'proyek') {
+                newItem.Deskripsi = document.getElementById('adm-deskripsi').value.trim();
+                newItem.Link = document.getElementById('adm-link').value.trim();
+            } else {
+                newItem.Subjudul = document.getElementById('adm-subjudul').value.trim();
+                newItem.Tanggal = document.getElementById('adm-tanggal').value.trim();
+            }
+
+            // Validasi Input Wajib
+            if(!newItem.Judul || !newItem.Gambar) {
+                alert("Judul dan Link Gambar wajib diisi!");
+                return;
+            }
+
+            if(currentEditIndex === -1) {
+                dataArray.push(newItem); // Tambah Baru
+            } else {
+                dataArray[currentEditIndex] = newItem; // Edit yang sudah ada
+            }
+
+            // Update ke Global Memory
+            if(currentAdminTab === 'proyek') globalSheetData.proyek = dataArray;
+            if(currentAdminTab === 'hobi') globalSheetData.sertifHobi = dataArray;
+            if(currentAdminTab === 'pdgi') globalSheetData.sertifPDGI = dataArray;
+
+            tutupFormItem();
+            renderAdminGUIList();
+            
+            // Highlight Save Button to remind user to Push
+            const btnPush = document.getElementById('btnSimpanCV');
+            btnPush.classList.add('ring-4', 'ring-[var(--color-secondary)]', 'animate-pulse');
+            setTimeout(() => { btnPush.classList.remove('ring-4', 'ring-[var(--color-secondary)]', 'animate-pulse'); }, 2000);
+        }
+
+        function hapusItem(index) {
+            if(!confirm("Yakin ingin menghapus data ini?")) return;
+            
+            let dataArray = [];
+            if(currentAdminTab === 'proyek') dataArray = globalSheetData.proyek;
+            if(currentAdminTab === 'hobi') dataArray = globalSheetData.sertifHobi;
+            if(currentAdminTab === 'pdgi') dataArray = globalSheetData.sertifPDGI;
+
+            dataArray.splice(index, 1);
+            renderAdminGUIList();
+            
+            // Highlight Save Button to remind user to Push
+            const btnPush = document.getElementById('btnSimpanCV');
+            btnPush.classList.add('ring-4', 'ring-red-500', 'animate-pulse');
+            setTimeout(() => { btnPush.classList.remove('ring-4', 'ring-red-500', 'animate-pulse'); }, 2000);
+        }
         
-        function simpanDatabase() {
+        function simpanDatabaseMain() {
             const btn = document.getElementById('btnSimpanCV'); 
             const notif = document.getElementById('adminNotif');
-            let newData; 
-            
-            try { 
-                newData = JSON.parse(document.getElementById('jsonEditor').value); 
-                // Pastikan tipe data array untuk sheet dinamis
-                if(currentAdminTab !== 'cv' && !Array.isArray(newData)) {
-                    throw new Error("Format harus berupa Array [...] untuk data tabel!");
-                }
-            } 
-            catch(e) { 
-                alert("Format JSON tidak valid!\nPastikan koma dan tanda kutip benar.\nDetail: " + e.message); 
-                return; 
-            }
-            
-            btn.disabled = true; btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin mr-1" aria-hidden="true"></i> Menyimpan...'; notif.classList.add('hidden');
-            
-            // Konfigurasi aksi dan target berdasarkan tab aktif
             let payload = { user: 'axaaxyz_01', pass: 'axaxyz999' };
             
             if (currentAdminTab === 'cv') {
+                try { 
+                    payload.newData = JSON.parse(document.getElementById('jsonEditor').value); 
+                } catch(e) { 
+                    alert("Format JSON Data CV tidak valid! Pastikan koma dan tanda kutip benar."); return; 
+                }
                 payload.action = 'updateCV';
-                payload.newData = newData;
             } else {
                 payload.action = 'updateSheet';
-                payload.data = newData;
-                if(currentAdminTab === 'proyek') payload.sheetName = 'Proyek_Web';
-                if(currentAdminTab === 'hobi') payload.sheetName = 'Sertifikasi_Hobi';
-                if(currentAdminTab === 'pdgi') payload.sheetName = 'Sertifikasi_PDGI';
+                if(currentAdminTab === 'proyek') { payload.sheetName = 'Proyek_Web'; payload.data = globalSheetData.proyek; }
+                if(currentAdminTab === 'hobi') { payload.sheetName = 'Sertifikasi_Hobi'; payload.data = globalSheetData.sertifHobi; }
+                if(currentAdminTab === 'pdgi') { payload.sheetName = 'Sertifikasi_PDGI'; payload.data = globalSheetData.sertifPDGI; }
             }
+            
+            btn.disabled = true; btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin mr-1" aria-hidden="true"></i> Processing...'; notif.classList.add('hidden');
 
             fetch(GAS_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
             .then(res => res.json())
             .then(res => {
                 if(res.status === 'success') {
-                    notif.innerHTML = "<i class='ph-fill ph-check-circle' aria-hidden='true'></i> Data Berhasil Disimpan!";
+                    notif.innerHTML = "<i class='ph-fill ph-check-circle' aria-hidden='true'></i> Data Tersimpan ke Database!";
                     notif.classList.remove('hidden', 'bg-red-500/20', 'text-red-500'); 
                     notif.classList.add('bg-green-500/20', 'text-green-500');
                     
-                    // Update state lokal agar render tidak perlu refresh page
-                    if(currentAdminTab === 'cv') globalCVData = newData;
-                    if(currentAdminTab === 'proyek') globalSheetData.proyek = newData;
-                    if(currentAdminTab === 'hobi') globalSheetData.sertifHobi = newData;
-                    if(currentAdminTab === 'pdgi') globalSheetData.sertifPDGI = newData;
+                    if(currentAdminTab === 'cv') globalCVData = payload.newData; 
                     
                     renderSeluruhUI(globalCVData, globalSheetData); 
                 } else {
@@ -1524,7 +1720,7 @@
                 }
             })
             .catch(err => {
-                notif.textContent = "Connection Timeout / Error Jaringan.";
+                notif.textContent = "Connection Timeout.";
                 notif.classList.remove('hidden', 'bg-green-500/20', 'text-green-500'); 
                 notif.classList.add('bg-red-500/20', 'text-red-500');
             }).finally(() => { 
