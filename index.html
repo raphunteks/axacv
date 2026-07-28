@@ -1470,7 +1470,19 @@
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username: ghUsername, token: token })
-            }).then(res => res.json()).then(res => {
+            })
+            .then(async res => {
+                const isJson = res.headers.get('content-type')?.includes('application/json');
+                const data = isJson ? await res.json() : null;
+                
+                // Jika server tidak OK (misal 401, 404, atau 500), lempar error agar ditangkap catch()
+                if (!res.ok) {
+                     const errorMsg = data && data.message ? data.message : `HTTP Error ${res.status}: ${res.statusText}`;
+                     throw new Error(errorMsg);
+                }
+                return data;
+            })
+            .then(res => {
                 const statsEl = document.getElementById('native-gh-stats');
                 const langsEl = document.getElementById('native-gh-langs');
                 
@@ -1509,8 +1521,9 @@
                     langsEl.innerHTML = `<div class="text-red-400 text-xs text-center"><i class="ph-bold ph-warning-circle text-3xl block mb-2 mx-auto"></i> Gagal Memuat Data Bahasa.</div>`;
                 }
             }).catch(e => {
-                document.getElementById('native-gh-stats').innerHTML = `<div class="text-red-400 text-xs text-center"><i class="ph-bold ph-warning-circle text-3xl block mb-2 mx-auto"></i> Server Backend Vercel Error / Timeout.</div>`;
-                document.getElementById('native-gh-langs').innerHTML = `<div class="text-red-400 text-xs text-center"><i class="ph-bold ph-warning-circle text-3xl block mb-2 mx-auto"></i> Server Backend Vercel Error / Timeout.</div>`;
+                // SANGAT KRITIKAL: Menampilkan pesan error ASLI (bukan sekadar timeout)
+                document.getElementById('native-gh-stats').innerHTML = `<div class="text-red-400 text-xs text-center flex flex-col items-center justify-center h-full"><i class="ph-bold ph-warning-circle text-3xl block mb-2"></i> <span class="font-bold">Server API Error</span><span class="text-white/50 text-[10px] mt-2 block break-words w-full px-4">${e.message}</span></div>`;
+                document.getElementById('native-gh-langs').innerHTML = `<div class="text-red-400 text-xs text-center flex flex-col items-center justify-center h-full"><i class="ph-bold ph-warning-circle text-3xl block mb-2"></i> <span class="font-bold">Server API Error</span><span class="text-white/50 text-[10px] mt-2 block break-words w-full px-4">${e.message}</span></div>`;
             });
         }
 
