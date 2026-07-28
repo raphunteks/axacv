@@ -2,7 +2,8 @@
 <html lang="id" class="scroll-smooth theme-cyan">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- FIX AKSESIBILITAS: Menghapus user-scalable=no agar zoom diizinkan (Skor 100) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#030712">
     
     <!-- ======================================================================= -->
@@ -21,7 +22,8 @@
     <link rel="dns-prefetch" href="https://script.google.com">
     <link rel="dns-prefetch" href="https://ui-avatars.com">
     
-    <link rel="preload" href="/axalogo.png" as="image" type="image/png">
+    <!-- FIX PERFORMA LCP: Menambahkan fetchpriority high untuk gambar utama -->
+    <link rel="preload" href="/axalogo.png" as="image" type="image/png" fetchpriority="high">
 
     <!-- ======================================================================= -->
     <!-- SUPER BIG UPGRADE: SITEMAP AUTODISCOVERY, PREFETCH & ALTERNATE          -->
@@ -233,6 +235,7 @@
     <link rel="icon" type="image/png" href="/axalogo.png">
     <link rel="apple-touch-icon" href="/axalogo.png">
     
+    <!-- Font display swap applied by Google Fonts natively -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
@@ -240,18 +243,16 @@
     <!-- Script Theming (Dipanggil paling awal agar tidak berkedip/Flash) -->
     <script>
         function initThemeSettings() {
-            const savedMode = localStorage.getItem('axa-theme-mode') || 'dark'; // (Deprecated flag, keeping for safety)
+            const savedMode = localStorage.getItem('axa-theme-mode') || 'dark';
             const savedBg = localStorage.getItem('axa-bg-theme') || 'dark';
             const savedColor = localStorage.getItem('axa-theme-color') || 'theme-cyan';
             
-            // Setel Background Theme Attribute
             if(savedBg === 'dark') {
                 document.documentElement.removeAttribute('data-theme');
             } else {
                 document.documentElement.setAttribute('data-theme', savedBg);
             }
             
-            // Bersihkan kelas tema warna sebelumnya dan setel yang baru
             document.documentElement.className = `scroll-smooth ${savedColor}`;
         }
         initThemeSettings();
@@ -262,7 +263,6 @@
            THEME ENGINE: CSS VARIABLES DYNAMIC & GEN Z AESTHETICS
            ========================================= */
         :root {
-            /* Palette Dasar (Deep Blue/Dark - DEFAULT) */
             --bg-main: #030712;
             --bg-card: rgba(30, 41, 59, 0.4);
             --bg-card-heavy: rgba(15, 23, 42, 0.8);
@@ -274,14 +274,13 @@
             --border-heavy: rgba(255, 255, 255, 0.2);
             --shadow-glass: rgba(0, 0, 0, 0.3);
 
-            /* Default Primary (Cyan) */
             --color-primary: #00E5FF;
             --color-primary-rgb: 0, 229, 255;
             --color-secondary: #6366F1;
             --color-secondary-rgb: 99, 102, 241;
         }
 
-        /* SUPER BIG UPGRADE: 5 BACKGROUND TEMA BARU EKSKLUSIF */
+        /* 5 BACKGROUND TEMA BARU EKSKLUSIF */
         [data-theme="light"] {
             --bg-main: #f8fafc; --bg-card: rgba(255, 255, 255, 0.7); --bg-card-heavy: rgba(255, 255, 255, 0.95);
             --bg-overlay: rgba(0, 0, 0, 0.05); --text-main: #0f172a; --text-muted: #475569; --text-inverse: #ffffff;
@@ -314,7 +313,6 @@
         }
 
         /* 50 TEMA WARNA (THE ULTIMATE COLLECTION) */
-        /* Base 10 */
         .theme-cyan { --color-primary: #00E5FF; --color-primary-rgb: 0, 229, 255; --color-secondary: #6366F1; --color-secondary-rgb: 99, 102, 241; }
         .theme-blue { --color-primary: #3B82F6; --color-primary-rgb: 59, 130, 246; --color-secondary: #8B5CF6; --color-secondary-rgb: 139, 92, 246; }
         .theme-emerald { --color-primary: #10B981; --color-primary-rgb: 16, 185, 129; --color-secondary: #0ea5e9; --color-secondary-rgb: 14, 165, 233; }
@@ -326,7 +324,6 @@
         .theme-pink { --color-primary: #EC4899; --color-primary-rgb: 236, 72, 153; --color-secondary: #f43f5e; --color-secondary-rgb: 244, 63, 94; }
         .theme-red { --color-primary: #EF4444; --color-primary-rgb: 239, 68, 68; --color-secondary: #f97316; --color-secondary-rgb: 249, 115, 22; }
         
-        /* Neon / Cyberpunk 10 */
         .theme-neon-green { --color-primary: #39FF14; --color-primary-rgb: 57, 255, 20; --color-secondary: #00E5FF; }
         .theme-neon-pink { --color-primary: #FF10F0; --color-primary-rgb: 255, 16, 240; --color-secondary: #8B5CF6; }
         .theme-cyber-yellow { --color-primary: #FFD300; --color-primary-rgb: 255, 211, 0; --color-secondary: #FF10F0; }
@@ -338,7 +335,6 @@
         .theme-plasma { --color-primary: #B533FF; --color-primary-rgb: 181, 51, 255; --color-secondary: #FF10F0; }
         .theme-tron { --color-primary: #4DEEEA; --color-primary-rgb: 77, 238, 234; --color-secondary: #74EE15; }
 
-        /* Soft / Pastel 10 */
         .theme-peach { --color-primary: #FFDAB9; --color-primary-rgb: 255, 218, 185; --color-secondary: #FFB7C5; }
         .theme-lavender { --color-primary: #E6E6FA; --color-primary-rgb: 230, 230, 250; --color-secondary: #E0B0FF; }
         .theme-mint { --color-primary: #98FF98; --color-primary-rgb: 152, 255, 152; --color-secondary: #AFEEEE; }
@@ -350,7 +346,6 @@
         .theme-periwinkle { --color-primary: #CCCCFF; --color-primary-rgb: 204, 204, 255; --color-secondary: #FFB7C5; }
         .theme-sand { --color-primary: #F4A460; --color-primary-rgb: 244, 164, 96; --color-secondary: #FFE4B5; }
 
-        /* Professional / Deep 10 */
         .theme-navy { --color-primary: #000080; --color-primary-rgb: 0, 0, 128; --color-secondary: #4682B4; }
         .theme-maroon { --color-primary: #800000; --color-primary-rgb: 128, 0, 0; --color-secondary: #DC143C; }
         .theme-olive { --color-primary: #808000; --color-primary-rgb: 128, 128, 0; --color-secondary: #BDB76B; }
@@ -362,7 +357,6 @@
         .theme-ochre { --color-primary: #CC7722; --color-primary-rgb: 204, 119, 34; --color-secondary: #DAA520; }
         .theme-charcoal { --color-primary: #36454F; --color-primary-rgb: 54, 69, 79; --color-secondary: #708090; }
 
-        /* Metallic / Premium 10 */
         .theme-gold { --color-primary: #FFD700; --color-primary-rgb: 255, 215, 0; --color-secondary: #DAA520; }
         .theme-silver { --color-primary: #C0C0C0; --color-primary-rgb: 192, 192, 192; --color-secondary: #A9A9A9; }
         .theme-bronze { --color-primary: #CD7F32; --color-primary-rgb: 205, 127, 50; --color-secondary: #D2691E; }
@@ -374,9 +368,6 @@
         .theme-topaz { --color-primary: #FFC87C; --color-primary-rgb: 255, 200, 124; --color-secondary: #FFA500; }
         .theme-onyx { --color-primary: #353839; --color-primary-rgb: 53, 56, 57; --color-secondary: #000000; }
 
-        /* =========================================
-           UI/UX DESIGN CSS & AESTHETIC UPGRADES
-           ========================================= */
         body {
             background-color: var(--bg-main);
             color: var(--text-main);
@@ -391,10 +382,9 @@
             box-shadow: 0 0 10px var(--color-primary);
         }
 
-        /* Accessibility WCAG */
         :focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; border-radius: 6px; }
 
-        /* 1. BACKGROUND: DOT MATRIX, NOISE & NEON GLOWS (Tri-Orb System) */
+        /* Background Effects */
         .bg-dots {
             position: fixed; inset: 0; z-index: -20;
             background-image: radial-gradient(var(--border-heavy) 1px, transparent 1px);
@@ -411,11 +401,11 @@
         .glow-orb {
             position: fixed; border-radius: 50%; filter: blur(140px); z-index: -10; opacity: 0.15;
             animation: orb-breathe 15s ease-in-out infinite alternate; will-change: transform, opacity;
-            mix-blend-mode: screen; /* Aurora blend mode */
+            mix-blend-mode: screen; 
         }
         .orb-1 { top: -10%; left: -5%; width: 50vw; height: 50vw; background-color: var(--color-primary); }
         .orb-2 { bottom: -10%; right: -5%; width: 40vw; height: 40vw; background-color: var(--color-secondary); animation-delay: -5s;}
-        .orb-3 { top: 30%; left: 40%; width: 35vw; height: 35vw; background-color: var(--text-main); opacity: 0.05; filter: blur(160px); animation-delay: -10s; } /* New Holographic Orb */
+        .orb-3 { top: 30%; left: 40%; width: 35vw; height: 35vw; background-color: var(--text-main); opacity: 0.05; filter: blur(160px); animation-delay: -10s; }
         
         [data-theme="light"] .glow-orb { opacity: 0.25; filter: blur(100px); mix-blend-mode: multiply; }
 
@@ -424,7 +414,7 @@
             100% { transform: translate(30px, -50px) scale(1.15); opacity: 0.25; } 
         }
 
-        /* 2. SKELETON / SHIMMER LOADING SCREEN */
+        /* LOADING SCREEN */
         #loader-screen { position: fixed; inset: 0; background-color: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; }
         .pulse-ring { width: 80px; height: 80px; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--color-primary); border-bottom-color: var(--color-secondary); animation: spin-ring 1.2s linear infinite; position: relative;}
         .pulse-ring::before { content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--color-secondary); border-right-color: var(--color-primary); animation: spin-ring 0.8s linear infinite reverse;}
@@ -437,43 +427,42 @@
         }
         @keyframes shimmer-slide { to { background-position: 200% center; } }
 
-        /* 3. PREMIUM CARD / GLASSMORPHISM + 3D TILT & GLARE */
+        /* PREMIUM CARD & GLASSMORPHISM */
         .premium-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 1.5rem;
             backdrop-filter: blur(25px) saturate(150%);
             -webkit-backdrop-filter: blur(25px) saturate(150%);
-            box-shadow: 0 10px 30px var(--shadow-glass), inset 0 1px 0 rgba(255,255,255,0.05); /* Neumorphic Inner Glass */
+            box-shadow: 0 10px 30px var(--shadow-glass), inset 0 1px 0 rgba(255,255,255,0.05); 
             transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative; overflow: hidden; width: 100%;
-            transform: perspective(1000px) translateZ(0); /* Hardware Accel */
+            transform: perspective(1000px) translateZ(0);
         }
-        /* Advanced Diagonal Glare Reflection */
         .premium-card::before {
             content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
             background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
             transform: skewX(-25deg); transition: 0.7s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; z-index: 10;
         }
         .premium-card:hover { 
-            transform: perspective(1000px) translateY(-6px) rotateX(2deg) scale(1.01); /* 3D Tilt */
+            transform: perspective(1000px) translateY(-6px) rotateX(2deg) scale(1.01); 
             border-color: rgba(var(--color-primary-rgb), 0.5); 
-            box-shadow: 0 25px 50px -12px rgba(var(--color-primary-rgb), 0.25), inset 0 0 20px rgba(var(--color-primary-rgb),0.05); /* Multi-Layer Glow */
+            box-shadow: 0 25px 50px -12px rgba(var(--color-primary-rgb), 0.25), inset 0 0 20px rgba(var(--color-primary-rgb),0.05); 
         }
         .premium-card:hover::before { left: 200%; }
 
-        /* 4. AVATAR MORPH BLOB & COMET TRAIL */
+        /* AVATAR MORPH BLOB & SCANNER */
         .scanner-container { position: relative; overflow: hidden; border-radius: 50%; background-color: var(--bg-card-heavy); } 
         .scanner-line { 
             position: absolute; width: 100%; height: 3px; background: var(--color-primary); 
-            box-shadow: 0 0 20px 5px var(--color-primary), 0 -20px 30px -10px var(--color-primary); /* Comet Trail */
+            box-shadow: 0 0 20px 5px var(--color-primary), 0 -20px 30px -10px var(--color-primary);
             z-index: 20; animation: scan-anim 3s infinite ease-in-out; opacity: 0.8;
         }
         @keyframes scan-anim { 0% { top: -10%; opacity: 0; } 10% { opacity: 0.9; } 90% { opacity: 0.9; } 100% { top: 110%; opacity: 0; } }
         
         .avatar-ring {
             background: conic-gradient(from 0deg, transparent 0%, var(--color-primary) 50%, transparent 100%);
-            animation: spin-ring 4s linear infinite, morph-blob 8s ease-in-out infinite alternate; /* Morphing Blob */
+            animation: spin-ring 4s linear infinite, morph-blob 8s ease-in-out infinite alternate; 
             padding: 3px;
         }
         @keyframes morph-blob {
@@ -482,7 +471,7 @@
             100% { border-radius: 50%; }
         }
 
-        /* 5. TYPOGRAPHY & CYBER GLITCH */
+        /* TYPOGRAPHY */
         .text-gradient { 
             background: linear-gradient(135deg, var(--text-main) 0%, var(--color-secondary) 50%, var(--color-primary) 100%); 
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
@@ -493,17 +482,15 @@
         .cyber-glitch:hover { animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite; text-shadow: 2px 2px var(--color-primary), -2px -2px var(--color-secondary); }
         @keyframes glitch-skew { 0% { transform: skew(0deg); } 20% { transform: skew(-10deg); } 40% { transform: skew(10deg); } 60% { transform: skew(-5deg); } 80% { transform: skew(5deg); } 100% { transform: skew(0deg); } }
         
-        /* Text-Stroke Gradient for Section Titles */
         .text-stroke-gradient {
             background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             drop-shadow: 0 0 10px rgba(var(--color-primary-rgb),0.5);
         }
 
-        /* Text Selection Adapts to Theme */
         ::selection { background: rgba(var(--color-primary-rgb), 0.3); color: var(--color-primary); text-shadow: 0 0 8px rgba(var(--color-primary-rgb), 0.6); }
 
-        /* 6. CYBER-FLOW TIMELINE & BARBER POLE BARS */
+        /* CYBER-FLOW TIMELINE & BARS */
         .circuit-line { position: relative; width: 100%; }
         .circuit-line::before { 
             content: ''; position: absolute; left: 21px; top: 0; bottom: 0; width: 2px; 
@@ -519,11 +506,10 @@
         }
         @keyframes move-stripes { from { background-position: 200% 0; } to { background-position: 0 0; } }
         
-        /* 7. ANIMATION ON SCROLL */
+        /* SCROLL ANIMATION & SCROLLBAR */
         .animate-on-scroll { opacity: 0; transform: translateY(40px) scale(0.95); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform, opacity; }
         .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0) scale(1); }
 
-        /* 8. CUSTOM SCROLLBAR Glow-in-the-dark */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-main); }
         ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, var(--border-heavy), var(--bg-card-heavy)); border-radius: 10px; border: 2px solid var(--bg-main); transition: background 0.3s;}
@@ -531,19 +517,16 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* 9. MICRO-INTERACTIONS & HOVER EFFECTS */
-        /* Center-Out Magnetic Underline */
+        /* MICRO-INTERACTIONS */
         .link-hover { position: relative; color: var(--text-main); transition: color 0.3s; word-break: break-all; outline: none; }
         .link-hover::after { content: ''; position: absolute; width: 0; height: 1.5px; bottom: -2px; left: 50%; background-color: var(--color-primary); transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), left 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
         .link-hover:hover, .link-hover:focus-visible { color: var(--color-primary); text-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.4); }
         .link-hover:hover::after, .link-hover:focus-visible::after { width: 100%; left: 0; }
         
-        /* Data-Glitch Micro Bouncing Icons */
         .icon-bounce-group:hover .icon-bounce { animation: bounce-micro 0.5s ease, icon-glitch 0.2s 0.2s; }
         @keyframes bounce-micro { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
         @keyframes icon-glitch { 0% { opacity:1; transform:skew(0); } 50% { opacity:0.8; transform:skew(-10deg); } 100% { opacity:1; transform:skew(0); } }
 
-        /* Liquid Hover CTA Button */
         .btn-pulse { position: relative; overflow: hidden; z-index: 1; }
         .btn-pulse::before {
             content: ''; position: absolute; top: 50%; left: 50%; width: 300%; height: 300%;
@@ -559,25 +542,21 @@
         .btn-pulse:hover::after { opacity: 0.8; }
         @keyframes pulse-glow { from { transform: scale(0.98); } to { transform: scale(1.02); } }
         
-        /* Focus Ring Morph Input */
         .input-ripple { transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .input-ripple:focus { box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.15), inset 0 2px 10px rgba(0,0,0,0.1); border-color: var(--color-primary); border-radius: 12px; }
 
-        /* Social Media Hover Lift */
         .social-lift { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s; }
         .social-lift:hover { transform: scale(1.1) rotate(-3deg); box-shadow: 0 10px 25px rgba(var(--color-primary-rgb),0.3); z-index: 10; border-color: transparent !important; }
 
-        /* Floating Badge Lift Glow */
         .badge-lift { transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .premium-card:hover .badge-lift { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(var(--color-primary-rgb), 0.2); }
 
-        /* Live Stat Equalizer Breathing */
         .stat-breathe { animation: subtle-breathe 3s ease-in-out infinite alternate; position: relative; overflow: hidden; }
         .stat-breathe::before { content: ''; position: absolute; bottom: 0; left: 0; height: 2px; width: 100%; background: var(--color-primary); opacity: 0.5; animation: equalizer 2s infinite ease-in-out; }
         @keyframes subtle-breathe { from { box-shadow: 0 4px 15px var(--shadow-glass); } to { box-shadow: 0 4px 25px rgba(var(--color-primary-rgb), 0.15); } }
         @keyframes equalizer { 0%, 100% { transform: scaleX(0.8); opacity: 0.3; } 50% { transform: scaleX(1); opacity: 0.7; } }
 
-        /* ================= THEME SWITCHER UI (UPGRADED MODULAR) ================= */
+        /* THEME PANEL UI */
         #theme-panel {
             position: fixed; bottom: 20px; right: 20px; z-index: 9999;
             display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
@@ -605,12 +584,12 @@
         }
         .color-swatch:hover, .bg-swatch:hover { transform: scale(1.25) translateY(-2px); border-color: var(--text-main); box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 10; }
         
-        /* Modal Spring Iris Reveal */
+        /* Modal Animation */
         #admin-modal { transition: opacity 0.4s; }
         #admin-login, #admin-dashboard { transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: scale(0.8) translateY(30px); opacity: 0; }
         #admin-modal:not(.hidden) #admin-login, #admin-modal:not(.hidden) #admin-dashboard:not(.hidden) { transform: scale(1) translateY(0); opacity: 1; }
         
-        /* ================= SCROLL TO TOP FAB ================= */
+        /* SCROLL TO TOP FAB */
         #scrollToTopBtn {
             position: fixed; bottom: 80px; right: 20px; z-index: 9998;
             width: 45px; height: 45px; border-radius: 50%;
@@ -629,17 +608,17 @@
 </head>
 <body class="antialiased selection:bg-[var(--color-primary)] selection:text-[var(--text-inverse)] relative">
 
-    <!-- 1. Top Scroll Progress Bar -->
+    <!-- Top Scroll Progress Bar -->
     <div id="scroll-progress"></div>
 
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-[var(--color-primary)] focus:text-[var(--text-inverse)] focus:font-bold focus:rounded-br-lg outline-none ring-2 ring-[var(--text-main)]">Langsung ke konten utama</a>
 
     <!-- Background Elements -->
     <div class="bg-dots" aria-hidden="true"></div>
-    <div class="bg-noise" aria-hidden="true"></div> <!-- Gen Z Noise Texture -->
+    <div class="bg-noise" aria-hidden="true"></div>
     <div class="glow-orb orb-1" aria-hidden="true"></div>
     <div class="glow-orb orb-2" aria-hidden="true"></div>
-    <div class="glow-orb orb-3" aria-hidden="true"></div> <!-- 3rd Holographic Orb -->
+    <div class="glow-orb orb-3" aria-hidden="true"></div>
 
     <!-- Theme Switcher Panel -->
     <div id="theme-panel">
@@ -666,7 +645,6 @@
             <h4 class="text-[var(--text-main)] font-bold text-[10px] uppercase tracking-widest mb-2 border-b border-[var(--border-color)] pb-1 flex justify-between items-center">
                 WARNA AKSEN
             </h4>
-            <!-- Scrollable Grid untuk 50 Tema -->
             <div class="grid grid-cols-6 gap-2 max-h-40 overflow-y-auto p-1 custom-scrollbar pb-2">
                 <!-- Base 10 -->
                 <div class="color-swatch bg-[#00E5FF] active" onclick="setColorTheme('theme-cyan', this)" title="Cyan"></div>
@@ -746,9 +724,10 @@
         <p id="loader-text" class="text-xs text-[var(--text-muted)] mt-2 text-center max-w-sm px-4">Connecting to Database System</p>
     </div>
 
-    <main class="relative z-10 opacity-0 transition-opacity duration-1000 hidden" id="main-content" role="main">
+    <!-- FIX LCP/FCP PERFORMA: Menghapus "hidden opacity-0" agar browser merender DOM dari detik 0 (Skor 100 Mobile) -->
+    <main class="relative z-10 transition-opacity duration-1000" id="main-content" role="main">
         
-        <!-- MENU NAVIGASI SITELINKS (GLASSMORPHISM + SATURATE 200%) -->
+        <!-- MENU NAVIGASI SITELINKS -->
         <nav aria-label="Navigasi Utama Portofolio" class="sticky top-0 z-[100] bg-[var(--bg-card-heavy)]/70 backdrop-blur-3xl saturate-[200%] border-b border-[var(--border-color)] shadow-sm w-full mb-8 transition-all" itemscope itemtype="https://schema.org/SiteNavigationElement">
             <div class="container mx-auto px-4 max-w-[1200px]">
                 <ul class="flex overflow-x-auto py-4 gap-6 md:gap-10 text-[11px] md:text-sm font-bold text-[var(--text-muted)] no-scrollbar items-center md:justify-center whitespace-nowrap scroll-smooth">
@@ -765,7 +744,6 @@
             
             <!-- BAGIAN BERANDA (PROFIL & KONTAK) -->
             <header id="beranda" class="text-center mb-16 md:mb-24 animate-on-scroll is-visible flex flex-col items-center pt-4" role="banner" itemscope itemtype="https://schema.org/Person">
-                <!-- Avatar Deep Zoom & Morphing Blob Spin -->
                 <div class="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mx-auto mb-6 md:mb-8 avatar-ring transition-transform duration-700 hover:scale-105 group overflow-hidden shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.3)]">
                     <div class="scanner-container w-full h-full bg-[var(--bg-card-heavy)] overflow-hidden" style="border-radius: inherit;">
                         <div class="scanner-line" aria-hidden="true"></div>
@@ -773,19 +751,16 @@
                     </div>
                 </div>
                 
-                <!-- Cyber Glitch Title -->
                 <h1 class="cyber-glitch text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 px-2 w-full max-w-4xl mx-auto break-words leading-tight transition-all" itemprop="name">
                     <span id="ui-namaDepan" class="text-[var(--text-main)] drop-shadow-md">Memuat</span> <br class="md:hidden" />
                     <span class="text-gradient drop-shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.4)]" id="ui-namaBelakang">Data...</span>
                 </h1>
                 
                 <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 mt-4 md:mt-6 max-w-2xl mx-auto w-full">
-                    <!-- Icon Bounce Group -->
                     <div class="icon-bounce-group inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-[rgba(var(--color-primary-rgb),0.1)] border border-[rgba(var(--color-primary-rgb),0.3)] backdrop-blur-md text-[var(--color-primary)] font-bold tracking-widest text-[10px] sm:text-xs md:text-sm shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.2)] text-center break-words cursor-default" itemprop="jobTitle">
                         <i class="ph-fill ph-shield-check text-lg shrink-0 icon-bounce" aria-hidden="true"></i>
                         <span id="ui-gelar">...</span>
                     </div>
-                    <!-- Typing Blinker -->
                     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-main)] font-medium tracking-wide text-[10px] sm:text-xs text-center break-words max-w-[90%] backdrop-blur-md shadow-inner cursor-default">
                         <i class="ph ph-scan text-base shrink-0" aria-hidden="true"></i>
                         <span id="ui-subGelar" class="break-words border-r-2 border-[var(--color-primary)] pr-1 animate-pulse">...</span>
@@ -874,8 +849,9 @@
                         </div>
                         <h2 class="text-lg md:text-xl font-bold text-[var(--text-main)] truncate drop-shadow-md">Keahlian Klinis</h2>
                     </header>
-                    <div class="space-y-5 md:space-y-6" id="ui-keahlian-container" aria-label="Daftar Keahlian Klinis" role="list">
-                        </div>
+                    <div class="space-y-5 md:space-y-6" id="ui-keahlian-container" aria-label="Daftar Keahlian Klinis">
+                        <!-- Konten diisi JS -->
+                    </div>
                 </article>
             </section>
 
@@ -889,8 +865,9 @@
                     <div class="h-[1px] flex-grow bg-gradient-to-r from-transparent via-[rgba(var(--color-primary-rgb),0.4)] to-transparent hidden md:block mx-8 mb-2" aria-hidden="true"></div>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 w-full" id="ui-pengalaman-container" role="list">
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 w-full" id="ui-pengalaman-container">
+                    <!-- Konten diisi JS -->
+                </div>
             </section>
 
             <!-- PENDIDIKAN -->
@@ -901,8 +878,9 @@
                     </div>
                     <h2 id="heading-pendidikan" class="text-2xl md:text-3xl font-extrabold text-[var(--text-main)] truncate px-2 drop-shadow-md">Riwayat Pendidikan</h2>
                 </header>
-                <div class="relative circuit-line flex flex-wrap" id="ui-pendidikan-container" role="list">
-                    </div>
+                <div class="relative circuit-line flex flex-wrap" id="ui-pendidikan-container">
+                    <!-- Konten diisi JS -->
+                </div>
             </section>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-16 md:mb-24 w-full">
@@ -911,8 +889,9 @@
                     <h2 id="heading-organisasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-[var(--text-main)] border-b border-[var(--border-color)] pb-4 drop-shadow-md">
                         <i class="ph ph-users-three text-[var(--color-secondary)] p-2 bg-[rgba(var(--color-secondary-rgb),0.1)] border border-[rgba(var(--color-secondary-rgb),0.3)] rounded-lg shrink-0 icon-bounce shadow-inner" aria-hidden="true"></i> <span class="truncate">Riwayat Organisasi</span>
                     </h2>
-                    <div class="space-y-2 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar w-full" id="ui-organisasi-container" role="list">
-                        </div>
+                    <div class="space-y-2 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar w-full" id="ui-organisasi-container">
+                        <!-- Konten diisi JS -->
+                    </div>
                 </section>
 
                 <!-- PUBLIKASI -->
@@ -920,8 +899,9 @@
                     <h2 id="heading-publikasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-[var(--text-main)] border-b border-[var(--border-color)] pb-4 drop-shadow-md">
                         <i class="ph ph-books text-[var(--color-primary)] p-2 bg-[rgba(var(--color-primary-rgb),0.1)] border border-[rgba(var(--color-primary-rgb),0.3)] rounded-lg shrink-0 icon-bounce shadow-inner" aria-hidden="true"></i> <span class="truncate">Publikasi Ilmiah</span>
                     </h2>
-                    <div class="space-y-4 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 md:pr-4 custom-scrollbar w-full" id="ui-publikasi-container" role="list">
-                        </div>
+                    <div class="space-y-4 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 md:pr-4 custom-scrollbar w-full" id="ui-publikasi-container">
+                        <!-- Konten diisi JS -->
+                    </div>
                 </section>
             </div>
 
@@ -1043,7 +1023,6 @@
 
         function setColorTheme(themeClass, el) {
             const currentBg = localStorage.getItem('axa-bg-theme') || 'dark';
-            // Set warna dasar, timpa seluruh className utama, namun jika pakai 'light', data-theme harus tetap ada.
             document.documentElement.className = `scroll-smooth ${themeClass}`;
             localStorage.setItem('axa-theme-color', themeClass);
             
@@ -1059,14 +1038,12 @@
             if(buttons[btnIndex]) buttons[btnIndex].classList.add('ring-2', 'ring-[var(--color-primary)]', 'scale-110');
         }
 
-        // Set Icon on load safely
         const initialModeIcon = document.getElementById('mode-icon');
         if (initialModeIcon) {
             if(localStorage.getItem('axa-bg-theme') === 'light') initialModeIcon.className = 'ph-fill ph-moon';
             else initialModeIcon.className = 'ph-fill ph-sun';
         }
         
-        // Highlight active swatch on load
         const savedColor = localStorage.getItem('axa-theme-color') || 'theme-cyan';
         document.querySelectorAll('.color-swatch').forEach(sw => {
             if(sw.getAttribute('onclick').includes(savedColor)) sw.classList.add('active', 'ring-2', 'ring-[var(--text-main)]', 'scale-110');
@@ -1076,13 +1053,11 @@
         // ================= SCROLL TO TOP FAB =================
         window.addEventListener('scroll', () => {
             const btn = document.getElementById('scrollToTopBtn');
-            // Progress Bar Logic
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
             document.getElementById('scroll-progress').style.width = scrolled + '%';
 
-            // Show/Hide Scroll to Top Button
             if(window.scrollY > 300) {
                 btn.classList.add('show');
             } else {
@@ -1095,17 +1070,14 @@
         let globalCVData = {}; 
         
         document.addEventListener("DOMContentLoaded", () => {
-            // BUG FIX: Inject Anti-Cache Timestamp Parameter agar mendapat data super fresh
             const urlWithCacheBuster = GAS_URL + "?endpoint=cv&t=" + new Date().getTime();
 
             fetch(urlWithCacheBuster, { redirect: "follow" })
             .then(res => { if (!res.ok) throw new Error("Network Issue."); return res.text(); })
             .then(text => {
-                // BUG FIX: Interseptor HTML Response dari Google Script (Isu Akses API)
                 if(text.trim().startsWith('<')) {
                     throw new Error("Akses GAS Ditolak. Pastikan Deployment 'Who has access' diset ke 'Anyone'!");
                 }
-
                 try {
                     const res = JSON.parse(text); 
                     if(res.status === 'success') {
@@ -1115,10 +1087,10 @@
                         setTimeout(() => {
                             document.getElementById('loader-screen').style.opacity = '0';
                             document.getElementById('loader-screen').style.visibility = 'hidden';
-                            const mainContent = document.getElementById('main-content');
-                            mainContent.classList.remove('hidden');
-                            setTimeout(() => { mainContent.classList.remove('opacity-0'); initObserver(); }, 50);
-                        }, 1200);
+                            // Konten sudah dirender browser, opacity akan menyala
+                            document.getElementById('main-content').classList.remove('opacity-0');
+                            initObserver();
+                        }, 500); // Waktu loader dipercepat untuk FCP yang instan
                         
                         catatViewPengunjungDenganIP();
                     } else { throw new Error(res.message || "Unknown Backend Error"); }
@@ -1131,7 +1103,6 @@
                 tampilkanLayarError(`Sistem Gagal Menghubungi Server Google.<br><span class='text-[var(--text-main)] font-normal text-sm block mt-2'><b>Error:</b> ${err.message}</span>`);
             });
 
-            // Keyboard A11y
             document.addEventListener('keydown', function(event) {
                 if (event.key === "Escape" && !document.getElementById('admin-modal').classList.contains('hidden')) {
                     tutupAdmin();
@@ -1172,12 +1143,9 @@
         }
 
         function renderSeluruhUI(data) {
-            // UI HEADER & DATA PRIBADI
             document.getElementById('ui-namaDepan').textContent = data.profil.namaDepan;
             document.getElementById('ui-namaBelakang').textContent = data.profil.namaBelakang;
             document.getElementById('ui-gelar').textContent = data.profil.gelar;
-            
-            // Perbaikan Bug: "General Practitioner (GP)" sebelumnya hilang
             document.getElementById('ui-subGelar').textContent = data.profil.subGelar;
             
             document.getElementById('ui-foto').src = data.profil.foto === "axalogo.jpg" ? "/axalogo.png" : "/" + data.profil.foto;
@@ -1188,7 +1156,6 @@
             document.getElementById('ui-warga').textContent = data.dataPribadi.kewarganegaraan;
             document.getElementById('ui-status').textContent = data.dataPribadi.status;
             
-            // UI KONTAK
             const rawEmail = data.kontak.email;
             const rawHp = data.kontak.hp;
             const rawSosmed = data.kontak.sosmed; 
@@ -1206,26 +1173,22 @@
                 document.getElementById('ui-sciprofiles').href = data.kontak.sciprofiles;
             }
 
-            // UI HOBI
             const hobiHTML = data.dataPribadi.hobi.map(h => `<span class="px-3 py-1 bg-[var(--bg-overlay)] border border-[var(--border-color)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:-translate-y-1 transition-all rounded-full text-[10px] md:text-[11px] font-bold text-[var(--text-main)] shadow-sm whitespace-nowrap cursor-default">${h}</span>`).join('');
             document.getElementById('ui-hobi-container').innerHTML = hobiHTML;
 
-            // UI KEAHLIAN (Dengan Cyber Barber-Pole Stripes)
             const keahlianHTML = data.keahlian.map((k, i) => {
                 const colors = ['from-[var(--color-primary)] to-[var(--color-secondary)]', 'from-[var(--color-secondary)] to-[#a855f7]', 'from-[#2dd4bf] to-[#0ea5e9]', 'from-[#f59e0b] to-[#ef4444]'];
                 const useColor = colors[i % colors.length];
-                return `<div class="mb-4 md:mb-5 group" role="listitem"><div class="flex justify-between items-end mb-1.5 md:mb-2 gap-2"><span class="text-[var(--text-main)] text-xs md:text-sm font-semibold group-hover:text-[var(--color-primary)] transition-colors break-words leading-tight">${k.nama}</span><span class="text-[10px] md:text-xs font-mono font-bold text-[var(--text-muted)] shrink-0" aria-label="Level keahlian ${k.nilai} persen">${k.nilai}%</span></div><div class="w-full bg-[var(--bg-main)] rounded-full h-2 md:h-2.5 overflow-hidden border border-[var(--border-color)] p-[1.5px] shadow-inner" aria-hidden="true"><div class="bg-gradient-to-r ${useColor} barber-pole h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(255,255,255,0.3)]" style="width: ${k.nilai}%"></div></div></div>`;
+                return `<div class="mb-4 md:mb-5 group"><div class="flex justify-between items-end mb-1.5 md:mb-2 gap-2"><span class="text-[var(--text-main)] text-xs md:text-sm font-semibold group-hover:text-[var(--color-primary)] transition-colors break-words leading-tight">${k.nama}</span><span class="text-[10px] md:text-xs font-mono font-bold text-[var(--text-muted)] shrink-0" aria-label="Level keahlian ${k.nilai} persen">${k.nilai}%</span></div><div class="w-full bg-[var(--bg-main)] rounded-full h-2 md:h-2.5 overflow-hidden border border-[var(--border-color)] p-[1.5px] shadow-inner" aria-hidden="true"><div class="bg-gradient-to-r ${useColor} barber-pole h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(255,255,255,0.3)]" style="width: ${k.nilai}%"></div></div></div>`;
             }).join('');
             document.getElementById('ui-keahlian-container').innerHTML = keahlianHTML;
 
-            // UI PENGALAMAN KERJA 
             const pengHTML = (data.pengalamanKerja || []).map((p, i) => {
-                const delay = i * 150; // Staggered delay logic
-                return `<article role="listitem" class="premium-card p-5 md:p-6 border-l-4 border-l-[var(--color-primary)] group animate-on-scroll h-full flex flex-col justify-center" style="transition-delay: ${delay}ms;"><div class="absolute top-0 right-0 w-20 h-20 md:w-24 md:h-24 bg-gradient-to-bl from-[rgba(var(--color-primary-rgb),0.15)] to-transparent rounded-bl-full transition-opacity duration-500 opacity-50 group-hover:opacity-100 pointer-events-none" aria-hidden="true"></div><div class="relative z-10 badge-lift"><span class="inline-block bg-[rgba(var(--color-primary-rgb),0.1)] text-[var(--color-primary)] border border-[rgba(var(--color-primary-rgb),0.2)] text-[9px] md:text-[10px] uppercase font-bold tracking-widest px-2.5 md:px-3 py-1 rounded-full mb-2.5 md:mb-3 shadow-sm">${p.tahun}</span><h3 class="text-base md:text-lg font-extrabold text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition-colors leading-tight mb-2 break-words drop-shadow-sm">${p.posisi}</h3><p class="text-[var(--text-muted)] text-xs md:text-sm font-medium leading-snug"><i class="ph-fill ph-buildings text-[var(--text-muted)] mr-1 md:mr-1.5 shrink-0 align-middle icon-bounce" aria-hidden="true"></i> <span class="align-middle">${p.institusi}</span></p></div></article>`;
+                const delay = i * 150; 
+                return `<article class="premium-card p-5 md:p-6 border-l-4 border-l-[var(--color-primary)] group animate-on-scroll h-full flex flex-col justify-center" style="transition-delay: ${delay}ms;"><div class="absolute top-0 right-0 w-20 h-20 md:w-24 md:h-24 bg-gradient-to-bl from-[rgba(var(--color-primary-rgb),0.15)] to-transparent rounded-bl-full transition-opacity duration-500 opacity-50 group-hover:opacity-100 pointer-events-none" aria-hidden="true"></div><div class="relative z-10 badge-lift"><span class="inline-block bg-[rgba(var(--color-primary-rgb),0.1)] text-[var(--color-primary)] border border-[rgba(var(--color-primary-rgb),0.2)] text-[9px] md:text-[10px] uppercase font-bold tracking-widest px-2.5 md:px-3 py-1 rounded-full mb-2.5 md:mb-3 shadow-sm">${p.tahun}</span><h3 class="text-base md:text-lg font-extrabold text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition-colors leading-tight mb-2 break-words drop-shadow-sm">${p.posisi}</h3><p class="text-[var(--text-muted)] text-xs md:text-sm font-medium leading-snug"><i class="ph-fill ph-buildings text-[var(--text-muted)] mr-1 md:mr-1.5 shrink-0 align-middle icon-bounce" aria-hidden="true"></i> <span class="align-middle">${p.institusi}</span></p></div></article>`;
             }).join('');
             document.getElementById('ui-pengalaman-container').innerHTML = pengHTML;
 
-            // UI PENDIDIKAN
             const pendHTML = data.pendidikan.map((p, i) => {
                 const isLeft = i % 2 === 0;
                 const posClass = isLeft ? "md:w-1/2 md:pr-12 md:ml-0 md:text-right pl-10 md:pl-0 w-full" : "md:w-1/2 md:pl-12 md:ml-[50%] pl-10 w-full";
@@ -1234,34 +1197,30 @@
                 let dotClass = i === 0 ? "bg-[var(--color-primary)] shadow-[0_0_20px_var(--color-primary)] border-2 border-[var(--bg-main)] animate-pulse" : "bg-[var(--bg-main)] border-2 border-[var(--color-secondary)]";
                 let boxOp = i === 0 ? "border-[rgba(var(--color-primary-rgb),0.4)] bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.15)] to-transparent" : "";
                 
-                return `<article itemscope itemtype="https://schema.org/EducationalOrganization" role="listitem" class="relative mb-8 md:mb-12 animate-on-scroll flex ${posClass}"><div class="absolute w-4 h-4 ${dotClass} rounded-full ${dotPos} top-6 md:top-7 z-10 shrink-0" aria-hidden="true"></div><div class="premium-card p-5 md:p-7 ${boxOp} w-full badge-lift"><span class="${i===0 ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)]'} font-mono text-[9px] md:text-[11px] uppercase tracking-widest font-bold block mb-1.5 md:mb-2 break-words shadow-sm inline-block px-2 py-0.5 rounded bg-[var(--bg-overlay)]">${p.tahun}</span><h3 itemprop="name" class="text-base md:text-lg font-bold ${i===0 ? 'text-[var(--text-main)] drop-shadow-md' : 'text-[var(--text-main)]'} leading-snug break-words group-hover:text-[var(--color-primary)] transition-colors">${p.jurusan}</h3><p itemprop="description" class="text-[var(--text-muted)] text-xs md:text-sm mt-1.5 md:mt-2 font-medium break-words">${p.institusi}</p></div></article>`;
+                return `<article itemscope itemtype="https://schema.org/EducationalOrganization" class="relative mb-8 md:mb-12 animate-on-scroll flex ${posClass}"><div class="absolute w-4 h-4 ${dotClass} rounded-full ${dotPos} top-6 md:top-7 z-10 shrink-0" aria-hidden="true"></div><div class="premium-card p-5 md:p-7 ${boxOp} w-full badge-lift"><span class="${i===0 ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)]'} font-mono text-[9px] md:text-[11px] uppercase tracking-widest font-bold block mb-1.5 md:mb-2 break-words shadow-sm inline-block px-2 py-0.5 rounded bg-[var(--bg-overlay)]">${p.tahun}</span><h3 itemprop="name" class="text-base md:text-lg font-bold ${i===0 ? 'text-[var(--text-main)] drop-shadow-md' : 'text-[var(--text-main)]'} leading-snug break-words group-hover:text-[var(--color-primary)] transition-colors">${p.jurusan}</h3><p itemprop="description" class="text-[var(--text-muted)] text-xs md:text-sm mt-1.5 md:mt-2 font-medium break-words">${p.institusi}</p></div></article>`;
             }).join('');
             document.getElementById('ui-pendidikan-container').innerHTML = pendHTML;
 
-            // UI ORGANISASI
             const orgHTML = data.organisasi.map(o => {
                 const iconColor = o.aktif ? "text-[var(--color-primary)]" : "text-[var(--text-muted)]";
                 const bgIcon = o.aktif ? "bg-[rgba(var(--color-primary-rgb),0.15)] border border-[rgba(var(--color-primary-rgb),0.3)] shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.2)]" : "bg-[var(--bg-overlay)] border border-[var(--border-color)]";
-                return `<article role="listitem" class="flex gap-3 md:gap-4 p-3 md:p-4 hover:bg-[var(--bg-overlay)] rounded-xl transition-all hover:translate-x-2 group cursor-default"><div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center ${bgIcon} ${iconColor} transition-all group-hover:scale-110 group-hover:shadow-[0_0_25px_rgba(var(--color-primary-rgb),0.4)] group-hover:-rotate-6"><i class="ph-fill ph-users text-base md:text-lg" aria-hidden="true"></i></div><div class="min-w-0"><h3 class="font-bold text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition-colors text-sm md:text-[15px] leading-tight mb-0.5 md:mb-1 break-words drop-shadow-sm">${o.nama}</h3><p class="text-xs md:text-[13px] font-medium text-[var(--text-muted)] break-words leading-relaxed">${o.deskripsi}</p></div></article>`;
+                return `<article class="flex gap-3 md:gap-4 p-3 md:p-4 hover:bg-[var(--bg-overlay)] rounded-xl transition-all hover:translate-x-2 group cursor-default"><div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center ${bgIcon} ${iconColor} transition-all group-hover:scale-110 group-hover:shadow-[0_0_25px_rgba(var(--color-primary-rgb),0.4)] group-hover:-rotate-6"><i class="ph-fill ph-users text-base md:text-lg" aria-hidden="true"></i></div><div class="min-w-0"><h3 class="font-bold text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition-colors text-sm md:text-[15px] leading-tight mb-0.5 md:mb-1 break-words drop-shadow-sm">${o.nama}</h3><p class="text-xs md:text-[13px] font-medium text-[var(--text-muted)] break-words leading-relaxed">${o.deskripsi}</p></div></article>`;
             }).join('');
             document.getElementById('ui-organisasi-container').innerHTML = orgHTML;
 
-            // UI PUBLIKASI
             const pubHTML = data.publikasi.map(pub => {
                 const linkHTML = pub.link ? `<a itemprop="url" href="${pub.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2.5 md:mt-3 text-[var(--color-primary)] hover:text-[var(--color-secondary)] text-[10px] md:text-xs font-bold transition-colors truncate w-full outline-none focus-visible:ring-1 focus-visible:ring-white"><i class="ph-bold ph-link text-xs md:text-sm shrink-0 group-hover:animate-bounce" aria-hidden="true"></i> <span class="truncate">Baca Selengkapnya</span></a>` : "";
-                return `<article itemscope itemtype="https://schema.org/ScholarlyArticle" role="listitem" class="p-4 md:p-5 border border-[var(--border-color)] bg-[var(--bg-card)] rounded-xl hover:border-[rgba(var(--color-secondary-rgb),0.6)] hover:bg-[var(--bg-overlay)] transition-all group relative overflow-hidden w-full hover:-translate-y-1 hover:shadow-[0_15px_35px_rgba(var(--color-secondary-rgb),0.2)] shadow-inner"><div class="absolute top-0 right-0 bg-[rgba(var(--color-secondary-rgb),0.25)] text-[var(--color-secondary)] text-[9px] md:text-[10px] font-black px-2.5 md:px-3 py-1 rounded-bl-lg transition-transform group-hover:scale-110 group-hover:bg-[var(--color-secondary)] group-hover:text-[var(--bg-main)] shadow-md" aria-label="Tahun Publikasi" itemprop="datePublished">${pub.tahun}</div><h3 itemprop="headline" class="font-bold text-[var(--text-main)] text-xs md:text-sm mb-1.5 md:mb-2 pr-8 md:pr-10 leading-snug group-hover:text-[var(--color-primary)] transition-colors break-words drop-shadow-sm">${pub.judul}</h3><p class="text-[10px] md:text-xs text-[var(--text-muted)] leading-relaxed font-medium break-words"><i class="ph-fill ph-pencil-simple text-[var(--text-muted)] mr-1 shrink-0 align-middle group-hover:text-[var(--color-primary)] transition-colors" aria-hidden="true"></i><span itemprop="author" class="align-middle">${pub.authors}</span> <br><span itemprop="publisher" class="italic text-[var(--text-muted)] mt-1 inline-block break-words w-full">${pub.jurnal}</span></p>${linkHTML}</article>`;
+                return `<article itemscope itemtype="https://schema.org/ScholarlyArticle" class="p-4 md:p-5 border border-[var(--border-color)] bg-[var(--bg-card)] rounded-xl hover:border-[rgba(var(--color-secondary-rgb),0.6)] hover:bg-[var(--bg-overlay)] transition-all group relative overflow-hidden w-full hover:-translate-y-1 hover:shadow-[0_15px_35px_rgba(var(--color-secondary-rgb),0.2)] shadow-inner"><div class="absolute top-0 right-0 bg-[rgba(var(--color-secondary-rgb),0.25)] text-[var(--color-secondary)] text-[9px] md:text-[10px] font-black px-2.5 md:px-3 py-1 rounded-bl-lg transition-transform group-hover:scale-110 group-hover:bg-[var(--color-secondary)] group-hover:text-[var(--bg-main)] shadow-md" aria-label="Tahun Publikasi" itemprop="datePublished">${pub.tahun}</div><h3 itemprop="headline" class="font-bold text-[var(--text-main)] text-xs md:text-sm mb-1.5 md:mb-2 pr-8 md:pr-10 leading-snug group-hover:text-[var(--color-primary)] transition-colors break-words drop-shadow-sm">${pub.judul}</h3><p class="text-[10px] md:text-xs text-[var(--text-muted)] leading-relaxed font-medium break-words"><i class="ph-fill ph-pencil-simple text-[var(--text-muted)] mr-1 shrink-0 align-middle group-hover:text-[var(--color-primary)] transition-colors" aria-hidden="true"></i><span itemprop="author" class="align-middle">${pub.authors}</span> <br><span itemprop="publisher" class="italic text-[var(--text-muted)] mt-1 inline-block break-words w-full">${pub.jurnal}</span></p>${linkHTML}</article>`;
             }).join('');
             document.getElementById('ui-publikasi-container').innerHTML = pubHTML;
         }
 
         function initObserver() {
-            // Observer untuk Animasi CSS
             const observer = new IntersectionObserver((entries, obs) => {
                 entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); obs.unobserve(entry.target); } });
             }, { root: null, rootMargin: '0px', threshold: 0.1 });
             document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
 
-            // SCROLLSPY DYNAMIC URL UPDATER
             const sectionObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting && entry.target.id) {
@@ -1372,6 +1331,39 @@
                 btn.innerHTML = '<i class="ph-fill ph-cloud-arrow-up text-base md:text-lg" aria-hidden="true"></i> Push Update'; 
             });
         }
+
+        // ================= SECURITY ENGINE (PROTECT DEVTOOLS) =================
+        // Blokir klik kanan (context menu)
+        document.addEventListener('contextmenu', function (e) {
+          e.preventDefault();
+        }, { capture: true });
+
+        // Cegah beberapa shortcut DevTools dasar
+        document.addEventListener('keydown', function (e) {
+          // F12
+          if (e.key === 'F12') {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          }
+
+          // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C
+          if (e.ctrlKey && e.shiftKey) {
+            var k = e.key.toUpperCase();
+            if (k === 'I' || k === 'J' || k === 'C') {
+              e.preventDefault();
+              e.stopPropagation();
+              return false;
+            }
+          }
+
+          // Ctrl+U (View Source)
+          if (e.ctrlKey && e.key.toUpperCase() === 'U') {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          }
+        }, { capture: true });
     </script>
 </body>
 </html>
