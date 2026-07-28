@@ -7,7 +7,6 @@
     
     <!-- ======================================================================= -->
     <!-- SUPER BIG UPGRADE SEO: CRAWLING BOTS DIRECTIVES                         -->
-    <!-- Mengamankan indeksasi dari berbagai agen mesin pencari (GSC 100% Valid) -->
     <!-- ======================================================================= -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
@@ -23,11 +22,7 @@
     
     <link rel="preload" href="/axalogo.png" as="image" type="image/png">
 
-    <!-- ======================================================================= -->
-    <!-- SUPER BIG UPGRADE: SITEMAP AUTODISCOVERY, PREFETCH & ALTERNATE          -->
-    <!-- Memaksa Google Search Console mendeteksi sitemap & mengatasi "Error     -->
-    <!-- pemrosesan sementara" dengan memberikan sinyal prioritas tinggi.        -->
-    <!-- ======================================================================= -->
+    <!-- SITEMAP AUTODISCOVERY -->
     <link rel="sitemap" type="application/xml" title="Sitemap" href="https://maksaarsyad.xyz/sitemap.xml">
     <link rel="alternate" type="application/xml" title="XML Sitemap" href="https://maksaarsyad.xyz/sitemap.xml">
     <link rel="prefetch" href="/sitemap.xml" as="fetch" crossorigin="anonymous">
@@ -36,7 +31,7 @@
 
     <title>CV & Portofolio | drg. M. Aksa Arsyad, S.KG</title>
     
-    <!-- ================= SEO EXPERT 100% UPGRADE (SITELINKS MASTERPIECE) ================= -->
+    <!-- SEO EXPERT 100% UPGRADE -->
     <meta name="description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum. Lihat pengalaman kerja, riwayat pendidikan, riwayat organisasi, publikasi ilmiah, dan hubungi langsung.">
     <meta name="keywords" content="Riwayat Pendidikan drg. M. Aksa Arsyad, Pengalaman Kerja drg. M. Aksa Arsyad, Dokter Gigi Umum, Aksa Arsyad, S.KG, Makassar, UMI, Dokter Gigi Makassar, Kedokteran Gigi, Klinik Gigi, Publikasi Ilmiah">
     <meta name="author" content="drg. M. Aksa Arsyad, S.KG">
@@ -47,6 +42,7 @@
     <meta name="apple-mobile-web-app-title" content="Axa CV">
     <meta name="application-name" content="Axa CV">
 
+    <!-- Open Graph (Facebook/WA) -->
     <meta property="og:site_name" content="Portofolio drg. M. Aksa Arsyad">
     <meta property="og:type" content="profile">
     <meta property="og:locale" content="id_ID">
@@ -58,6 +54,7 @@
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Logo Portofolio drg. M. Aksa Arsyad">
 
+    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@axaaxyz_01">
     <meta name="twitter:creator" content="@axaaxyz_01">
@@ -245,8 +242,6 @@
             const savedMode = localStorage.getItem('axa-theme-mode') || 'dark';
             const savedColor = localStorage.getItem('axa-theme-color') || 'theme-cyan';
             if(savedMode === 'light') document.documentElement.setAttribute('data-theme', 'light');
-            
-            // Bersihkan kelas tema sebelumnya dan setel yang baru
             document.documentElement.className = `scroll-smooth ${savedColor}`;
         }
         initThemeSettings();
@@ -350,7 +345,6 @@
         .theme-amethyst { --color-primary: #9966CC; --color-primary-rgb: 153, 102, 204; --color-secondary: #8A2BE2; }
         .theme-topaz { --color-primary: #FFC87C; --color-primary-rgb: 255, 200, 124; --color-secondary: #FFA500; }
         .theme-onyx { --color-primary: #353839; --color-primary-rgb: 53, 56, 57; --color-secondary: #000000; }
-
 
         /* =========================================
            UI/UX DESIGN CSS & AESTHETIC UPGRADES
@@ -576,7 +570,7 @@
 
     <!-- Background Elements -->
     <div class="bg-dots" aria-hidden="true"></div>
-    <div class="bg-noise" aria-hidden="true"></div> <!-- 10. Gen Z Noise Texture -->
+    <div class="bg-noise" aria-hidden="true"></div> <!-- Gen Z Noise Texture -->
     <div class="glow-orb orb-1" aria-hidden="true"></div>
     <div class="glow-orb orb-2" aria-hidden="true"></div>
 
@@ -657,7 +651,7 @@
         </button>
     </div>
 
-    <!-- Scroll To Top Button -->
+    <!-- Scroll To Top Button (FAB) -->
     <button id="scrollToTopBtn" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Kembali ke atas">
         <i class="ph-bold ph-caret-up"></i>
     </button>
@@ -671,9 +665,7 @@
 
     <main class="relative z-10 opacity-0 transition-opacity duration-1000 hidden" id="main-content" role="main">
         
-        <!-- ============================================================================== 
-             MENU NAVIGASI SITELINKS (GLASSMORPHISM + SATURATE)
-             ============================================================================== -->
+        <!-- MENU NAVIGASI SITELINKS (GLASSMORPHISM + SATURATE) -->
         <nav aria-label="Navigasi Utama Portofolio" class="sticky top-0 z-[100] bg-[var(--bg-card-heavy)]/80 backdrop-blur-3xl saturate-[150%] border-b border-[var(--border-color)] shadow-sm w-full mb-8 transition-all" itemscope itemtype="https://schema.org/SiteNavigationElement">
             <div class="container mx-auto px-4 max-w-[1200px]">
                 <ul class="flex overflow-x-auto py-4 gap-6 md:gap-10 text-[11px] md:text-sm font-bold text-[var(--text-muted)] no-scrollbar items-center md:justify-center whitespace-nowrap scroll-smooth">
@@ -685,11 +677,10 @@
                 </ul>
             </div>
         </nav>
-        <!-- ============================================================================== -->
 
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 pb-12 md:pb-16 max-w-[1200px]">
             
-            <!-- 1. BAGIAN BERANDA (PROFIL & KONTAK) -->
+            <!-- BAGIAN BERANDA (PROFIL & KONTAK) -->
             <header id="beranda" class="text-center mb-16 md:mb-24 animate-on-scroll is-visible flex flex-col items-center pt-4" role="banner" itemscope itemtype="https://schema.org/Person">
                 <!-- Avatar Deep Zoom & Ring Spin -->
                 <div class="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mx-auto mb-6 md:mb-8 avatar-ring transition-transform duration-700 hover:scale-105 group overflow-hidden">
@@ -805,7 +796,7 @@
                 </article>
             </section>
 
-            <!-- 2. BAGIAN PENGALAMAN -->
+            <!-- PENGALAMAN -->
             <section id="pengalaman" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24" aria-labelledby="heading-pengalaman">
                 <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-10 gap-4">
                     <div class="w-full">
@@ -819,7 +810,7 @@
                     </div>
             </section>
 
-            <!-- 3. BAGIAN PENDIDIKAN -->
+            <!-- PENDIDIKAN -->
             <section id="pendidikan" class="mb-16 md:mb-24 w-full pt-6 scroll-mt-24" aria-labelledby="heading-pendidikan">
                 <header class="flex flex-col items-center text-center mb-12 md:mb-16 animate-on-scroll icon-bounce-group">
                     <div class="p-3 md:p-4 bg-gradient-to-b from-[rgba(var(--color-primary-rgb),0.1)] to-transparent rounded-full mb-4 border border-[rgba(var(--color-primary-rgb),0.3)] shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.1)] icon-bounce">
@@ -832,8 +823,7 @@
             </section>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-16 md:mb-24 w-full">
-                <!-- 4. ORGANISASI -->
-                <!-- ID ORGANISASI ditambahkan agar menu sitelink berfungsi langsung kemari -->
+                <!-- ORGANISASI -->
                 <section id="organisasi" class="animate-on-scroll premium-card p-6 md:p-8 w-full scroll-mt-24 icon-bounce-group" aria-labelledby="heading-organisasi">
                     <h2 id="heading-organisasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-[var(--text-main)] border-b border-[var(--border-color)] pb-4">
                         <i class="ph ph-users-three text-[var(--color-secondary)] p-2 bg-[rgba(var(--color-secondary-rgb),0.1)] border border-[rgba(var(--color-secondary-rgb),0.2)] rounded-lg shrink-0 icon-bounce" aria-hidden="true"></i> <span class="truncate">Riwayat Organisasi</span>
@@ -842,7 +832,7 @@
                         </div>
                 </section>
 
-                <!-- 5. PUBLIKASI -->
+                <!-- PUBLIKASI -->
                 <section id="publikasi" class="animate-on-scroll premium-card p-6 md:p-8 w-full scroll-mt-24 icon-bounce-group" style="transition-delay: 150ms;" aria-labelledby="heading-publikasi">
                     <h2 id="heading-publikasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-[var(--text-main)] border-b border-[var(--border-color)] pb-4">
                         <i class="ph ph-books text-[var(--color-primary)] p-2 bg-[rgba(var(--color-primary-rgb),0.1)] border border-[rgba(var(--color-primary-rgb),0.2)] rounded-lg shrink-0 icon-bounce" aria-hidden="true"></i> <span class="truncate">Publikasi Ilmiah</span>
@@ -996,9 +986,19 @@
         let globalCVData = {}; 
         
         document.addEventListener("DOMContentLoaded", () => {
-            fetch(GAS_URL + "?endpoint=cv", { redirect: "follow" })
+            // BUG FIX 1: Penambahan Cache-Buster Time parameter (&t=...)
+            // Mencegah Browser me-load file JSON lama yang nyangkut di memori Cache.
+            const urlWithCacheBuster = GAS_URL + "?endpoint=cv&t=" + new Date().getTime();
+
+            fetch(urlWithCacheBuster, { redirect: "follow" })
             .then(res => { if (!res.ok) throw new Error("Network Issue."); return res.text(); })
             .then(text => {
+                // BUG FIX 2: Interseptor HTML Response
+                // Jika Google Script meminta login (Deployment Permissions salah), maka script tidak akan crash, melainkan menampilkan notifikasi tepat guna.
+                if(text.trim().startsWith('<')) {
+                    throw new Error("Akses GAS Ditolak. Pastikan Deployment 'Who has access' diset ke 'Anyone'!");
+                }
+
                 try {
                     const res = JSON.parse(text); 
                     if(res.status === 'success') {
@@ -1017,11 +1017,11 @@
                     } else { throw new Error(res.message || "Unknown Backend Error"); }
                 } catch (e) {
                     console.error("Axa Xyz Error:", e.message);
-                    tampilkanLayarError("Koneksi API Gagal / Format Tidak Valid.<br><span class='text-[var(--text-main)] font-normal text-sm block mt-2'><b>Solusi:</b> Periksa Deployment.</span>");
+                    tampilkanLayarError(`Koneksi API Gagal / Format Tidak Valid.<br><span class='text-[var(--text-main)] font-normal text-sm block mt-2'><b>Error:</b> ${e.message}</span>`);
                 }
             })
             .catch(err => {
-                tampilkanLayarError("Sistem Gagal Menghubungi Server Google.<br><span class='text-[var(--text-main)] font-normal text-sm block mt-2'><b>Cek URL Apps Script</b>.</span>");
+                tampilkanLayarError(`Sistem Gagal Menghubungi Server Google.<br><span class='text-[var(--text-main)] font-normal text-sm block mt-2'><b>Error:</b> ${err.message}</span>`);
             });
 
             // Keyboard A11y
