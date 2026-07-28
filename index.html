@@ -1362,9 +1362,11 @@
             // ================== GITHUB GRAPH & NATIVE STATS TRIGGER ==================
             // Memastikan username GitHub terkunci ke raphunteks jika kosong
             const ghUsername = data.kontak.github || 'raphunteks';
-            document.getElementById('gh-graph').src = `https://ghchart.rshah.org/00E5FF/${ghUsername}`;
             
-            // Panggil API Proxy Google Apps Script untuk mereplace loading Skeleton
+            // Perbaikan Cache & Tampilan Graph Kontribusi GitHub agar tidak Blank Hitam
+            document.getElementById('gh-graph').src = `https://ghchart.rshah.org/00E5FF/${ghUsername}?t=${new Date().getTime()}`;
+            
+            // Panggil API Proxy Node.js Vercel Serverless
             renderGithubNativeStats(ghUsername);
 
 
@@ -1459,13 +1461,15 @@
             document.getElementById('ui-publikasi-container').innerHTML = pubHTML;
         }
 
-        // ================== GITHUB PROXY RENDERER ==================
+        // ================== GITHUB PROXY RENDERER (VERCEL SERVERLESS NODE.JS) ==================
         function renderGithubNativeStats(ghUsername) {
-            // FIX CORS: Menambahkan Headers text/plain agar tidak diblokir browser
-            fetch(GAS_URL, {
+            const token = globalCVData.kontak ? globalCVData.kontak.githubToken : null;
+
+            // Fetch ke Backend Server Anda Sendiri (Vercel API)
+            fetch('/api/github', {
                 method: 'POST',
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: 'getGithubStats', username: ghUsername })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: ghUsername, token: token })
             }).then(res => res.json()).then(res => {
                 const statsEl = document.getElementById('native-gh-stats');
                 const langsEl = document.getElementById('native-gh-langs');
@@ -1495,18 +1499,18 @@
                                 </div>
                             `;
                         });
-                        langsHTML += `</div>`;
+                         langsHTML += `</div>`;
                         langsEl.innerHTML = langsHTML;
                     } else {
                         langsEl.innerHTML = `<div class="text-[var(--text-muted)] text-sm text-center h-full flex flex-col items-center justify-center"><i class="ph-fill ph-ghost text-3xl mb-2"></i> Belum ada bahasa pemrograman terdeteksi.</div>`;
                     }
                 } else {
-                    statsEl.innerHTML = `<div class="text-red-400 text-xs text-center"><i class="ph-bold ph-warning-circle text-3xl block mb-2 mx-auto"></i> API Limit / Konfigurasi Token Gagal.<br><span class="text-white/50 text-[10px] mt-2 block">${res.message}</span></div>`;
-                    langsEl.innerHTML = `<div class="text-red-400 text-xs text-center"><i class="ph-bold ph-warning-circle text-3xl block mb-2 mx-auto"></i> Tambahkan "githubToken" di Dashboard Admin.</div>`;
+                    statsEl.innerHTML = `<div class="text-red-400 text-xs text-center"><i class="ph-bold ph-warning-circle text-3xl block mb-2 mx-auto"></i> Koneksi GitHub API Gagal.<br><span class="text-white/50 text-[10px] mt-2 block break-words">${res.message}</span></div>`;
+                    langsEl.innerHTML = `<div class="text-red-400 text-xs text-center"><i class="ph-bold ph-warning-circle text-3xl block mb-2 mx-auto"></i> Gagal Memuat Data Bahasa.</div>`;
                 }
             }).catch(e => {
-                document.getElementById('native-gh-stats').innerHTML = `<div class="text-red-400 text-xs text-center">Gagal koneksi ke proxy GitHub.</div>`;
-                document.getElementById('native-gh-langs').innerHTML = `<div class="text-red-400 text-xs text-center">Gagal koneksi ke proxy GitHub.</div>`;
+                document.getElementById('native-gh-stats').innerHTML = `<div class="text-red-400 text-xs text-center"><i class="ph-bold ph-warning-circle text-3xl block mb-2 mx-auto"></i> Server Backend Vercel Error / Timeout.</div>`;
+                document.getElementById('native-gh-langs').innerHTML = `<div class="text-red-400 text-xs text-center"><i class="ph-bold ph-warning-circle text-3xl block mb-2 mx-auto"></i> Server Backend Vercel Error / Timeout.</div>`;
             });
         }
 
