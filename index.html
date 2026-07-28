@@ -1461,8 +1461,10 @@
 
         // ================== GITHUB PROXY RENDERER ==================
         function renderGithubNativeStats(ghUsername) {
+            // FIX CORS: Menambahkan Headers text/plain agar tidak diblokir browser
             fetch(GAS_URL, {
                 method: 'POST',
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({ action: 'getGithubStats', username: ghUsername })
             }).then(res => res.json()).then(res => {
                 const statsEl = document.getElementById('native-gh-stats');
