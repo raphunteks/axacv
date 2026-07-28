@@ -886,15 +886,16 @@
                 </h2>
 
                 <div class="premium-card p-4 md:p-6 mb-8 flex justify-center items-center overflow-x-auto bg-[#0d1117]/80 group">
-                    <img id="gh-graph" src="https://ghchart.rshah.org/00E5FF/raphunteks" alt="GitHub Contributions Graph" class="min-w-[700px] w-full max-w-4xl object-contain opacity-90 group-hover:opacity-100 transition-opacity drop-shadow-md" onerror="this.src='https://placehold.co/800x200/0d1117/00E5FF?text=Aktivitas+GitHub+Belum+Ditemukan'">
+                    <img id="gh-graph" src="https://ghchart.rshah.org/00E5FF/raphunteks" alt="GitHub Contributions Graph" class="min-w-[700px] w-full max-w-4xl object-contain opacity-90 group-hover:opacity-100 transition-opacity drop-shadow-md" onerror="this.onerror=null; this.src='https://placehold.co/800x200/0d1117/00E5FF?text=Aktivitas+GitHub+Belum+Ditemukan'">
                 </div>
 
+                <!-- SUPER BIG UPGRADE: PENGAMAN FALLBACK JIKA API GITHUB DILIMIT -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                    <div class="premium-card p-2 flex justify-center bg-[#0d1117]/80 hover:border-[var(--color-primary)] transition-colors">
-                        <img id="gh-stats" src="https://github-readme-stats.vercel.app/api?username=raphunteks&show_icons=true&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8&icon_color=6366F1" alt="GitHub Stats" class="w-full object-contain max-w-md" onerror="this.style.display='none'">
+                    <div class="premium-card p-2 flex justify-center bg-[#0d1117]/80 hover:border-[var(--color-primary)] transition-colors relative min-h-[160px]">
+                        <img id="gh-stats" src="https://github-readme-stats.vercel.app/api?username=raphunteks&show_icons=true&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8&icon_color=6366F1" alt="GitHub Stats" class="w-full object-contain max-w-md relative z-10" onerror="this.onerror=null; this.src='https://placehold.co/400x160/0d1117/00E5FF?text=GitHub+API+Rate+Limited\\nCoba+Refresh+Nanti';">
                     </div>
-                    <div class="premium-card p-2 flex justify-center bg-[#0d1117]/80 hover:border-[var(--color-secondary)] transition-colors">
-                        <img id="gh-langs" src="https://github-readme-stats.vercel.app/api/top-langs/?username=raphunteks&layout=compact&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8" alt="Top Languages" class="w-full object-contain max-w-md" onerror="this.style.display='none'">
+                    <div class="premium-card p-2 flex justify-center bg-[#0d1117]/80 hover:border-[var(--color-secondary)] transition-colors relative min-h-[160px]">
+                        <img id="gh-langs" src="https://github-readme-stats.vercel.app/api/top-langs/?username=raphunteks&layout=compact&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8" alt="Top Languages" class="w-full object-contain max-w-md relative z-10" onerror="this.onerror=null; this.src='https://placehold.co/400x160/0d1117/00E5FF?text=GitHub+API+Rate+Limited\\nCoba+Refresh+Nanti';">
                     </div>
                 </div>
             </section>
@@ -1042,7 +1043,7 @@
         </div>
     </main>
 
-    <!-- ADMIN MODAL (SUPER BIG UPGRADE GUI) -->
+    <!-- ADMIN MODAL (SUPER BIG UPGRADE GUI AUTO-PUSH) -->
     <div id="admin-modal" class="fixed inset-0 bg-[var(--bg-main)]/95 backdrop-blur-xl z-[9999] hidden flex items-center justify-center p-4 transition-all" role="dialog" aria-modal="true" aria-labelledby="admin-title">
         
         <!-- LOGIN ADMIN -->
@@ -1133,7 +1134,9 @@
                     </div>
                     
                     <div class="flex gap-3 mt-6 pt-4 border-t border-[var(--border-color)] shrink-0">
-                        <button onclick="simpanFormItem()" class="flex-1 bg-[var(--color-primary)] hover:brightness-110 text-[var(--bg-main)] font-bold py-2.5 rounded-lg transition-colors text-sm shadow-md">Simpan & Push Database</button>
+                        <button onclick="simpanFormItem()" class="flex-1 bg-[var(--color-primary)] hover:brightness-110 text-[var(--bg-main)] font-bold py-2.5 rounded-lg transition-colors text-sm shadow-md">
+                            <i class="ph-bold ph-floppy-disk"></i> Simpan & Update Database
+                        </button>
                         <button onclick="tutupFormItem()" class="flex-1 bg-transparent border border-[var(--text-muted)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-[var(--text-main)] font-bold py-2.5 rounded-lg transition-colors text-sm">Batal</button>
                     </div>
                 </div>
@@ -1333,17 +1336,18 @@
                 document.getElementById('ui-sciprofiles').href = data.kontak.sciprofiles;
             }
 
-            // ================== GITHUB API RENDER ==================
-            // Mengambil dari JSON Data CV (default raphunteks)
+            // ================== GITHUB API RENDER (SUPER UPGRADE) ==================
+            // Memastikan username mengambil dari JSON (default raphunteks jika kosong)
             const ghUsername = data.kontak.github || 'raphunteks';
             document.getElementById('gh-graph').src = `https://ghchart.rshah.org/00E5FF/${ghUsername}`;
+            
+            // Perbaikan URL github-readme-stats agar fallback jika gagal dimuat (Rate Limit)
             document.getElementById('gh-stats').src = `https://github-readme-stats.vercel.app/api?username=${ghUsername}&show_icons=true&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8&icon_color=6366F1`;
             document.getElementById('gh-langs').src = `https://github-readme-stats.vercel.app/api/top-langs/?username=${ghUsername}&layout=compact&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8`;
 
-            // ================== HELPER FILTER IMAGE ==================
+            // ================== HELPER FILTER GOOGLE DRIVE IMAGE ==================
             const convertDriveLink = (url) => {
                 if(!url) return 'https://ui-avatars.com/api/?name=No+Image&background=1e293b&color=fff';
-                // Jika format url copy link drive biasa
                 const match = url.match(/\/d\/(.+?)\//);
                 if(match && match[1]) return `https://drive.google.com/uc?id=${match[1]}`;
                 return url; 
@@ -1353,10 +1357,10 @@
             if(sheetData.proyek && document.getElementById('ui-proyek-container')) {
                 const proyekHTML = sheetData.proyek.map((p, i) => `
                     <article class="premium-card overflow-hidden group hover:-translate-y-2 transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.5)] animate-on-scroll flex flex-col bg-[#0d1117]/80" style="transition-delay: ${i*100}ms">
-                        <div class="h-48 md:h-56 w-full overflow-hidden bg-white/5 border-b border-[var(--border-color)]">
+                        <div class="h-48 md:h-56 w-full overflow-hidden bg-white/5 border-b border-[var(--border-color)] relative">
                             <img src="${convertDriveLink(p.Gambar)}" alt="${p.Judul}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                         </div>
-                        <div class="p-5 md:p-6 flex flex-col flex-grow">
+                        <div class="p-5 md:p-6 flex flex-col flex-grow relative z-10">
                             <h3 class="text-lg font-bold text-[var(--text-main)] mb-2 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2 drop-shadow-sm">${p.Judul}</h3>
                             <p class="text-[var(--text-muted)] text-xs md:text-sm mb-6 line-clamp-3 leading-relaxed flex-grow">${p.Deskripsi}</p>
                             ${p.Link ? `<a href="${p.Link}" target="_blank" rel="noopener noreferrer" class="mt-auto inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-[var(--color-primary)] text-black font-bold text-sm hover:brightness-110 transition-all shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.3)] hover:shadow-[0_0_25px_rgba(var(--color-primary-rgb),0.6)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--text-main)]"><i class="ph-bold ph-eye text-lg"></i> Lihat Proyek</a>` : ''}
@@ -1374,7 +1378,7 @@
                         <div class="h-40 md:h-48 w-full rounded-lg overflow-hidden border border-[var(--border-color)] mb-4 bg-white/5 relative">
                             <img src="${convertDriveLink(s.Gambar)}" alt="${s.Judul}" loading="lazy" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500">
                         </div>
-                        <div class="flex-grow flex flex-col justify-center text-center">
+                        <div class="flex-grow flex flex-col justify-center text-center relative z-10">
                             <h3 class="text-sm md:text-base font-bold text-[var(--text-main)] mb-1 group-hover:text-[var(--color-secondary)] transition-colors line-clamp-2 drop-shadow-sm">${s.Judul}</h3>
                             <p class="text-[var(--text-muted)] text-xs md:text-sm font-medium mb-4 line-clamp-2 leading-snug">${s.Subjudul}</p>
                             <span class="inline-block mt-auto mx-auto bg-[var(--bg-overlay)] text-[var(--text-main)] text-[10px] md:text-xs px-3 py-1.5 rounded-md font-bold border border-[var(--border-color)] shadow-inner w-full truncate"><i class="ph-fill ph-calendar text-[var(--color-primary)] align-middle mb-0.5"></i> ${s.Tanggal}</span>
@@ -1490,7 +1494,7 @@
 
         // ================= SISTEM DASHBOARD ADMIN MULTI-TAB =================
         let currentAdminTab = 'cv';
-        let currentEditIndex = -1; // -1 for Add New
+        let currentEditIndex = -1; 
 
         function bukaLoginAdmin() { 
             document.getElementById('admin-modal').classList.remove('hidden'); 
@@ -1595,7 +1599,6 @@
             document.getElementById('field-subjudul').style.display = !isProyek ? 'block' : 'none';
             document.getElementById('field-tanggal').style.display = !isProyek ? 'block' : 'none';
 
-            // Reset inputs & file upload
             const ids = ['adm-judul', 'adm-gambar', 'adm-deskripsi', 'adm-link', 'adm-subjudul', 'adm-tanggal'];
             ids.forEach(id => document.getElementById(id).value = '');
             document.getElementById('adm-file-upload').value = '';
@@ -1716,7 +1719,7 @@
             tutupFormItem();
             renderAdminGUIList();
             
-            // AUTO PUSH KE SPREADSHEET
+            // AUTO PUSH KE SPREADSHEET (REALTIME)
             simpanDatabaseMain();
         }
 
@@ -1731,7 +1734,7 @@
             dataArray.splice(index, 1);
             renderAdminGUIList();
             
-            // AUTO PUSH KE SPREADSHEET
+            // AUTO PUSH KE SPREADSHEET (REALTIME)
             simpanDatabaseMain();
         }
         
@@ -1776,7 +1779,6 @@
                 
             } else {
                 // LOGIC AUTO-PUSH UNTUK TAB PROYEK & SERTIFIKASI
-                // Tampilkan notifikasi melayang sementara (Toast) agar tidak mengganggu layout
                 let toast = document.createElement('div');
                 toast.className = "fixed top-4 right-4 bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold shadow-lg z-[10000] flex items-center gap-2 transition-all";
                 toast.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin"></i> Menyinkronkan ke Spreadsheet...';
