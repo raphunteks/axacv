@@ -885,18 +885,41 @@
                     <i class="ph-fill ph-github-logo text-[var(--color-primary)] mr-2"></i> GitHub <span class="text-[var(--color-primary)]">Aktivitas</span>
                 </h2>
 
-                <div class="premium-card p-4 md:p-6 mb-8 flex justify-center items-center overflow-x-auto bg-[#0d1117]/80 group">
-                    <img id="gh-graph" src="https://ghchart.rshah.org/00E5FF/raphunteks" alt="GitHub Contributions Graph" class="min-w-[700px] w-full max-w-4xl object-contain opacity-90 group-hover:opacity-100 transition-opacity drop-shadow-md" onerror="this.onerror=null; this.src='https://placehold.co/800x200/0d1117/00E5FF?text=Aktivitas+GitHub+Belum+Ditemukan'">
+                <!-- 1. GITHUB CONTRIBUTION GRAPH -->
+                <div class="premium-card p-4 md:p-6 mb-8 flex justify-center items-center overflow-x-auto bg-[#0d1117]/80 group relative min-h-[200px]">
+                    <div id="gh-graph-loader" class="absolute inset-0 flex items-center justify-center text-[var(--color-primary)]">
+                        <i class="ph-bold ph-spinner-gap animate-spin text-3xl"></i>
+                    </div>
+                    <img id="gh-graph" src="" alt="GitHub Contributions Graph" class="min-w-[700px] w-full max-w-4xl object-contain opacity-0 transition-opacity duration-1000 drop-shadow-md relative z-10" onload="this.classList.remove('opacity-0'); document.getElementById('gh-graph-loader').style.display='none';" onerror="this.style.display='none'; document.getElementById('gh-graph-loader').innerHTML='<span class=\'text-red-400 text-sm font-bold block text-center\'><i class=\'ph-bold ph-warning-circle text-2xl mb-2 block\'></i>Grafik GitHub Gagal Dimuat.<br>Coba matikan AdBlock Anda.</span>';">
                 </div>
 
-                <!-- SUPER BIG UPGRADE: PENGAMAN FALLBACK JIKA API GITHUB DILIMIT -->
+                <!-- 2. GITHUB NATIVE STATS & LANGUAGES (PROXY SERVER) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                    <div class="premium-card p-2 flex justify-center bg-[#0d1117]/80 hover:border-[var(--color-primary)] transition-colors relative min-h-[160px]">
-                        <img id="gh-stats" src="https://github-readme-stats.vercel.app/api?username=raphunteks&show_icons=true&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8&icon_color=6366F1" alt="GitHub Stats" class="w-full object-contain max-w-md relative z-10" onerror="this.onerror=null; this.src='https://placehold.co/400x160/0d1117/00E5FF?text=GitHub+API+Rate+Limited\\nCoba+Refresh+Nanti';">
+                    
+                    <!-- STATS CARD -->
+                    <div id="native-gh-stats" class="premium-card p-6 flex flex-col justify-center bg-[#0d1117]/80 hover:border-[var(--color-primary)] transition-colors relative min-h-[160px]">
+                        <div class="animate-pulse space-y-4 w-full">
+                            <div class="h-4 bg-[var(--border-color)] rounded w-1/2 mb-6"></div>
+                            <div class="space-y-4">
+                                <div class="flex justify-between"><div class="h-3 bg-[var(--border-color)] rounded w-1/4"></div><div class="h-3 bg-[var(--border-color)] rounded w-1/4"></div></div>
+                                <div class="flex justify-between"><div class="h-3 bg-[var(--border-color)] rounded w-1/4"></div><div class="h-3 bg-[var(--border-color)] rounded w-1/4"></div></div>
+                                <div class="flex justify-between"><div class="h-3 bg-[var(--border-color)] rounded w-1/4"></div><div class="h-3 bg-[var(--border-color)] rounded w-1/4"></div></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="premium-card p-2 flex justify-center bg-[#0d1117]/80 hover:border-[var(--color-secondary)] transition-colors relative min-h-[160px]">
-                        <img id="gh-langs" src="https://github-readme-stats.vercel.app/api/top-langs/?username=raphunteks&layout=compact&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8" alt="Top Languages" class="w-full object-contain max-w-md relative z-10" onerror="this.onerror=null; this.src='https://placehold.co/400x160/0d1117/00E5FF?text=GitHub+API+Rate+Limited\\nCoba+Refresh+Nanti';">
+
+                    <!-- LANGUAGES CARD -->
+                    <div id="native-gh-langs" class="premium-card p-6 flex flex-col justify-center bg-[#0d1117]/80 hover:border-[var(--color-secondary)] transition-colors relative min-h-[160px]">
+                        <div class="animate-pulse space-y-4 w-full">
+                            <div class="h-4 bg-[var(--border-color)] rounded w-1/2 mb-6"></div>
+                            <div class="space-y-4">
+                                <div><div class="flex justify-between mb-2"><div class="h-2 bg-[var(--border-color)] rounded w-1/5"></div><div class="h-2 bg-[var(--border-color)] rounded w-1/6"></div></div><div class="h-1.5 bg-[var(--border-color)] rounded-full w-full"></div></div>
+                                <div><div class="flex justify-between mb-2"><div class="h-2 bg-[var(--border-color)] rounded w-1/4"></div><div class="h-2 bg-[var(--border-color)] rounded w-1/6"></div></div><div class="h-1.5 bg-[var(--border-color)] rounded-full w-full"></div></div>
+                                <div><div class="flex justify-between mb-2"><div class="h-2 bg-[var(--border-color)] rounded w-1/5"></div><div class="h-2 bg-[var(--border-color)] rounded w-1/6"></div></div><div class="h-1.5 bg-[var(--border-color)] rounded-full w-full"></div></div>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </section>
 
@@ -1336,14 +1359,14 @@
                 document.getElementById('ui-sciprofiles').href = data.kontak.sciprofiles;
             }
 
-            // ================== GITHUB API RENDER (SUPER UPGRADE) ==================
-            // Memastikan username mengambil dari JSON (default raphunteks jika kosong)
+            // ================== GITHUB GRAPH & NATIVE STATS TRIGGER ==================
+            // Memastikan username GitHub terkunci ke raphunteks jika kosong
             const ghUsername = data.kontak.github || 'raphunteks';
             document.getElementById('gh-graph').src = `https://ghchart.rshah.org/00E5FF/${ghUsername}`;
             
-            // Perbaikan URL github-readme-stats agar fallback jika gagal dimuat (Rate Limit)
-            document.getElementById('gh-stats').src = `https://github-readme-stats.vercel.app/api?username=${ghUsername}&show_icons=true&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8&icon_color=6366F1`;
-            document.getElementById('gh-langs').src = `https://github-readme-stats.vercel.app/api/top-langs/?username=${ghUsername}&layout=compact&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8`;
+            // Panggil API Proxy Google Apps Script untuk mereplace loading Skeleton
+            renderGithubNativeStats(ghUsername);
+
 
             // ================== HELPER FILTER GOOGLE DRIVE IMAGE ==================
             const convertDriveLink = (url) => {
@@ -1435,6 +1458,56 @@
             }).join('');
             document.getElementById('ui-publikasi-container').innerHTML = pubHTML;
         }
+
+        // ================== GITHUB PROXY RENDERER ==================
+        function renderGithubNativeStats(ghUsername) {
+            fetch(GAS_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'getGithubStats', username: ghUsername })
+            }).then(res => res.json()).then(res => {
+                const statsEl = document.getElementById('native-gh-stats');
+                const langsEl = document.getElementById('native-gh-langs');
+                
+                if(res.status === 'success') {
+                    const s = res.data;
+                    
+                    // Render UI Stars & Commits
+                    statsEl.innerHTML = `
+                        <h3 class="text-[var(--color-primary)] font-bold mb-5 border-b border-[var(--border-color)] pb-3 flex items-center gap-2 drop-shadow-md"><i class="ph-bold ph-github-logo text-2xl"></i> ${ghUsername}'s Stats</h3>
+                        <div class="grid grid-cols-1 gap-y-4 text-xs md:text-sm text-[var(--text-main)] font-medium">
+                            <div class="flex items-center justify-between group"><span class="flex items-center gap-2 text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors"><i class="ph-fill ph-star text-yellow-400 text-lg shadow-sm"></i> Total Stars</span><span class="font-bold text-[var(--color-primary)] text-sm">${s.stars}</span></div>
+                            <div class="flex items-center justify-between group"><span class="flex items-center gap-2 text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors"><i class="ph-bold ph-git-commit text-emerald-400 text-lg shadow-sm"></i> Total Commits</span><span class="font-bold text-[var(--color-primary)] text-sm">${s.commits}</span></div>
+                            <div class="flex items-center justify-between group"><span class="flex items-center gap-2 text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors"><i class="ph-bold ph-git-pull-request text-purple-400 text-lg shadow-sm"></i> Total PRs</span><span class="font-bold text-[var(--color-primary)] text-sm">${s.prs}</span></div>
+                            <div class="flex items-center justify-between group"><span class="flex items-center gap-2 text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors"><i class="ph-fill ph-warning-circle text-orange-400 text-lg shadow-sm"></i> Total Issues</span><span class="font-bold text-[var(--color-primary)] text-sm">${s.issues}</span></div>
+                        </div>
+                    `;
+
+                    // Render UI Languages Progress Bar
+                    if(s.topLangs && s.topLangs.length > 0) {
+                        let langsHTML = `<h3 class="text-[var(--color-secondary)] font-bold mb-5 border-b border-[var(--border-color)] pb-3 flex items-center gap-2 drop-shadow-md"><i class="ph-bold ph-code text-2xl"></i> Top Languages</h3><div class="space-y-4">`;
+                        s.topLangs.forEach(lang => {
+                            langsHTML += `
+                                <div class="group">
+                                    <div class="flex justify-between text-[10px] md:text-xs font-bold text-[var(--text-main)] mb-1.5 px-1"><span class="tracking-wide">${lang.name}</span><span style="color:${lang.color}">${lang.percent}%</span></div>
+                                    <div class="w-full bg-[var(--bg-main)] rounded-full h-2 shadow-inner overflow-hidden border border-[var(--border-color)]"><div class="h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(255,255,255,0.2)] w-0 group-hover:brightness-125" style="width: ${lang.percent}%; background-color: ${lang.color}"></div></div>
+                                </div>
+                            `;
+                        });
+                        langsHTML += `</div>`;
+                        langsEl.innerHTML = langsHTML;
+                    } else {
+                        langsEl.innerHTML = `<div class="text-[var(--text-muted)] text-sm text-center h-full flex flex-col items-center justify-center"><i class="ph-fill ph-ghost text-3xl mb-2"></i> Belum ada bahasa pemrograman terdeteksi.</div>`;
+                    }
+                } else {
+                    statsEl.innerHTML = `<div class="text-red-400 text-xs text-center"><i class="ph-bold ph-warning-circle text-3xl block mb-2 mx-auto"></i> API Limit / Konfigurasi Token Gagal.<br><span class="text-white/50 text-[10px] mt-2 block">${res.message}</span></div>`;
+                    langsEl.innerHTML = `<div class="text-red-400 text-xs text-center"><i class="ph-bold ph-warning-circle text-3xl block mb-2 mx-auto"></i> Tambahkan "githubToken" di Dashboard Admin.</div>`;
+                }
+            }).catch(e => {
+                document.getElementById('native-gh-stats').innerHTML = `<div class="text-red-400 text-xs text-center">Gagal koneksi ke proxy GitHub.</div>`;
+                document.getElementById('native-gh-langs').innerHTML = `<div class="text-red-400 text-xs text-center">Gagal koneksi ke proxy GitHub.</div>`;
+            });
+        }
+
 
         function initObserver() {
             const observer = new IntersectionObserver((entries, obs) => {
