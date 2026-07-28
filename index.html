@@ -240,6 +240,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
+    <!-- Script Theming (Dipanggil paling awal agar tidak berkedip/Flash) -->
     <script>
         function initThemeSettings() {
             const savedMode = localStorage.getItem('axa-theme-mode') || 'dark';
@@ -720,6 +721,7 @@
         <i class="ph-bold ph-caret-up"></i>
     </button>
 
+    <!-- Shimmering Loading Screen -->
     <div id="loader-screen" role="status" aria-live="polite">
         <div class="pulse-ring mb-6" aria-hidden="true"></div>
         <h2 id="loader-title" class="text-xl font-bold tracking-[0.3em] shimmer-text uppercase text-center px-4">Initializing</h2>
@@ -734,17 +736,12 @@
             <div class="container mx-auto px-4 max-w-[1200px]">
                 <ul class="flex overflow-x-auto py-4 gap-6 md:gap-10 text-[11px] md:text-sm font-bold text-[var(--text-muted)] no-scrollbar items-center md:justify-center whitespace-nowrap scroll-smooth">
                     <li><a itemprop="url" href="#beranda" title="Halaman Utama Profil" aria-label="Beranda" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Beranda</span></a></li>
-                    <!-- NAVIGASI BARU: KEAHLIAN & TECH -->
                     <li><a itemprop="url" href="#keahlian-tech" title="Keahlian & Kemampuan" aria-label="Keahlian" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Keahlian & Tech</span></a></li>
-                    <!-- NAVIGASI BARU: PROYEK WEB -->
                     <li><a itemprop="url" href="#proyek" title="Proyek Web" aria-label="Proyek" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Proyek Web</span></a></li>
-                    
                     <li><a itemprop="url" href="#pengalaman" title="Riwayat Pengalaman Kerja" aria-label="Pengalaman Kerja" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Pengalaman Kerja</span></a></li>
                     <li><a itemprop="url" href="#pendidikan" title="Riwayat Pendidikan Akademis" aria-label="Riwayat Pendidikan" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Riwayat Pendidikan</span></a></li>
                     <li><a itemprop="url" href="#organisasi" title="Riwayat Organisasi" aria-label="Riwayat Organisasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Riwayat Organisasi</span></a></li>
                     <li><a itemprop="url" href="#publikasi" title="Kumpulan Publikasi Ilmiah" aria-label="Publikasi Ilmiah" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Publikasi Ilmiah</span></a></li>
-                    
-                    <!-- NAVIGASI BARU: SERTIFIKASI -->
                     <li><a itemprop="url" href="#sertifikasi" title="Sertifikasi & Pelatihan" aria-label="Sertifikasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Sertifikasi</span></a></li>
                 </ul>
             </div>
@@ -865,6 +862,53 @@
                 </article>
             </section>
 
+            <!-- KEAHLIAN TECH & GITHUB API -->
+            <section id="keahlian-tech" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-10 text-[var(--text-main)] drop-shadow-md">
+                    <i class="ph-bold ph-code text-[var(--color-primary)] mr-2"></i> Keahlian & <span class="text-stroke-gradient">Kemampuan</span>
+                </h2>
+                
+                <div class="flex flex-wrap justify-center gap-4 md:gap-6 mb-16 max-w-4xl mx-auto bg-[var(--bg-overlay)] p-6 rounded-2xl border border-[var(--border-color)] backdrop-blur-md shadow-inner">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="JavaScript">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="HTML5">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="CSS3">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="React JS">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="NodeJS" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="Node.js">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="Python">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="PHP">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="MySQL">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="Git">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg dark:invert" title="GitHub">
+                </div>
+
+                <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-8 text-[var(--text-main)] drop-shadow-md">
+                    <i class="ph-fill ph-github-logo text-[var(--color-primary)] mr-2"></i> GitHub <span class="text-[var(--color-primary)]">Aktivitas</span>
+                </h2>
+
+                <div class="premium-card p-4 md:p-6 mb-8 flex justify-center items-center overflow-x-auto bg-[#0d1117]/80 group">
+                    <img id="gh-graph" src="https://ghchart.rshah.org/00E5FF/torvalds" alt="GitHub Contributions Graph" class="min-w-[700px] w-full max-w-4xl object-contain opacity-90 group-hover:opacity-100 transition-opacity drop-shadow-md" onerror="this.src='https://placehold.co/800x200/0d1117/00E5FF?text=Aktivitas+GitHub+Belum+Ditemukan'">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                    <div class="premium-card p-2 flex justify-center bg-[#0d1117]/80 hover:border-[var(--color-primary)] transition-colors">
+                        <img id="gh-stats" src="https://github-readme-stats.vercel.app/api?username=torvalds&show_icons=true&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8&icon_color=6366F1" alt="GitHub Stats" class="w-full object-contain max-w-md" onerror="this.style.display='none'">
+                    </div>
+                    <div class="premium-card p-2 flex justify-center bg-[#0d1117]/80 hover:border-[var(--color-secondary)] transition-colors">
+                        <img id="gh-langs" src="https://github-readme-stats.vercel.app/api/top-langs/?username=torvalds&layout=compact&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8" alt="Top Languages" class="w-full object-contain max-w-md" onerror="this.style.display='none'">
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROYEK WEB DINAMIS -->
+            <section id="proyek" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-10 text-[var(--text-main)] drop-shadow-md">
+                    <i class="ph-bold ph-browsers text-[var(--color-secondary)] mr-2"></i> Proyek <span class="text-stroke-gradient">Saya</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full" id="ui-proyek-container">
+                    <div class="text-center col-span-full py-10"><i class="ph-bold ph-spinner-gap animate-spin text-3xl text-[var(--color-primary)]"></i></div>
+                </div>
+            </section>
+
             <!-- PENGALAMAN -->
             <section id="pengalaman" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24" aria-labelledby="heading-pengalaman">
                 <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-10 gap-4">
@@ -915,58 +959,7 @@
                 </section>
             </div>
 
-            <!-- KEAHLIAN & GITHUB API (SESUAI GBR 1 & 2) -->
-            <section id="keahlian-tech" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24">
-                <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-10 text-[var(--text-main)] drop-shadow-md">
-                    <i class="ph-bold ph-code text-[var(--color-primary)] mr-2"></i> Keahlian & <span class="text-stroke-gradient">Kemampuan</span>
-                </h2>
-                
-                <!-- Deretan Ikon Teknologi -->
-                <div class="flex flex-wrap justify-center gap-4 md:gap-6 mb-16 max-w-4xl mx-auto bg-[var(--bg-overlay)] p-6 rounded-2xl border border-[var(--border-color)] backdrop-blur-md shadow-inner">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="JavaScript">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="HTML5">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="CSS3">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="React JS">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="NodeJS" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="Node.js">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="Python">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="PHP">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="MySQL">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg" title="Git">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" class="w-10 h-10 md:w-12 md:h-12 hover:scale-125 transition-transform duration-300 drop-shadow-lg dark:invert" title="GitHub">
-                </div>
-
-                <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-8 text-[var(--text-main)] drop-shadow-md">
-                    <i class="ph-fill ph-github-logo text-[var(--color-primary)] mr-2"></i> GitHub <span class="text-[var(--color-primary)]">Aktivitas</span>
-                </h2>
-
-                <!-- GitHub Contribution Graph -->
-                <div class="premium-card p-4 md:p-6 mb-8 flex justify-center items-center overflow-x-auto bg-[#0d1117]/80 group">
-                    <img id="gh-graph" src="https://ghchart.rshah.org/00E5FF/torvalds" alt="GitHub Contributions Graph" class="min-w-[700px] w-full max-w-4xl object-contain opacity-90 group-hover:opacity-100 transition-opacity drop-shadow-md" onerror="this.src='https://placehold.co/800x200/0d1117/00E5FF?text=GitHub+Username+Tidak+Valid+atau+Private'">
-                </div>
-
-                <!-- GitHub Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                    <div class="premium-card p-2 flex justify-center bg-[#0d1117]/80 hover:border-[var(--color-primary)] transition-colors">
-                        <img id="gh-stats" src="https://github-readme-stats.vercel.app/api?username=torvalds&show_icons=true&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8&icon_color=6366F1" alt="GitHub Stats" class="w-full object-contain max-w-md" onerror="this.style.display='none'">
-                    </div>
-                    <div class="premium-card p-2 flex justify-center bg-[#0d1117]/80 hover:border-[var(--color-secondary)] transition-colors">
-                        <img id="gh-langs" src="https://github-readme-stats.vercel.app/api/top-langs/?username=torvalds&layout=compact&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8" alt="Top Languages" class="w-full object-contain max-w-md" onerror="this.style.display='none'">
-                    </div>
-                </div>
-            </section>
-
-            <!-- PROYEK WEB (SESUAI GBR 3) -->
-            <section id="proyek" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24">
-                <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-10 text-[var(--text-main)] drop-shadow-md">
-                    <i class="ph-bold ph-browsers text-[var(--color-secondary)] mr-2"></i> Proyek <span class="text-stroke-gradient">Saya</span>
-                </h2>
-                <!-- Container Proyek dari JS -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full" id="ui-proyek-container">
-                    <div class="text-center col-span-full py-10"><i class="ph-bold ph-spinner-gap animate-spin text-3xl text-[var(--color-primary)]"></i></div>
-                </div>
-            </section>
-
-            <!-- SERTIFIKASI HOBI & PDGI (SESUAI GBR 4 & 5) -->
+            <!-- SERTIFIKASI DINAMIS -->
             <section id="sertifikasi" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24">
                 <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-12 text-[var(--text-main)] drop-shadow-md">
                     <i class="ph-fill ph-certificate text-[var(--color-primary)] mr-2"></i> Sertifikasi & <span class="text-stroke-gradient">Pelatihan</span>
@@ -987,6 +980,7 @@
                 </div>
             </section>
 
+            <!-- KIRIM PESAN -->
             <section class="max-w-3xl mx-auto animate-on-scroll mb-12 md:mb-16 w-full" aria-labelledby="heading-pesan">
                 <div class="premium-card p-6 sm:p-8 md:p-12 text-center relative overflow-hidden group w-full">
                     <div class="absolute -top-32 -right-32 w-64 h-64 bg-[var(--color-primary)] rounded-full blur-[100px] opacity-10 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none" aria-hidden="true"></div>
@@ -1048,7 +1042,7 @@
         </div>
     </main>
 
-    <!-- ADMIN MODAL -->
+    <!-- ADMIN MODAL (SUPER BIG UPGRADE GUI) -->
     <div id="admin-modal" class="fixed inset-0 bg-[var(--bg-main)]/95 backdrop-blur-xl z-[9999] hidden flex items-center justify-center p-4 transition-all" role="dialog" aria-modal="true" aria-labelledby="admin-title">
         
         <!-- LOGIN ADMIN -->
@@ -1095,7 +1089,7 @@
                     </button>
                 </div>
 
-                <!-- SUB-MODAL FORM INPUT (MUNCUL OVERLAY DI DALAM TAB) -->
+                <!-- SUB-MODAL FORM INPUT DENGAN FITUR UPLOAD IMAGE -->
                 <div id="admin-item-form" class="hidden absolute inset-0 bg-[var(--bg-card-heavy)] backdrop-blur-xl p-4 sm:p-6 flex flex-col z-20 rounded-xl border border-[var(--color-primary)] overflow-y-auto shadow-2xl">
                     <h3 id="form-item-title" class="font-bold text-lg mb-4 text-[var(--text-main)] border-b border-[var(--border-color)] pb-2">Tambah Data</h3>
                     
@@ -1104,9 +1098,18 @@
                             <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Judul *</label>
                             <input type="text" id="adm-judul" placeholder="Masukkan Judul..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
                         </div>
+                        
+                        <!-- UPLOAD GAMBAR DRIVE TERINTEGRASI -->
                         <div>
-                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Link Gambar (URL Public / GDrive Link) *</label>
-                            <input type="text" id="adm-gambar" placeholder="https://..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Gambar (Upload File / Paste URL) *</label>
+                            <div class="flex gap-2 items-center">
+                                <input type="text" id="adm-gambar" placeholder="Menunggu URL gambar..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
+                                <label class="bg-[var(--color-secondary)] hover:brightness-110 text-white px-4 py-2 rounded-lg cursor-pointer text-xs font-bold shrink-0 transition-all flex items-center gap-1 shadow-md whitespace-nowrap">
+                                    <i class="ph-bold ph-upload-simple"></i> Upload
+                                    <input type="file" id="adm-file-upload" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
+                                </label>
+                            </div>
+                            <p id="upload-status" class="text-[9px] text-[var(--color-primary)] mt-1 hidden font-bold"></p>
                         </div>
                         
                         <!-- Dynamic Fields -->
@@ -1115,22 +1118,22 @@
                             <textarea id="adm-deskripsi" rows="3" placeholder="Deskripsi..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none resize-none"></textarea>
                         </div>
                         <div id="field-link">
-                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Link URL (Proyek)</label>
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Link URL Proyek (Opsional)</label>
                             <input type="text" id="adm-link" placeholder="https://..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
                         </div>
                         
                         <div id="field-subjudul" class="hidden">
-                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Subjudul (Penyelenggara Sertifikat)</label>
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Penyelenggara Sertifikat</label>
                             <input type="text" id="adm-subjudul" placeholder="e.g. Kementerian Kominfo" class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
                         </div>
                         <div id="field-tanggal" class="hidden">
-                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Tanggal (Sertifikasi)</label>
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Tanggal Sertifikasi</label>
                             <input type="text" id="adm-tanggal" placeholder="e.g. 20 Agustus 2026" class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
                         </div>
                     </div>
                     
-                    <div class="flex gap-3 mt-6 pt-4 border-t border-[var(--border-color)]">
-                        <button onclick="simpanFormItem()" class="flex-1 bg-[var(--color-primary)] hover:brightness-110 text-[var(--bg-main)] font-bold py-2.5 rounded-lg transition-colors text-sm shadow-md">Simpan Data</button>
+                    <div class="flex gap-3 mt-6 pt-4 border-t border-[var(--border-color)] shrink-0">
+                        <button onclick="simpanFormItem()" class="flex-1 bg-[var(--color-primary)] hover:brightness-110 text-[var(--bg-main)] font-bold py-2.5 rounded-lg transition-colors text-sm shadow-md">Simpan Draft</button>
                         <button onclick="tutupFormItem()" class="flex-1 bg-transparent border border-[var(--text-muted)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-[var(--text-main)] font-bold py-2.5 rounded-lg transition-colors text-sm">Batal</button>
                     </div>
                 </div>
@@ -1140,7 +1143,7 @@
             <div class="mt-4 md:mt-5 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
                 <span id="adminNotif" class="text-[10px] md:text-xs font-bold hidden px-3 md:px-4 py-2 rounded-lg text-center w-full sm:w-auto break-words" aria-live="polite"></span>
                 <button onclick="simpanDatabaseMain()" id="btnSimpanCV" class="w-full sm:w-auto bg-[var(--color-primary)] hover:brightness-110 text-[var(--bg-main)] font-bold px-6 md:px-8 py-2.5 md:py-3 rounded-xl shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.5)] transition-all flex items-center justify-center gap-2 text-sm md:text-base shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-white">
-                    <i class="ph-fill ph-cloud-arrow-up text-base md:text-lg" aria-hidden="true"></i> Push Data ke Sheet
+                    <i class="ph-fill ph-cloud-arrow-up text-base md:text-lg" aria-hidden="true"></i> Push Data ke Database
                 </button>
             </div>
         </div>
@@ -1243,7 +1246,6 @@
                         setTimeout(() => {
                             document.getElementById('loader-screen').style.opacity = '0';
                             document.getElementById('loader-screen').style.visibility = 'hidden';
-                            // Konten sudah dirender browser, opacity akan menyala
                             document.getElementById('main-content').classList.remove('opacity-0');
                             initObserver();
                         }, 500); 
@@ -1331,21 +1333,22 @@
                 document.getElementById('ui-sciprofiles').href = data.kontak.sciprofiles;
             }
 
-            // GITHUB API RENDER
-            const ghUsername = data.kontak.github || 'torvalds'; // Fallback jika username kosong/belum diset
+            // ================== GITHUB API RENDER ==================
+            const ghUsername = data.kontak.github || 'torvalds';
             document.getElementById('gh-graph').src = `https://ghchart.rshah.org/00E5FF/${ghUsername}`;
             document.getElementById('gh-stats').src = `https://github-readme-stats.vercel.app/api?username=${ghUsername}&show_icons=true&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8&icon_color=6366F1`;
             document.getElementById('gh-langs').src = `https://github-readme-stats.vercel.app/api/top-langs/?username=${ghUsername}&layout=compact&theme=transparent&hide_border=true&title_color=00E5FF&text_color=94a3b8`;
 
-            // HELPER FILTER GOOGLE DRIVE IMAGE
+            // ================== HELPER FILTER IMAGE ==================
             const convertDriveLink = (url) => {
                 if(!url) return 'https://ui-avatars.com/api/?name=No+Image&background=1e293b&color=fff';
+                // Jika format url copy link drive biasa
                 const match = url.match(/\/d\/(.+?)\//);
                 if(match && match[1]) return `https://drive.google.com/uc?id=${match[1]}`;
                 return url; 
             };
 
-            // RENDER PROYEK WEB DARI SHEET
+            // ================== RENDER PROYEK WEB ==================
             if(sheetData.proyek && document.getElementById('ui-proyek-container')) {
                 const proyekHTML = sheetData.proyek.map((p, i) => `
                     <article class="premium-card overflow-hidden group hover:-translate-y-2 transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.5)] animate-on-scroll flex flex-col bg-[#0d1117]/80" style="transition-delay: ${i*100}ms">
@@ -1362,7 +1365,7 @@
                 document.getElementById('ui-proyek-container').innerHTML = proyekHTML || `<p class="text-[var(--text-muted)] text-center col-span-full py-8 border border-dashed border-[var(--border-color)] rounded-xl">Belum ada proyek ditambahkan.</p>`;
             }
 
-            // RENDER SERTIFIKASI DARI SHEET
+            // ================== RENDER SERTIFIKASI ==================
             const generateSertifHTML = (arr) => {
                 if(!arr || arr.length === 0) return `<p class="text-[var(--text-muted)] text-center col-span-full py-8 border border-dashed border-[var(--border-color)] rounded-xl">Data sertifikasi kosong.</p>`;
                 return arr.map((s, i) => `
@@ -1484,6 +1487,7 @@
             });
         }
 
+        // ================= SISTEM DASHBOARD ADMIN MULTI-TAB =================
         let currentAdminTab = 'cv';
         let currentEditIndex = -1; // -1 for Add New
 
@@ -1506,7 +1510,6 @@
                 document.getElementById('admin-login').classList.add('hidden'); 
                 document.getElementById('admin-dashboard').classList.remove('hidden');
                 
-                // Initialize default tab
                 switchAdminTab('cv');
                 document.getElementById('loginErr').classList.add('hidden');
             } else { 
@@ -1517,7 +1520,6 @@
         function switchAdminTab(tab) {
             currentAdminTab = tab;
             
-            // Tab Buttons Styling
             document.querySelectorAll('.admin-tab').forEach(el => {
                 el.classList.remove('bg-[var(--color-primary)]', 'text-[var(--bg-main)]', 'shadow-md');
                 el.classList.add('bg-[var(--bg-overlay)]', 'text-[var(--text-main)]', 'border', 'border-[var(--border-color)]');
@@ -1526,15 +1528,12 @@
             activeEl.classList.remove('bg-[var(--bg-overlay)]', 'text-[var(--text-main)]', 'border');
             activeEl.classList.add('bg-[var(--color-primary)]', 'text-[var(--bg-main)]', 'shadow-md');
             
-            // View Toggling
             if(tab === 'cv') {
                 document.getElementById('admin-json-view').classList.remove('hidden');
                 document.getElementById('admin-json-view').classList.add('flex');
                 document.getElementById('admin-gui-view').classList.add('hidden');
                 document.getElementById('admin-gui-view').classList.remove('flex');
                 
-                // Load JSON to editor
-                // Ensure default structure mapping just in case
                 if(!globalCVData.kontak) globalCVData.kontak = {};
                 if(!globalCVData.kontak.github) globalCVData.kontak.github = "itsmeaxaa";
                 document.getElementById('jsonEditor').value = JSON.stringify(globalCVData, null, 4);
@@ -1583,18 +1582,18 @@
             document.getElementById('admin-item-form').classList.remove('hidden');
             document.getElementById('form-item-title').textContent = index === -1 ? 'Tambah Data Baru' : 'Edit Data';
 
-            // Show/Hide Fields based on current tab
             const isProyek = currentAdminTab === 'proyek';
             document.getElementById('field-deskripsi').style.display = isProyek ? 'block' : 'none';
             document.getElementById('field-link').style.display = isProyek ? 'block' : 'none';
             document.getElementById('field-subjudul').style.display = !isProyek ? 'block' : 'none';
             document.getElementById('field-tanggal').style.display = !isProyek ? 'block' : 'none';
 
-            // Clear inputs
+            // Reset inputs & file upload
             const ids = ['adm-judul', 'adm-gambar', 'adm-deskripsi', 'adm-link', 'adm-subjudul', 'adm-tanggal'];
             ids.forEach(id => document.getElementById(id).value = '');
+            document.getElementById('adm-file-upload').value = '';
+            document.getElementById('upload-status').classList.add('hidden');
 
-            // Populate if edit
             if(index !== -1) {
                 let dataArray = [];
                 if(currentAdminTab === 'proyek') dataArray = globalSheetData.proyek;
@@ -1613,6 +1612,59 @@
                     document.getElementById('adm-tanggal').value = item.Tanggal || '';
                 }
             }
+        }
+
+        // ================== GOOGLE DRIVE IMAGE UPLOAD LOGIC ==================
+        function handleImageUpload(input) {
+            if(!input.files || input.files.length === 0) return;
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            const statusEl = document.getElementById('upload-status');
+            const urlInput = document.getElementById('adm-gambar');
+            
+            statusEl.classList.remove('hidden');
+            statusEl.classList.replace('text-green-400', 'text-[var(--color-primary)]');
+            statusEl.classList.replace('text-red-400', 'text-[var(--color-primary)]');
+            statusEl.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin inline-block"></i> Mengunggah ke Google Drive...';
+            urlInput.disabled = true;
+            
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                const base64 = dataUrl.split(',')[1];
+                const mimeType = dataUrl.split(';')[0].split(':')[1];
+                
+                const payload = {
+                    action: 'uploadImage',
+                    user: 'axaaxyz_01',
+                    pass: 'axaxyz999',
+                    filename: file.name,
+                    mimeType: mimeType,
+                    base64: base64
+                };
+                
+                fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                }).then(res => res.json())
+                .then(res => {
+                    if(res.status === 'success') {
+                        urlInput.value = res.url; // Tampilkan URL Drive ke input text
+                        statusEl.innerHTML = '<i class="ph-bold ph-check-circle inline-block"></i> Upload Berhasil!';
+                        statusEl.classList.replace('text-[var(--color-primary)]', 'text-green-400');
+                    } else {
+                        statusEl.innerHTML = '<i class="ph-bold ph-warning-circle inline-block"></i> Gagal: ' + res.message;
+                        statusEl.classList.replace('text-[var(--color-primary)]', 'text-red-400');
+                    }
+                }).catch(err => {
+                    statusEl.innerHTML = '<i class="ph-bold ph-warning-circle inline-block"></i> Error jaringan / Server.';
+                    statusEl.classList.replace('text-[var(--color-primary)]', 'text-red-400');
+                }).finally(() => {
+                    urlInput.disabled = false;
+                });
+            };
+            reader.readAsDataURL(file);
         }
 
         function tutupFormItem() {
@@ -1638,19 +1690,17 @@
                 newItem.Tanggal = document.getElementById('adm-tanggal').value.trim();
             }
 
-            // Validasi Input Wajib
             if(!newItem.Judul || !newItem.Gambar) {
-                alert("Judul dan Link Gambar wajib diisi!");
+                alert("Judul dan Gambar wajib diisi!");
                 return;
             }
 
             if(currentEditIndex === -1) {
-                dataArray.push(newItem); // Tambah Baru
+                dataArray.push(newItem);
             } else {
-                dataArray[currentEditIndex] = newItem; // Edit yang sudah ada
+                dataArray[currentEditIndex] = newItem;
             }
 
-            // Update ke Global Memory
             if(currentAdminTab === 'proyek') globalSheetData.proyek = dataArray;
             if(currentAdminTab === 'hobi') globalSheetData.sertifHobi = dataArray;
             if(currentAdminTab === 'pdgi') globalSheetData.sertifPDGI = dataArray;
@@ -1658,7 +1708,6 @@
             tutupFormItem();
             renderAdminGUIList();
             
-            // Highlight Save Button to remind user to Push
             const btnPush = document.getElementById('btnSimpanCV');
             btnPush.classList.add('ring-4', 'ring-[var(--color-secondary)]', 'animate-pulse');
             setTimeout(() => { btnPush.classList.remove('ring-4', 'ring-[var(--color-secondary)]', 'animate-pulse'); }, 2000);
@@ -1675,7 +1724,6 @@
             dataArray.splice(index, 1);
             renderAdminGUIList();
             
-            // Highlight Save Button to remind user to Push
             const btnPush = document.getElementById('btnSimpanCV');
             btnPush.classList.add('ring-4', 'ring-red-500', 'animate-pulse');
             setTimeout(() => { btnPush.classList.remove('ring-4', 'ring-red-500', 'animate-pulse'); }, 2000);
@@ -1725,7 +1773,7 @@
                 notif.classList.add('bg-red-500/20', 'text-red-500');
             }).finally(() => { 
                 btn.disabled = false; 
-                btn.innerHTML = '<i class="ph-fill ph-cloud-arrow-up text-base md:text-lg" aria-hidden="true"></i> Push Data ke Sheet'; 
+                btn.innerHTML = '<i class="ph-fill ph-cloud-arrow-up text-base md:text-lg" aria-hidden="true"></i> Push Data ke Database'; 
             });
         }
     </script>
