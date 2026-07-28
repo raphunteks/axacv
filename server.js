@@ -14,9 +14,14 @@ export default async function handler(req, res) {
         // 2. Menerima request body dari Frontend
         const { username, token } = req.body || {};
         
-        // 3. Fallback ke Data Anda jika parameter kosong
-        const authToken = token || "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";
-        const ghUser = username || "raphunteks";
+        // 3. Fallback ke Environment Variables (process.env) jika frontend tidak mengirimkan token/username
+        // Ini adalah cara AMAN 100% karena Token dirahasiakan di server Vercel, bukan di public code.
+        const authToken = token || process.env.GITHUB_TOKEN;
+        const ghUser = username || process.env.GITHUB_USERNAME || "raphunteks"; // Fallback akhir untuk username
+
+        if (!authToken) {
+             return res.status(401).json({ status: 'error', message: 'Token GitHub tidak ditemukan. Harap isi GITHUB_TOKEN di Environment Variables Vercel.' });
+        }
 
         // 4. GraphQL Query ke GitHub API
         const query = `
