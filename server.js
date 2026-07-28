@@ -1,4 +1,5 @@
-export default async function handler(req, res) {
+// Menggunakan module.exports agar kompatibel dengan Vercel Node.js standar (CommonJS)
+module.exports = async function handler(req, res) {
     // 1. Setup Header CORS agar aman dan bisa dipanggil dari frontend
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,10 +15,10 @@ export default async function handler(req, res) {
         // 2. Menerima request body dari Frontend
         const { username, token } = req.body || {};
         
-        // 3. Fallback ke Environment Variables (process.env) jika frontend tidak mengirimkan token/username
-        // Ini adalah cara AMAN 100% karena Token dirahasiakan di server Vercel, bukan di public code.
+        // 3. Fallback ke Environment Variables (process.env)
+        // Token AMAN dan dirahasiakan di server Vercel.
         const authToken = token || process.env.GITHUB_TOKEN;
-        const ghUser = username || process.env.GITHUB_USERNAME || "raphunteks"; // Fallback akhir untuk username
+        const ghUser = username || process.env.GITHUB_USERNAME || "raphunteks"; 
 
         if (!authToken) {
              return res.status(401).json({ status: 'error', message: 'Token GitHub tidak ditemukan. Harap isi GITHUB_TOKEN di Environment Variables Vercel.' });
@@ -50,11 +51,20 @@ export default async function handler(req, res) {
             headers: {
                 'Authorization': `Bearer ${authToken}`,
                 'Content-Type': 'application/json',
+                'User-Agent': 'Axa-Portfolio-App' // SANGAT KRITIKAL: GitHub API akan menolak request tanpa User-Agent
             },
             body: JSON.stringify({ query })
         });
 
-        const result = await response.json();
+        // Parse Text terlebih dahulu untuk menangkap error non-JSON dari GitHub
+        const responseText = await response.text();
+        
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch(e) {
+            return res.status(500).json({ status: 'error', message: 'GitHub API tidak mengembalikan format JSON yang valid.' });
+        }
 
         if (result.errors) {
             return res.status(400).json({ status: 'error', message: result.errors[0].message });
@@ -95,6 +105,7 @@ export default async function handler(req, res) {
         res.status(200).json({ status: 'success', data: stats });
 
     } catch (error) {
-        res.status(500).json({ status: 'error', message: error.message });
+        console.error("Vercel Serverless Error:", error);
+        res.status(500).json({ status: 'error', message: error.message || 'Internal Server Error' });
     }
 }
