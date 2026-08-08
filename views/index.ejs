@@ -69,8 +69,7 @@
 
     <!-- ======================================================================= -->
     <!-- ADVANCED JSON-LD Schema.org (ENTERPRISE GOLD STANDARD GSC)              -->
-    <!-- Menyertakan struktur ketat item: {@id, name} agar tidak ada error       -->
-    <!-- "Item tanpa nama" dan meng-cover FULL 8 TAB / Menu.                     -->
+    <!-- FIX MAINENTITY: Mengatasi error kritis "Kolom mainEntity tidak ada"     -->
     <!-- ======================================================================= -->
     <script type="application/ld+json">
     {
@@ -90,7 +89,7 @@
           "url": "https://maksaarsyad.xyz/",
           "name": "CV & Portofolio | drg. M. Aksa Arsyad, S.KG",
           "isPartOf": { "@id": "https://maksaarsyad.xyz/#website" },
-          "about": { "@id": "https://maksaarsyad.xyz/#person" },
+          "mainEntity": { "@id": "https://maksaarsyad.xyz/#person" },
           "inLanguage": "id-ID",
           "hasPart": [
             {
