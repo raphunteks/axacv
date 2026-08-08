@@ -20,11 +20,21 @@ app.use((req, res, next) => {
 });
 
 // ==========================================
-// 2. SETUP EJS & FOLDER PUBLIC (FIX VERCEL PATH)
+// 2. SETUP EJS & FOLDER PUBLIC
 // ==========================================
-// Menggunakan process.cwd() agar Vercel Cloud bisa menemukan foldernya secara absolut
 app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
+
+// ==========================================
+// SANGAT PENTING: FIX SITEMAP.XML TREE
+// Memaksa browser menampilkan sitemap sebagai Tree XML (Bukan Teks HTML)
+// ==========================================
+app.get('/sitemap.xml', (req, res) => {
+    res.set('Content-Type', 'application/xml; charset=utf-8');
+    res.sendFile(path.join(process.cwd(), 'public', 'sitemap.xml'));
+});
+
+// Serve file statis lainnya (logo, css, js)
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 // ==========================================
@@ -40,7 +50,7 @@ app.get('/', (req, res) => {
 });
 
 // ==========================================
-// ROUTE 2: API GITHUB STATS (SCRIPT PROXY ANDA)
+// ROUTE 2: API GITHUB STATS (SCRIPT PROXY)
 // ==========================================
 app.post('/api/github', async (req, res) => {
     try {
