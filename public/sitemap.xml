@@ -11,7 +11,8 @@ Googlebot membaca "Source Code" XML ini dengan sempurna 100%.
 
 - Menggunakan Namespace XHTML untuk Hreflang (Internasional/Lokal).
 - Menggunakan Geo-Location & License pada Image Sitemap.
-- Struktur Anchor URLs untuk SPA (Beranda, Pengalaman, Pendidikan, dll).
+- Struktur Anchor URLs untuk SPA (Beranda, Pengalaman, Pendidikan, dll) 
+  Lengkap untuk ke-8 Tab (SEO 100% Gold Standard).
 ========================================================================
 -->
 <urlset
@@ -32,7 +33,7 @@ Googlebot membaca "Source Code" XML ini dengan sempurna 100%.
   <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/</loc>
-    <lastmod>2026-07-24T21:20:00+08:00</lastmod>
+    <lastmod>2026-08-09T00:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
     
@@ -50,26 +51,34 @@ Googlebot membaca "Source Code" XML ini dengan sempurna 100%.
     </image:image>
   </url>
 
-  <!-- ========================================================= -->
-  <!-- 2. PENGALAMAN KERJA (Prioritas 0.80)                      -->
-  <!-- ========================================================= -->
   <url>
-    <loc>https://maksaarsyad.xyz/#pengalaman</loc>
-    <lastmod>2026-07-24T21:20:00+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.80</priority>
-    <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#pengalaman" />
+    <loc>https://maksaarsyad.xyz/#beranda</loc>
+    <lastmod>2026-08-09T00:00:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.00</priority>
+    <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#beranda" />
   </url>
 
   <!-- ========================================================= -->
-  <!-- 3. RIWAYAT PENDIDIKAN (Prioritas 0.80)                    -->
+  <!-- 2. RIWAYAT PENDIDIKAN (Prioritas 0.80)                    -->
   <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/#pendidikan</loc>
-    <lastmod>2026-07-24T21:20:00+08:00</lastmod>
+    <lastmod>2026-08-09T00:00:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
     <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#pendidikan" />
+  </url>
+
+  <!-- ========================================================= -->
+  <!-- 3. PENGALAMAN KERJA (Prioritas 0.80)                      -->
+  <!-- ========================================================= -->
+  <url>
+    <loc>https://maksaarsyad.xyz/#pengalaman</loc>
+    <lastmod>2026-08-09T00:00:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#pengalaman" />
   </url>
 
   <!-- ========================================================= -->
@@ -77,7 +86,7 @@ Googlebot membaca "Source Code" XML ini dengan sempurna 100%.
   <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/#organisasi</loc>
-    <lastmod>2026-07-24T21:20:00+08:00</lastmod>
+    <lastmod>2026-08-09T00:00:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
     <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#organisasi" />
@@ -88,10 +97,43 @@ Googlebot membaca "Source Code" XML ini dengan sempurna 100%.
   <!-- ========================================================= -->
   <url>
     <loc>https://maksaarsyad.xyz/#publikasi</loc>
-    <lastmod>2026-07-24T21:20:00+08:00</lastmod>
+    <lastmod>2026-08-09T00:00:00+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
     <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#publikasi" />
+  </url>
+
+  <!-- ========================================================= -->
+  <!-- 6. KEAHLIAN & TECH (Prioritas 0.80)                       -->
+  <!-- ========================================================= -->
+  <url>
+    <loc>https://maksaarsyad.xyz/#keahlian-tech</loc>
+    <lastmod>2026-08-09T00:00:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#keahlian-tech" />
+  </url>
+
+  <!-- ========================================================= -->
+  <!-- 7. PROYEK WEB (Prioritas 0.80)                            -->
+  <!-- ========================================================= -->
+  <url>
+    <loc>https://maksaarsyad.xyz/#proyek</loc>
+    <lastmod>2026-08-09T00:00:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#proyek" />
+  </url>
+
+  <!-- ========================================================= -->
+  <!-- 8. SERTIFIKASI (Prioritas 0.80)                           -->
+  <!-- ========================================================= -->
+  <url>
+    <loc>https://maksaarsyad.xyz/#sertifikasi</loc>
+    <lastmod>2026-08-09T00:00:00+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="id-ID" href="https://maksaarsyad.xyz/#sertifikasi" />
   </url>
 
 </urlset>
