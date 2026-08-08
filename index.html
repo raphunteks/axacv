@@ -125,7 +125,8 @@
             "https://www.instagram.com/axaaxyz_01",
             "https://scholar.google.com/citations?user=hQlIsLoAAAAJ&hl=id",
             "https://orcid.org/0009-0003-2658-3320",
-            "https://sciprofiles.com/profile/aksaarsyad"
+            "https://sciprofiles.com/profile/aksaarsyad",
+            "https://www.linkedin.com/in/drg-m-aksa-arsyad-4b95b2428"
           ],
           "alumniOf": [
             {
@@ -815,10 +816,26 @@
                             <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-[#2dd4bf] group-hover:bg-[#2dd4bf]/10 group-hover:scale-110 transition-all shrink-0"><i class="ph ph-whatsapp-logo text-lg md:text-xl" aria-hidden="true"></i></div>
                             <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">WhatsApp</p><div class="font-medium text-[var(--text-main)]" id="ui-hp-container">...</div></div>
                         </div>
+                        
                         <div class="group flex items-start gap-3 md:gap-4 overflow-hidden">
                             <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-pink-400 group-hover:bg-pink-400/10 group-hover:scale-110 transition-all shrink-0"><i class="ph ph-instagram-logo text-lg md:text-xl" aria-hidden="true"></i></div>
                             <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">Sosial Media</p><div class="font-medium text-[var(--text-main)]" id="ui-sosmed-container">...</div></div>
                         </div>
+                        
+                        <div class="group flex items-start gap-3 md:gap-4 overflow-hidden">
+                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-[#0A66C2] group-hover:bg-[#0A66C2]/10 group-hover:scale-110 transition-all shrink-0">
+                                <svg viewBox="0 0 24 24" class="w-[18px] h-[18px] md:w-[20px] md:h-[20px] fill-current" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0 overflow-hidden w-full">
+                                <p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">LinkedIn</p>
+                                <div class="font-medium text-[var(--text-main)]" id="ui-linkedin-container">
+                                    <a href="https://www.linkedin.com/in/drg-m-aksa-arsyad-4b95b2428" target="_blank" rel="noopener noreferrer" class="link-hover truncate block" aria-label="Kunjungi LinkedIn">drg. M. Aksa Arsyad</a>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="group flex items-start gap-3 md:gap-4 overflow-hidden">
                             <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-red-400 group-hover:bg-red-400/10 group-hover:scale-110 transition-all shrink-0"><i class="ph ph-map-pin text-lg md:text-xl" aria-hidden="true"></i></div>
                             <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">Domisili</p><address class="text-[var(--text-main)] leading-relaxed break-words not-italic" id="ui-alamat">...</address></div>
@@ -1365,11 +1382,23 @@
                 document.getElementById('ui-sciprofiles').href = data.kontak.sciprofiles;
             }
 
-            // ================== HELPER FILTER GOOGLE DRIVE IMAGE ==================
+            // ================== HELPER FILTER GOOGLE DRIVE IMAGE (SUPER UPGRADE) ==================
             const convertDriveLink = (url) => {
                 if(!url) return 'https://ui-avatars.com/api/?name=No+Image&background=1e293b&color=fff';
+                
+                let fileId = '';
+                // 1. Ekstrak ID dari link share reguler (/d/ID/view)
                 const match = url.match(/\/d\/(.+?)\//);
-                if(match && match[1]) return `https://drive.google.com/uc?id=${match[1]}`;
+                if(match && match[1]) fileId = match[1];
+                
+                // 2. Ekstrak ID dari link uc?id=ID
+                const matchUc = url.match(/id=([^&]+)/);
+                if(matchUc && matchUc[1]) fileId = matchUc[1];
+
+                if (fileId) {
+                    // Gunakan server bypass lh3.googleusercontent.com yang kebal blokir CORS
+                    return `https://lh3.googleusercontent.com/d/${fileId}`;
+                }
                 return url; 
             };
 
