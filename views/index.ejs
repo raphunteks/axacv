@@ -7,9 +7,10 @@
     <meta name="theme-color" content="#030712">
     
     <!-- ======================================================================= -->
-    <!-- SUPER BIG UPGRADE SEO: CRAWLING BOTS DIRECTIVES                         -->
-    <!-- Mengamankan indeksasi dari berbagai agen mesin pencari (GSC 100% Valid) -->
+    <!-- SUPER BIG UPGRADE SEO: CRAWLING BOTS & HTTPS STRICT ENFORCEMENT         -->
+    <!-- Mempercepat status pelaporan HTTPS di Google Search Console (GSC)       -->
     <!-- ======================================================================= -->
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
@@ -26,7 +27,7 @@
     <link rel="preload" href="/axalogo.png" as="image" type="image/png" fetchpriority="high">
 
     <!-- ======================================================================= -->
-    <!-- SUPER BIG UPGRADE: SITEMAP AUTODISCOVERY, PREFETCH & ALTERNATE          -->
+    <!-- SITEMAP AUTODISCOVERY, PREFETCH & ALTERNATE                             -->
     <!-- ======================================================================= -->
     <link rel="sitemap" type="application/xml" title="Sitemap" href="https://maksaarsyad.xyz/sitemap.xml">
     <link rel="alternate" type="application/xml" title="XML Sitemap" href="https://maksaarsyad.xyz/sitemap.xml">
@@ -36,7 +37,7 @@
 
     <title>CV & Portofolio | drg. M. Aksa Arsyad, S.KG</title>
     
-    <!-- ================= SEO EXPERT 100% UPGRADE (SITELINKS MASTERPIECE.) ================= -->
+    <!-- ================= SEO EXPERT 100% UPGRADE ================= -->
     <meta name="description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum. Lihat pengalaman kerja, riwayat pendidikan, riwayat organisasi, publikasi ilmiah, dan hubungi langsung.">
     <meta name="keywords" content="Riwayat Pendidikan drg. M. Aksa Arsyad, Pengalaman Kerja drg. M. Aksa Arsyad, Dokter Gigi Umum, Aksa Arsyad, S.KG, Makassar, UMI, Dokter Gigi Makassar, Kedokteran Gigi, Klinik Gigi, Publikasi Ilmiah">
     <meta name="author" content="drg. M. Aksa Arsyad, S.KG">
@@ -67,50 +68,86 @@
     <meta name="twitter:image:alt" content="Logo Portofolio drg. M. Aksa Arsyad">
 
     <!-- ======================================================================= -->
-    <!-- ADVANCED JSON-LD Schema.org (@graph Format - DYNAMIC SITELINKS)         -->
+    <!-- ADVANCED JSON-LD Schema.org (ENTERPRISE GOLD STANDARD GSC)              -->
+    <!-- Menyertakan struktur ketat item: {@id, name} agar tidak ada error       -->
+    <!-- "Item tanpa nama" dan meng-cover FULL 8 TAB / Menu.                     -->
     <!-- ======================================================================= -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@graph": [
         {
+          "@type": "WebSite",
+          "@id": "https://maksaarsyad.xyz/#website",
+          "url": "https://maksaarsyad.xyz/",
+          "name": "CV & Portofolio drg. M. Aksa Arsyad",
+          "description": "Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG.",
+          "inLanguage": "id-ID"
+        },
+        {
           "@type": "ProfilePage",
           "@id": "https://maksaarsyad.xyz/#webpage",
           "url": "https://maksaarsyad.xyz/",
           "name": "CV & Portofolio | drg. M. Aksa Arsyad, S.KG",
-          "description": "Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG.",
+          "isPartOf": { "@id": "https://maksaarsyad.xyz/#website" },
+          "about": { "@id": "https://maksaarsyad.xyz/#person" },
           "inLanguage": "id-ID",
-          "mainEntity": {
-            "@id": "https://maksaarsyad.xyz/#person"
-          },
           "hasPart": [
             {
               "@type": "WebPageElement",
-              "@id": "https://maksaarsyad.xyz/#pengalaman",
-              "name": "Pengalaman Kerja drg. M. Aksa Arsyad",
-              "description": "Riwayat karir klinis, pekerjaan, dan pengalaman profesional di klinik serta rumah sakit.",
-              "url": "https://maksaarsyad.xyz/#pengalaman"
+              "@id": "https://maksaarsyad.xyz/#beranda",
+              "name": "Beranda",
+              "description": "Halaman Utama Profil drg. M. Aksa Arsyad, S.KG.",
+              "url": "https://maksaarsyad.xyz/#beranda"
             },
             {
               "@type": "WebPageElement",
               "@id": "https://maksaarsyad.xyz/#pendidikan",
-              "name": "Riwayat Pendidikan drg. M. Aksa Arsyad",
+              "name": "Riwayat Pendidikan",
               "description": "Latar belakang pendidikan, institusi, dan almamater Universitas Muslim Indonesia & Hasanuddin.",
               "url": "https://maksaarsyad.xyz/#pendidikan"
             },
             {
               "@type": "WebPageElement",
+              "@id": "https://maksaarsyad.xyz/#pengalaman",
+              "name": "Pengalaman Kerja",
+              "description": "Riwayat karir klinis, pekerjaan, dan pengalaman profesional di klinik serta rumah sakit.",
+              "url": "https://maksaarsyad.xyz/#pengalaman"
+            },
+            {
+              "@type": "WebPageElement",
               "@id": "https://maksaarsyad.xyz/#organisasi",
-              "name": "Riwayat Organisasi drg. M. Aksa Arsyad",
+              "name": "Riwayat Organisasi",
               "description": "Pengalaman keanggotaan dan aktivitas dalam organisasi profesi maupun kemahasiswaan.",
               "url": "https://maksaarsyad.xyz/#organisasi"
             },
             {
               "@type": "WebPageElement",
               "@id": "https://maksaarsyad.xyz/#publikasi",
-              "name": "Publikasi Ilmiah drg. M. Aksa Arsyad",
+              "name": "Publikasi Ilmiah",
               "description": "Kumpulan jurnal, penelitian, dan publikasi ilmiah di bidang kedokteran gigi.",
               "url": "https://maksaarsyad.xyz/#publikasi"
+            },
+            {
+              "@type": "WebPageElement",
+              "@id": "https://maksaarsyad.xyz/#keahlian-tech",
+              "name": "Keahlian & Tech",
+              "description": "Daftar keahlian klinis medis, bahasa pemrograman, dan kemampuan teknologi.",
+              "url": "https://maksaarsyad.xyz/#keahlian-tech"
+            },
+            {
+              "@type": "WebPageElement",
+              "@id": "https://maksaarsyad.xyz/#proyek",
+              "name": "Proyek Web",
+              "description": "Portofolio pengembangan website, sistem, dan aplikasi.",
+              "url": "https://maksaarsyad.xyz/#proyek"
+            },
+            {
+              "@type": "WebPageElement",
+              "@id": "https://maksaarsyad.xyz/#sertifikasi",
+              "name": "Sertifikasi",
+              "description": "Kumpulan sertifikasi kompetensi medis dan penghargaan pemrograman.",
+              "url": "https://maksaarsyad.xyz/#sertifikasi"
             }
           ]
         },
@@ -147,7 +184,7 @@
           "medicalSpecialty": "General Dentistry"
         },
         
-        /* SITELINKS FOR SERP (Search Engine Results Page) NAVIGATION */
+        /* ITEM LIST (MENJADI SITELINKS DI HASIL PENCARIAN GOOGLE) - FULL 8 TAB */
         {
           "@type": "ItemList",
           "@id": "https://maksaarsyad.xyz/#sitelinks",
@@ -157,41 +194,54 @@
               "@type": "SiteNavigationElement",
               "position": 1,
               "name": "Beranda",
-              "description": "Halaman Utama Profil drg. M. Aksa Arsyad, S.KG.",
               "url": "https://maksaarsyad.xyz/#beranda"
             },
             {
               "@type": "SiteNavigationElement",
               "position": 2,
-              "name": "Pengalaman Kerja",
-              "description": "Riwayat karir klinis, pekerjaan, dan pengalaman profesional di klinik serta rumah sakit.",
-              "url": "https://maksaarsyad.xyz/#pengalaman"
+              "name": "Riwayat Pendidikan",
+              "url": "https://maksaarsyad.xyz/#pendidikan"
             },
             {
               "@type": "SiteNavigationElement",
               "position": 3,
-              "name": "Riwayat Pendidikan",
-              "description": "Latar belakang pendidikan, institusi, dan almamater Universitas.",
-              "url": "https://maksaarsyad.xyz/#pendidikan"
+              "name": "Pengalaman Kerja",
+              "url": "https://maksaarsyad.xyz/#pengalaman"
             },
             {
               "@type": "SiteNavigationElement",
               "position": 4,
               "name": "Riwayat Organisasi",
-              "description": "Pengalaman keanggotaan dan aktivitas dalam organisasi profesi maupun kemahasiswaan.",
               "url": "https://maksaarsyad.xyz/#organisasi"
             },
             {
               "@type": "SiteNavigationElement",
               "position": 5,
               "name": "Publikasi Ilmiah",
-              "description": "Kumpulan jurnal, penelitian, dan publikasi ilmiah yang telah diterbitkan.",
               "url": "https://maksaarsyad.xyz/#publikasi"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 6,
+              "name": "Keahlian & Tech",
+              "url": "https://maksaarsyad.xyz/#keahlian-tech"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 7,
+              "name": "Proyek Web",
+              "url": "https://maksaarsyad.xyz/#proyek"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 8,
+              "name": "Sertifikasi",
+              "url": "https://maksaarsyad.xyz/#sertifikasi"
             }
           ]
         },
 
-        /* BREADCRUMBS UNTUK MEMPERKUAT SITELINKS & PERUJUK */
+        /* BREADCRUMBS STRICT FORMAT (MENCEGAH ERROR "ITEM TANPA NAMA" DI GSC) */
         {
           "@type": "BreadcrumbList",
           "@id": "https://maksaarsyad.xyz/#breadcrumbs",
@@ -199,32 +249,66 @@
             {
               "@type": "ListItem",
               "position": 1,
-              "name": "Beranda",
-              "item": "https://maksaarsyad.xyz/#beranda"
+              "item": {
+                "@id": "https://maksaarsyad.xyz/#beranda",
+                "name": "Beranda"
+              }
             },
             {
               "@type": "ListItem",
               "position": 2,
-              "name": "Pengalaman Kerja",
-              "item": "https://maksaarsyad.xyz/#pengalaman"
+              "item": {
+                "@id": "https://maksaarsyad.xyz/#pendidikan",
+                "name": "Riwayat Pendidikan"
+              }
             },
             {
               "@type": "ListItem",
               "position": 3,
-              "name": "Riwayat Pendidikan",
-              "item": "https://maksaarsyad.xyz/#pendidikan"
+              "item": {
+                "@id": "https://maksaarsyad.xyz/#pengalaman",
+                "name": "Pengalaman Kerja"
+              }
             },
             {
               "@type": "ListItem",
               "position": 4,
-              "name": "Riwayat Organisasi",
-              "item": "https://maksaarsyad.xyz/#organisasi"
+              "item": {
+                "@id": "https://maksaarsyad.xyz/#organisasi",
+                "name": "Riwayat Organisasi"
+              }
             },
             {
               "@type": "ListItem",
               "position": 5,
-              "name": "Publikasi Ilmiah",
-              "item": "https://maksaarsyad.xyz/#publikasi"
+              "item": {
+                "@id": "https://maksaarsyad.xyz/#publikasi",
+                "name": "Publikasi Ilmiah"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 6,
+              "item": {
+                "@id": "https://maksaarsyad.xyz/#keahlian-tech",
+                "name": "Keahlian & Tech"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 7,
+              "item": {
+                "@id": "https://maksaarsyad.xyz/#proyek",
+                "name": "Proyek Web"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 8,
+              "item": {
+                "@id": "https://maksaarsyad.xyz/#sertifikasi",
+                "name": "Sertifikasi"
+              }
             }
           ]
         }
