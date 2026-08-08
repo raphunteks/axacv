@@ -20,11 +20,12 @@ app.use((req, res, next) => {
 });
 
 // ==========================================
-// 2. SETUP EJS & FOLDER PUBLIC
+// 2. SETUP EJS & FOLDER PUBLIC (FIX VERCEL PATH)
 // ==========================================
+// Menggunakan process.cwd() agar Vercel Cloud bisa menemukan foldernya secara absolut
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
+app.set('views', path.join(process.cwd(), 'views'));
+app.use(express.static(path.join(process.cwd(), 'public')));
 
 // ==========================================
 // ROUTE 1: HALAMAN UTAMA (WEB PORTFOLIO EJS)
@@ -34,12 +35,12 @@ app.get('/', (req, res) => {
         res.render('index');
     } catch (error) {
         console.error("Gagal merender index.ejs:", error);
-        res.status(500).send("Internal Server Error saat merender halaman.");
+        res.status(500).send("Internal Server Error: Gagal memuat file EJS.");
     }
 });
 
 // ==========================================
-// ROUTE 2: API GITHUB STATS (SCRIPT LAMA ANDA)
+// ROUTE 2: API GITHUB STATS (SCRIPT PROXY ANDA)
 // ==========================================
 app.post('/api/github', async (req, res) => {
     try {
@@ -140,7 +141,7 @@ app.post('/api/github', async (req, res) => {
 // ==========================================
 module.exports = app;
 
-// Listener untuk keperluan Development Lokal (node server.js)
+// Listener untuk keperluan Development Lokal
 if (require.main === module) {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
