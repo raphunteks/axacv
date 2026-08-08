@@ -2,9 +2,9 @@
   "name": "axa-cv-enterprise",
   "version": "3.0.0",
   "description": "CV & Portofolio drg. M. Aksa Arsyad SEO Optimized",
-  "main": "api/index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node api/index.js"
+    "start": "node server.js"
   },
   "keywords": [
     "cv",
