@@ -736,12 +736,12 @@
             <div class="container mx-auto px-4 max-w-[1200px]">
                 <ul class="flex overflow-x-auto py-4 gap-6 md:gap-10 text-[11px] md:text-sm font-bold text-[var(--text-muted)] no-scrollbar items-center md:justify-center whitespace-nowrap scroll-smooth">
                     <li><a itemprop="url" href="#beranda" title="Halaman Utama Profil" aria-label="Beranda" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Beranda</span></a></li>
-                    <li><a itemprop="url" href="#keahlian-tech" title="Keahlian & Kemampuan" aria-label="Keahlian" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Keahlian & Tech</span></a></li>
-                    <li><a itemprop="url" href="#proyek" title="Proyek Web" aria-label="Proyek" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Proyek Web</span></a></li>
-                    <li><a itemprop="url" href="#pengalaman" title="Riwayat Pengalaman Kerja" aria-label="Pengalaman Kerja" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Pengalaman Kerja</span></a></li>
                     <li><a itemprop="url" href="#pendidikan" title="Riwayat Pendidikan Akademis" aria-label="Riwayat Pendidikan" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Riwayat Pendidikan</span></a></li>
+                    <li><a itemprop="url" href="#pengalaman" title="Riwayat Pengalaman Kerja" aria-label="Pengalaman Kerja" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Pengalaman Kerja</span></a></li>
                     <li><a itemprop="url" href="#organisasi" title="Riwayat Organisasi" aria-label="Riwayat Organisasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Riwayat Organisasi</span></a></li>
                     <li><a itemprop="url" href="#publikasi" title="Kumpulan Publikasi Ilmiah" aria-label="Publikasi Ilmiah" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Publikasi Ilmiah</span></a></li>
+                    <li><a itemprop="url" href="#keahlian-tech" title="Keahlian & Kemampuan" aria-label="Keahlian" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Keahlian & Tech</span></a></li>
+                    <li><a itemprop="url" href="#proyek" title="Proyek Web" aria-label="Proyek" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Proyek Web</span></a></li>
                     <li><a itemprop="url" href="#sertifikasi" title="Sertifikasi & Pelatihan" aria-label="Sertifikasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover"><span itemprop="name">Sertifikasi</span></a></li>
                 </ul>
             </div>
@@ -862,6 +862,56 @@
                 </article>
             </section>
 
+            <!-- PENDIDIKAN -->
+            <section id="pendidikan" class="mb-16 md:mb-24 w-full pt-6 scroll-mt-24" aria-labelledby="heading-pendidikan">
+                <header class="flex flex-col items-center text-center mb-12 md:mb-16 animate-on-scroll icon-bounce-group">
+                    <div class="p-3 md:p-4 bg-gradient-to-b from-[rgba(var(--color-primary-rgb),0.15)] to-transparent rounded-full mb-4 border border-[rgba(var(--color-primary-rgb),0.3)] shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.2)] icon-bounce">
+                        <i class="ph ph-student text-2xl md:text-3xl text-[var(--color-primary)]" aria-hidden="true"></i>
+                    </div>
+                    <h2 id="heading-pendidikan" class="text-2xl md:text-3xl font-extrabold text-[var(--text-main)] truncate px-2 drop-shadow-md">Riwayat Pendidikan</h2>
+                </header>
+                <div class="relative circuit-line flex flex-wrap" id="ui-pendidikan-container">
+                    <!-- Konten diisi JS -->
+                </div>
+            </section>
+
+            <!-- PENGALAMAN -->
+            <section id="pengalaman" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24" aria-labelledby="heading-pengalaman">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-10 gap-4">
+                    <div class="w-full">
+                        <h2 id="heading-pengalaman" class="text-2xl md:text-3xl font-extrabold text-[var(--text-main)] mb-2 truncate drop-shadow-md">Pengalaman <span class="text-stroke-gradient">Kerja</span></h2>
+                        <p class="text-[var(--text-muted)] text-xs md:text-sm">Riwayat karir klinis dan pekerjaan profesional.</p>
+                    </div>
+                    <div class="h-[1px] flex-grow bg-gradient-to-r from-transparent via-[rgba(var(--color-primary-rgb),0.4)] to-transparent hidden md:block mx-8 mb-2" aria-hidden="true"></div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 w-full" id="ui-pengalaman-container">
+                    <!-- Konten diisi JS -->
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-16 md:mb-24 w-full">
+                <!-- ORGANISASI -->
+                <section id="organisasi" class="animate-on-scroll premium-card p-6 md:p-8 w-full scroll-mt-24 icon-bounce-group" aria-labelledby="heading-organisasi">
+                    <h2 id="heading-organisasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-[var(--text-main)] border-b border-[var(--border-color)] pb-4 drop-shadow-md">
+                        <i class="ph ph-users-three text-[var(--color-secondary)] p-2 bg-[rgba(var(--color-secondary-rgb),0.1)] border border-[rgba(var(--color-secondary-rgb),0.3)] rounded-lg shrink-0 icon-bounce shadow-inner" aria-hidden="true"></i> <span class="truncate">Riwayat Organisasi</span>
+                    </h2>
+                    <div class="space-y-2 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar w-full" id="ui-organisasi-container">
+                        <!-- Konten diisi JS -->
+                    </div>
+                </section>
+
+                <!-- PUBLIKASI -->
+                <section id="publikasi" class="animate-on-scroll premium-card p-6 md:p-8 w-full scroll-mt-24 icon-bounce-group" style="transition-delay: 150ms;" aria-labelledby="heading-publikasi">
+                    <h2 id="heading-publikasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-[var(--text-main)] border-b border-[var(--border-color)] pb-4 drop-shadow-md">
+                        <i class="ph ph-books text-[var(--color-primary)] p-2 bg-[rgba(var(--color-primary-rgb),0.1)] border border-[rgba(var(--color-primary-rgb),0.3)] rounded-lg shrink-0 icon-bounce shadow-inner" aria-hidden="true"></i> <span class="truncate">Publikasi Ilmiah</span>
+                    </h2>
+                    <div class="space-y-4 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 md:pr-4 custom-scrollbar w-full" id="ui-publikasi-container">
+                        <!-- Konten diisi JS -->
+                    </div>
+                </section>
+            </div>
+
             <!-- KEAHLIAN TECH & GITHUB API (SUPER UPGRADE) -->
             <section id="keahlian-tech" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24">
                 <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-10 text-[var(--text-main)] drop-shadow-md">
@@ -938,56 +988,6 @@
                     <div class="text-center col-span-full py-10"><i class="ph-bold ph-spinner-gap animate-spin text-3xl text-[var(--color-primary)]"></i></div>
                 </div>
             </section>
-
-            <!-- PENGALAMAN -->
-            <section id="pengalaman" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24" aria-labelledby="heading-pengalaman">
-                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-10 gap-4">
-                    <div class="w-full">
-                        <h2 id="heading-pengalaman" class="text-2xl md:text-3xl font-extrabold text-[var(--text-main)] mb-2 truncate drop-shadow-md">Pengalaman <span class="text-stroke-gradient">Kerja</span></h2>
-                        <p class="text-[var(--text-muted)] text-xs md:text-sm">Riwayat karir klinis dan pekerjaan profesional.</p>
-                    </div>
-                    <div class="h-[1px] flex-grow bg-gradient-to-r from-transparent via-[rgba(var(--color-primary-rgb),0.4)] to-transparent hidden md:block mx-8 mb-2" aria-hidden="true"></div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 w-full" id="ui-pengalaman-container">
-                    <!-- Konten diisi JS -->
-                </div>
-            </section>
-
-            <!-- PENDIDIKAN -->
-            <section id="pendidikan" class="mb-16 md:mb-24 w-full pt-6 scroll-mt-24" aria-labelledby="heading-pendidikan">
-                <header class="flex flex-col items-center text-center mb-12 md:mb-16 animate-on-scroll icon-bounce-group">
-                    <div class="p-3 md:p-4 bg-gradient-to-b from-[rgba(var(--color-primary-rgb),0.15)] to-transparent rounded-full mb-4 border border-[rgba(var(--color-primary-rgb),0.3)] shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.2)] icon-bounce">
-                        <i class="ph ph-student text-2xl md:text-3xl text-[var(--color-primary)]" aria-hidden="true"></i>
-                    </div>
-                    <h2 id="heading-pendidikan" class="text-2xl md:text-3xl font-extrabold text-[var(--text-main)] truncate px-2 drop-shadow-md">Riwayat Pendidikan</h2>
-                </header>
-                <div class="relative circuit-line flex flex-wrap" id="ui-pendidikan-container">
-                    <!-- Konten diisi JS -->
-                </div>
-            </section>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-16 md:mb-24 w-full">
-                <!-- ORGANISASI -->
-                <section id="organisasi" class="animate-on-scroll premium-card p-6 md:p-8 w-full scroll-mt-24 icon-bounce-group" aria-labelledby="heading-organisasi">
-                    <h2 id="heading-organisasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-[var(--text-main)] border-b border-[var(--border-color)] pb-4 drop-shadow-md">
-                        <i class="ph ph-users-three text-[var(--color-secondary)] p-2 bg-[rgba(var(--color-secondary-rgb),0.1)] border border-[rgba(var(--color-secondary-rgb),0.3)] rounded-lg shrink-0 icon-bounce shadow-inner" aria-hidden="true"></i> <span class="truncate">Riwayat Organisasi</span>
-                    </h2>
-                    <div class="space-y-2 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar w-full" id="ui-organisasi-container">
-                        <!-- Konten diisi JS -->
-                    </div>
-                </section>
-
-                <!-- PUBLIKASI -->
-                <section id="publikasi" class="animate-on-scroll premium-card p-6 md:p-8 w-full scroll-mt-24 icon-bounce-group" style="transition-delay: 150ms;" aria-labelledby="heading-publikasi">
-                    <h2 id="heading-publikasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-[var(--text-main)] border-b border-[var(--border-color)] pb-4 drop-shadow-md">
-                        <i class="ph ph-books text-[var(--color-primary)] p-2 bg-[rgba(var(--color-primary-rgb),0.1)] border border-[rgba(var(--color-primary-rgb),0.3)] rounded-lg shrink-0 icon-bounce shadow-inner" aria-hidden="true"></i> <span class="truncate">Publikasi Ilmiah</span>
-                    </h2>
-                    <div class="space-y-4 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 md:pr-4 custom-scrollbar w-full" id="ui-publikasi-container">
-                        <!-- Konten diisi JS -->
-                    </div>
-                </section>
-            </div>
 
             <!-- SERTIFIKASI DINAMIS -->
             <section id="sertifikasi" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24">
@@ -1473,7 +1473,8 @@
                 });
             }, { root: null, rootMargin: '-40% 0px -40% 0px', threshold: 0.1 });
             
-            ['beranda', 'keahlian-tech', 'proyek', 'pengalaman', 'pendidikan', 'organisasi', 'publikasi', 'sertifikasi'].forEach(id => {
+            // SUPER UPGRADE: Susunan Observer disamakan dengan visual urutan web agar rapi!
+            ['beranda', 'pendidikan', 'pengalaman', 'organisasi', 'publikasi', 'keahlian-tech', 'proyek', 'sertifikasi'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) sectionObserver.observe(el);
             });
