@@ -169,11 +169,16 @@
     </script>
 
     <style>
-        /* MENCEGAH OFFSIDE / OVERFLOW HORIZONTAL PADA MOBILE DAN DESKTOP */
-        /* FIX ROOT CAUSE SCROLLING: Menghapus !important max-width dan overscroll-behavior-y agar native scroll aktif */
-        html, body {
-            overflow-x: hidden;
+        /* FIX ROOT CAUSE SCROLLING PADA DESKTOP */
+        /* Menghapus overflow-x: hidden dari html dan hanya menerapkannya pada body */
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            transition: background-color 0.5s ease, color 0.5s ease;
+            overflow-x: hidden; /* Mencegah offside horizontal */
+            overflow-y: auto;   /* Memastikan scroll vertikal aktif */
             width: 100%;
+            min-height: 100vh;
         }
 
         :root {
@@ -247,12 +252,40 @@
         .theme-plasma { --color-primary: #B533FF; --color-primary-rgb: 181, 51, 255; --color-secondary: #FF10F0; }
         .theme-tron { --color-primary: #4DEEEA; --color-primary-rgb: 77, 238, 234; --color-secondary: #74EE15; }
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            transition: background-color 0.5s ease, color 0.5s ease;
-        }
+        .theme-peach { --color-primary: #FFDAB9; --color-primary-rgb: 255, 218, 185; --color-secondary: #FFB7C5; }
+        .theme-lavender { --color-primary: #E6E6FA; --color-primary-rgb: 230, 230, 250; --color-secondary: #E0B0FF; }
+        .theme-mint { --color-primary: #98FF98; --color-primary-rgb: 152, 255, 152; --color-secondary: #AFEEEE; }
+        .theme-sakura { --color-primary: #FFB7C5; --color-primary-rgb: 255, 183, 197; --color-secondary: #E6E6FA; }
+        .theme-baby-blue { --color-primary: #89CFF0; --color-primary-rgb: 137, 207, 240; --color-secondary: #FFDAB9; }
+        .theme-lemonade { --color-primary: #FFF700; --color-primary-rgb: 255, 247, 0; --color-secondary: #98FF98; }
+        .theme-lilac { --color-primary: #C8A2C8; --color-primary-rgb: 200, 162, 200; --color-secondary: #89CFF0; }
+        .theme-coral { --color-primary: #FF7F50; --color-primary-rgb: 255, 127, 80; --color-secondary: #FFDAB9; }
+        .theme-periwinkle { --color-primary: #CCCCFF; --color-primary-rgb: 204, 204, 255; --color-secondary: #FFB7C5; }
+        .theme-sand { --color-primary: #F4A460; --color-primary-rgb: 244, 164, 96; --color-secondary: #FFE4B5; }
 
+        .theme-navy { --color-primary: #000080; --color-primary-rgb: 0, 0, 128; --color-secondary: #4682B4; }
+        .theme-maroon { --color-primary: #800000; --color-primary-rgb: 128, 0, 0; --color-secondary: #DC143C; }
+        .theme-olive { --color-primary: #808000; --color-primary-rgb: 128, 128, 0; --color-secondary: #BDB76B; }
+        .theme-teal { --color-primary: #008080; --color-primary-rgb: 0, 128, 128; --color-secondary: #20B2AA; }
+        .theme-indigo { --color-primary: #4B0082; --color-primary-rgb: 75, 0, 130; --color-secondary: #8A2BE2; }
+        .theme-slate { --color-primary: #708090; --color-primary-rgb: 112, 128, 144; --color-secondary: #778899; }
+        .theme-forest { --color-primary: #228B22; --color-primary-rgb: 34, 139, 34; --color-secondary: #32CD32; }
+        .theme-crimson { --color-primary: #DC143C; --color-primary-rgb: 220, 20, 60; --color-secondary: #FF6347; }
+        .theme-ochre { --color-primary: #CC7722; --color-primary-rgb: 204, 119, 34; --color-secondary: #DAA520; }
+        .theme-charcoal { --color-primary: #36454F; --color-primary-rgb: 54, 69, 79; --color-secondary: #708090; }
+
+        .theme-gold { --color-primary: #FFD700; --color-primary-rgb: 255, 215, 0; --color-secondary: #DAA520; }
+        .theme-silver { --color-primary: #C0C0C0; --color-primary-rgb: 192, 192, 192; --color-secondary: #A9A9A9; }
+        .theme-bronze { --color-primary: #CD7F32; --color-primary-rgb: 205, 127, 50; --color-secondary: #D2691E; }
+        .theme-platinum { --color-primary: #E5E4E2; --color-primary-rgb: 229, 228, 226; --color-secondary: #B0C4DE; }
+        .theme-ruby { --color-primary: #E0115F; --color-primary-rgb: 224, 17, 95; --color-secondary: #C71585; }
+        .theme-sapphire { --color-primary: #0F52BA; --color-primary-rgb: 15, 82, 186; --color-secondary: #4169E1; }
+        .theme-emerald-deep { --color-primary: #50C878; --color-primary-rgb: 80, 200, 120; --color-secondary: #2E8B57; }
+        .theme-amethyst { --color-primary: #9966CC; --color-primary-rgb: 153, 102, 204; --color-secondary: #8A2BE2; }
+        .theme-topaz { --color-primary: #FFC87C; --color-primary-rgb: 255, 200, 124; --color-secondary: #FFA500; }
+        .theme-onyx { --color-primary: #353839; --color-primary-rgb: 53, 56, 57; --color-secondary: #000000; }
+
+        /* PROGRESS SCROLL */
         #scroll-progress {
             position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
             z-index: 10000; width: 0%; transition: width 0.1s ease-out;
@@ -263,6 +296,7 @@
 
         .bg-dots {
             position: fixed; inset: 0; z-index: -20;
+            pointer-events: none; /* MEMASTIKAN TIDAK MENGHALANGI SCROLL */
             background-image: 
                 linear-gradient(var(--border-color) 1px, transparent 1px),
                 linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
@@ -287,7 +321,7 @@
             will-change: transform, opacity, border-radius;
             mix-blend-mode: screen; 
             border-radius: 50%;
-            pointer-events: none;
+            pointer-events: none; /* SANGAT PENTING AGAR TIDAK BLOCK KLIK/SCROLL */
         }
         .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; min-width: 300px; min-height: 300px; background-color: var(--color-primary); }
         .orb-2 { bottom: -10%; right: -10%; width: 45vw; height: 45vw; min-width: 250px; min-height: 250px; background-color: var(--color-secondary); animation-delay: -7s; animation-direction: alternate-reverse;}
@@ -501,13 +535,13 @@
         .admin-item-card:hover { border-color: var(--color-primary); }
     </style>
 </head>
-<!-- FIX ROOT CAUSE: Menghapus animate__animated animate__fadeIn pada tag body agar scroll native tidak terganggu -->
 <body class="antialiased selection:bg-[var(--color-primary)] selection:text-black relative">
 
     <div id="scroll-progress"></div>
 
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-[var(--color-primary)] focus:text-[var(--text-inverse)] focus:font-bold focus:rounded-br-xl outline-none ring-4 ring-[var(--text-main)] shadow-2xl">Langsung ke konten utama</a>
 
+    <!-- Latar Belakang Kosmik Dinamis -->
     <div class="bg-dots" aria-hidden="true"></div>
     <div class="bg-noise" aria-hidden="true"></div>
     <div class="glow-orb orb-1" aria-hidden="true"></div>
@@ -607,7 +641,7 @@
         <p id="loader-text" class="text-sm font-medium text-[var(--color-primary)] mt-3 text-center max-w-sm px-4">Connecting to Database System</p>
     </div>
 
-    <!-- FIX ROOT CAUSE: Menghapus overflow-hidden dari main agar native sticky bekerja dan scroll lancar -->
+    <!-- Tidak menggunakan overflow-hidden di sini agar scroll tidak macet -->
     <main class="relative z-10 transition-opacity duration-1000 opacity-0 w-full" id="main-content" role="main">
         
         <nav aria-label="Navigasi Utama Portofolio" class="sticky top-0 z-[100] bg-[var(--bg-card-heavy)]/80 backdrop-blur-3xl saturate-[200%] border-b border-[var(--border-heavy)] shadow-[0_5px_25px_rgba(0,0,0,0.3)] w-full mb-10 transition-all animate__animated animate__fadeInDown max-w-full" itemscope itemtype="https://schema.org/SiteNavigationElement">
@@ -653,7 +687,6 @@
             </header>
 
             <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 mb-20 md:mb-28 w-full max-w-full" aria-label="Informasi Dasar">
-                
                 <article class="premium-card p-5 md:p-8 lg:col-span-4 animate-on-scroll w-full icon-bounce-group">
                     <header class="flex items-center gap-4 mb-6 md:mb-8">
                         <div class="p-3.5 bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.3)] to-transparent rounded-2xl border border-[rgba(var(--color-primary-rgb),0.5)] text-[var(--color-primary)] shrink-0 shadow-[inset_0_0_15px_rgba(var(--color-primary-rgb),0.4)] icon-bounce">
@@ -838,20 +871,28 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full mb-10 animate-on-scroll max-w-full">
-                    <div class="premium-card p-4 md:p-8 flex justify-center items-center group max-w-full">
-                        <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/stats-output/stats.svg?hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false" alt="GitHub Stats" class="w-full h-auto max-w-full group-hover:scale-105 transition-transform duration-700 drop-shadow-lg">
+                    <div class="premium-card p-4 md:p-8 flex justify-center items-center group max-w-full overflow-hidden">
+                        <div class="w-full overflow-x-auto no-scrollbar flex justify-center items-center min-w-0">
+                            <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/stats-output/stats.svg?hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false" alt="GitHub Stats" class="w-full h-auto max-w-[450px] group-hover:scale-105 transition-transform duration-700 drop-shadow-lg">
+                        </div>
                     </div>
-                    <div class="premium-card p-4 md:p-8 flex justify-center items-center group max-w-full">
-                        <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/languages-output/languages.svg?locale=en&hide_title=false&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false" alt="GitHub Languages" class="w-full h-auto max-w-full group-hover:scale-105 transition-transform duration-700 drop-shadow-lg">
+                    <div class="premium-card p-4 md:p-8 flex justify-center items-center group max-w-full overflow-hidden">
+                        <div class="w-full overflow-x-auto no-scrollbar flex justify-center items-center min-w-0">
+                            <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/languages-output/languages.svg?locale=en&hide_title=false&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false" alt="GitHub Languages" class="w-full h-auto max-w-[450px] group-hover:scale-105 transition-transform duration-700 drop-shadow-lg">
+                        </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full mb-10 animate-on-scroll max-w-full">
-                    <div class="premium-card p-4 md:p-8 flex justify-center items-center group max-w-full">
-                        <img src="https://github-readme-streak-stats.herokuapp.com/?user=raphunteks&theme=dracula&hide_border=true" alt="GitHub Streak" class="w-full h-auto max-w-full group-hover:scale-105 transition-transform duration-700 drop-shadow-lg">
+                    <div class="premium-card p-4 md:p-8 flex justify-center items-center group max-w-full overflow-hidden">
+                        <div class="w-full overflow-x-auto no-scrollbar flex justify-center items-center min-w-0">
+                            <img src="https://github-readme-streak-stats.herokuapp.com/?user=raphunteks&theme=dracula&hide_border=true" alt="GitHub Streak" class="w-full h-auto max-w-[450px] group-hover:scale-105 transition-transform duration-700 drop-shadow-lg">
+                        </div>
                     </div>
-                    <div class="premium-card p-4 md:p-8 flex justify-center items-center group max-w-full">
-                        <img src="https://readme-jokes.vercel.app/api?theme=dracula&hideBorder=true" alt="Developer Joke" class="w-full h-auto max-w-full group-hover:scale-105 transition-transform duration-700 drop-shadow-lg">
+                    <div class="premium-card p-4 md:p-8 flex justify-center items-center group max-w-full overflow-hidden">
+                        <div class="w-full overflow-x-auto no-scrollbar flex justify-center items-center min-w-0">
+                            <img src="https://readme-jokes.vercel.app/api?theme=dracula&hideBorder=true" alt="Developer Joke" class="w-full h-auto max-w-[450px] group-hover:scale-105 transition-transform duration-700 drop-shadow-lg">
+                        </div>
                     </div>
                 </div>
 
@@ -1150,8 +1191,13 @@
                         renderSeluruhUI(globalCVData, globalSheetData);
                         
                         setTimeout(() => {
-                            document.getElementById('loader-screen').style.opacity = '0';
-                            document.getElementById('loader-screen').style.visibility = 'hidden';
+                            const loader = document.getElementById('loader-screen');
+                            loader.style.opacity = '0';
+                            // Menghapus elemen secara mutlak setelah animasi selesai
+                            // Mencegah overlay yang menyebabkan masalah klik atau scroll
+                            setTimeout(() => {
+                                loader.style.display = 'none';
+                            }, 800);
                             document.getElementById('main-content').classList.remove('opacity-0');
                             initObserver();
                         }, 500); 
