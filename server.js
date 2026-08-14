@@ -1,169 +1,1541 @@
-const express = require('express');
-const path = require('path');
-const app = express();
-
-// ==========================================
-// 1. SETUP MIDDLEWARE & CORS
-// ==========================================
-app.use(express.json()); // WAJIB: Agar server bisa membaca req.body dari request API
-
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth theme-cyan">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#030712">
     
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    
+    <link rel="preconnect" href="https://script.google.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <!-- Preconnect ke Resource GitHub Stats untuk mempercepat pemuatan LCP -->
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://github-readme-streak-stats.herokuapp.com" crossorigin>
+    <link rel="preconnect" href="https://readme-jokes.vercel.app" crossorigin>
+    
+    <link rel="dns-prefetch" href="https://script.google.com">
+    <link rel="dns-prefetch" href="https://ui-avatars.com">
+    
+    <link rel="preload" href="/axalogo.png" as="image" type="image/png" fetchpriority="high">
+
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://maksaarsyad.xyz/sitemap.xml">
+    <link rel="alternate" type="application/xml" title="XML Sitemap" href="https://maksaarsyad.xyz/sitemap.xml">
+
+    <meta name="google-site-verification" content="AAKLVErwuFUspLpKD6XZwRxIZ5XqaTwy1BEK6-Rl0Ig" />
+
+    <title>CV & Portofolio | drg. M. Aksa Arsyad, S.KG</title>
+    
+    <meta name="description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum. Lihat pengalaman kerja, riwayat pendidikan, riwayat organisasi, publikasi ilmiah, dan hubungi langsung.">
+    <meta name="keywords" content="Riwayat Pendidikan drg. M. Aksa Arsyad, Pengalaman Kerja drg. M. Aksa Arsyad, Dokter Gigi Umum, Aksa Arsyad, S.KG, Makassar, UMI, Dokter Gigi Makassar, Kedokteran Gigi, Klinik Gigi, Publikasi Ilmiah">
+    <meta name="author" content="drg. M. Aksa Arsyad, S.KG">
+    <link rel="canonical" href="https://maksaarsyad.xyz/">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Axa CV">
+    <meta name="application-name" content="Axa CV">
+
+    <meta property="og:site_name" content="Portofolio drg. M. Aksa Arsyad">
+    <meta property="og:type" content="profile">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:url" content="https://maksaarsyad.xyz/">
+    <meta property="og:title" content="drg. M. Aksa Arsyad, S.KG | Dokter Gigi Umum">
+    <meta property="og:description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG. Lihat pengalaman klinis, akademik, dan publikasi ilmiah.">
+    <meta property="og:image" content="https://maksaarsyad.xyz/axalogo.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Logo Portofolio drg. M. Aksa Arsyad">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@axaaxyz_01">
+    <meta name="twitter:creator" content="@axaaxyz_01">
+    <meta name="twitter:title" content="drg. M. Aksa Arsyad, S.KG | Dokter Gigi Umum">
+    <meta name="twitter:description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG. Lihat pengalaman klinis dan hubungi saya.">
+    <meta name="twitter:image" content="https://maksaarsyad.xyz/axalogo.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://maksaarsyad.xyz/#website",
+          "url": "https://maksaarsyad.xyz/",
+          "name": "CV & Portofolio drg. M. Aksa Arsyad",
+          "description": "Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG.",
+          "inLanguage": "id-ID"
+        },
+        {
+          "@type": "ProfilePage",
+          "@id": "https://maksaarsyad.xyz/#webpage",
+          "url": "https://maksaarsyad.xyz/",
+          "name": "CV & Portofolio | drg. M. Aksa Arsyad, S.KG",
+          "isPartOf": { "@id": "https://maksaarsyad.xyz/#website" },
+          "mainEntity": { "@id": "https://maksaarsyad.xyz/#person" },
+          "inLanguage": "id-ID",
+          "hasPart": [
+            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#beranda", "name": "Beranda", "url": "https://maksaarsyad.xyz/#beranda" },
+            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#pendidikan", "name": "Riwayat Pendidikan", "url": "https://maksaarsyad.xyz/#pendidikan" },
+            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#pengalaman", "name": "Pengalaman Kerja", "url": "https://maksaarsyad.xyz/#pengalaman" },
+            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#organisasi", "name": "Riwayat Organisasi", "url": "https://maksaarsyad.xyz/#organisasi" },
+            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#publikasi", "name": "Publikasi Ilmiah", "url": "https://maksaarsyad.xyz/#publikasi" },
+            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#keahlian-tech", "name": "Keahlian & Tech", "url": "https://maksaarsyad.xyz/#keahlian-tech" },
+            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#proyek", "name": "Proyek Web", "url": "https://maksaarsyad.xyz/#proyek" },
+            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#sertifikasi", "name": "Sertifikasi", "url": "https://maksaarsyad.xyz/#sertifikasi" }
+          ]
+        },
+        {
+          "@type": ["Person", "Physician"],
+          "@id": "https://maksaarsyad.xyz/#person",
+          "name": "drg. M. Aksa Arsyad, S.KG",
+          "jobTitle": "Dokter Gigi Umum / General Practitioner",
+          "image": "https://maksaarsyad.xyz/axalogo.png",
+          "url": "https://maksaarsyad.xyz/",
+          "sameAs": [
+            "https://www.instagram.com/axaaxyz_01",
+            "https://scholar.google.com/citations?user=hQlIsLoAAAAJ&hl=id",
+            "https://orcid.org/0009-0003-2658-3320",
+            "https://sciprofiles.com/profile/aksaarsyad",
+            "https://www.linkedin.com/in/drg-m-aksa-arsyad-4b95b2428",
+            "https://www.semanticscholar.org/author/M.-Aksa-Arsyad/2328471622"
+          ],
+          "medicalSpecialty": "General Dentistry"
+        }
+      ]
     }
-    next();
-});
+    </script>
+    
+    <link rel="icon" type="image/png" href="/axalogo.png">
+    <link rel="apple-touch-icon" href="/axalogo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
-// ==========================================
-// 2. SETUP EJS & FOLDER PUBLIC
-// ==========================================
-app.set('view engine', 'ejs');
-app.set('views', path.join(process.cwd(), 'views'));
+    <script>
+        function initThemeSettings() {
+            const savedBg = localStorage.getItem('axa-bg-theme') || 'dark';
+            const savedColor = localStorage.getItem('axa-theme-color') || 'theme-cyan';
+            
+            if(savedBg === 'dark') document.documentElement.removeAttribute('data-theme');
+            else document.documentElement.setAttribute('data-theme', savedBg);
+            
+            document.documentElement.className = `scroll-smooth ${savedColor}`;
+        }
+        initThemeSettings();
+    </script>
 
-// ==========================================
-// SANGAT PENTING: FIX SITEMAP.XML TREE
-// Memaksa browser menampilkan sitemap sebagai Tree XML (Bukan Teks HTML)
-// ==========================================
-app.get('/sitemap.xml', (req, res) => {
-    res.set('Content-Type', 'application/xml; charset=utf-8');
-    res.sendFile(path.join(process.cwd(), 'public', 'sitemap.xml'));
-});
-
-// ==========================================
-// ROUTE ROBOTS.TXT
-// Melayani file robots.txt langsung dari root folder (sesuai struktur GitHub Anda)
-// ==========================================
-app.get('/robots.txt', (req, res) => {
-    res.set('Content-Type', 'text/plain; charset=utf-8');
-    res.sendFile(path.join(process.cwd(), 'robots.txt'));
-});
-
-// Serve file statis lainnya (logo, css, js) yang ada di folder public
-app.use(express.static(path.join(process.cwd(), 'public')));
-
-// ==========================================
-// ROUTE 1: HALAMAN UTAMA (WEB PORTFOLIO EJS)
-// ==========================================
-app.get('/', (req, res) => {
-    try {
-        res.render('index');
-    } catch (error) {
-        console.error("Gagal merender index.ejs:", error);
-        res.status(500).send("Internal Server Error: Gagal memuat file EJS.");
-    }
-});
-
-// ==========================================
-// ROUTE 2: API GITHUB STATS (SCRIPT PROXY)
-// ==========================================
-app.post('/api/github', async (req, res) => {
-    try {
-        const { username, token } = req.body || {};
-        
-        // Fallback ke Environment Variables (process.env) Vercel
-        const authToken = token || process.env.GITHUB_TOKEN;
-        const ghUser = username || process.env.GITHUB_USERNAME || "raphunteks"; 
-
-        if (!authToken) {
-             return res.status(401).json({ status: 'error', message: 'Token GitHub tidak ditemukan. Harap isi GITHUB_TOKEN di Environment Variables Vercel.' });
+    <style>
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            transition: background-color 0.5s ease, color 0.5s ease;
+            overflow-y: auto;
+            width: 100%;
+            min-height: 100vh;
         }
 
-        const query = `
-        query {
-          user(login: "${ghUser}") {
-            repositories(first: 100, ownerAffiliations: OWNER, isFork: false) {
-              nodes {
-                stargazerCount
-                languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
-                  edges { size node { name color } }
+        :root {
+            --bg-main: #030712; --bg-card: rgba(15, 23, 42, 0.45); --bg-card-heavy: rgba(3, 7, 18, 0.85);
+            --bg-overlay: rgba(255, 255, 255, 0.03); --text-main: #ffffff; --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.08); --border-heavy: rgba(255, 255, 255, 0.2);
+            --shadow-glass: rgba(0, 0, 0, 0.5); --color-primary: #00E5FF; --color-primary-rgb: 0, 229, 255;
+            --color-secondary: #6366F1; --color-secondary-rgb: 99, 102, 241;
+        }
+
+        [data-theme="light"] { --bg-main: #f8fafc; --bg-card: rgba(255, 255, 255, 0.8); --bg-card-heavy: rgba(255, 255, 255, 0.95); --bg-overlay: rgba(0, 0, 0, 0.03); --text-main: #0f172a; --text-muted: #475569; --border-color: rgba(0, 0, 0, 0.08); --border-heavy: rgba(0, 0, 0, 0.15); --shadow-glass: rgba(0, 0, 0, 0.05); }
+        [data-theme="obsidian"] { --bg-main: #000000; --bg-card: rgba(12, 12, 12, 0.75); --bg-card-heavy: rgba(5, 5, 5, 0.9); --bg-overlay: rgba(255, 255, 255, 0.03); --text-main: #f9f9f9; --text-muted: #737373; --border-color: rgba(255, 255, 255, 0.08); --border-heavy: rgba(255, 255, 255, 0.15); --shadow-glass: rgba(255, 255, 255, 0.02); }
+        [data-theme="cosmic"] { --bg-main: #0b091a; --bg-card: rgba(25, 20, 50, 0.5); --bg-card-heavy: rgba(15, 10, 35, 0.85); --bg-overlay: rgba(255, 255, 255, 0.05); --text-main: #f0f0ff; --text-muted: #9a95c4; --border-color: rgba(200, 200, 255, 0.1); --border-heavy: rgba(200, 200, 255, 0.2); --shadow-glass: rgba(0, 0, 0, 0.4); }
+        [data-theme="abyssal"] { --bg-main: #001614; --bg-card: rgba(0, 35, 30, 0.5); --bg-card-heavy: rgba(0, 20, 18, 0.85); --bg-overlay: rgba(255, 255, 255, 0.04); --text-main: #e0fcf9; --text-muted: #629c95; --border-color: rgba(0, 255, 200, 0.1); --border-heavy: rgba(0, 255, 200, 0.2); --shadow-glass: rgba(0, 0, 0, 0.5); }
+        [data-theme="matrix"] { --bg-main: #0d1117; --bg-card: rgba(22, 27, 34, 0.6); --bg-card-heavy: rgba(13, 17, 23, 0.9); --bg-overlay: rgba(255, 255, 255, 0.05); --text-main: #c9d1d9; --text-muted: #8b949e; --border-color: rgba(48, 54, 61, 0.8); --border-heavy: rgba(48, 54, 61, 1); --shadow-glass: rgba(0, 0, 0, 0.5); }
+        [data-theme="sepia"] { --bg-main: #27211b; --bg-card: rgba(56, 47, 39, 0.6); --bg-card-heavy: rgba(33, 27, 22, 0.9); --bg-overlay: rgba(255, 255, 255, 0.04); --text-main: #f4ebd8; --text-muted: #af9e87; --border-color: rgba(255, 200, 150, 0.15); --border-heavy: rgba(255, 200, 150, 0.25); --shadow-glass: rgba(0, 0, 0, 0.4); }
+
+        .theme-cyan { --color-primary: #00E5FF; --color-primary-rgb: 0, 229, 255; --color-secondary: #6366F1; --color-secondary-rgb: 99, 102, 241; }
+        .theme-blue { --color-primary: #3B82F6; --color-primary-rgb: 59, 130, 246; --color-secondary: #8B5CF6; --color-secondary-rgb: 139, 92, 246; }
+        .theme-emerald { --color-primary: #10B981; --color-primary-rgb: 16, 185, 129; --color-secondary: #0ea5e9; --color-secondary-rgb: 14, 165, 233; }
+        .theme-purple { --color-primary: #A855F7; --color-primary-rgb: 168, 85, 247; --color-secondary: #ec4899; --color-secondary-rgb: 236, 72, 153; }
+        .theme-rose { --color-primary: #F43F5E; --color-primary-rgb: 244, 63, 94; --color-secondary: #8b5cf6; --color-secondary-rgb: 139, 92, 246; }
+        .theme-amber { --color-primary: #F59E0B; --color-primary-rgb: 245, 158, 11; --color-secondary: #ef4444; --color-secondary-rgb: 239, 68, 68; }
+        .theme-orange { --color-primary: #F97316; --color-primary-rgb: 249, 115, 22; --color-secondary: #eab308; --color-secondary-rgb: 234, 179, 8; }
+        .theme-green { --color-primary: #22C55E; --color-primary-rgb: 34, 197, 94; --color-secondary: #14b8a6; --color-secondary-rgb: 20, 184, 166; }
+        .theme-pink { --color-primary: #EC4899; --color-primary-rgb: 236, 72, 153; --color-secondary: #f43f5e; --color-secondary-rgb: 244, 63, 94; }
+        .theme-red { --color-primary: #EF4444; --color-primary-rgb: 239, 68, 68; --color-secondary: #f97316; --color-secondary-rgb: 249, 115, 22; }
+
+        .theme-neon-green { --color-primary: #39FF14; --color-primary-rgb: 57, 255, 20; --color-secondary: #00E5FF; }
+        .theme-neon-pink { --color-primary: #FF10F0; --color-primary-rgb: 255, 16, 240; --color-secondary: #8B5CF6; }
+        .theme-cyber-yellow { --color-primary: #FFD300; --color-primary-rgb: 255, 211, 0; --color-secondary: #FF10F0; }
+        .theme-electric-blue { --color-primary: #7DF9FF; --color-primary-rgb: 125, 249, 255; --color-secondary: #A855F7; }
+        .theme-magenta { --color-primary: #FF00FF; --color-primary-rgb: 255, 0, 255; --color-secondary: #00E5FF; }
+        .theme-laser-lemon { --color-primary: #FEFE22; --color-primary-rgb: 254, 254, 34; --color-secondary: #FF00FF; }
+        .theme-hot-pink { --color-primary: #FF69B4; --color-primary-rgb: 255, 105, 180; --color-secondary: #F59E0B; }
+        .theme-toxic { --color-primary: #CCFF00; --color-primary-rgb: 204, 255, 0; --color-secondary: #10B981; }
+        .theme-plasma { --color-primary: #B533FF; --color-primary-rgb: 181, 51, 255; --color-secondary: #FF10F0; }
+        .theme-tron { --color-primary: #4DEEEA; --color-primary-rgb: 77, 238, 234; --color-secondary: #74EE15; }
+
+        .theme-peach { --color-primary: #FFDAB9; --color-primary-rgb: 255, 218, 185; --color-secondary: #FFB7C5; }
+        .theme-lavender { --color-primary: #E6E6FA; --color-primary-rgb: 230, 230, 250; --color-secondary: #E0B0FF; }
+        .theme-mint { --color-primary: #98FF98; --color-primary-rgb: 152, 255, 152; --color-secondary: #AFEEEE; }
+        .theme-sakura { --color-primary: #FFB7C5; --color-primary-rgb: 255, 183, 197; --color-secondary: #E6E6FA; }
+        .theme-baby-blue { --color-primary: #89CFF0; --color-primary-rgb: 137, 207, 240; --color-secondary: #FFDAB9; }
+        .theme-lemonade { --color-primary: #FFF700; --color-primary-rgb: 255, 247, 0; --color-secondary: #98FF98; }
+        .theme-lilac { --color-primary: #C8A2C8; --color-primary-rgb: 200, 162, 200; --color-secondary: #89CFF0; }
+        .theme-coral { --color-primary: #FF7F50; --color-primary-rgb: 255, 127, 80; --color-secondary: #FFDAB9; }
+        .theme-periwinkle { --color-primary: #CCCCFF; --color-primary-rgb: 204, 204, 255; --color-secondary: #FFB7C5; }
+        .theme-sand { --color-primary: #F4A460; --color-primary-rgb: 244, 164, 96; --color-secondary: #FFE4B5; }
+
+        .theme-navy { --color-primary: #000080; --color-primary-rgb: 0, 0, 128; --color-secondary: #4682B4; }
+        .theme-maroon { --color-primary: #800000; --color-primary-rgb: 128, 0, 0; --color-secondary: #DC143C; }
+        .theme-olive { --color-primary: #808000; --color-primary-rgb: 128, 128, 0; --color-secondary: #BDB76B; }
+        .theme-teal { --color-primary: #008080; --color-primary-rgb: 0, 128, 128; --color-secondary: #20B2AA; }
+        .theme-indigo { --color-primary: #4B0082; --color-primary-rgb: 75, 0, 130; --color-secondary: #8A2BE2; }
+        .theme-slate { --color-primary: #708090; --color-primary-rgb: 112, 128, 144; --color-secondary: #778899; }
+        .theme-forest { --color-primary: #228B22; --color-primary-rgb: 34, 139, 34; --color-secondary: #32CD32; }
+        .theme-crimson { --color-primary: #DC143C; --color-primary-rgb: 220, 20, 60; --color-secondary: #FF6347; }
+        .theme-ochre { --color-primary: #CC7722; --color-primary-rgb: 204, 119, 34; --color-secondary: #DAA520; }
+        .theme-charcoal { --color-primary: #36454F; --color-primary-rgb: 54, 69, 79; --color-secondary: #708090; }
+
+        .theme-gold { --color-primary: #FFD700; --color-primary-rgb: 255, 215, 0; --color-secondary: #DAA520; }
+        .theme-silver { --color-primary: #C0C0C0; --color-primary-rgb: 192, 192, 192; --color-secondary: #A9A9A9; }
+        .theme-bronze { --color-primary: #CD7F32; --color-primary-rgb: 205, 127, 50; --color-secondary: #D2691E; }
+        .theme-platinum { --color-primary: #E5E4E2; --color-primary-rgb: 229, 228, 226; --color-secondary: #B0C4DE; }
+        .theme-ruby { --color-primary: #E0115F; --color-primary-rgb: 224, 17, 95; --color-secondary: #C71585; }
+        .theme-sapphire { --color-primary: #0F52BA; --color-primary-rgb: 15, 82, 186; --color-secondary: #4169E1; }
+        .theme-emerald-deep { --color-primary: #50C878; --color-primary-rgb: 80, 200, 120; --color-secondary: #2E8B57; }
+        .theme-amethyst { --color-primary: #9966CC; --color-primary-rgb: 153, 102, 204; --color-secondary: #8A2BE2; }
+        .theme-topaz { --color-primary: #FFC87C; --color-primary-rgb: 255, 200, 124; --color-secondary: #FFA500; }
+        .theme-onyx { --color-primary: #353839; --color-primary-rgb: 53, 56, 57; --color-secondary: #000000; }
+
+        #scroll-progress {
+            position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+            z-index: 10000; width: 0%; transition: width 0.1s ease-out;
+            box-shadow: 0 0 10px var(--color-primary);
+        }
+
+        :focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; border-radius: 6px; }
+
+        .bg-dots {
+            position: fixed; inset: 0; z-index: -20;
+            background-image: radial-gradient(var(--border-heavy) 1px, transparent 1px);
+            background-size: 32px 32px;
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            pointer-events: none; /* Mencegah blokir kursor mouse/scroll desktop */
+        }
+        
+        .bg-noise {
+            position: fixed; inset: 0; z-index: -15; opacity: 0.04; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .glow-orb {
+            position: fixed; border-radius: 50%; filter: blur(140px); z-index: -10; opacity: 0.15;
+            animation: orb-breathe 15s ease-in-out infinite alternate, morph-blob 10s ease-in-out infinite alternate; 
+            will-change: transform, opacity, border-radius;
+            mix-blend-mode: screen; pointer-events: none;
+        }
+        .orb-1 { top: -10%; left: -5%; width: 50vw; height: 50vw; background-color: var(--color-primary); }
+        .orb-2 { bottom: -10%; right: -5%; width: 40vw; height: 40vw; background-color: var(--color-secondary); animation-delay: -5s;}
+        .orb-3 { top: 30%; left: 40%; width: 35vw; height: 35vw; background-color: var(--text-main); opacity: 0.05; filter: blur(160px); animation-delay: -10s; }
+        
+        [data-theme="light"] .glow-orb { opacity: 0.25; filter: blur(100px); mix-blend-mode: multiply; }
+
+        @keyframes orb-breathe { 
+            0% { transform: translate(0, 0) scale(1); opacity: 0.1; } 
+            100% { transform: translate(30px, -50px) scale(1.15); opacity: 0.25; } 
+        }
+
+        @keyframes morph-blob {
+            0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            100% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+        }
+
+        #loader-screen { position: fixed; inset: 0; background-color: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .pulse-ring { width: 80px; height: 80px; border-radius: 50%; border: 2px solid transparent; border-top-color: var(--color-primary); border-bottom-color: var(--color-secondary); animation: spin-ring 1.2s linear infinite; position: relative;}
+        .pulse-ring::before { content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border-radius: 50%; border: 2px solid transparent; border-left-color: var(--color-secondary); border-right-color: var(--color-primary); animation: spin-ring 0.8s linear infinite reverse;}
+        @keyframes spin-ring { 100% { transform: rotate(360deg); } }
+        
+        .shimmer-text {
+            background: linear-gradient(90deg, var(--color-primary) 0%, #ffffff 50%, var(--color-primary) 100%);
+            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: shimmer-slide 2s linear infinite;
+        }
+        @keyframes shimmer-slide { to { background-position: 200% center; } }
+
+        .premium-card {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 1.5rem;
+            backdrop-filter: blur(25px) saturate(150%); -webkit-backdrop-filter: blur(25px) saturate(150%);
+            box-shadow: 0 10px 30px var(--shadow-glass), inset 0 1px 0 rgba(255,255,255,0.05); 
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden; width: 100%;
+            transform: perspective(1000px) translateZ(0);
+        }
+        .premium-card::before {
+            content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg); transition: 0.7s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; z-index: 10;
+        }
+        .premium-card:hover { 
+            transform: perspective(1000px) translateY(-6px) rotateX(2deg) scale(1.01); 
+            border-color: rgba(var(--color-primary-rgb), 0.5); 
+            box-shadow: 0 25px 50px -12px rgba(var(--color-primary-rgb), 0.25), inset 0 0 20px rgba(var(--color-primary-rgb),0.05); 
+        }
+        .premium-card:hover::before { left: 200%; }
+
+        .scanner-container { position: relative; overflow: hidden; border-radius: inherit; background-color: var(--bg-card-heavy); } 
+        .scanner-line { 
+            position: absolute; width: 100%; height: 3px; background: var(--color-primary); 
+            box-shadow: 0 0 20px 5px var(--color-primary), 0 -20px 30px -10px var(--color-primary);
+            z-index: 20; animation: scan-anim 3s infinite ease-in-out; opacity: 0.8;
+        }
+        @keyframes scan-anim { 0% { top: -10%; opacity: 0; } 10% { opacity: 0.9; } 90% { opacity: 0.9; } 100% { top: 110%; opacity: 0; } }
+        
+        .avatar-ring {
+            background: conic-gradient(from 0deg, var(--color-secondary) 0%, var(--color-primary) 50%, var(--color-secondary) 100%);
+            animation: spin-ring 5s linear infinite, morph-blob 8s ease-in-out infinite alternate; 
+            padding: 3px;
+        }
+
+        .text-gradient { 
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--color-secondary) 50%, var(--color-primary) 100%); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            background-size: 200% auto; animation: shine 5s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+        
+        .cyber-glitch:hover { animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite; text-shadow: 2px 2px var(--color-primary), -2px -2px var(--color-secondary); }
+        @keyframes glitch-skew { 0% { transform: skew(0deg); } 20% { transform: skew(-10deg); } 40% { transform: skew(10deg); } 60% { transform: skew(-5deg); } 80% { transform: skew(5deg); } 100% { transform: skew(0deg); } }
+        
+        .text-stroke-gradient {
+            background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            drop-shadow: 0 0 10px rgba(var(--color-primary-rgb),0.5);
+        }
+
+        ::selection { background: rgba(var(--color-primary-rgb), 0.3); color: var(--color-primary); text-shadow: 0 0 8px rgba(var(--color-primary-rgb), 0.6); }
+
+        .circuit-line { position: relative; width: 100%; }
+        .circuit-line::before { 
+            content: ''; position: absolute; left: 21px; top: 0; bottom: 0; width: 2px; 
+            background: linear-gradient(to bottom, var(--color-primary), var(--color-secondary), transparent); 
+            background-size: 100% 200%; animation: cyber-flow 3s linear infinite; opacity: 0.6; 
+        }
+        @keyframes cyber-flow { 0% { background-position: 0% -100%; } 100% { background-position: 0% 100%; } }
+        @media (min-width: 768px) { .circuit-line::before { left: 50%; transform: translateX(-50%); } }
+
+        .barber-pole {
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.15) 10px, rgba(255,255,255,0.15) 20px);
+            background-size: 200% 100%; animation: move-stripes 2s linear infinite;
+        }
+        @keyframes move-stripes { from { background-position: 200% 0; } to { background-position: 0 0; } }
+        
+        .animate-on-scroll { opacity: 0; transform: translateY(40px) scale(0.95); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform, opacity; }
+        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0) scale(1); }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, var(--border-heavy), var(--bg-card-heavy)); border-radius: 10px; border: 2px solid var(--bg-main); transition: background 0.3s;}
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(to bottom, var(--color-primary), var(--color-secondary)); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .link-hover { position: relative; color: var(--text-main); transition: color 0.3s; word-break: break-all; outline: none; }
+        .link-hover::after { content: ''; position: absolute; width: 0; height: 1.5px; bottom: -2px; left: 50%; background-color: var(--color-primary); transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), left 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+        .link-hover:hover, .link-hover:focus-visible { color: var(--color-primary); text-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.4); }
+        .link-hover:hover::after, .link-hover:focus-visible::after { width: 100%; left: 0; }
+        
+        .icon-bounce-group:hover .icon-bounce { animation: bounce-micro 0.5s ease, icon-glitch 0.2s 0.2s; }
+        @keyframes bounce-micro { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @keyframes icon-glitch { 0% { opacity:1; transform:skew(0); } 50% { opacity:0.8; transform:skew(-10deg); } 100% { opacity:1; transform:skew(0); } }
+
+        .btn-pulse { position: relative; overflow: hidden; z-index: 1; }
+        .btn-pulse::before {
+            content: ''; position: absolute; top: 50%; left: 50%; width: 300%; height: 300%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translate(-50%, -50%) rotate(45deg) translateY(100%); transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); z-index: -1;
+        }
+        .btn-pulse:hover::before { transform: translate(-50%, -50%) rotate(45deg) translateY(-100%); }
+        .btn-pulse::after {
+            content: ''; position: absolute; inset: -4px; border-radius: inherit; z-index: -2;
+            background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
+            opacity: 0; transition: opacity 0.3s; filter: blur(12px); animation: pulse-glow 2s infinite alternate;
+        }
+        .btn-pulse:hover::after { opacity: 0.8; }
+        @keyframes pulse-glow { from { transform: scale(0.98); } to { transform: scale(1.02); } }
+        
+        .input-ripple { transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .input-ripple:focus { box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.15), inset 0 2px 10px rgba(0,0,0,0.1); border-color: var(--color-primary); border-radius: 12px; }
+
+        .social-lift { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s; }
+        .social-lift:hover { transform: scale(1.1) rotate(-3deg); box-shadow: 0 10px 25px rgba(var(--color-primary-rgb),0.3); z-index: 10; border-color: transparent !important; }
+
+        .badge-lift { transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .premium-card:hover .badge-lift { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(var(--color-primary-rgb), 0.2); }
+
+        .stat-breathe { animation: subtle-breathe 3s ease-in-out infinite alternate; position: relative; overflow: hidden; }
+        .stat-breathe::before { content: ''; position: absolute; bottom: 0; left: 0; height: 2px; width: 100%; background: var(--color-primary); opacity: 0.5; animation: equalizer 2s infinite ease-in-out; }
+        @keyframes subtle-breathe { from { box-shadow: 0 4px 15px var(--shadow-glass); } to { box-shadow: 0 4px 25px rgba(var(--color-primary-rgb), 0.15); } }
+        @keyframes equalizer { 0%, 100% { transform: scaleX(0.8); opacity: 0.3; } 50% { transform: scaleX(1); opacity: 0.7; } }
+
+        /* THEME PANEL UI */
+        #theme-panel { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .theme-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--bg-card-heavy); border: 1px solid var(--border-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; font-size: 1.2rem; cursor: pointer; box-shadow: 0 5px 20px var(--shadow-glass); backdrop-filter: blur(10px); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .theme-btn:hover { border-color: var(--color-primary); transform: scale(1.15) rotate(15deg); color: var(--color-primary); box-shadow: 0 8px 25px rgba(var(--color-primary-rgb), 0.4);}
+        
+        .theme-options { background: var(--bg-card-heavy); border: 1px solid var(--border-color); padding: 15px; border-radius: 16px; backdrop-filter: blur(25px) saturate(150%); display: none; opacity: 0; transform: translateY(20px) scale(0.95); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 15px 40px rgba(0,0,0,0.5); width: 280px; }
+        .theme-options.open { display: block; opacity: 1; transform: translateY(0) scale(1); }
+        
+        .color-swatch, .bg-swatch { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
+        .color-swatch:hover, .bg-swatch:hover { transform: scale(1.25) translateY(-2px); border-color: var(--text-main); box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 10; }
+        
+        /* Modal Animation */
+        #admin-modal { transition: opacity 0.4s; }
+        #admin-login, #admin-dashboard { transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: scale(0.8) translateY(30px); opacity: 0; }
+        #admin-modal:not(.hidden) #admin-login, #admin-modal:not(.hidden) #admin-dashboard:not(.hidden) { transform: scale(1) translateY(0); opacity: 1; }
+        
+        /* SCROLL TO TOP FAB */
+        #scrollToTopBtn { position: fixed; bottom: 80px; right: 20px; z-index: 9998; width: 45px; height: 45px; border-radius: 50%; background: var(--bg-card-heavy); border: 1px solid var(--color-primary); color: var(--color-primary); display: flex; justify-content: center; align-items: center; font-size: 1.2rem; cursor: pointer; backdrop-filter: blur(10px); box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.3); opacity: 0; pointer-events: none; transform: translateY(20px) scale(0.8); transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        #scrollToTopBtn.show { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+        #scrollToTopBtn.show::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--color-primary); animation: radar-pulse 2s infinite; opacity: 0; z-index: -1; }
+        #scrollToTopBtn:hover { background: var(--color-primary); color: #fff; transform: translateY(-5px) scale(1.15); box-shadow: 0 10px 25px rgba(var(--color-primary-rgb), 0.5); }
+        @keyframes radar-pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.5); opacity: 0; } }
+
+        .admin-item-card { background: var(--bg-overlay); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; }
+        .admin-item-card:hover { border-color: var(--color-primary); }
+    </style>
+</head>
+<body class="antialiased selection:bg-[var(--color-primary)] selection:text-black relative">
+
+    <!-- Top Scroll Progress Bar -->
+    <div id="scroll-progress"></div>
+
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-[var(--color-primary)] focus:text-[var(--text-inverse)] focus:font-bold focus:rounded-br-lg outline-none ring-2 ring-[var(--text-main)]">Langsung ke konten utama</a>
+
+    <!-- Background Elements -->
+    <div class="bg-dots" aria-hidden="true"></div>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <div class="glow-orb orb-1" aria-hidden="true"></div>
+    <div class="glow-orb orb-2" aria-hidden="true"></div>
+    <div class="glow-orb orb-3" aria-hidden="true"></div>
+
+    <!-- Theme Switcher Panel -->
+    <div id="theme-panel" class="animate__animated animate__zoomIn animate__delay-1s">
+        <div id="theme-options-panel" class="theme-options">
+            <h4 class="text-[var(--text-main)] font-bold text-[10px] uppercase tracking-widest mb-2 border-b border-[var(--border-color)] pb-1 flex justify-between items-center">
+                LATAR BELAKANG
+                <button onclick="toggleMode()" class="p-1 rounded bg-[var(--bg-overlay)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] text-[var(--color-primary)] transition-colors active:scale-95" title="Switch Light/Dark">
+                    <i class="ph-fill ph-sun" id="mode-icon"></i>
+                </button>
+            </h4>
+            <div class="flex gap-2 mb-4 overflow-x-auto pb-2 no-scrollbar px-1">
+                <button onclick="setBgTheme('dark', this)" class="bg-swatch bg-[#030712] shrink-0 active-bg border border-gray-600" title="Deep Blue (Default)"></button>
+                <button onclick="setBgTheme('light', this)" class="bg-swatch bg-[#f8fafc] shrink-0 border border-gray-400" title="Light Snow"></button>
+                <button onclick="setBgTheme('obsidian', this)" class="bg-swatch bg-[#000000] shrink-0 border border-gray-700" title="Obsidian Black"></button>
+                <button onclick="setBgTheme('cosmic', this)" class="bg-swatch bg-[#0f0c29] shrink-0 border border-purple-500/50" title="Cosmic Space"></button>
+                <button onclick="setBgTheme('abyssal', this)" class="bg-swatch bg-[#001b1c] shrink-0 border border-teal-500/50" title="Abyssal Green"></button>
+                <button onclick="setBgTheme('matrix', this)" class="bg-swatch bg-[#0d1117] shrink-0 border border-gray-500" title="Cyber Matrix"></button>
+                <button onclick="setBgTheme('sepia', this)" class="bg-swatch bg-[#2c241b] shrink-0 border border-amber-900/50" title="Warm Sepia"></button>
+            </div>
+
+            <h4 class="text-[var(--text-main)] font-bold text-[10px] uppercase tracking-widest mb-2 border-b border-[var(--border-color)] pb-1 flex justify-between items-center">
+                WARNA AKSEN
+            </h4>
+            <div class="grid grid-cols-6 gap-2 max-h-40 overflow-y-auto p-1 custom-scrollbar pb-2">
+                <div class="color-swatch bg-[#00E5FF] active" onclick="setColorTheme('theme-cyan', this)" title="Cyan"></div>
+                <div class="color-swatch bg-[#3B82F6]" onclick="setColorTheme('theme-blue', this)" title="Blue"></div>
+                <div class="color-swatch bg-[#10B981]" onclick="setColorTheme('theme-emerald', this)" title="Emerald"></div>
+                <div class="color-swatch bg-[#A855F7]" onclick="setColorTheme('theme-purple', this)" title="Purple"></div>
+                <div class="color-swatch bg-[#F43F5E]" onclick="setColorTheme('theme-rose', this)" title="Rose"></div>
+                <div class="color-swatch bg-[#F59E0B]" onclick="setColorTheme('theme-amber', this)" title="Amber"></div>
+                <div class="color-swatch bg-[#F97316]" onclick="setColorTheme('theme-orange', this)" title="Orange"></div>
+                <div class="color-swatch bg-[#22C55E]" onclick="setColorTheme('theme-green', this)" title="Green"></div>
+                <div class="color-swatch bg-[#EC4899]" onclick="setColorTheme('theme-pink', this)" title="Pink"></div>
+                <div class="color-swatch bg-[#EF4444]" onclick="setColorTheme('theme-red', this)" title="Red"></div>
+                
+                <div class="color-swatch bg-[#39FF14]" onclick="setColorTheme('theme-neon-green', this)" title="Neon Green"></div>
+                <div class="color-swatch bg-[#FF10F0]" onclick="setColorTheme('theme-neon-pink', this)" title="Neon Pink"></div>
+                <div class="color-swatch bg-[#FFD300]" onclick="setColorTheme('theme-cyber-yellow', this)" title="Cyber Yellow"></div>
+                <div class="color-swatch bg-[#7DF9FF]" onclick="setColorTheme('theme-electric-blue', this)" title="Electric Blue"></div>
+                <div class="color-swatch bg-[#FF00FF]" onclick="setColorTheme('theme-magenta', this)" title="Magenta"></div>
+                <div class="color-swatch bg-[#FEFE22]" onclick="setColorTheme('theme-laser-lemon', this)" title="Laser Lemon"></div>
+                <div class="color-swatch bg-[#FF69B4]" onclick="setColorTheme('theme-hot-pink', this)" title="Hot Pink"></div>
+                <div class="color-swatch bg-[#CCFF00]" onclick="setColorTheme('theme-toxic', this)" title="Toxic"></div>
+                <div class="color-swatch bg-[#B533FF]" onclick="setColorTheme('theme-plasma', this)" title="Plasma"></div>
+                <div class="color-swatch bg-[#4DEEEA]" onclick="setColorTheme('theme-tron', this)" title="Tron"></div>
+
+                <div class="color-swatch bg-[#FFDAB9]" onclick="setColorTheme('theme-peach', this)" title="Peach"></div>
+                <div class="color-swatch bg-[#E6E6FA]" onclick="setColorTheme('theme-lavender', this)" title="Lavender"></div>
+                <div class="color-swatch bg-[#98FF98]" onclick="setColorTheme('theme-mint', this)" title="Mint"></div>
+                <div class="color-swatch bg-[#FFB7C5]" onclick="setColorTheme('theme-sakura', this)" title="Sakura"></div>
+                <div class="color-swatch bg-[#89CFF0]" onclick="setColorTheme('theme-baby-blue', this)" title="Baby Blue"></div>
+                <div class="color-swatch bg-[#FFF700]" onclick="setColorTheme('theme-lemonade', this)" title="Lemonade"></div>
+                <div class="color-swatch bg-[#C8A2C8]" onclick="setColorTheme('theme-lilac', this)" title="Lilac"></div>
+                <div class="color-swatch bg-[#FF7F50]" onclick="setColorTheme('theme-coral', this)" title="Coral"></div>
+                <div class="color-swatch bg-[#CCCCFF]" onclick="setColorTheme('theme-periwinkle', this)" title="Periwinkle"></div>
+                <div class="color-swatch bg-[#F4A460]" onclick="setColorTheme('theme-sand', this)" title="Sand"></div>
+
+                <div class="color-swatch bg-[#000080]" onclick="setColorTheme('theme-navy', this)" title="Navy"></div>
+                <div class="color-swatch bg-[#800000]" onclick="setColorTheme('theme-maroon', this)" title="Maroon"></div>
+                <div class="color-swatch bg-[#808000]" onclick="setColorTheme('theme-olive', this)" title="Olive"></div>
+                <div class="color-swatch bg-[#008080]" onclick="setColorTheme('theme-teal', this)" title="Teal"></div>
+                <div class="color-swatch bg-[#4B0082]" onclick="setColorTheme('theme-indigo', this)" title="Indigo"></div>
+                <div class="color-swatch bg-[#708090]" onclick="setColorTheme('theme-slate', this)" title="Slate"></div>
+                <div class="color-swatch bg-[#228B22]" onclick="setColorTheme('theme-forest', this)" title="Forest"></div>
+                <div class="color-swatch bg-[#DC143C]" onclick="setColorTheme('theme-crimson', this)" title="Crimson"></div>
+                <div class="color-swatch bg-[#CC7722]" onclick="setColorTheme('theme-ochre', this)" title="Ochre"></div>
+                <div class="color-swatch bg-[#36454F]" onclick="setColorTheme('theme-charcoal', this)" title="Charcoal"></div>
+
+                <div class="color-swatch bg-[#FFD700]" onclick="setColorTheme('theme-gold', this)" title="Gold"></div>
+                <div class="color-swatch bg-[#C0C0C0]" onclick="setColorTheme('theme-silver', this)" title="Silver"></div>
+                <div class="color-swatch bg-[#CD7F32]" onclick="setColorTheme('theme-bronze', this)" title="Bronze"></div>
+                <div class="color-swatch bg-[#E5E4E2]" onclick="setColorTheme('theme-platinum', this)" title="Platinum"></div>
+                <div class="color-swatch bg-[#E0115F]" onclick="setColorTheme('theme-ruby', this)" title="Ruby"></div>
+                <div class="color-swatch bg-[#0F52BA]" onclick="setColorTheme('theme-sapphire', this)" title="Sapphire"></div>
+                <div class="color-swatch bg-[#50C878]" onclick="setColorTheme('theme-emerald-deep', this)" title="Emerald Deep"></div>
+                <div class="color-swatch bg-[#9966CC]" onclick="setColorTheme('theme-amethyst', this)" title="Amethyst"></div>
+                <div class="color-swatch bg-[#FFC87C]" onclick="setColorTheme('theme-topaz', this)" title="Topaz"></div>
+                <div class="color-swatch bg-[#353839]" onclick="setColorTheme('theme-onyx', this)" title="Onyx"></div>
+            </div>
+        </div>
+        <button class="theme-btn hover:scale-110 active:scale-95" onclick="document.getElementById('theme-options-panel').classList.toggle('open')" aria-label="Pengaturan Tema">
+            <i class="ph-fill ph-palette"></i>
+        </button>
+    </div>
+
+    <button id="scrollToTopBtn" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Kembali ke atas" class="active:scale-90">
+        <i class="ph-bold ph-caret-up"></i>
+    </button>
+
+    <div id="loader-screen" role="status" aria-live="polite">
+        <div class="pulse-ring mb-6" aria-hidden="true"></div>
+        <h2 id="loader-title" class="text-xl font-bold tracking-[0.3em] shimmer-text uppercase text-center px-4">Initializing</h2>
+        <p id="loader-text" class="text-xs text-[var(--text-muted)] mt-2 text-center max-w-sm px-4">Connecting to Database System</p>
+    </div>
+
+    <!-- Main Content Container tanpa class overflow tersembunyi penyebab glitch -->
+    <main class="relative z-10 transition-opacity duration-700 opacity-0" id="main-content" role="main">
+        
+        <nav aria-label="Navigasi Utama Portofolio" class="sticky top-0 z-[100] bg-[var(--bg-card-heavy)]/70 backdrop-blur-3xl saturate-[200%] border-b border-[var(--border-color)] shadow-sm w-full mb-8 transition-all animate__animated animate__fadeInDown" itemscope itemtype="https://schema.org/SiteNavigationElement">
+            <div class="container mx-auto px-4 max-w-[1200px]">
+                <!-- FIX: justify-start untuk layar kecil agar tidak terpotong (Scrollable Horizontal utuh) -->
+                <ul class="flex overflow-x-auto py-4 gap-6 md:gap-10 text-[11px] md:text-sm font-bold text-[var(--text-muted)] no-scrollbar items-center justify-start lg:justify-center whitespace-nowrap scroll-smooth w-full">
+                    <li><a itemprop="url" href="#beranda" title="Halaman Utama Profil" aria-label="Beranda" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Beranda</span></a></li>
+                    <li><a itemprop="url" href="#pendidikan" title="Riwayat Pendidikan Akademis" aria-label="Riwayat Pendidikan" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Riwayat Pendidikan</span></a></li>
+                    <li><a itemprop="url" href="#pengalaman" title="Riwayat Pengalaman Kerja" aria-label="Pengalaman Kerja" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Pengalaman Kerja</span></a></li>
+                    <li><a itemprop="url" href="#organisasi" title="Riwayat Organisasi" aria-label="Riwayat Organisasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Riwayat Organisasi</span></a></li>
+                    <li><a itemprop="url" href="#publikasi" title="Kumpulan Publikasi Ilmiah" aria-label="Publikasi Ilmiah" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Publikasi Ilmiah</span></a></li>
+                    <li><a itemprop="url" href="#keahlian-tech" title="Keahlian & Kemampuan" aria-label="Keahlian" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Keahlian & Tech</span></a></li>
+                    <li><a itemprop="url" href="#proyek" title="Proyek Web" aria-label="Proyek" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Proyek Web</span></a></li>
+                    <li><a itemprop="url" href="#sertifikasi" title="Sertifikasi & Pelatihan" aria-label="Sertifikasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Sertifikasi</span></a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 pb-12 md:pb-16 max-w-[1200px]">
+            
+            <header id="beranda" class="text-center mb-16 md:mb-24 flex flex-col items-center pt-4 scroll-mt-24" role="banner" itemscope itemtype="https://schema.org/Person">
+                <div class="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mx-auto mb-6 md:mb-8 avatar-ring transition-transform duration-700 hover:scale-105 group overflow-hidden shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.3)] animate__animated animate__zoomIn">
+                    <div class="scanner-container w-full h-full bg-[var(--bg-card-heavy)] overflow-hidden" style="border-radius: inherit;">
+                        <div class="scanner-line" aria-hidden="true"></div>
+                        <!-- FIX: Menambahkan width dan height eksplisit untuk menghindari CLS dan teguran Aspect Ratio -->
+                        <img id="ui-foto" itemprop="image" src="/axalogo.png" alt="Foto Profil drg. M. Aksa Arsyad" width="192" height="192" fetchpriority="high" loading="eager" decoding="sync" onerror="this.src='https://ui-avatars.com/api/?name=M+Aksa+Arsyad&background=00E5FF&color=fff&size=256'" class="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-110" style="border-radius: inherit; aspect-ratio: 1/1;">
+                    </div>
+                </div>
+                
+                <h1 class="cyber-glitch text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 px-2 w-full max-w-4xl mx-auto break-words leading-tight transition-all" itemprop="name">
+                    <span id="ui-namaDepan" class="text-[var(--text-main)] drop-shadow-md animate__animated animate__fadeInLeft inline-block">Memuat</span> <br class="md:hidden" />
+                    <span class="text-gradient drop-shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.4)] animate__animated animate__fadeInRight inline-block" id="ui-namaBelakang">Data...</span>
+                </h1>
+                
+                <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 mt-4 md:mt-6 max-w-2xl mx-auto w-full animate__animated animate__fadeInUp animate__delay-1s">
+                    <div class="icon-bounce-group inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-[rgba(var(--color-primary-rgb),0.1)] border border-[rgba(var(--color-primary-rgb),0.3)] backdrop-blur-md text-[var(--color-primary)] font-bold tracking-widest text-[10px] sm:text-xs md:text-sm shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.2)] text-center break-words cursor-default" itemprop="jobTitle">
+                        <i class="ph-fill ph-shield-check text-lg shrink-0 icon-bounce" aria-hidden="true"></i>
+                        <span id="ui-gelar">...</span>
+                    </div>
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-main)] font-medium tracking-wide text-[10px] sm:text-xs text-center break-words max-w-[90%] backdrop-blur-md shadow-inner cursor-default">
+                        <i class="ph ph-scan text-base shrink-0 text-[var(--color-secondary)]" aria-hidden="true"></i>
+                        <span id="ui-subGelar" class="break-words border-r-2 border-[var(--color-primary)] pr-1 animate-pulse">...</span>
+                    </div>
+                </div>
+            </header>
+
+            <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 mb-16 md:mb-24 w-full" aria-label="Informasi Dasar">
+                <!-- DATA PRIBADI -->
+                <article class="premium-card p-6 md:p-8 lg:col-span-4 animate-on-scroll w-full icon-bounce-group min-w-0">
+                    <header class="flex items-center gap-4 mb-6 md:mb-8">
+                        <div class="p-3 bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.2)] to-transparent rounded-xl border border-[rgba(var(--color-primary-rgb),0.3)] text-[var(--color-primary)] shrink-0 shadow-inner icon-bounce">
+                            <i class="ph ph-fingerprint text-xl md:text-2xl" aria-hidden="true"></i>
+                        </div>
+                        <h2 class="text-lg md:text-xl font-bold text-[var(--text-main)] truncate drop-shadow-md w-full">Data Pribadi</h2>
+                    </header>
+                    <div class="space-y-4 text-xs md:text-sm">
+                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4 hover:border-[var(--color-primary)] transition-colors"><span class="text-[var(--text-muted)] shrink-0 font-semibold">Lahir</span><span class="text-right text-[var(--text-main)] font-medium whitespace-pre-line break-words min-w-0" id="ui-lahir">...</span></div>
+                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4 hover:border-[var(--color-primary)] transition-colors"><span class="text-[var(--text-muted)] shrink-0 font-semibold">Gender</span><span class="text-right text-[var(--text-main)] font-medium break-words min-w-0" id="ui-gender">...</span></div>
+                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4 hover:border-[var(--color-primary)] transition-colors"><span class="text-[var(--text-muted)] shrink-0 font-semibold">Agama</span><span class="text-right text-[var(--text-main)] font-medium break-words min-w-0" id="ui-agama">...</span></div>
+                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4 hover:border-[var(--color-primary)] transition-colors"><span class="text-[var(--text-muted)] shrink-0 font-semibold">Negara</span><span class="text-right text-[var(--text-main)] font-medium break-words min-w-0" id="ui-warga">...</span></div>
+                        <div class="flex justify-between items-end border-b border-[var(--border-color)] pb-2 gap-4 hover:border-[var(--color-primary)] transition-colors"><span class="text-[var(--text-muted)] shrink-0 font-semibold">Status</span><span class="text-right text-[var(--color-primary)] font-bold break-words min-w-0 drop-shadow-sm" id="ui-status">...</span></div>
+                    </div>
+                    <div class="mt-6 pt-4">
+                        <span class="text-[10px] md:text-xs text-[var(--text-muted)] mb-3 block font-bold uppercase tracking-wider">Hobi</span>
+                        <div class="flex flex-wrap gap-2" id="ui-hobi-container" aria-label="Daftar Hobi"></div>
+                    </div>
+                </article>
+
+                <!-- KONTAK -->
+                <article class="premium-card p-6 md:p-8 lg:col-span-4 animate-on-scroll w-full icon-bounce-group min-w-0" style="transition-delay: 100ms;">
+                    <header class="flex items-center gap-4 mb-6 md:mb-8">
+                        <div class="p-3 bg-gradient-to-br from-[rgba(var(--color-secondary-rgb),0.2)] to-transparent rounded-xl border border-[rgba(var(--color-secondary-rgb),0.3)] text-[var(--color-secondary)] shrink-0 shadow-inner icon-bounce">
+                            <i class="ph ph-address-book text-xl md:text-2xl" aria-hidden="true"></i>
+                        </div>
+                        <h2 class="text-lg md:text-xl font-bold text-[var(--text-main)] truncate drop-shadow-md w-full">Hubungi Saya</h2>
+                    </header>
+                    <div class="space-y-5 text-xs md:text-sm w-full">
+                        <div class="group flex items-start gap-3 md:gap-4 overflow-hidden w-full">
+                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-[var(--color-primary)] group-hover:bg-[rgba(var(--color-primary-rgb),0.1)] group-hover:scale-110 transition-all shrink-0"><i class="ph ph-envelope-simple text-lg md:text-xl" aria-hidden="true"></i></div>
+                            <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">Email</p><div class="font-medium text-[var(--text-main)] w-full min-w-0" id="ui-email-container">...</div></div>
+                        </div>
+                        <div class="group flex items-start gap-3 md:gap-4 overflow-hidden w-full">
+                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-[#2dd4bf] group-hover:bg-[#2dd4bf]/10 group-hover:scale-110 transition-all shrink-0"><i class="ph ph-whatsapp-logo text-lg md:text-xl" aria-hidden="true"></i></div>
+                            <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">WhatsApp</p><div class="font-medium text-[var(--text-main)] w-full min-w-0" id="ui-hp-container">...</div></div>
+                        </div>
+                        
+                        <div class="group flex items-start gap-3 md:gap-4 overflow-hidden w-full">
+                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-pink-400 group-hover:bg-pink-400/10 group-hover:scale-110 transition-all shrink-0"><i class="ph ph-instagram-logo text-lg md:text-xl" aria-hidden="true"></i></div>
+                            <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">Sosial Media</p><div class="font-medium text-[var(--text-main)] w-full min-w-0" id="ui-sosmed-container">...</div></div>
+                        </div>
+                        
+                        <div class="group flex items-start gap-3 md:gap-4 overflow-hidden w-full">
+                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-[#0A66C2] group-hover:bg-[#0A66C2]/10 group-hover:scale-110 transition-all shrink-0">
+                                <svg viewBox="0 0 24 24" class="w-[18px] h-[18px] md:w-[20px] md:h-[20px] fill-current" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0 overflow-hidden w-full">
+                                <p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">LinkedIn</p>
+                                <div class="font-medium text-[var(--text-main)] w-full min-w-0" id="ui-linkedin-container">
+                                    <a href="https://www.linkedin.com/in/drg-m-aksa-arsyad-4b95b2428" target="_blank" rel="noopener noreferrer" class="link-hover truncate block" aria-label="Kunjungi LinkedIn">M. Aksa Arsyad, drg., S.KG</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="group flex items-start gap-3 md:gap-4 overflow-hidden w-full">
+                            <div class="p-2 bg-[var(--bg-overlay)] rounded-lg text-[var(--text-muted)] group-hover:text-red-400 group-hover:bg-red-400/10 group-hover:scale-110 transition-all shrink-0"><i class="ph ph-map-pin text-lg md:text-xl" aria-hidden="true"></i></div>
+                            <div class="min-w-0 overflow-hidden w-full"><p class="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-bold mb-1">Domisili</p><address class="text-[var(--text-main)] leading-relaxed break-words not-italic w-full min-w-0" id="ui-alamat">...</address></div>
+                        </div>
+                        
+                        <div class="pt-4 mt-2 border-t border-[var(--border-color)] grid grid-cols-2 sm:grid-cols-4 gap-1.5 md:gap-2 w-full">
+                            <a id="ui-scholar" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil Google Scholar" class="social-lift flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl border border-transparent outline-none focus-visible:ring-2 focus-visible:ring-blue-400 text-center w-full min-w-0 shadow-inner">
+                                <i class="ph ph-graduation-cap text-blue-400 text-[18px] md:text-[22px] mb-1 drop-shadow-md" aria-hidden="true"></i>
+                                <span class="text-[8px] md:text-[10px] font-bold text-[var(--text-main)] leading-tight w-full min-w-0 truncate">Google Scholar</span>
+                            </a>
+                            <a id="ui-orcid" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil ORCID iD" class="social-lift flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl border border-transparent outline-none focus-visible:ring-2 focus-visible:ring-[#a6ce39] text-center w-full min-w-0 shadow-inner">
+                                <svg viewBox="0 0 256 256" class="w-[18px] h-[18px] md:w-[22px] md:h-[22px] mb-1 drop-shadow-md shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <circle cx="128" cy="128" r="128" fill="#a6ce39"/>
+                                    <path d="M86.3 186.2H70.9V79.1h15.4v107.1zM108.9 79.1h41.6c39.6 0 57 28.3 57 53.6 0 27.5-21.5 53.6-56.8 53.6h-41.8V79.1zm15.4 93.3h24.5c34.9 0 42.9-26.5 42.9-39.7 0-21.5-13.7-39.7-43.7-39.7h-23.7v79.4zM88.7 56.8c0 5.5-4.5 10.1-10.1 10.1-5.6 0-10.1-4.6-10.1-10.1 0-5.6 4.5-10.1 10.1-10.1 5.5 0 10.1 4.6 10.1 10.1z" fill="#ffffff"/>
+                                </svg>
+                                <span class="text-[8px] md:text-[10px] font-bold text-[var(--text-main)] leading-tight w-full min-w-0 truncate">ORCID iD</span>
+                            </a>
+                            <a id="ui-sciprofiles" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil SciProfiles" class="social-lift flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl border border-transparent outline-none focus-visible:ring-2 focus-visible:ring-[#3bc6e8] text-center w-full min-w-0 shadow-inner">
+                                <svg viewBox="0 0 100 100" class="w-[18px] h-[18px] md:w-[22px] md:h-[22px] mb-1 drop-shadow-md shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path d="M7 44.5C2 22 17 5 39 12C61 19 82 8 91 29C100 50 99 74 81 87C63 100 24 100 13 83C2 66 12 67 7 44.5Z" fill="#327c8e" opacity="0.9"/>
+                                    <path d="M21 21C38 3 71 -4 87 14C103 32 94 65 83 83C72 101 32 96 16 83C0 70 4 39 21 21Z" fill="#3bc6e8" opacity="0.95"/>
+                                    <text x="50" y="66" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="44" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="-1">Sci</text>
+                                </svg>
+                                <span class="text-[8px] md:text-[10px] font-bold text-[var(--text-main)] leading-tight w-full min-w-0 truncate">SciProfiles</span>
+                            </a>
+                            <a id="ui-semanticscholar" href="https://www.semanticscholar.org/author/M.-Aksa-Arsyad/2328471622" target="_blank" rel="noopener noreferrer" aria-label="Profil Semantic Scholar" class="social-lift flex flex-col items-center justify-center gap-1 p-2 bg-[var(--bg-overlay)] rounded-xl border border-transparent outline-none focus-visible:ring-2 focus-visible:ring-[#F4C443] text-center w-full min-w-0 shadow-inner">
+                                <svg viewBox="0 0 200 200" class="w-[18px] h-[18px] md:w-[22px] md:h-[22px] mb-1 drop-shadow-md shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path d="M 60 40 L 160 40 L 170 90 C 160 110 130 130 100 120 L 75 120 C 65 90 60 60 60 40 Z" fill="var(--text-main)" />
+                                    <path d="M 45 50 C 50 70 65 95 85 115 L 75 115 C 55 90 40 65 35 45 Z" fill="var(--text-main)" opacity="0.8"/>
+                                    <path d="M 30 60 C 35 80 50 105 70 120 L 60 120 C 40 100 25 75 20 55 Z" fill="var(--text-main)" opacity="0.6"/>
+                                    <path d="M 30 110 L 80 170 L 190 70 L 180 60 L 80 150 L 40 100 Z" fill="#F4C443" />
+                                </svg>
+                                <span class="text-[8px] md:text-[10px] font-bold text-[var(--text-main)] leading-tight w-full min-w-0 truncate">Semantic Scholar</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- KEAHLIAN KLINIS -->
+                <article id="keahlian" class="premium-card p-6 md:p-8 lg:col-span-4 animate-on-scroll w-full icon-bounce-group min-w-0" style="transition-delay: 200ms;">
+                    <header class="flex items-center gap-4 mb-6 md:mb-8 w-full">
+                        <div class="p-3 bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.2)] to-transparent rounded-xl border border-[rgba(var(--color-primary-rgb),0.3)] text-[var(--color-primary)] shrink-0 shadow-inner icon-bounce">
+                            <i class="ph ph-crosshair text-xl md:text-2xl" aria-hidden="true"></i>
+                        </div>
+                        <h2 class="text-lg md:text-xl font-bold text-[var(--text-main)] truncate drop-shadow-md w-full">Keahlian Klinis</h2>
+                    </header>
+                    <div class="space-y-5 md:space-y-6 w-full" id="ui-keahlian-container" aria-label="Daftar Keahlian Klinis">
+                        <!-- Konten diisi JS -->
+                    </div>
+                </article>
+            </section>
+
+            <!-- PENDIDIKAN -->
+            <section id="pendidikan" class="mb-16 md:mb-24 w-full pt-6 scroll-mt-24 max-w-full" aria-labelledby="heading-pendidikan">
+                <header class="flex flex-col items-center text-center mb-12 md:mb-16 animate-on-scroll icon-bounce-group w-full min-w-0">
+                    <div class="p-3 md:p-4 bg-gradient-to-b from-[rgba(var(--color-primary-rgb),0.15)] to-transparent rounded-full mb-4 border border-[rgba(var(--color-primary-rgb),0.3)] shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.2)] icon-bounce">
+                        <i class="ph ph-student text-2xl md:text-3xl text-[var(--color-primary)]" aria-hidden="true"></i>
+                    </div>
+                    <h2 id="heading-pendidikan" class="text-2xl md:text-3xl font-extrabold text-[var(--text-main)] truncate px-2 drop-shadow-md w-full">Riwayat Pendidikan</h2>
+                </header>
+                <div class="relative circuit-line flex flex-wrap w-full max-w-full" id="ui-pendidikan-container">
+                    <!-- Konten diisi JS -->
+                </div>
+            </section>
+
+            <!-- PENGALAMAN -->
+            <section id="pengalaman" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24 max-w-full" aria-labelledby="heading-pengalaman">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-10 gap-4 w-full min-w-0">
+                    <div class="w-full">
+                        <h2 id="heading-pengalaman" class="text-2xl md:text-3xl font-extrabold text-[var(--text-main)] mb-2 truncate drop-shadow-md w-full">Pengalaman <span class="text-stroke-gradient">Kerja</span></h2>
+                        <p class="text-[var(--text-muted)] text-xs md:text-sm w-full truncate">Riwayat karir klinis dan pekerjaan profesional.</p>
+                    </div>
+                    <div class="h-[1px] flex-grow bg-gradient-to-r from-transparent via-[rgba(var(--color-primary-rgb),0.4)] to-transparent hidden md:block mx-8 mb-2" aria-hidden="true"></div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 w-full max-w-full" id="ui-pengalaman-container">
+                    <!-- Konten diisi JS -->
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-16 md:mb-24 w-full max-w-full">
+                <!-- ORGANISASI -->
+                <section id="organisasi" class="animate-on-scroll premium-card p-6 md:p-8 w-full scroll-mt-24 icon-bounce-group min-w-0" aria-labelledby="heading-organisasi">
+                    <h2 id="heading-organisasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-[var(--text-main)] border-b border-[var(--border-color)] pb-4 drop-shadow-md w-full">
+                        <i class="ph ph-users-three text-[var(--color-secondary)] p-2 bg-[rgba(var(--color-secondary-rgb),0.1)] border border-[rgba(var(--color-secondary-rgb),0.3)] rounded-lg shrink-0 icon-bounce shadow-inner" aria-hidden="true"></i> <span class="truncate w-full">Riwayat Organisasi</span>
+                    </h2>
+                    <div class="space-y-2 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 custom-scrollbar w-full" id="ui-organisasi-container">
+                        <!-- Konten diisi JS -->
+                    </div>
+                </section>
+
+                <!-- PUBLIKASI -->
+                <section id="publikasi" class="animate-on-scroll premium-card p-6 md:p-8 w-full scroll-mt-24 icon-bounce-group min-w-0" style="transition-delay: 150ms;" aria-labelledby="heading-publikasi">
+                    <h2 id="heading-publikasi" class="text-xl md:text-2xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-[var(--text-main)] border-b border-[var(--border-color)] pb-4 drop-shadow-md w-full">
+                        <i class="ph ph-books text-[var(--color-primary)] p-2 bg-[rgba(var(--color-primary-rgb),0.1)] border border-[rgba(var(--color-primary-rgb),0.3)] rounded-lg shrink-0 icon-bounce shadow-inner" aria-hidden="true"></i> <span class="truncate w-full">Publikasi Ilmiah</span>
+                    </h2>
+                    <div class="space-y-4 max-h-[400px] md:max-h-[500px] overflow-y-auto pr-2 md:pr-4 custom-scrollbar w-full" id="ui-publikasi-container">
+                        <!-- Konten diisi JS -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- KEAHLIAN TECH & GITHUB API -->
+            <section id="keahlian-tech" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24 max-w-full">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-10 text-[var(--text-main)] drop-shadow-md w-full">
+                    <i class="ph-bold ph-code text-[var(--color-primary)] mr-2"></i> Keahlian & <span class="text-stroke-gradient">Kemampuan</span>
+                </h2>
+                
+                <div class="flex flex-wrap justify-center gap-4 md:gap-6 mb-16 max-w-4xl mx-auto bg-[var(--bg-overlay)] p-6 rounded-2xl border border-[var(--border-color)] backdrop-blur-md shadow-inner">
+                    <!-- FIX: Menambahkan explicit width dan height 64x64, serta loading lazy untuk skor LCP dan Aspect Ratio sempurna -->
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg object-contain" title="JavaScript">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg object-contain" title="HTML5">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg object-contain" title="CSS3">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg object-contain" title="React JS">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="NodeJS" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg object-contain" title="Node.js">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg object-contain" title="Python">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg object-contain" title="PHP">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg object-contain" title="MySQL">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg object-contain" title="Git">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg dark:invert object-contain" title="GitHub">
+                </div>
+
+                <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-10 text-[var(--text-main)] drop-shadow-md w-full">
+                    <i class="ph-fill ph-github-logo text-[var(--color-primary)] mr-2"></i> GitHub <span class="text-[var(--color-primary)]">Aktivitas</span>
+                </h2>
+
+                <!-- 1. GITHUB TROPHY (LIVE API) -->
+                <!-- FIX: Overflow x auto untuk mencegah pelebaran layar di mobile -->
+                <div class="mb-8 w-full overflow-x-auto custom-scrollbar animate-on-scroll">
+                    <div class="flex justify-center w-full min-w-0">
+                        <a href="https://www.maksaarsyad.xyz/" target="_blank" rel="noopener noreferrer" class="block w-full text-center">
+                            <!-- FIX: Explicit Aspect Ratio -->
+                            <img src="https://trophygithubreadmelang.cybee.dpdns.org/?username=raphunteks&theme=dracula&no-frame=true&no-bg=true&margin-w=15&v=1" alt="GitHub Trophies" width="1000" height="150" loading="lazy" decoding="async" style="aspect-ratio: 1000/150; max-width: 100%; height: auto;" class="inline-block drop-shadow-lg hover:scale-[1.02] transition-transform duration-500 object-contain">
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 2. GITHUB STATS & LANGUAGES (RAW GITHUB ACTIONS) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-8 animate-on-scroll max-w-full">
+                    <!-- STATS CARD -->
+                    <div class="premium-card p-4 md:p-6 flex justify-center items-center bg-[var(--bg-card-heavy)] hover:border-[var(--color-primary)] transition-colors min-h-[160px] shadow-lg group overflow-hidden w-full">
+                        <div class="w-full overflow-x-auto no-scrollbar text-center">
+                            <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/stats-output/stats.svg?hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false" alt="GitHub Stats" width="495" height="195" loading="lazy" decoding="async" style="aspect-ratio: 495/195; max-width: 100%; height: auto;" class="inline-block group-hover:scale-105 transition-transform duration-500 drop-shadow-md object-contain">
+                        </div>
+                    </div>
+                    <!-- LANGUAGES CARD -->
+                    <div class="premium-card p-4 md:p-6 flex justify-center items-center bg-[var(--bg-card-heavy)] hover:border-[var(--color-secondary)] transition-colors min-h-[160px] shadow-lg group overflow-hidden w-full">
+                        <div class="w-full overflow-x-auto no-scrollbar text-center">
+                            <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/languages-output/languages.svg?locale=en&hide_title=false&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false" alt="GitHub Languages" width="300" height="285" loading="lazy" decoding="async" style="aspect-ratio: 300/285; max-width: 100%; height: auto;" class="inline-block group-hover:scale-105 transition-transform duration-500 drop-shadow-md object-contain">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. STREAK & JOKES (LIVE API) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-8 animate-on-scroll max-w-full">
+                    <!-- STREAK CARD -->
+                    <div class="premium-card p-4 md:p-6 flex justify-center items-center bg-[var(--bg-card-heavy)] hover:border-emerald-400 transition-colors min-h-[160px] shadow-lg group overflow-hidden w-full">
+                        <div class="w-full overflow-x-auto no-scrollbar text-center">
+                            <img src="https://github-readme-streak-stats.herokuapp.com/?user=raphunteks&theme=dracula&hide_border=true" alt="GitHub Streak" width="495" height="195" loading="lazy" decoding="async" style="aspect-ratio: 495/195; max-width: 100%; height: auto;" class="inline-block group-hover:scale-105 transition-transform duration-500 drop-shadow-md object-contain">
+                        </div>
+                    </div>
+                    <!-- JOKE CARD -->
+                    <div class="premium-card p-4 md:p-6 flex justify-center items-center bg-[var(--bg-card-heavy)] hover:border-purple-400 transition-colors min-h-[160px] shadow-lg group overflow-hidden w-full">
+                        <div class="w-full overflow-x-auto no-scrollbar text-center">
+                            <img src="https://readme-jokes.vercel.app/api?theme=dracula&hideBorder=true" alt="Developer Joke" width="400" height="200" loading="lazy" decoding="async" style="aspect-ratio: 400/200; max-width: 100%; height: auto;" class="inline-block group-hover:scale-105 transition-transform duration-500 drop-shadow-md object-contain">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. GITHUB ACTIVITY GRAPH & SNAKE (RAW GITHUB ACTIONS) -->
+                <div class="premium-card p-4 md:p-8 flex flex-col justify-center items-center bg-[var(--bg-card-heavy)] relative min-h-[300px] shadow-xl hover:border-[var(--color-primary)] transition-colors animate-on-scroll overflow-hidden w-full max-w-full">
+                    <!-- Activity Graph -->
+                    <div class="w-full overflow-x-auto custom-scrollbar text-center mb-6">
+                        <img src="https://github-readme-activity-graph.vercel.app/graph?username=raphunteks&theme=dracula&hide_border=true&area=true" alt="Activity Graph" width="1000" height="300" loading="lazy" decoding="async" style="aspect-ratio: 1000/300; min-width: 600px; height: auto;" class="inline-block drop-shadow-lg hover:scale-[1.02] transition-transform duration-500 object-contain">
+                    </div>
+                    
+                    <!-- Snake Animation -->
+                    <div class="w-full overflow-x-auto no-scrollbar text-center">
+                        <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/snake-output/snake.svg?v=1" alt="Snake Animation" width="800" height="250" loading="lazy" decoding="async" style="aspect-ratio: 800/250; min-width: 600px; height: auto;" class="inline-block drop-shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.3)] object-contain">
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- PROYEK WEB DINAMIS -->
+            <section id="proyek" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24 max-w-full">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-10 text-[var(--text-main)] drop-shadow-md w-full">
+                    <i class="ph-bold ph-browsers text-[var(--color-secondary)] mr-2"></i> Proyek <span class="text-stroke-gradient">Saya</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full max-w-full" id="ui-proyek-container">
+                    <div class="text-center col-span-full py-10 w-full"><i class="ph-bold ph-spinner-gap animate-spin text-3xl text-[var(--color-primary)]"></i></div>
+                </div>
+            </section>
+
+            <!-- SERTIFIKASI DINAMIS -->
+            <section id="sertifikasi" class="mb-16 md:mb-24 animate-on-scroll w-full pt-6 scroll-mt-24 max-w-full">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-center mb-12 text-[var(--text-main)] drop-shadow-md w-full">
+                    <i class="ph-fill ph-certificate text-[var(--color-primary)] mr-2"></i> Sertifikasi & <span class="text-stroke-gradient">Pelatihan</span>
+                </h2>
+                
+                <h3 class="text-lg md:text-xl font-bold mb-6 text-[var(--text-main)] border-b border-[var(--border-color)] pb-3 drop-shadow-sm flex items-center gap-2 w-full">
+                    <i class="ph-fill ph-code-block text-[var(--color-secondary)]"></i> Sertifikasi Programming & Hobi
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 mb-16 w-full max-w-full" id="ui-sertif-hobi-container">
+                    <div class="text-center col-span-full py-10 w-full"><i class="ph-bold ph-spinner-gap animate-spin text-3xl text-[var(--color-secondary)]"></i></div>
+                </div>
+
+                <h3 class="text-lg md:text-xl font-bold mb-6 text-[var(--text-main)] border-b border-[var(--border-color)] pb-3 drop-shadow-sm flex items-center gap-2 w-full">
+                    <i class="ph-fill ph-first-aid-kit text-emerald-400"></i> Sertifikasi Medis (PDGI)
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 w-full max-w-full" id="ui-sertif-pdgi-container">
+                    <div class="text-center col-span-full py-10 w-full"><i class="ph-bold ph-spinner-gap animate-spin text-3xl text-emerald-400"></i></div>
+                </div>
+            </section>
+
+            <!-- KIRIM PESAN -->
+            <section class="max-w-3xl mx-auto animate-on-scroll mb-12 md:mb-16 w-full" aria-labelledby="heading-pesan">
+                <div class="premium-card p-6 sm:p-8 md:p-12 text-center relative overflow-hidden group w-full min-w-0">
+                    <div class="absolute -top-32 -right-32 w-64 h-64 bg-[var(--color-primary)] rounded-full blur-[100px] opacity-10 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none" aria-hidden="true"></div>
+                    
+                    <i class="ph ph-paper-plane-tilt text-3xl md:text-4xl text-[var(--color-primary)] mb-3 md:mb-4 inline-block drop-shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.6)] transition-transform group-hover:-translate-y-3 group-hover:rotate-12 duration-500 animate__animated animate__pulse animate__infinite" aria-hidden="true"></i>
+                    <h2 id="heading-pesan" class="text-2xl md:text-3xl font-extrabold mb-2 md:mb-3 text-[var(--text-main)] truncate px-2 drop-shadow-md w-full">Kirim Pesan</h2>
+                    <p class="text-[var(--text-muted)] mb-8 md:mb-10 text-xs md:text-sm max-w-lg mx-auto px-2 leading-relaxed w-full">Untuk keperluan diskusi klinis, kolaborasi riset, atau konsultasi, silakan tinggalkan pesan Anda di bawah ini.</p>
+                    
+                    <form id="formKontak" onsubmit="event.preventDefault(); prosesPesan();" class="space-y-4 md:space-y-6 text-left relative z-10 w-full" aria-label="Formulir Kontak">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 w-full">
+                            <div class="w-full">
+                                <label for="inputNama" class="block text-[10px] md:text-[11px] font-bold text-[var(--text-muted)] mb-1.5 md:mb-2 ml-1 uppercase tracking-widest">Nama Lengkap</label>
+                                <input type="text" id="inputNama" required class="w-full bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl px-4 md:px-5 py-3 md:py-3.5 text-xs md:text-sm text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] transition-all backdrop-blur-md input-ripple shadow-inner" placeholder="John Doe">
+                            </div>
+                            <div class="w-full">
+                                <label for="inputKontak" class="block text-[10px] md:text-[11px] font-bold text-[var(--text-muted)] mb-1.5 md:mb-2 ml-1 uppercase tracking-widest">No. WhatsApp</label>
+                                <input type="tel" id="inputKontak" required class="w-full bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl px-4 md:px-5 py-3 md:py-3.5 text-xs md:text-sm text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] transition-all backdrop-blur-md input-ripple shadow-inner" placeholder="0812...">
+                            </div>
+                        </div>
+                        <div class="w-full">
+                            <label for="inputPesan" class="block text-[10px] md:text-[11px] font-bold text-[var(--text-muted)] mb-1.5 md:mb-2 ml-1 uppercase tracking-widest">Pesan / Keperluan</label>
+                            <textarea id="inputPesan" required rows="4" class="w-full bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl px-4 md:px-5 py-3 md:py-4 text-xs md:text-sm text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] resize-none transition-all backdrop-blur-md input-ripple shadow-inner" placeholder="Tuliskan detail keperluan Anda..."></textarea>
+                        </div>
+                        <button type="submit" id="btnSubmit" class="btn-pulse w-full bg-[var(--color-primary)] hover:brightness-110 text-[var(--bg-main)] font-bold py-3.5 md:py-4 rounded-xl shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.4)] transition-all text-sm md:text-base border border-white/20 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-primary)] relative active:scale-95">
+                            <span class="relative z-10 flex items-center justify-center gap-2"><i class="ph-bold ph-paper-plane-right"></i> Kirim Pesan Sekarang</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <footer class="mt-16 md:mt-20 pb-8 md:pb-10 border-t border-[var(--border-color)] pt-8 md:pt-10 w-full" role="contentinfo">
+                <div class="flex flex-wrap justify-center gap-3 md:gap-4 mb-6 md:mb-8 animate-on-scroll px-2 w-full" aria-label="Statistik Pengunjung">
+                    <div class="stat-breathe bg-[var(--bg-card)] border border-[var(--border-color)] px-4 md:px-5 py-2 md:py-3 rounded-2xl text-center flex-1 sm:flex-none min-w-[100px] md:min-w-[120px] backdrop-blur-md shadow-lg">
+                        <p class="text-[8px] md:text-[9px] text-[var(--text-muted)] uppercase tracking-widest mb-1 font-bold">Views Today</p>
+                        <div class="flex items-center justify-center gap-2 text-[var(--color-primary)] font-black font-mono text-base md:text-lg"><span id="view-today" aria-live="polite">-</span></div>
+                    </div>
+                    <div class="stat-breathe bg-[var(--bg-card)] border border-[var(--border-color)] px-4 md:px-5 py-2 md:py-3 rounded-2xl text-center flex-1 sm:flex-none min-w-[100px] md:min-w-[120px] backdrop-blur-md shadow-lg" style="animation-delay: 1s">
+                        <p class="text-[8px] md:text-[9px] text-[var(--text-muted)] uppercase tracking-widest mb-1 font-bold">This Week</p>
+                        <div class="flex items-center justify-center gap-2 text-[var(--color-secondary)] font-black font-mono text-base md:text-lg"><span id="view-week" aria-live="polite">-</span></div>
+                    </div>
+                    <div class="stat-breathe bg-[var(--bg-card)] border border-[var(--border-color)] px-4 md:px-5 py-2 md:py-3 rounded-2xl text-center flex-1 sm:flex-none min-w-[100px] md:min-w-[120px] backdrop-blur-md shadow-lg" style="animation-delay: 2s">
+                        <p class="text-[8px] md:text-[9px] text-[var(--text-muted)] uppercase tracking-widest mb-1 font-bold">Total Views</p>
+                        <div class="flex items-center justify-center gap-2 text-[var(--text-main)] font-black font-mono text-base md:text-lg"><span id="view-total" aria-live="polite">-</span></div>
+                    </div>
+                </div>
+
+                <div class="text-center text-[var(--text-muted)] px-4 w-full">
+                    <p class="font-medium text-xs md:text-sm break-words">&copy; 2026 drg. M. Aksa Arsyad, S.KG.</p>
+                    <p class="text-[10px] md:text-[11px] mt-2 tracking-wider break-words">
+                        SYSTEM BY <span class="text-[var(--color-primary)] font-bold">AXA XYZ</span>
+                        <button onclick="bukaLoginAdmin()" aria-label="Buka Dashboard Admin" class="ml-2 text-[var(--text-muted)] hover:text-[var(--color-primary)] transition-colors p-2 -m-2 outline-none focus-visible:text-[var(--color-primary)] active:scale-95"><i class="ph-fill ph-lock-key text-lg align-middle" aria-hidden="true"></i></button>
+                    </p>
+                </div>
+
+                <div class="text-center mt-4 w-full">
+                    <a href="https://maksaarsyad.xyz/sitemap.xml" target="_blank" aria-label="Peta Situs XML" class="text-[9px] text-[var(--text-muted)] hover:text-[var(--color-primary)] transition-colors">Sitemap XML</a>
+                </div>
+            </footer>
+        </div>
+    </main>
+
+    <!-- ADMIN MODAL -->
+    <div id="admin-modal" class="fixed inset-0 bg-[var(--bg-main)]/95 backdrop-blur-xl z-[9999] hidden flex items-center justify-center p-4 transition-all w-full h-full overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+        
+        <!-- LOGIN ADMIN -->
+        <div id="admin-login" class="premium-card p-6 md:p-8 max-w-sm w-full text-center mx-auto border-[var(--border-color)]">
+            <div class="w-14 h-14 md:w-16 md:h-16 mx-auto bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.2)] to-transparent rounded-full flex items-center justify-center mb-4 text-[var(--color-primary)] border border-[rgba(var(--color-primary-rgb),0.3)] shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.2)]"><i class="ph ph-shield-check text-2xl md:text-3xl" aria-hidden="true"></i></div>
+            <h2 id="admin-title" class="text-xl md:text-2xl font-bold text-[var(--text-main)] mb-5 md:mb-6 w-full">Admin Access</h2>
+            <input type="text" id="adminUser" placeholder="Username" aria-label="Username" class="w-full mb-3 md:mb-4 bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none transition-all shadow-inner">
+            <input type="password" id="adminPass" placeholder="Password" aria-label="Password" class="w-full mb-5 md:mb-6 bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-lg px-4 py-2.5 md:py-3 text-sm md:text-base text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none transition-all shadow-inner">
+            <button onclick="cekLogin()" class="w-full bg-[var(--color-primary)] hover:brightness-110 text-[var(--bg-main)] font-bold py-2.5 md:py-3 rounded-lg transition-colors text-sm md:text-base shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.4)] outline-none active:scale-95">LOGIN SECURE</button>
+            <button onclick="tutupAdmin()" class="w-full mt-3 md:mt-4 text-[var(--text-muted)] hover:text-[var(--text-main)] text-xs md:text-sm transition-colors font-semibold py-2 outline-none active:scale-95">Cancel</button>
+            <p id="loginErr" class="text-red-500 text-[11px] md:text-xs mt-3 md:mt-4 hidden bg-red-500/10 border border-red-500/20 py-2 rounded break-words w-full" aria-live="assertive">Invalid Credentials!</p>
+        </div>
+        
+        <!-- DASHBOARD ADMIN TABS -->
+        <div id="admin-dashboard" class="premium-card p-4 sm:p-6 max-w-5xl w-full h-[95vh] md:h-[90vh] flex flex-col hidden mx-auto relative overflow-hidden border-[var(--border-color)]">
+            <div class="flex justify-between items-center mb-3 md:mb-4 border-b border-[var(--border-color)] pb-3 md:pb-4 gap-2 w-full min-w-0">
+                <h2 class="text-lg md:text-xl font-bold text-[var(--text-main)] flex items-center gap-2 truncate w-full"><i class="ph ph-database text-[var(--color-primary)] shrink-0" aria-hidden="true"></i> <span class="truncate">Master Editor</span></h2>
+                <button onclick="tutupAdmin()" aria-label="Tutup Editor" class="text-[var(--text-muted)] hover:text-red-500 transition-colors bg-[var(--bg-overlay)] hover:bg-red-500/10 p-1.5 md:p-2 rounded-lg shrink-0 border border-transparent hover:border-red-500/30 outline-none active:scale-95"><i class="ph ph-x text-lg md:text-xl" aria-hidden="true"></i></button>
+            </div>
+            
+            <div class="flex gap-2 mb-3 overflow-x-auto custom-scrollbar pb-2 shrink-0 w-full">
+                <button onclick="switchAdminTab('cv')" id="tab-cv" class="admin-tab active bg-[var(--color-primary)] text-[var(--bg-main)] px-4 py-2 rounded-lg font-bold text-[10px] md:text-xs transition-colors shrink-0 shadow-md">Data CV</button>
+                <button onclick="switchAdminTab('proyek')" id="tab-proyek" class="admin-tab bg-[var(--bg-overlay)] text-[var(--text-main)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] px-4 py-2 rounded-lg font-bold text-[10px] md:text-xs transition-colors shrink-0 border border-[var(--border-color)]">Proyek Web</button>
+                <button onclick="switchAdminTab('hobi')" id="tab-hobi" class="admin-tab bg-[var(--bg-overlay)] text-[var(--text-main)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] px-4 py-2 rounded-lg font-bold text-[10px] md:text-xs transition-colors shrink-0 border border-[var(--border-color)]">Sertif Hobi</button>
+                <button onclick="switchAdminTab('pdgi')" id="tab-pdgi" class="admin-tab bg-[var(--bg-overlay)] text-[var(--text-main)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] px-4 py-2 rounded-lg font-bold text-[10px] md:text-xs transition-colors shrink-0 border border-[var(--border-color)]">Sertif PDGI</button>
+            </div>
+
+            <div id="admin-json-view" class="flex flex-col flex-grow min-h-0 w-full">
+                <p class="text-[9px] md:text-[10px] text-[var(--color-primary)] mb-2 shrink-0 italic break-words w-full">*Hati-hati edit JSON. Pastikan {} dan "" valid.</p>
+                <textarea id="jsonEditor" class="flex-grow w-full bg-[#0d1117] border border-[var(--border-color)] rounded-xl p-3 md:p-5 text-[var(--color-primary)] font-mono text-[10px] md:text-[11px] focus:outline-none focus:border-[var(--color-primary)] resize-none custom-scrollbar leading-relaxed shadow-inner"></textarea>
+            </div>
+
+            <div id="admin-gui-view" class="hidden flex-col flex-grow min-h-0 relative w-full">
+                <div id="admin-item-list" class="flex-grow overflow-y-auto space-y-3 pr-2 custom-scrollbar pb-16 w-full">
+                </div>
+                
+                <div class="absolute bottom-0 left-0 right-0 pt-2 bg-gradient-to-t from-[var(--bg-card-heavy)] to-transparent w-full">
+                    <button onclick="bukaFormItem(-1)" class="w-full py-3 bg-[rgba(var(--color-primary-rgb),0.1)] border border-dashed border-[var(--color-primary)] text-[var(--color-primary)] font-bold rounded-xl hover:bg-[var(--color-primary)] hover:text-[var(--bg-main)] transition-colors shadow-sm outline-none active:scale-95">
+                        + Tambah Data Baru
+                    </button>
+                </div>
+
+                <div id="admin-item-form" class="hidden absolute inset-0 bg-[var(--bg-card-heavy)] backdrop-blur-xl p-4 sm:p-6 flex flex-col z-20 rounded-xl border border-[var(--color-primary)] overflow-y-auto shadow-2xl w-full">
+                    <h3 id="form-item-title" class="font-bold text-lg mb-4 text-[var(--text-main)] border-b border-[var(--border-color)] pb-2 w-full truncate">Tambah Data</h3>
+                    
+                    <div class="space-y-3 flex-grow w-full">
+                        <div class="w-full">
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Judul *</label>
+                            <input type="text" id="adm-judul" placeholder="Masukkan Judul..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
+                        </div>
+                        
+                        <div class="w-full">
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Gambar (Upload / URL) *</label>
+                            <div class="flex gap-2 items-center w-full">
+                                <input type="text" id="adm-gambar" placeholder="URL gambar..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
+                                <label class="bg-[var(--color-secondary)] hover:brightness-110 text-white px-4 py-2 rounded-lg cursor-pointer text-xs font-bold shrink-0 transition-all flex items-center gap-1 shadow-md whitespace-nowrap active:scale-95">
+                                    <i class="ph-bold ph-upload-simple"></i> Upload
+                                    <input type="file" id="adm-file-upload" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
+                                </label>
+                            </div>
+                            <p id="upload-status" class="text-[9px] text-[var(--color-primary)] mt-1 hidden font-bold break-words w-full"></p>
+                        </div>
+                        
+                        <div id="field-deskripsi" class="w-full">
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Deskripsi Singkat</label>
+                            <textarea id="adm-deskripsi" rows="3" placeholder="Deskripsi..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none resize-none"></textarea>
+                        </div>
+                        <div id="field-link" class="w-full">
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Link URL Proyek</label>
+                            <input type="text" id="adm-link" placeholder="https://..." class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
+                        </div>
+                        
+                        <div id="field-subjudul" class="hidden w-full">
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Penyelenggara</label>
+                            <input type="text" id="adm-subjudul" placeholder="e.g. Kementerian Kominfo" class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
+                        </div>
+                        <div id="field-tanggal" class="hidden w-full">
+                            <label class="block text-[10px] text-[var(--text-muted)] font-bold mb-1">Tanggal</label>
+                            <input type="text" id="adm-tanggal" placeholder="e.g. 20 Agustus 2026" class="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none">
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 mt-6 pt-4 border-t border-[var(--border-color)] shrink-0 w-full">
+                        <button onclick="simpanFormItem()" class="flex-1 bg-[var(--color-primary)] hover:brightness-110 text-[var(--bg-main)] font-bold py-2.5 rounded-lg transition-colors text-sm shadow-md active:scale-95 w-full">
+                            <i class="ph-bold ph-floppy-disk"></i> Simpan
+                        </button>
+                        <button onclick="tutupFormItem()" class="flex-1 bg-transparent border border-[var(--text-muted)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-[var(--text-main)] font-bold py-2.5 rounded-lg transition-colors text-sm active:scale-95 w-full">Batal</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="master-save-container" class="mt-4 md:mt-5 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0 w-full">
+                <span id="adminNotif" class="text-[10px] md:text-xs font-bold hidden px-3 md:px-4 py-2 rounded-lg text-center w-full sm:w-auto break-words" aria-live="polite"></span>
+                <button onclick="simpanDatabaseMain()" id="btnSimpanCV" class="w-full sm:w-auto bg-[var(--color-primary)] hover:brightness-110 text-[var(--bg-main)] font-bold px-6 md:px-8 py-2.5 md:py-3 rounded-xl shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.5)] transition-all flex items-center justify-center gap-2 text-sm md:text-base shrink-0 outline-none active:scale-95">
+                    <i class="ph-fill ph-cloud-arrow-up text-base md:text-lg" aria-hidden="true"></i> Push Data CV
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================= THEME SWITCHER LOGIC =================
+        function toggleMode() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            const modeIconEl = document.getElementById('mode-icon');
+            
+            if(isLight) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('axa-bg-theme', 'dark');
+                if (modeIconEl) modeIconEl.className = 'ph-fill ph-sun';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('axa-bg-theme', 'light');
+                if (modeIconEl) modeIconEl.className = 'ph-fill ph-moon';
+            }
+            updateActiveBgSwatch(localStorage.getItem('axa-bg-theme'));
+        }
+
+        function setBgTheme(bgClass, el) {
+            if(bgClass === 'dark') document.documentElement.removeAttribute('data-theme');
+            else document.documentElement.setAttribute('data-theme', bgClass);
+            localStorage.setItem('axa-bg-theme', bgClass);
+            updateActiveBgSwatch(bgClass);
+        }
+
+        function setColorTheme(themeClass, el) {
+            document.documentElement.className = `scroll-smooth ${themeClass}`;
+            localStorage.setItem('axa-theme-color', themeClass);
+            document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('active', 'ring-2', 'ring-[var(--text-main)]', 'scale-110'));
+            if(el) el.classList.add('active', 'ring-2', 'ring-[var(--text-main)]', 'scale-110');
+        }
+        
+        function updateActiveBgSwatch(bgClass) {
+            document.querySelectorAll('.bg-swatch').forEach(sw => sw.classList.remove('ring-2', 'ring-[var(--color-primary)]', 'scale-110'));
+            const map = {'dark':0, 'light':1, 'obsidian':2, 'cosmic':3, 'abyssal':4, 'matrix':5, 'sepia':6};
+            const btnIndex = map[bgClass] || 0;
+            const buttons = document.querySelectorAll('.bg-swatch');
+            if(buttons[btnIndex]) buttons[btnIndex].classList.add('ring-2', 'ring-[var(--color-primary)]', 'scale-110');
+        }
+
+        const initialModeIcon = document.getElementById('mode-icon');
+        if (initialModeIcon) {
+            initialModeIcon.className = localStorage.getItem('axa-bg-theme') === 'light' ? 'ph-fill ph-moon' : 'ph-fill ph-sun';
+        }
+        
+        const savedColor = localStorage.getItem('axa-theme-color') || 'theme-cyan';
+        document.querySelectorAll('.color-swatch').forEach(sw => {
+            if(sw.getAttribute('onclick').includes(savedColor)) sw.classList.add('active', 'ring-2', 'ring-[var(--text-main)]', 'scale-110');
+        });
+        updateActiveBgSwatch(localStorage.getItem('axa-bg-theme') || 'dark');
+
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('scrollToTopBtn');
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            document.getElementById('scroll-progress').style.width = ((winScroll / height) * 100) + '%';
+            if(window.scrollY > 300) btn.classList.add('show'); else btn.classList.remove('show');
+        });
+
+        // ================= API FETCH LCP OPTIMIZATION =================
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxv7LpGFB37qXUvpPYapXUIaaMv0nV06AnGbwQ_CRBSj4zIoxo7N3NwAn9WSsphDrtR/exec";
+        let globalCVData = {}; 
+        let globalSheetData = {}; 
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlWithCacheBuster = GAS_URL + "?endpoint=cv&t=" + new Date().getTime();
+
+            fetch(urlWithCacheBuster, { redirect: "follow" })
+            .then(res => { if (!res.ok) throw new Error("Network Issue."); return res.text(); })
+            .then(text => {
+                if(text.trim().startsWith('<')) throw new Error("Akses GAS Ditolak.");
+                const res = JSON.parse(text); 
+                if(res.status === 'success') {
+                    globalCVData = res.data;
+                    globalSheetData = res.sheets || { proyek: [], sertifHobi: [], sertifPDGI: [] }; 
+                    
+                    // FIX LCP/TBT: Memecah render logic dari Main Thread Sync ke Microtask asinkron 
+                    // agar browser tidak terkunci (Skor TBT hijau 100)
+                    setTimeout(() => {
+                        renderSeluruhUI(globalCVData, globalSheetData);
+                        
+                        requestAnimationFrame(() => {
+                            const loader = document.getElementById('loader-screen');
+                            loader.style.opacity = '0';
+                            setTimeout(() => {
+                                loader.style.display = 'none';
+                                document.getElementById('main-content').classList.remove('opacity-0');
+                                initObserver(); // Initialize animations after layout is painted
+                            }, 600);
+                        });
+                        
+                        // Menunda pencatatan view agar tidak memblokir render utama
+                        setTimeout(catatViewPengunjungDenganIP, 2000);
+                    }, 0);
+                    
+                } else throw new Error(res.message || "Unknown Backend Error");
+            })
+            .catch(err => tampilkanLayarError(`Koneksi Gagal.<br><b>Error:</b> ${err.message}`));
+
+            document.addEventListener('keydown', e => { if (e.key === "Escape") tutupAdmin(); });
+        });
+
+        function catatViewPengunjungDenganIP() {
+            fetch('https://api.ipify.org?format=json').then(res => res.json()).then(data => data.ip).catch(() => 'HIDDEN_IP')
+            .then(clientIP => fetch(GAS_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: 'recordView', ip: clientIP }) }))
+            .then(res => res.json()).then(res => {
+                if(res.status === 'success') {
+                    animasiCounter('view-today', res.data.today);
+                    animasiCounter('view-week', res.data.week);
+                    animasiCounter('view-total', res.data.total);
                 }
-              }
-            }
-            contributionsCollection {
-              totalCommitContributions
-              restrictedContributionsCount
-            }
-            pullRequests(first: 1) { totalCount }
-            issues(first: 1) { totalCount }
-          }
-        }`;
-
-        // Eksekusi Request HTTP dari Server Node.js ke GitHub
-        const response = await fetch('https://api.github.com/graphql', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${authToken}`,
-                'Content-Type': 'application/json',
-                'User-Agent': 'Axa-Portfolio-App' // SANGAT KRITIKAL: Wajib ada User-Agent
-            },
-            body: JSON.stringify({ query })
-        });
-
-        const responseText = await response.text();
-        
-        let result;
-        try {
-            result = JSON.parse(responseText);
-        } catch(e) {
-            return res.status(500).json({ status: 'error', message: 'GitHub API tidak mengembalikan format JSON yang valid.' });
+            }).catch(e => console.log("Gagal hitung view", e));
         }
 
-        if (result.errors) {
-            return res.status(400).json({ status: 'error', message: result.errors[0].message });
+        function animasiCounter(id, targetValue) {
+            const el = document.getElementById(id);
+            let start = 0; const duration = 1500; const increment = targetValue / (duration / 16); 
+            if (targetValue === 0) { el.textContent = "0"; return; }
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= targetValue) { clearInterval(timer); el.textContent = targetValue; } 
+                else { el.textContent = Math.floor(start); }
+            }, 16);
         }
 
-        // Pengolahan Data Statistik & Kalkulasi Persentase Bahasa
-        const data = result.data.user;
-        let totalStars = 0;
-        let langMap = {};
-        let totalSize = 0;
+        function tampilkanLayarError(pesanError) {
+            document.querySelector('.pulse-ring').style.display = 'none';
+            document.getElementById('loader-title').textContent = "SYSTEM ERROR"; 
+            document.getElementById('loader-title').classList.replace('text-[var(--color-primary)]', 'text-red-500');
+            document.getElementById('loader-text').innerHTML = pesanError; 
+            document.getElementById('loader-text').classList.add('text-red-400');
+        }
 
-        data.repositories.nodes.forEach(repo => {
-            totalStars += repo.stargazerCount;
-            repo.languages.edges.forEach(edge => {
-                const langName = edge.node.name;
-                const langColor = edge.node.color || '#cccccc';
-                if (!langMap[langName]) langMap[langName] = { size: 0, color: langColor };
-                langMap[langName].size += edge.size;
-                totalSize += edge.size;
+        // ================= RENDER UI (Dengan Optimasi Gambar Strict LCP) =================
+        function renderSeluruhUI(data, sheetData = {}) {
+            document.getElementById('ui-namaDepan').textContent = data.profil.namaDepan;
+            document.getElementById('ui-namaBelakang').textContent = data.profil.namaBelakang;
+            document.getElementById('ui-gelar').textContent = data.profil.gelar;
+            document.getElementById('ui-subGelar').textContent = data.profil.subGelar;
+            
+            document.getElementById('ui-foto').src = data.profil.foto === "axalogo.jpg" ? "/axalogo.png" : "/" + data.profil.foto;
+
+            document.getElementById('ui-lahir').textContent = data.dataPribadi.lahir;
+            document.getElementById('ui-gender').textContent = data.dataPribadi.gender;
+            document.getElementById('ui-agama').textContent = data.dataPribadi.agama;
+            document.getElementById('ui-warga').textContent = data.dataPribadi.kewarganegaraan;
+            document.getElementById('ui-status').textContent = data.dataPribadi.status;
+            
+            const rawEmail = data.kontak.email;
+            const rawHp = data.kontak.hp;
+            const rawSosmed = data.kontak.sosmed; 
+            let cleanHp = rawHp.replace(/\D/g, ''); if (cleanHp.startsWith('0')) cleanHp = '62' + cleanHp.substring(1);
+            let cleanIg = rawSosmed.replace(/[@ ]/g, '').split('/')[0]; 
+
+            document.getElementById('ui-email-container').innerHTML = `<a href="mailto:${rawEmail}" class="link-hover truncate block" aria-label="Kirim email">${rawEmail}</a>`;
+            document.getElementById('ui-hp-container').innerHTML = `<a href="https://wa.me/${cleanHp}" target="_blank" rel="noopener noreferrer" class="link-hover truncate block" aria-label="Chat WA">${rawHp}</a>`;
+            document.getElementById('ui-sosmed-container').innerHTML = `<a href="https://www.instagram.com/${cleanIg}" target="_blank" rel="noopener noreferrer" class="link-hover truncate block" aria-label="Kunjungi IG">${rawSosmed}</a>`;
+            document.getElementById('ui-alamat').textContent = data.kontak.alamat;
+            document.getElementById('ui-scholar').href = data.kontak.scholar;
+            document.getElementById('ui-orcid').href = data.kontak.orcid;
+            
+            if (document.getElementById('ui-sciprofiles') && data.kontak.sciprofiles) document.getElementById('ui-sciprofiles').href = data.kontak.sciprofiles;
+            if (document.getElementById('ui-semanticscholar')) document.getElementById('ui-semanticscholar').href = data.kontak.semanticscholar || "https://www.semanticscholar.org/author/M.-Aksa-Arsyad/2328471622";
+
+            const convertDriveLink = (url) => {
+                if(!url) return 'https://ui-avatars.com/api/?name=No+Image&background=1e293b&color=fff';
+                let fileId = '';
+                const match = url.match(/\/d\/(.+?)\//); if(match && match[1]) fileId = match[1];
+                const matchUc = url.match(/id=([^&]+)/); if(matchUc && matchUc[1]) fileId = matchUc[1];
+                if (fileId) return `https://lh3.googleusercontent.com/d/${fileId}`;
+                return url; 
+            };
+
+            // FIX: Render Proyek dengan Explicit Width Height 800x450 as default aspect ratio
+            if(sheetData.proyek && document.getElementById('ui-proyek-container')) {
+                const proyekHTML = sheetData.proyek.map((p, i) => `
+                    <article class="premium-card overflow-hidden group hover:-translate-y-2 transition-all duration-300 shadow-lg animate-on-scroll flex flex-col bg-[var(--bg-card-heavy)] w-full" style="transition-delay: ${i*100}ms">
+                        <div class="h-48 md:h-56 w-full overflow-hidden bg-[var(--bg-overlay)] border-b border-[var(--border-color)] relative">
+                            <img src="${convertDriveLink(p.Gambar)}" alt="${p.Judul}" width="800" height="450" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-5 md:p-6 flex flex-col flex-grow relative z-10 w-full min-w-0">
+                            <h3 class="text-lg font-bold text-[var(--text-main)] mb-2 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2 drop-shadow-sm w-full break-words">${p.Judul}</h3>
+                            <p class="text-[var(--text-muted)] text-xs md:text-sm mb-6 line-clamp-3 leading-relaxed flex-grow w-full break-words">${p.Deskripsi}</p>
+                            ${p.Link ? `<a href="${p.Link}" target="_blank" rel="noopener noreferrer" class="mt-auto inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-[var(--color-primary)] text-[var(--text-inverse)] font-bold text-sm hover:brightness-110 transition-all shadow-md active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-white"><i class="ph-bold ph-eye text-lg"></i> Akses Proyek</a>` : ''}
+                        </div>
+                    </article>
+                `).join('');
+                document.getElementById('ui-proyek-container').innerHTML = proyekHTML || `<p class="text-[var(--text-muted)] text-center col-span-full py-8 border border-dashed border-[var(--border-color)] rounded-xl w-full">Belum ada proyek.</p>`;
+            }
+
+            // FIX: Render Sertifikasi dengan explicit width height 800x600 as default
+            const generateSertifHTML = (arr) => {
+                if(!arr || arr.length === 0) return `<p class="text-[var(--text-muted)] text-center col-span-full py-8 border border-dashed border-[var(--border-color)] rounded-xl w-full">Data kosong.</p>`;
+                return arr.map((s, i) => `
+                    <article class="premium-card p-4 group hover:-translate-y-2 transition-all duration-300 shadow-lg animate-on-scroll flex flex-col h-full bg-[var(--bg-card-heavy)] w-full" style="transition-delay: ${i*100}ms">
+                        <div class="h-40 md:h-48 w-full rounded-lg overflow-hidden border border-[var(--border-color)] mb-4 bg-[var(--bg-overlay)] relative">
+                            <img src="${convertDriveLink(s.Gambar)}" alt="${s.Judul}" width="800" height="600" loading="lazy" decoding="async" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="flex-grow flex flex-col justify-center text-center relative z-10 w-full min-w-0">
+                            <h3 class="text-sm md:text-base font-bold text-[var(--text-main)] mb-1 group-hover:text-[var(--color-secondary)] transition-colors line-clamp-2 drop-shadow-sm w-full break-words">${s.Judul}</h3>
+                            <p class="text-[var(--text-muted)] text-xs md:text-sm font-medium mb-4 line-clamp-2 leading-snug w-full break-words">${s.Subjudul}</p>
+                            <span class="inline-block mt-auto mx-auto bg-[var(--bg-overlay)] text-[var(--text-main)] text-[10px] md:text-xs px-3 py-1.5 rounded-md font-bold border border-[var(--border-color)] shadow-inner w-full truncate"><i class="ph-fill ph-calendar text-[var(--color-primary)] align-middle mb-0.5"></i> ${s.Tanggal}</span>
+                        </div>
+                    </article>
+                `).join('');
+            };
+
+            if(sheetData.sertifHobi && document.getElementById('ui-sertif-hobi-container')) document.getElementById('ui-sertif-hobi-container').innerHTML = generateSertifHTML(sheetData.sertifHobi);
+            if(sheetData.sertifPDGI && document.getElementById('ui-sertif-pdgi-container')) document.getElementById('ui-sertif-pdgi-container').innerHTML = generateSertifHTML(sheetData.sertifPDGI);
+
+            const hobiHTML = data.dataPribadi.hobi.map(h => `
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--bg-overlay)] border border-[var(--border-color)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] hover:-translate-y-1 transition-all rounded-full text-[10px] md:text-[11px] font-bold text-[var(--text-main)] shadow-md whitespace-nowrap cursor-default group animate__animated animate__zoomIn">
+                    <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-[var(--color-primary)] transition-colors shrink-0" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 1l2.8 6.5 6.2 3-6.2 3L12 20l-2.8-6.5-6.2-3 6.2-3L12 1zm0 4.2L10.3 9.4 6.6 11l3.7 1.6L12 16.8l1.7-4.2 3.7-1.6-3.7-1.6L12 5.2zM19.5 17.5l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5 1.5-3.5z"/></svg>
+                    ${h}
+                </span>
+            `).join('');
+            document.getElementById('ui-hobi-container').innerHTML = hobiHTML;
+
+            const keahlianHTML = data.keahlian.map((k, i) => {
+                const colors = ['from-[var(--color-primary)] to-[var(--color-secondary)]', 'from-[var(--color-secondary)] to-[#a855f7]', 'from-[#2dd4bf] to-[#0ea5e9]', 'from-[#f59e0b] to-[#ef4444]'];
+                const useColor = colors[i % colors.length];
+                return `<div class="mb-4 md:mb-5 group w-full min-w-0"><div class="flex justify-between items-end mb-1.5 gap-2"><span class="text-[var(--text-main)] text-xs md:text-sm font-semibold group-hover:text-[var(--color-primary)] transition-colors flex-grow break-words leading-tight">${k.nama}</span><span class="text-[10px] md:text-xs font-mono font-bold text-[var(--text-muted)] shrink-0">${k.nilai}%</span></div><div class="w-full bg-[var(--bg-main)] rounded-full h-2 md:h-2.5 overflow-hidden border border-[var(--border-color)] p-[1.5px] shadow-inner"><div class="bg-gradient-to-r ${useColor} barber-pole h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(255,255,255,0.3)]" style="width: ${k.nilai}%"></div></div></div>`;
+            }).join('');
+            document.getElementById('ui-keahlian-container').innerHTML = keahlianHTML;
+
+            const pengHTML = (data.pengalamanKerja || []).map((p, i) => {
+                return `<article class="premium-card p-5 md:p-6 border-l-4 border-l-[var(--color-primary)] group animate-on-scroll h-full flex flex-col justify-center w-full" style="transition-delay: ${i*150}ms;"><div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[rgba(var(--color-primary-rgb),0.15)] to-transparent rounded-bl-full transition-opacity duration-500 opacity-50 group-hover:opacity-100 pointer-events-none" aria-hidden="true"></div><div class="relative z-10 badge-lift w-full min-w-0"><span class="inline-block bg-[rgba(var(--color-primary-rgb),0.1)] text-[var(--color-primary)] border border-[rgba(var(--color-primary-rgb),0.2)] text-[9px] md:text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full mb-2.5 shadow-sm whitespace-nowrap">${p.tahun}</span><h3 class="text-base md:text-lg font-extrabold text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition-colors leading-tight mb-2 break-words drop-shadow-sm w-full">${p.posisi}</h3><p class="text-[var(--text-muted)] text-xs md:text-sm font-medium leading-snug flex items-start gap-1.5"><i class="ph-fill ph-buildings text-[var(--text-muted)] shrink-0 mt-0.5 icon-bounce" aria-hidden="true"></i> <span class="break-words w-full">${p.institusi}</span></p></div></article>`;
+            }).join('');
+            document.getElementById('ui-pengalaman-container').innerHTML = pengHTML;
+
+            const pendHTML = data.pendidikan.map((p, i) => {
+                const isLeft = i % 2 === 0;
+                const posClass = isLeft ? "md:w-1/2 md:pr-12 md:ml-0 md:text-right pl-10 md:pl-0 w-full" : "md:w-1/2 md:pl-12 md:ml-[50%] pl-10 w-full";
+                const dotPos = isLeft ? "left-[14px] md:left-auto md:right-[-8px]" : "left-[14px] md:left-[-8px]";
+                let dotClass = i === 0 ? "bg-[var(--color-primary)] shadow-[0_0_20px_var(--color-primary)] border-2 border-[var(--bg-main)] animate-pulse" : "bg-[var(--bg-main)] border-2 border-[var(--color-secondary)]";
+                let boxOp = i === 0 ? "border-[rgba(var(--color-primary-rgb),0.4)] bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.15)] to-transparent" : "";
+                
+                return `<article itemscope itemtype="https://schema.org/EducationalOrganization" class="relative mb-8 md:mb-12 animate-on-scroll flex ${posClass}"><div class="absolute w-4 h-4 ${dotClass} rounded-full ${dotPos} top-6 md:top-7 z-10 shrink-0" aria-hidden="true"></div><div class="premium-card p-5 md:p-7 ${boxOp} w-full badge-lift min-w-0"><span class="${i===0 ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)]'} font-mono text-[9px] md:text-[11px] uppercase tracking-widest font-bold block mb-1.5 md:mb-2 break-words shadow-sm inline-block px-2 py-0.5 rounded bg-[var(--bg-overlay)] w-max max-w-full truncate">${p.tahun}</span><h3 itemprop="name" class="text-base md:text-lg font-bold ${i===0 ? 'text-[var(--text-main)] drop-shadow-md' : 'text-[var(--text-main)]'} leading-snug break-words group-hover:text-[var(--color-primary)] transition-colors w-full">${p.jurusan}</h3><p itemprop="description" class="text-[var(--text-muted)] text-xs md:text-sm mt-1.5 md:mt-2 font-medium break-words w-full">${p.institusi}</p></div></article>`;
+            }).join('');
+            document.getElementById('ui-pendidikan-container').innerHTML = pendHTML;
+
+            const orgHTML = data.organisasi.map(o => {
+                const iconColor = o.aktif ? "text-[var(--color-primary)]" : "text-[var(--text-muted)]";
+                const bgIcon = o.aktif ? "bg-[rgba(var(--color-primary-rgb),0.15)] border border-[rgba(var(--color-primary-rgb),0.3)] shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.2)]" : "bg-[var(--bg-overlay)] border border-[var(--border-color)]";
+                return `<article class="flex gap-3 md:gap-4 p-3 md:p-4 hover:bg-[var(--bg-overlay)] rounded-xl transition-all hover:translate-x-2 group cursor-default w-full"><div class="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center ${bgIcon} ${iconColor} transition-all group-hover:scale-110 group-hover:shadow-[0_0_25px_rgba(var(--color-primary-rgb),0.4)] group-hover:-rotate-6"><i class="ph-fill ph-users text-base md:text-lg" aria-hidden="true"></i></div><div class="min-w-0 w-full"><h3 class="font-bold text-[var(--text-main)] group-hover:text-[var(--color-primary)] transition-colors text-sm md:text-[15px] leading-tight mb-0.5 md:mb-1 break-words drop-shadow-sm w-full">${o.nama}</h3><p class="text-xs md:text-[13px] font-medium text-[var(--text-muted)] break-words leading-relaxed w-full">${o.deskripsi}</p></div></article>`;
+            }).join('');
+            document.getElementById('ui-organisasi-container').innerHTML = orgHTML;
+
+            const pubHTML = data.publikasi.map(pub => {
+                const linkHTML = pub.link ? `<a itemprop="url" href="${pub.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-2.5 md:mt-3 text-[var(--color-primary)] hover:text-[var(--color-secondary)] text-[10px] md:text-xs font-bold transition-colors truncate w-full outline-none active:scale-95"><i class="ph-bold ph-link text-xs md:text-sm shrink-0 group-hover:animate-bounce" aria-hidden="true"></i> <span class="truncate">Baca Selengkapnya</span></a>` : "";
+                return `<article itemscope itemtype="https://schema.org/ScholarlyArticle" class="p-4 md:p-5 border border-[var(--border-color)] bg-[var(--bg-card)] rounded-xl hover:border-[rgba(var(--color-secondary-rgb),0.6)] hover:bg-[var(--bg-overlay)] transition-all group relative overflow-hidden w-full hover:-translate-y-1 hover:shadow-lg shadow-inner min-w-0"><div class="absolute top-0 right-0 bg-[rgba(var(--color-secondary-rgb),0.25)] text-[var(--color-secondary)] text-[9px] md:text-[10px] font-black px-2.5 md:px-3 py-1 rounded-bl-lg transition-transform group-hover:scale-110 group-hover:bg-[var(--color-secondary)] group-hover:text-[var(--bg-main)] shadow-md" aria-label="Tahun Publikasi" itemprop="datePublished">${pub.tahun}</div><h3 itemprop="headline" class="font-bold text-[var(--text-main)] text-xs md:text-sm mb-1.5 md:mb-2 pr-8 md:pr-10 leading-snug group-hover:text-[var(--color-primary)] transition-colors break-words drop-shadow-sm w-full">${pub.judul}</h3><p class="text-[10px] md:text-xs text-[var(--text-muted)] leading-relaxed font-medium break-words w-full"><i class="ph-fill ph-pencil-simple text-[var(--text-muted)] mr-1 shrink-0 align-middle group-hover:text-[var(--color-primary)] transition-colors" aria-hidden="true"></i><span itemprop="author" class="align-middle">${pub.authors}</span> <br><span itemprop="publisher" class="italic text-[var(--text-muted)] mt-1 inline-block break-words w-full">${pub.jurnal}</span></p>${linkHTML}</article>`;
+            }).join('');
+            document.getElementById('ui-publikasi-container').innerHTML = pubHTML;
+        }
+
+        function initObserver() {
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); obs.unobserve(entry.target); } });
+            }, { root: null, rootMargin: '0px', threshold: 0.1 });
+            document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.target.id) {
+                        const hash = '#' + entry.target.id;
+                        if (history.replaceState && window.location.hash !== hash) history.replaceState(null, null, hash);
+                    }
+                });
+            }, { root: null, rootMargin: '-40% 0px -40% 0px', threshold: 0.1 });
+            
+            ['beranda', 'pendidikan', 'pengalaman', 'organisasi', 'publikasi', 'keahlian-tech', 'proyek', 'sertifikasi'].forEach(id => {
+                const el = document.getElementById(id); if(el) sectionObserver.observe(el);
             });
-        });
+        }
 
-        const sortedLangs = Object.keys(langMap)
-            .map(k => ({ name: k, size: langMap[k].size, color: langMap[k].color, percent: ((langMap[k].size / totalSize) * 100).toFixed(2) }))
-            .sort((a, b) => b.size - a.size)
-            .slice(0, 5);
+        function prosesPesan() {
+            const btn = document.getElementById('btnSubmit');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<span class="relative z-10 flex items-center justify-center gap-2"><i class="ph-bold ph-spinner-gap animate-spin text-lg md:text-xl"></i> Mengirim...</span>';
+            btn.disabled = true; btn.classList.add('opacity-70', 'cursor-not-allowed');
 
-        const stats = {
-            stars: totalStars,
-            commits: data.contributionsCollection.totalCommitContributions + data.contributionsCollection.restrictedContributionsCount,
-            prs: data.pullRequests.totalCount,
-            issues: data.issues.totalCount,
-            topLangs: sortedLangs
-        };
+            const payload = { action: 'submitPesan', nama: document.getElementById('inputNama').value.trim(), kontak: document.getElementById('inputKontak').value.trim(), pesan: document.getElementById('inputPesan').value.trim() };
 
-        res.status(200).json({ status: 'success', data: stats });
+            fetch(GAS_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    tampilkanAlertCustom("Pesan Anda telah berhasil dikirim. Terima kasih!", false);
+                    btn.style.background = 'var(--color-secondary)';
+                    document.getElementById('formKontak').reset();
+                } else throw new Error(res.message);
+            })
+            .catch(err => {
+                tampilkanAlertCustom("Gagal mengirim pesan: " + err.message, true);
+                btn.style.background = '#ef4444';
+            }).finally(() => {
+                setTimeout(() => { btn.innerHTML = originalHTML; btn.style.background = ''; btn.classList.remove('opacity-70', 'cursor-not-allowed'); btn.disabled = false; }, 3000);
+            });
+        }
 
-    } catch (error) {
-        console.error("Vercel Serverless Error:", error);
-        res.status(500).json({ status: 'error', message: error.message || 'Internal Server Error' });
-    }
-});
+        // ================= SISTEM MODAL CUSTOM (NON-BLOCKING ALERT) =================
+        function tampilkanAlertCustom(pesan, isError) {
+            let existingModal = document.getElementById('custom-alert-modal');
+            if(existingModal) existingModal.remove();
 
-// ==========================================
-// EXPORT UNTUK VERCEL SERVERLESS
-// ==========================================
-module.exports = app;
+            const iconClass = isError ? 'ph-warning-circle text-red-500' : 'ph-check-circle text-green-400';
+            const borderClass = isError ? 'border-red-500/50' : 'border-[var(--color-primary)]';
 
-// Listener untuk keperluan Development Lokal
-if (require.main === module) {
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-        console.log(`Server is running on http://localhost:${PORT}`);
-    });
-}
+            const modalHtml = `
+                <div id="custom-alert-modal" class="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate__animated animate__fadeIn w-full h-full overflow-hidden">
+                    <div class="bg-[var(--bg-card-heavy)] border-2 ${borderClass} p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center animate__animated animate__zoomIn animate__faster">
+                        <i class="ph-fill ${iconClass} text-5xl mb-4 drop-shadow-md"></i>
+                        <p class="text-[var(--text-main)] text-sm font-bold mb-6 break-words w-full">${pesan}</p>
+                        <button onclick="document.getElementById('custom-alert-modal').remove()" class="w-full bg-[var(--color-primary)] text-black px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest hover:brightness-110 shadow-lg active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-white">Tutup</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        // ================= SISTEM DASHBOARD ADMIN MULTI-TAB =================
+        let currentAdminTab = 'cv';
+        let currentEditIndex = -1; 
+
+        function bukaLoginAdmin() { 
+            document.getElementById('admin-modal').classList.remove('hidden'); 
+            document.getElementById('admin-login').classList.remove('hidden'); 
+            document.getElementById('admin-dashboard').classList.add('hidden'); 
+            setTimeout(() => document.getElementById('adminUser').focus(), 100);
+        }
+
+        function tutupAdmin() { document.getElementById('admin-modal').classList.add('hidden'); }
+        
+        function cekLogin() {
+            const u = document.getElementById('adminUser').value.trim();
+            const p = document.getElementById('adminPass').value.trim();
+            
+            if(u === 'axaaxyz_01' && p === 'axaxyz999') {
+                document.getElementById('admin-login').classList.add('hidden'); 
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                switchAdminTab('cv');
+                document.getElementById('loginErr').classList.add('hidden');
+            } else document.getElementById('loginErr').classList.remove('hidden'); 
+        }
+
+        function switchAdminTab(tab) {
+            currentAdminTab = tab;
+            document.querySelectorAll('.admin-tab').forEach(el => {
+                el.classList.remove('bg-[var(--color-primary)]', 'text-[var(--bg-main)]', 'shadow-md');
+                el.classList.add('bg-[var(--bg-overlay)]', 'text-[var(--text-main)]', 'border', 'border-[var(--border-color)]');
+            });
+            const activeEl = document.getElementById('tab-' + tab);
+            activeEl.classList.remove('bg-[var(--bg-overlay)]', 'text-[var(--text-main)]', 'border');
+            activeEl.classList.add('bg-[var(--color-primary)]', 'text-[var(--bg-main)]', 'shadow-md');
+            
+            if(tab === 'cv') {
+                document.getElementById('admin-json-view').classList.remove('hidden'); document.getElementById('admin-json-view').classList.add('flex');
+                document.getElementById('admin-gui-view').classList.add('hidden'); document.getElementById('admin-gui-view').classList.remove('flex');
+                
+                if(!globalCVData.kontak) globalCVData.kontak = {}; if(!globalCVData.kontak.github) globalCVData.kontak.github = "raphunteks";
+                document.getElementById('jsonEditor').value = JSON.stringify(globalCVData, null, 4);
+                
+                document.getElementById('master-save-container').classList.remove('hidden'); document.getElementById('master-save-container').classList.add('flex');
+            } else {
+                document.getElementById('admin-json-view').classList.add('hidden'); document.getElementById('admin-json-view').classList.remove('flex');
+                document.getElementById('admin-gui-view').classList.remove('hidden'); document.getElementById('admin-gui-view').classList.add('flex');
+                document.getElementById('master-save-container').classList.add('hidden'); document.getElementById('master-save-container').classList.remove('flex');
+                renderAdminGUIList(); tutupFormItem(); 
+            }
+        }
+
+        function renderAdminGUIList() {
+            let dataArray = [];
+            if(currentAdminTab === 'proyek') dataArray = globalSheetData.proyek || [];
+            if(currentAdminTab === 'hobi') dataArray = globalSheetData.sertifHobi || [];
+            if(currentAdminTab === 'pdgi') dataArray = globalSheetData.sertifPDGI || [];
+
+            const listContainer = document.getElementById('admin-item-list');
+            if(dataArray.length === 0) {
+                listContainer.innerHTML = `<div class="text-center py-6 text-[var(--text-muted)] text-sm border border-dashed border-[var(--border-color)] rounded-xl w-full">Belum ada data.</div>`;
+                return;
+            }
+
+            listContainer.innerHTML = dataArray.map((item, index) => `
+                <div class="admin-item-card group w-full">
+                    <div class="flex items-center gap-3 overflow-hidden w-full min-w-0">
+                        <img src="${item.Gambar || 'https://placehold.co/100'}" class="w-10 h-10 rounded object-cover bg-[#0d1117] shrink-0" onerror="this.src='https://placehold.co/100'">
+                        <div class="min-w-0 flex-grow w-full">
+                            <h4 class="text-sm font-bold text-[var(--text-main)] truncate w-full">${item.Judul || 'Tanpa Judul'}</h4>
+                            <p class="text-[10px] text-[var(--text-muted)] truncate w-full">${currentAdminTab === 'proyek' ? (item.Deskripsi || '') : (item.Subjudul || item.Tanggal || '')}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 shrink-0 ml-2">
+                        <button onclick="bukaFormItem(${index})" class="p-2 bg-[rgba(var(--color-primary-rgb),0.1)] text-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary)] hover:text-black transition-colors active:scale-95" title="Edit"><i class="ph-bold ph-pencil-simple"></i></button>
+                        <button onclick="tampilkanKonfirmasiHapus(${index})" class="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors active:scale-95" title="Hapus"><i class="ph-bold ph-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function tampilkanKonfirmasiHapus(index) {
+            let existingModal = document.getElementById('custom-confirm-modal');
+            if(existingModal) existingModal.remove();
+
+            const modalHtml = `
+                <div id="custom-confirm-modal" class="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate__animated animate__fadeIn w-full h-full overflow-hidden">
+                    <div class="bg-[var(--bg-card-heavy)] border-2 border-red-500/50 p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center animate__animated animate__shakeX animate__faster">
+                        <i class="ph-fill ph-warning text-red-500 text-5xl mb-4 drop-shadow-md"></i>
+                        <p class="text-[var(--text-main)] text-sm font-bold mb-6 break-words w-full">Yakin ingin menghapus data ini secara permanen dari Sheet?</p>
+                        <div class="flex gap-3 w-full">
+                            <button id="btn-hapus-yes" class="flex-1 bg-red-500 text-white py-2.5 rounded-xl font-bold tracking-wider hover:brightness-110 shadow-lg active:scale-95 outline-none">HAPUS</button>
+                            <button onclick="document.getElementById('custom-confirm-modal').remove()" class="flex-1 bg-transparent border border-[var(--text-muted)] text-[var(--text-muted)] hover:text-white py-2.5 rounded-xl font-bold tracking-wider transition-colors active:scale-95 outline-none">BATAL</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            document.getElementById('btn-hapus-yes').addEventListener('click', () => {
+                document.getElementById('custom-confirm-modal').remove();
+                hapusItemEksekusi(index);
+            });
+        }
+
+        function hapusItemEksekusi(index) {
+            let dataArray = [];
+            if(currentAdminTab === 'proyek') dataArray = globalSheetData.proyek;
+            if(currentAdminTab === 'hobi') dataArray = globalSheetData.sertifHobi;
+            if(currentAdminTab === 'pdgi') dataArray = globalSheetData.sertifPDGI;
+
+            dataArray.splice(index, 1);
+            renderAdminGUIList();
+            simpanDatabaseMain();
+        }
+
+        function bukaFormItem(index) {
+            currentEditIndex = index;
+            document.getElementById('admin-item-form').classList.remove('hidden');
+            document.getElementById('form-item-title').textContent = index === -1 ? 'Tambah Data Baru' : 'Edit Data';
+
+            const isProyek = currentAdminTab === 'proyek';
+            document.getElementById('field-deskripsi').style.display = isProyek ? 'block' : 'none';
+            document.getElementById('field-link').style.display = isProyek ? 'block' : 'none';
+            document.getElementById('field-subjudul').style.display = !isProyek ? 'block' : 'none';
+            document.getElementById('field-tanggal').style.display = !isProyek ? 'block' : 'none';
+
+            ['adm-judul', 'adm-gambar', 'adm-deskripsi', 'adm-link', 'adm-subjudul', 'adm-tanggal'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('adm-file-upload').value = ''; document.getElementById('upload-status').classList.add('hidden');
+
+            if(index !== -1) {
+                let dataArray = currentAdminTab === 'proyek' ? globalSheetData.proyek : (currentAdminTab === 'hobi' ? globalSheetData.sertifHobi : globalSheetData.sertifPDGI);
+                const item = dataArray[index];
+                document.getElementById('adm-judul').value = item.Judul || '';
+                document.getElementById('adm-gambar').value = item.Gambar || '';
+                
+                if(isProyek) { document.getElementById('adm-deskripsi').value = item.Deskripsi || ''; document.getElementById('adm-link').value = item.Link || ''; } 
+                else { document.getElementById('adm-subjudul').value = item.Subjudul || ''; document.getElementById('adm-tanggal').value = item.Tanggal || ''; }
+            }
+        }
+
+        function handleImageUpload(input) {
+            if(!input.files || input.files.length === 0) return;
+            const file = input.files[0]; const reader = new FileReader();
+            const statusEl = document.getElementById('upload-status'); const urlInput = document.getElementById('adm-gambar');
+            
+            statusEl.classList.remove('hidden'); statusEl.classList.replace('text-green-400', 'text-[var(--color-primary)]'); statusEl.classList.replace('text-red-400', 'text-[var(--color-primary)]');
+            statusEl.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin"></i> Uploading Drive...'; urlInput.disabled = true;
+            
+            reader.onload = function(e) {
+                const dataUrl = e.target.result; const base64 = dataUrl.split(',')[1]; const mimeType = dataUrl.split(';')[0].split(':')[1];
+                const payload = { action: 'uploadImage', user: 'axaaxyz_01', pass: 'axaxyz999', filename: file.name, mimeType: mimeType, base64: base64 };
+                
+                fetch(GAS_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) }).then(res => res.json())
+                .then(res => {
+                    if(res.status === 'success') { urlInput.value = res.url; statusEl.innerHTML = '<i class="ph-bold ph-check-circle"></i> Berhasil!'; statusEl.classList.replace('text-[var(--color-primary)]', 'text-green-400'); } 
+                    else { statusEl.innerHTML = '<i class="ph-bold ph-warning-circle"></i> Gagal: ' + res.message; statusEl.classList.replace('text-[var(--color-primary)]', 'text-red-400'); }
+                }).catch(err => { statusEl.innerHTML = '<i class="ph-bold ph-warning-circle"></i> Error jaringan.'; statusEl.classList.replace('text-[var(--color-primary)]', 'text-red-400'); })
+                .finally(() => { urlInput.disabled = false; });
+            }; reader.readAsDataURL(file);
+        }
+
+        function tutupFormItem() { document.getElementById('admin-item-form').classList.add('hidden'); }
+
+        function simpanFormItem() {
+            let dataArray = currentAdminTab === 'proyek' ? (globalSheetData.proyek || []) : (currentAdminTab === 'hobi' ? (globalSheetData.sertifHobi || []) : (globalSheetData.sertifPDGI || []));
+            const newItem = { Judul: document.getElementById('adm-judul').value.trim(), Gambar: document.getElementById('adm-gambar').value.trim() };
+
+            if(currentAdminTab === 'proyek') { newItem.Deskripsi = document.getElementById('adm-deskripsi').value.trim(); newItem.Link = document.getElementById('adm-link').value.trim(); } 
+            else { newItem.Subjudul = document.getElementById('adm-subjudul').value.trim(); newItem.Tanggal = document.getElementById('adm-tanggal').value.trim(); }
+
+            if(!newItem.Judul || !newItem.Gambar) { tampilkanAlertCustom("Judul dan Gambar wajib diisi!", true); return; }
+
+            if(currentEditIndex === -1) dataArray.push(newItem); else dataArray[currentEditIndex] = newItem;
+
+            if(currentAdminTab === 'proyek') globalSheetData.proyek = dataArray;
+            if(currentAdminTab === 'hobi') globalSheetData.sertifHobi = dataArray;
+            if(currentAdminTab === 'pdgi') globalSheetData.sertifPDGI = dataArray;
+
+            tutupFormItem(); renderAdminGUIList(); simpanDatabaseMain();
+        }
+        
+        function simpanDatabaseMain() {
+            let payload = { user: 'axaaxyz_01', pass: 'axaxyz999' };
+            
+            if (currentAdminTab === 'cv') {
+                const btn = document.getElementById('btnSimpanCV'); const notif = document.getElementById('adminNotif');
+                try { payload.newData = JSON.parse(document.getElementById('jsonEditor').value); } catch(e) { tampilkanAlertCustom("Format JSON salah! Pastikan kurawal {} dan tanda kutip benar.", true); return; }
+                payload.action = 'updateCV';
+                btn.disabled = true; btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin mr-1"></i> Processing...'; notif.classList.add('hidden');
+
+                fetch(GAS_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) }).then(res => res.json())
+                .then(res => {
+                    if(res.status === 'success') { notif.innerHTML = "Berhasil!"; notif.classList.remove('hidden', 'bg-red-500/20', 'text-red-500'); notif.classList.add('bg-green-500/20', 'text-green-500'); globalCVData = payload.newData; renderSeluruhUI(globalCVData, globalSheetData); } 
+                    else { notif.textContent = "Error: " + res.message; notif.classList.remove('hidden', 'bg-green-500/20', 'text-green-500'); notif.classList.add('bg-red-500/20', 'text-red-500'); }
+                }).catch(err => { notif.textContent = "Timeout."; notif.classList.remove('hidden', 'bg-green-500/20', 'text-green-500'); notif.classList.add('bg-red-500/20', 'text-red-500'); })
+                .finally(() => { btn.disabled = false; btn.innerHTML = '<i class="ph-fill ph-cloud-arrow-up text-lg"></i> Push Data CV'; });
+            } else {
+                let toast = document.createElement('div');
+                toast.className = "fixed top-4 right-4 bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold shadow-lg z-[10000] flex items-center gap-2 transition-all w-[90%] md:w-auto";
+                toast.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin"></i> Menyinkronkan...'; document.body.appendChild(toast);
+
+                payload.action = 'updateSheet';
+                if(currentAdminTab === 'proyek') { payload.sheetName = 'Proyek_Web'; payload.data = globalSheetData.proyek; }
+                if(currentAdminTab === 'hobi') { payload.sheetName = 'Sertifikasi_Hobi'; payload.data = globalSheetData.sertifHobi; }
+                if(currentAdminTab === 'pdgi') { payload.sheetName = 'Sertifikasi_PDGI'; payload.data = globalSheetData.sertifPDGI; }
+                
+                fetch(GAS_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) }).then(res => res.json())
+                .then(res => {
+                    if(res.status === 'success') { toast.className = "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg font-bold shadow-lg z-[10000] flex items-center gap-2 w-[90%] md:w-auto"; toast.innerHTML = "<i class='ph-bold ph-check-circle'></i> Sinkronisasi Sheets Berhasil!"; renderSeluruhUI(globalCVData, globalSheetData); } 
+                    else { toast.className = "fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg font-bold shadow-lg z-[10000] flex items-center gap-2 w-[90%] md:w-auto"; toast.innerHTML = "<i class='ph-bold ph-warning-circle'></i> Gagal: " + res.message; }
+                    setTimeout(() => toast.remove(), 3000);
+                }).catch(err => { toast.className = "fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg font-bold shadow-lg z-[10000] flex items-center gap-2 w-[90%] md:w-auto"; toast.innerHTML = "<i class='ph-bold ph-warning-circle'></i> Koneksi Terputus!"; setTimeout(() => toast.remove(), 3000); });
+            }
+        }
+    </script>
+    <script src="protect-devtools.js" defer></script>
+</body>
+</html>
