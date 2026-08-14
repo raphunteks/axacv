@@ -34,7 +34,16 @@ app.get('/sitemap.xml', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'public', 'sitemap.xml'));
 });
 
-// Serve file statis lainnya (logo, css, js)
+// ==========================================
+// ROUTE ROBOTS.TXT
+// Melayani file robots.txt langsung dari root folder (sesuai struktur GitHub Anda)
+// ==========================================
+app.get('/robots.txt', (req, res) => {
+    res.set('Content-Type', 'text/plain; charset=utf-8');
+    res.sendFile(path.join(process.cwd(), 'robots.txt'));
+});
+
+// Serve file statis lainnya (logo, css, js) yang ada di folder public
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 // ==========================================
