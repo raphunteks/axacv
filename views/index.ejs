@@ -983,16 +983,16 @@
                     <form id="formKontak" onsubmit="event.preventDefault(); prosesPesan();" class="space-y-6 md:space-y-8 text-left relative z-10 w-full" aria-label="Formulir Kontak">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-8 w-full">
                             <div class="w-full">
-                                <label for="inputNama" class="block text-[11px] md:text-xs font-black text-[var(--color-primary)] mb-2 ml-1 uppercase tracking-widest drop-shadow-[0_0_5px_rgba(var(--color-primary-rgb),0.5)]">Identitas Pengguna</label>
+                                <label for="inputNama" class="block text-[11px] md:text-xs font-black text-[var(--color-primary)] mb-2 ml-1 uppercase tracking-widest drop-shadow-[0_0_5px_rgba(var(--color-primary-rgb),0.5)]">Nama Lengkap</label>
                                 <input type="text" id="inputNama" required class="w-full bg-[var(--bg-card)] border-2 border-[var(--border-heavy)] rounded-xl px-5 py-3.5 md:py-4 text-sm md:text-base text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] transition-all backdrop-blur-2xl input-ripple shadow-inner font-mono" placeholder="Masukkan Nama Lengkap">
                             </div>
                             <div class="w-full">
-                                <label for="inputKontak" class="block text-[11px] md:text-xs font-black text-[var(--color-primary)] mb-2 ml-1 uppercase tracking-widest drop-shadow-[0_0_5px_rgba(var(--color-primary-rgb),0.5)]">Jalur Komunikasi</label>
+                                <label for="inputKontak" class="block text-[11px] md:text-xs font-black text-[var(--color-primary)] mb-2 ml-1 uppercase tracking-widest drop-shadow-[0_0_5px_rgba(var(--color-primary-rgb),0.5)]">No. WhatsApp</label>
                                 <input type="tel" id="inputKontak" required class="w-full bg-[var(--bg-card)] border-2 border-[var(--border-heavy)] rounded-xl px-5 py-3.5 md:py-4 text-sm md:text-base text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] transition-all backdrop-blur-2xl input-ripple shadow-inner font-mono" placeholder="No. WhatsApp Aktif">
                             </div>
                         </div>
                         <div class="w-full">
-                            <label for="inputPesan" class="block text-[11px] md:text-xs font-black text-[var(--color-primary)] mb-2 ml-1 uppercase tracking-widest drop-shadow-[0_0_5px_rgba(var(--color-primary-rgb),0.5)]">Transmisi Data</label>
+                            <label for="inputPesan" class="block text-[11px] md:text-xs font-black text-[var(--color-primary)] mb-2 ml-1 uppercase tracking-widest drop-shadow-[0_0_5px_rgba(var(--color-primary-rgb),0.5)]">Pesan / Keperluan</label>
                             <textarea id="inputPesan" required rows="5" class="w-full bg-[var(--bg-card)] border-2 border-[var(--border-heavy)] rounded-xl px-5 py-4 text-sm md:text-base text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] resize-none transition-all backdrop-blur-2xl input-ripple shadow-inner font-mono leading-relaxed" placeholder="Ketik rincian pesan atau keperluan Anda di sini..."></textarea>
                         </div>
                         <button type="submit" id="btnSubmit" class="btn-pulse w-full bg-[var(--color-primary)] text-[var(--bg-main)] font-black py-4 md:py-5 rounded-xl shadow-[0_0_30px_rgba(var(--color-primary-rgb),0.5)] transition-all text-sm md:text-lg border-2 border-[rgba(255,255,255,0.3)] outline-none focus-visible:ring-4 focus-visible:ring-offset-4 focus-visible:ring-[var(--color-primary)] relative tracking-widest uppercase">
