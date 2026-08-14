@@ -207,7 +207,6 @@
     <link rel="apple-touch-icon" href="/axalogo.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- SUPER UPGRADE: Menambahkan ANIMATE.CSS untuk Animasi Futuristik -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
@@ -279,7 +278,6 @@
             --border-color: rgba(255, 200, 150, 0.15); --border-heavy: rgba(255, 200, 150, 0.25); --shadow-glass: rgba(0, 0, 0, 0.4);
         }
 
-        /* 50 TEMA WARNA (THE ULTIMATE COLLECTION) */
         .theme-cyan { --color-primary: #00E5FF; --color-primary-rgb: 0, 229, 255; --color-secondary: #6366F1; --color-secondary-rgb: 99, 102, 241; }
         .theme-blue { --color-primary: #3B82F6; --color-primary-rgb: 59, 130, 246; --color-secondary: #8B5CF6; --color-secondary-rgb: 139, 92, 246; }
         .theme-emerald { --color-primary: #10B981; --color-primary-rgb: 16, 185, 129; --color-secondary: #0ea5e9; --color-secondary-rgb: 14, 165, 233; }
@@ -342,7 +340,6 @@
             transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        /* Top Progress Bar */
         #scroll-progress {
             position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
             z-index: 10000; width: 0%; transition: width 0.1s ease-out;
@@ -351,6 +348,7 @@
 
         :focus-visible { outline: 3px solid var(--color-primary); outline-offset: 3px; border-radius: 8px; }
 
+        /* UPGRADED CYBER GRID BACKGROUND */
         .bg-dots {
             position: fixed; inset: 0; z-index: -20;
             background-image: 
@@ -386,7 +384,6 @@
             100% { transform: translate(50px, -70px) scale(1.2); opacity: 0.3; } 
         }
 
-        /* LOADING SCREEN */
         #loader-screen { position: fixed; inset: 0; background-color: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; }
         .pulse-ring { width: 90px; height: 90px; border-radius: 50%; border: 3px solid transparent; border-top-color: var(--color-primary); border-bottom-color: var(--color-secondary); animation: spin-ring 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; position: relative; box-shadow: 0 0 20px rgba(var(--color-primary-rgb),0.4);}
         .pulse-ring::before { content: ''; position: absolute; top: 12px; left: 12px; right: 12px; bottom: 12px; border-radius: 50%; border: 3px solid transparent; border-left-color: var(--color-secondary); border-right-color: var(--color-primary); animation: spin-ring 0.6s linear infinite reverse;}
@@ -399,6 +396,7 @@
         }
         @keyframes shimmer-slide { to { background-position: 200% center; } }
 
+        /* UPGRADED PREMIUM CARD WITH HOLOGRAPHIC EFFECT */
         .premium-card {
             background: linear-gradient(145deg, var(--bg-card) 0%, rgba(0,0,0,0.2) 100%);
             border: 1px solid var(--border-color);
@@ -415,7 +413,6 @@
             background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
             transform: skewX(-25deg); transition: 0.7s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; z-index: 10;
         }
-        /* Efek Hover 3D Bergaya Sci-Fi */
         .premium-card:hover { 
             transform: perspective(1000px) translateY(-8px) rotateX(3deg) rotateY(-2deg) scale(1.02); 
             border-color: rgba(var(--color-primary-rgb), 0.6); 
@@ -423,7 +420,6 @@
         }
         .premium-card:hover::before { left: 200%; }
 
-        /* AVATAR MORPH BLOB & SCANNER */
         .scanner-container { position: relative; overflow: hidden; border-radius: 50%; background-color: var(--bg-card-heavy); box-shadow: inset 0 0 30px rgba(0,0,0,0.8);} 
         .scanner-line { 
             position: absolute; width: 100%; height: 4px; background: var(--color-primary); 
@@ -444,7 +440,6 @@
             100% { border-radius: 50%; }
         }
 
-        /* TYPOGRAPHY */
         .text-gradient { 
             background: linear-gradient(135deg, var(--text-main) 0%, var(--color-secondary) 50%, var(--color-primary) 100%); 
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
@@ -461,7 +456,6 @@
 
         ::selection { background: rgba(var(--color-primary-rgb), 0.4); color: var(--color-inverse); text-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.8); }
 
-        /* CYBER-FLOW TIMELINE & BARS */
         .circuit-line { position: relative; width: 100%; }
         .circuit-line::before { 
             content: ''; position: absolute; left: 21px; top: 0; bottom: 0; width: 3px; 
@@ -476,6 +470,7 @@
             background-size: 200% 100%; animation: move-stripes 1.5s linear infinite;
         }
         
+        /* UPGRADED 3D SCROLL ANIMATION */
         .animate-on-scroll { 
             opacity: 0; 
             transform: perspective(1200px) rotateX(-15deg) translateY(60px) scale(0.92); 
@@ -494,7 +489,6 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* MICRO-INTERACTIONS */
         .link-hover { position: relative; color: var(--text-main); transition: color 0.3s, text-shadow 0.3s; word-break: break-all; outline: none; }
         .link-hover::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 50%; background-color: var(--color-primary); transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), left 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 8px var(--color-primary);}
         .link-hover:hover, .link-hover:focus-visible { color: var(--color-primary); text-shadow: 0 0 12px rgba(var(--color-primary-rgb), 0.6); }
@@ -532,7 +526,6 @@
         @keyframes subtle-breathe { from { box-shadow: 0 5px 20px var(--shadow-glass); } to { box-shadow: 0 5px 35px rgba(var(--color-primary-rgb), 0.25); } }
         @keyframes equalizer { 0%, 100% { transform: scaleX(0.5); opacity: 0.4; } 50% { transform: scaleX(1.2); opacity: 0.9; } }
 
-        /* THEME PANEL UI */
         #theme-panel {
             position: fixed; bottom: 25px; right: 25px; z-index: 9999;
             display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
@@ -560,12 +553,10 @@
         }
         .color-swatch:hover, .bg-swatch:hover { transform: scale(1.3) translateY(-3px); border-color: var(--text-main); box-shadow: 0 8px 20px rgba(0,0,0,0.5); z-index: 10; }
         
-        /* Modal Animation */
         #admin-modal { transition: opacity 0.5s; }
         #admin-login, #admin-dashboard { transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1); transform: perspective(1000px) rotateX(15deg) scale(0.8) translateY(40px); opacity: 0; }
         #admin-modal:not(.hidden) #admin-login, #admin-modal:not(.hidden) #admin-dashboard:not(.hidden) { transform: perspective(1000px) rotateX(0deg) scale(1) translateY(0); opacity: 1; }
         
-        /* SCROLL TO TOP FAB */
         #scrollToTopBtn {
             position: fixed; bottom: 90px; right: 25px; z-index: 9998;
             width: 50px; height: 50px; border-radius: 50%;
@@ -579,6 +570,9 @@
         #scrollToTopBtn.show { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
         #scrollToTopBtn.show::before { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--color-primary); animation: radar-pulse 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite; opacity: 0; z-index: -1; }
         #scrollToTopBtn:hover { background: var(--color-primary); color: #fff; transform: translateY(-8px) scale(1.2); box-shadow: 0 15px 30px rgba(var(--color-primary-rgb), 0.6); }
+
+        .admin-item-card { background: var(--bg-overlay); border: 1px solid var(--border-color); padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; }
+        .admin-item-card:hover { border-color: var(--color-primary); }
     </style>
 </head>
 <body class="antialiased selection:bg-[var(--color-primary)] selection:text-black relative">
@@ -587,7 +581,6 @@
 
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-[var(--color-primary)] focus:text-[var(--text-inverse)] focus:font-bold focus:rounded-br-xl outline-none ring-4 ring-[var(--text-main)] shadow-2xl">Langsung ke konten utama</a>
 
-    <!-- Background Elements -->
     <div class="bg-dots" aria-hidden="true"></div>
     <div class="bg-noise" aria-hidden="true"></div>
     <div class="glow-orb orb-1" aria-hidden="true"></div>
@@ -596,7 +589,6 @@
 
     <div id="theme-panel" class="animate__animated animate__fadeInRight animate__delay-1s">
         <div id="theme-options-panel" class="theme-options">
-            
             <h4 class="text-[var(--text-main)] font-bold text-[10px] uppercase tracking-widest mb-3 border-b border-[var(--border-color)] pb-2 flex justify-between items-center">
                 LATAR BELAKANG
                 <button onclick="toggleMode()" class="p-1.5 rounded-lg bg-[var(--bg-overlay)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] text-[var(--color-primary)] transition-all hover:scale-110" title="Switch Light/Dark">
@@ -691,8 +683,10 @@
     <main class="relative z-10 transition-opacity duration-1000" id="main-content" role="main">
         
         <nav aria-label="Navigasi Utama Portofolio" class="sticky top-0 z-[100] bg-[var(--bg-card-heavy)]/80 backdrop-blur-3xl saturate-[200%] border-b border-[var(--border-heavy)] shadow-[0_5px_25px_rgba(0,0,0,0.3)] w-full mb-10 transition-all animate__animated animate__fadeInDown" itemscope itemtype="https://schema.org/SiteNavigationElement">
-            <div class="container mx-auto px-4 max-w-[1200px]">
-                <ul class="flex overflow-x-auto py-4 gap-6 md:gap-12 text-[12px] md:text-[15px] font-bold text-[var(--text-muted)] no-scrollbar items-center md:justify-center whitespace-nowrap scroll-smooth">
+            <div class="container mx-auto px-2 sm:px-4 max-w-[1200px]">
+                <!-- FIX TEPOTONG: Menghapus md:justify-center, menambahkan lg:justify-center dan px-4 agar aman di semua devais -->
+                <ul class="flex overflow-x-auto py-4 gap-6 md:gap-10 lg:gap-12 text-[12px] md:text-[14px] font-bold text-[var(--text-muted)] no-scrollbar items-center justify-start lg:justify-center whitespace-nowrap scroll-smooth px-4 lg:px-0">
+                    <!-- FIX URUTAN MENU PERSIS PERMINTAAN + PROYEK WEB UNTUK KESTABILAN JS -->
                     <li><a itemprop="url" href="#beranda" title="Halaman Utama Profil" aria-label="Beranda" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Beranda</span></a></li>
                     <li><a itemprop="url" href="#pendidikan" title="Riwayat Pendidikan Akademis" aria-label="Riwayat Pendidikan" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Riwayat Pendidikan</span></a></li>
                     <li><a itemprop="url" href="#pengalaman" title="Riwayat Pengalaman Kerja" aria-label="Pengalaman Kerja" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Pengalaman Kerja</span></a></li>
@@ -707,8 +701,9 @@
 
         <div class="container mx-auto px-5 sm:px-6 lg:px-8 pb-12 md:pb-16 max-w-[1200px]">
             
-            <header id="beranda" class="text-center mb-20 md:mb-28 animate__animated animate__fadeIn flex flex-col items-center pt-4" role="banner" itemscope itemtype="https://schema.org/Person">
-                <div class="relative w-36 h-36 sm:w-44 sm:h-44 md:w-56 md:h-56 mx-auto mb-8 md:mb-10 avatar-ring transition-transform duration-700 hover:scale-110 group overflow-hidden shadow-[0_0_40px_rgba(var(--color-primary-rgb),0.5)] animate__animated animate__zoomIn">
+            <!-- POSISI DOM 1: BERANDA -->
+            <header id="beranda" class="text-center mb-20 md:mb-28 animate__animated animate__zoomIn flex flex-col items-center pt-4 scroll-mt-32" role="banner" itemscope itemtype="https://schema.org/Person">
+                <div class="relative w-36 h-36 sm:w-44 sm:h-44 md:w-56 md:h-56 mx-auto mb-8 md:mb-10 avatar-ring transition-transform duration-700 hover:scale-110 group overflow-hidden shadow-[0_0_40px_rgba(var(--color-primary-rgb),0.5)]">
                     <div class="scanner-container w-full h-full bg-[var(--bg-card-heavy)] overflow-hidden" style="border-radius: inherit;">
                         <div class="scanner-line" aria-hidden="true"></div>
                         <img id="ui-foto" itemprop="image" src="/axalogo.png" alt="Foto Profil drg. M. Aksa Arsyad" width="224" height="224" fetchpriority="high" loading="eager" decoding="sync" onerror="this.src='https://ui-avatars.com/api/?name=M+Aksa+Arsyad&background=00E5FF&color=fff&size=256'" class="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-110 group-hover:rotate-3" style="border-radius: inherit;">
@@ -716,8 +711,8 @@
                 </div>
                 
                 <h1 class="cyber-glitch text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-5 px-2 w-full max-w-5xl mx-auto break-words leading-tight transition-all" itemprop="name">
-                    <span id="ui-namaDepan" class="text-[var(--text-main)] drop-shadow-lg">Memuat</span> <br class="md:hidden" />
-                    <span class="text-gradient drop-shadow-[0_0_25px_rgba(var(--color-primary-rgb),0.5)]" id="ui-namaBelakang">Data...</span>
+                    <span id="ui-namaDepan" class="text-[var(--text-main)] drop-shadow-lg animate__animated animate__fadeInDown">Memuat</span> <br class="md:hidden" />
+                    <span class="text-gradient drop-shadow-[0_0_25px_rgba(var(--color-primary-rgb),0.5)] animate__animated animate__fadeInUp animate__delay-1s" id="ui-namaBelakang">Data...</span>
                 </h1>
                 
                 <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 mt-6 md:mt-8 max-w-3xl mx-auto w-full animate__animated animate__fadeInUp animate__delay-1s">
@@ -828,7 +823,7 @@
                     </div>
                 </article>
 
-                <article id="keahlian" class="premium-card p-6 md:p-10 lg:col-span-4 animate-on-scroll w-full icon-bounce-group" style="transition-delay: 200ms;">
+                <article class="premium-card p-6 md:p-10 lg:col-span-4 animate-on-scroll w-full icon-bounce-group" style="transition-delay: 200ms;">
                     <header class="flex items-center gap-4 mb-8">
                         <div class="p-3.5 bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.3)] to-transparent rounded-2xl border border-[rgba(var(--color-primary-rgb),0.5)] text-[var(--color-primary)] shrink-0 shadow-[inset_0_0_15px_rgba(var(--color-primary-rgb),0.4)] icon-bounce">
                             <i class="ph-bold ph-crosshair text-2xl md:text-3xl" aria-hidden="true"></i>
@@ -841,6 +836,56 @@
                 </article>
             </section>
 
+            <!-- POSISI DOM 2: PENDIDIKAN (Direlokasi ke urutan yang benar) -->
+            <section id="pendidikan" class="mb-20 md:mb-32 w-full pt-10 scroll-mt-32" aria-labelledby="heading-pendidikan">
+                <header class="flex flex-col items-center text-center mb-16 md:mb-20 animate-on-scroll icon-bounce-group">
+                    <div class="p-4 md:p-5 bg-gradient-to-b from-[rgba(var(--color-primary-rgb),0.2)] to-transparent rounded-full mb-5 border border-[rgba(var(--color-primary-rgb),0.5)] shadow-[0_0_30px_rgba(var(--color-primary-rgb),0.4)] icon-bounce">
+                        <i class="ph-fill ph-student text-3xl md:text-4xl text-[var(--color-primary)]" aria-hidden="true"></i>
+                    </div>
+                    <h2 id="heading-pendidikan" class="text-3xl md:text-4xl font-black text-[var(--text-main)] truncate px-2 drop-shadow-md tracking-tight">Riwayat Pendidikan</h2>
+                </header>
+                <div class="relative circuit-line flex flex-wrap" id="ui-pendidikan-container">
+                    <!-- Konten diisi JS -->
+                </div>
+            </section>
+
+            <!-- POSISI DOM 3: PENGALAMAN (Direlokasi ke urutan yang benar) -->
+            <section id="pengalaman" class="mb-20 md:mb-32 animate-on-scroll w-full pt-10 scroll-mt-32" aria-labelledby="heading-pengalaman">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-5">
+                    <div class="w-full">
+                        <h2 id="heading-pengalaman" class="text-3xl md:text-4xl font-black text-[var(--text-main)] mb-3 truncate drop-shadow-md tracking-tight">Pengalaman <span class="text-stroke-gradient">Kerja</span></h2>
+                        <p class="text-[var(--text-muted)] text-sm md:text-base font-medium font-mono">Riwayat karir klinis dan pekerjaan profesional.</p>
+                    </div>
+                    <div class="h-[2px] flex-grow bg-gradient-to-r from-transparent via-[rgba(var(--color-primary-rgb),0.6)] to-transparent hidden md:block mx-10 mb-3 shadow-[0_0_10px_var(--color-primary)]" aria-hidden="true"></div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full" id="ui-pengalaman-container">
+                    <!-- Konten diisi JS -->
+                </div>
+            </section>
+
+            <!-- POSISI DOM 4 & 5: ORGANISASI & PUBLIKASI (Direlokasi ke urutan yang benar) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 mb-20 md:mb-32 w-full">
+                <section id="organisasi" class="animate-on-scroll premium-card p-6 md:p-10 w-full scroll-mt-32 icon-bounce-group" aria-labelledby="heading-organisasi">
+                    <h2 id="heading-organisasi" class="text-2xl md:text-3xl font-black mb-8 flex items-center gap-4 text-[var(--text-main)] border-b border-[var(--border-heavy)] pb-5 drop-shadow-md">
+                        <i class="ph-fill ph-users-three text-[var(--color-secondary)] p-3 bg-[rgba(var(--color-secondary-rgb),0.15)] border border-[rgba(var(--color-secondary-rgb),0.4)] rounded-xl shrink-0 icon-bounce shadow-[inset_0_0_10px_rgba(var(--color-secondary-rgb),0.3)]" aria-hidden="true"></i> <span class="truncate tracking-tight">Riwayat Organisasi</span>
+                    </h2>
+                    <div class="space-y-3 max-h-[450px] md:max-h-[550px] overflow-y-auto pr-3 custom-scrollbar w-full" id="ui-organisasi-container">
+                        <!-- Konten diisi JS -->
+                    </div>
+                </section>
+
+                <section id="publikasi" class="animate-on-scroll premium-card p-6 md:p-10 w-full scroll-mt-32 icon-bounce-group" style="transition-delay: 150ms;" aria-labelledby="heading-publikasi">
+                    <h2 id="heading-publikasi" class="text-2xl md:text-3xl font-black mb-8 flex items-center gap-4 text-[var(--text-main)] border-b border-[var(--border-heavy)] pb-5 drop-shadow-md">
+                        <i class="ph-fill ph-books text-[var(--color-primary)] p-3 bg-[rgba(var(--color-primary-rgb),0.15)] border border-[rgba(var(--color-primary-rgb),0.4)] rounded-xl shrink-0 icon-bounce shadow-[inset_0_0_10px_rgba(var(--color-primary-rgb),0.3)]" aria-hidden="true"></i> <span class="truncate tracking-tight">Publikasi Ilmiah</span>
+                    </h2>
+                    <div class="space-y-5 max-h-[450px] md:max-h-[550px] overflow-y-auto pr-3 md:pr-5 custom-scrollbar w-full" id="ui-publikasi-container">
+                        <!-- Konten diisi JS -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- POSISI DOM 6: KEAHLIAN TECH (Direlokasi ke urutan yang benar) -->
             <section id="keahlian-tech" class="mb-20 md:mb-32 animate-on-scroll w-full pt-10 scroll-mt-32">
                 <h2 class="text-3xl md:text-4xl font-black text-center mb-12 text-[var(--text-main)] drop-shadow-[0_0_10px_rgba(var(--color-primary-rgb),0.3)] tracking-tight">
                     <i class="ph-fill ph-code text-[var(--color-primary)] mr-3"></i> Keahlian & <span class="text-stroke-gradient">Kemampuan</span>
@@ -894,9 +939,9 @@
                         <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/snake-output/snake.svg?v=1" alt="Snake Animation" class="min-w-[600px] max-w-5xl object-contain drop-shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.4)]">
                     </div>
                 </div>
-
             </section>
 
+            <!-- POSISI DOM 7: PROYEK WEB (Sengaja tidak dihapus karena esensial untuk portofolio) -->
             <section id="proyek" class="mb-20 md:mb-32 animate-on-scroll w-full pt-10 scroll-mt-32">
                 <h2 class="text-3xl md:text-4xl font-black text-center mb-12 text-[var(--text-main)] drop-shadow-md tracking-tight">
                     <i class="ph-bold ph-browsers text-[var(--color-secondary)] mr-3"></i> Proyek <span class="text-stroke-gradient">Saya</span>
@@ -906,52 +951,7 @@
                 </div>
             </section>
 
-            <section id="pengalaman" class="mb-20 md:mb-32 animate-on-scroll w-full pt-10 scroll-mt-32" aria-labelledby="heading-pengalaman">
-                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-5">
-                    <div class="w-full">
-                        <h2 id="heading-pengalaman" class="text-3xl md:text-4xl font-black text-[var(--text-main)] mb-3 truncate drop-shadow-md tracking-tight">Pengalaman <span class="text-stroke-gradient">Kerja</span></h2>
-                        <p class="text-[var(--text-muted)] text-sm md:text-base font-medium font-mono">Riwayat karir klinis dan pekerjaan profesional.</p>
-                    </div>
-                    <div class="h-[2px] flex-grow bg-gradient-to-r from-transparent via-[rgba(var(--color-primary-rgb),0.6)] to-transparent hidden md:block mx-10 mb-3 shadow-[0_0_10px_var(--color-primary)]" aria-hidden="true"></div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full" id="ui-pengalaman-container">
-                    <!-- Konten diisi JS -->
-                </div>
-            </section>
-
-            <section id="pendidikan" class="mb-20 md:mb-32 w-full pt-10 scroll-mt-32" aria-labelledby="heading-pendidikan">
-                <header class="flex flex-col items-center text-center mb-16 md:mb-20 animate-on-scroll icon-bounce-group">
-                    <div class="p-4 md:p-5 bg-gradient-to-b from-[rgba(var(--color-primary-rgb),0.2)] to-transparent rounded-full mb-5 border border-[rgba(var(--color-primary-rgb),0.5)] shadow-[0_0_30px_rgba(var(--color-primary-rgb),0.4)] icon-bounce">
-                        <i class="ph-fill ph-student text-3xl md:text-4xl text-[var(--color-primary)]" aria-hidden="true"></i>
-                    </div>
-                    <h2 id="heading-pendidikan" class="text-3xl md:text-4xl font-black text-[var(--text-main)] truncate px-2 drop-shadow-md tracking-tight">Riwayat Pendidikan</h2>
-                </header>
-                <div class="relative circuit-line flex flex-wrap" id="ui-pendidikan-container">
-                    <!-- Konten diisi JS -->
-                </div>
-            </section>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 mb-20 md:mb-32 w-full">
-                <section id="organisasi" class="animate-on-scroll premium-card p-6 md:p-10 w-full scroll-mt-32 icon-bounce-group" aria-labelledby="heading-organisasi">
-                    <h2 id="heading-organisasi" class="text-2xl md:text-3xl font-black mb-8 flex items-center gap-4 text-[var(--text-main)] border-b border-[var(--border-heavy)] pb-5 drop-shadow-md">
-                        <i class="ph-fill ph-users-three text-[var(--color-secondary)] p-3 bg-[rgba(var(--color-secondary-rgb),0.15)] border border-[rgba(var(--color-secondary-rgb),0.4)] rounded-xl shrink-0 icon-bounce shadow-[inset_0_0_10px_rgba(var(--color-secondary-rgb),0.3)]" aria-hidden="true"></i> <span class="truncate tracking-tight">Riwayat Organisasi</span>
-                    </h2>
-                    <div class="space-y-3 max-h-[450px] md:max-h-[550px] overflow-y-auto pr-3 custom-scrollbar w-full" id="ui-organisasi-container">
-                        <!-- Konten diisi JS -->
-                    </div>
-                </section>
-
-                <section id="publikasi" class="animate-on-scroll premium-card p-6 md:p-10 w-full scroll-mt-32 icon-bounce-group" style="transition-delay: 150ms;" aria-labelledby="heading-publikasi">
-                    <h2 id="heading-publikasi" class="text-2xl md:text-3xl font-black mb-8 flex items-center gap-4 text-[var(--text-main)] border-b border-[var(--border-heavy)] pb-5 drop-shadow-md">
-                        <i class="ph-fill ph-books text-[var(--color-primary)] p-3 bg-[rgba(var(--color-primary-rgb),0.15)] border border-[rgba(var(--color-primary-rgb),0.4)] rounded-xl shrink-0 icon-bounce shadow-[inset_0_0_10px_rgba(var(--color-primary-rgb),0.3)]" aria-hidden="true"></i> <span class="truncate tracking-tight">Publikasi Ilmiah</span>
-                    </h2>
-                    <div class="space-y-5 max-h-[450px] md:max-h-[550px] overflow-y-auto pr-3 md:pr-5 custom-scrollbar w-full" id="ui-publikasi-container">
-                        <!-- Konten diisi JS -->
-                    </div>
-                </section>
-            </div>
-
+            <!-- POSISI DOM 8: SERTIFIKASI -->
             <section id="sertifikasi" class="mb-20 md:mb-32 animate-on-scroll w-full pt-10 scroll-mt-32">
                 <h2 class="text-3xl md:text-4xl font-black text-center mb-16 text-[var(--text-main)] drop-shadow-md tracking-tight">
                     <i class="ph-fill ph-certificate text-[var(--color-primary)] mr-3"></i> Sertifikasi & <span class="text-stroke-gradient">Pelatihan</span>
@@ -989,7 +989,7 @@
                             </div>
                             <div class="w-full">
                                 <label for="inputKontak" class="block text-[11px] md:text-xs font-black text-[var(--color-primary)] mb-2 ml-1 uppercase tracking-widest drop-shadow-[0_0_5px_rgba(var(--color-primary-rgb),0.5)]">Jalur Komunikasi</label>
-                                <input type="tel" id="inputKontak" required class="w-full bg-[var(--bg-card)] border-2 border-[var(--border-heavy)] rounded-xl px-5 py-3.5 md:py-4 text-sm md:text-base text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] transition-all backdrop-blur-2xl input-ripple shadow-inner font-mono" placeholder="No. WhatsAppAktif">
+                                <input type="tel" id="inputKontak" required class="w-full bg-[var(--bg-card)] border-2 border-[var(--border-heavy)] rounded-xl px-5 py-3.5 md:py-4 text-sm md:text-base text-[var(--text-main)] focus:outline-none focus:border-[var(--color-primary)] transition-all backdrop-blur-2xl input-ripple shadow-inner font-mono" placeholder="No. WhatsApp Aktif">
                             </div>
                         </div>
                         <div class="w-full">
@@ -1069,7 +1069,6 @@
 
             <div id="admin-gui-view" class="hidden flex-col flex-grow min-h-0 relative">
                 <div id="admin-item-list" class="flex-grow overflow-y-auto space-y-4 pr-3 custom-scrollbar pb-20">
-                    <!-- List Item -->
                 </div>
                 
                 <div class="absolute bottom-0 left-0 right-0 pt-4 pb-2 bg-gradient-to-t from-[var(--bg-card-heavy)] via-[var(--bg-card-heavy)] to-transparent">
