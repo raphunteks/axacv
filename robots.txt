@@ -33,7 +33,6 @@ User-agent: Baiduspider
 User-agent: YandexBot
 Allow: /
 # Mencegah server overload dari bot yang terlalu agresif (Hemat Resource)
-Crawl-delay: 1
 
 # 4. BLOKIR BOT SPAM & ANALYTICS CRAWLER PIHAK KETIGA
 # Menghemat "Crawl Budget" server Vercel Anda agar fokus 100% hanya ke Google
