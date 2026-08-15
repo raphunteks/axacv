@@ -5,7 +5,7 @@ const app = express();
 // ==========================================
 // 1. SETUP MIDDLEWARE & CORS
 // ==========================================
-app.use(express.json()); // WAJIB: Agar server bisa membaca req.body dari request API
+app.use(express.json());
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -19,31 +19,27 @@ app.use((req, res, next) => {
     next();
 });
 
-// ==========================================
-// 2. SETUP EJS & FOLDER PUBLIC
-// ==========================================
 app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 
 // ==========================================
-// SANGAT PENTING: FIX SITEMAP.XML TREE
-// Memaksa browser menampilkan sitemap sebagai Tree XML (Bukan Teks HTML)
+// SANGAT PENTING: ROUTE KHUSUS SEO (XML & TXT)
+// Wajib diletakkan DI ATAS express.static agar tidak di-override
+// Menggunakan 'text/xml' agar browser merender sebagai Tree (Seperti GBR 2)
 // ==========================================
 app.get('/sitemap.xml', (req, res) => {
-    res.set('Content-Type', 'application/xml; charset=utf-8');
+    res.set('Content-Type', 'text/xml; charset=utf-8');
     res.sendFile(path.join(process.cwd(), 'public', 'sitemap.xml'));
 });
 
-// ==========================================
-// ROUTE ROBOTS.TXT
-// Melayani file robots.txt langsung dari root folder (sesuai struktur GitHub Anda)
-// ==========================================
 app.get('/robots.txt', (req, res) => {
     res.set('Content-Type', 'text/plain; charset=utf-8');
-    res.sendFile(path.join(process.cwd(), 'robots.txt'));
+    res.sendFile(path.join(process.cwd(), 'public', 'robots.txt'));
 });
 
-// Serve file statis lainnya (logo, css, js) yang ada di folder public
+// ==========================================
+// 2. FOLDER PUBLIC (Di bawah route SEO)
+// ==========================================
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 // ==========================================
@@ -64,13 +60,11 @@ app.get('/', (req, res) => {
 app.post('/api/github', async (req, res) => {
     try {
         const { username, token } = req.body || {};
-        
-        // Fallback ke Environment Variables (process.env) Vercel
         const authToken = token || process.env.GITHUB_TOKEN;
         const ghUser = username || process.env.GITHUB_USERNAME || "raphunteks"; 
 
         if (!authToken) {
-             return res.status(401).json({ status: 'error', message: 'Token GitHub tidak ditemukan. Harap isi GITHUB_TOKEN di Environment Variables Vercel.' });
+             return res.status(401).json({ status: 'error', message: 'Token GitHub tidak ditemukan.' });
         }
 
         const query = `
@@ -93,13 +87,12 @@ app.post('/api/github', async (req, res) => {
           }
         }`;
 
-        // Eksekusi Request HTTP dari Server Node.js ke GitHub
         const response = await fetch('https://api.github.com/graphql', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${authToken}`,
                 'Content-Type': 'application/json',
-                'User-Agent': 'Axa-Portfolio-App' // SANGAT KRITIKAL: Wajib ada User-Agent
+                'User-Agent': 'Axa-Portfolio-App'
             },
             body: JSON.stringify({ query })
         });
@@ -117,7 +110,6 @@ app.post('/api/github', async (req, res) => {
             return res.status(400).json({ status: 'error', message: result.errors[0].message });
         }
 
-        // Pengolahan Data Statistik & Kalkulasi Persentase Bahasa
         const data = result.data.user;
         let totalStars = 0;
         let langMap = {};
@@ -155,12 +147,8 @@ app.post('/api/github', async (req, res) => {
     }
 });
 
-// ==========================================
-// EXPORT UNTUK VERCEL SERVERLESS
-// ==========================================
 module.exports = app;
 
-// Listener untuk keperluan Development Lokal
 if (require.main === module) {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
