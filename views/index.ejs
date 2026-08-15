@@ -14,6 +14,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <!-- Preconnect tambahan untuk PageSpeed Insights LCP -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+    <link rel="preconnect" href="https://github-readme-streak-stats.herokuapp.com" crossorigin>
+    
     <link rel="dns-prefetch" href="https://script.google.com">
     <link rel="dns-prefetch" href="https://ui-avatars.com">
     
@@ -145,7 +150,6 @@
     <link rel="icon" type="image/png" href="/axalogo.png">
     <link rel="apple-touch-icon" href="/axalogo.png">
     
-    <!-- Integrasi Animate.css Framework -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -153,7 +157,6 @@
 
     <script>
         function initThemeSettings() {
-            const savedMode = localStorage.getItem('axa-theme-mode') || 'dark';
             const savedBg = localStorage.getItem('axa-bg-theme') || 'dark';
             const savedColor = localStorage.getItem('axa-theme-color') || 'theme-cyan';
             
@@ -169,14 +172,12 @@
     </script>
 
     <style>
-        /* FIX ROOT CAUSE SCROLLING PADA DESKTOP */
-        /* Menghapus overflow-x: hidden dari html dan hanya menerapkannya pada body */
         body {
             background-color: var(--bg-main);
             color: var(--text-main);
             transition: background-color 0.5s ease, color 0.5s ease;
-            overflow-x: hidden; /* Mencegah offside horizontal */
-            overflow-y: auto;   /* Memastikan scroll vertikal aktif */
+            overflow-x: hidden; 
+            overflow-y: auto;   
             width: 100%;
             min-height: 100vh;
         }
@@ -285,7 +286,6 @@
         .theme-topaz { --color-primary: #FFC87C; --color-primary-rgb: 255, 200, 124; --color-secondary: #FFA500; }
         .theme-onyx { --color-primary: #353839; --color-primary-rgb: 53, 56, 57; --color-secondary: #000000; }
 
-        /* PROGRESS SCROLL */
         #scroll-progress {
             position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
             z-index: 10000; width: 0%; transition: width 0.1s ease-out;
@@ -296,7 +296,7 @@
 
         .bg-dots {
             position: fixed; inset: 0; z-index: -20;
-            pointer-events: none; /* MEMASTIKAN TIDAK MENGHALANGI SCROLL */
+            pointer-events: none; 
             background-image: 
                 linear-gradient(var(--border-color) 1px, transparent 1px),
                 linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
@@ -314,14 +314,13 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* SUPER UPGRADE: Extreme Liquid Morphing for Orbs - Pointer events none mencegah blocking klik */
         .glow-orb {
             position: fixed; filter: blur(120px); z-index: -10; opacity: 0.25;
             animation: morph-blob-extreme 18s ease-in-out infinite alternate, orb-breathe 25s linear infinite alternate; 
             will-change: transform, opacity, border-radius;
             mix-blend-mode: screen; 
             border-radius: 50%;
-            pointer-events: none; /* SANGAT PENTING AGAR TIDAK BLOCK KLIK/SCROLL */
+            pointer-events: none; 
         }
         .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; min-width: 300px; min-height: 300px; background-color: var(--color-primary); }
         .orb-2 { bottom: -10%; right: -10%; width: 45vw; height: 45vw; min-width: 250px; min-height: 250px; background-color: var(--color-secondary); animation-delay: -7s; animation-direction: alternate-reverse;}
@@ -354,7 +353,6 @@
         }
         @keyframes shimmer-slide { to { background-position: 200% center; } }
 
-        /* UPGRADED PREMIUM CARD WITH HOLOGRAPHIC EFFECT & MAX-WIDTH PROTECTIONS */
         .premium-card {
             background: linear-gradient(145deg, var(--bg-card) 0%, rgba(0,0,0,0.2) 100%);
             border: 1px solid var(--border-color);
@@ -364,7 +362,7 @@
             box-shadow: 0 15px 35px var(--shadow-glass), inset 0 1px 0 rgba(255,255,255,0.1); 
             transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative; 
-            overflow: hidden; /* Mencegah elemen anak offside */
+            overflow: hidden;
             width: 100%;
             max-width: 100%;
             transform: perspective(1000px) translateZ(0);
@@ -411,7 +409,7 @@
             drop-shadow: 0 0 12px rgba(var(--color-primary-rgb),0.6);
         }
 
-        ::selection { background: rgba(var(--color-primary-rgb), 0.4); color: var(--color-inverse); text-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.8); }
+        ::selection { background: rgba(var(--color-primary-rgb), 0.4); color: var(--text-inverse); text-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.8); }
 
         .circuit-line { position: relative; width: 100%; max-width: 100%; }
         .circuit-line::before { 
@@ -427,7 +425,6 @@
             background-size: 200% 100%; animation: move-stripes 1.5s linear infinite;
         }
         
-        /* UPGRADED 3D SCROLL ANIMATION */
         .animate-on-scroll { 
             opacity: 0; 
             transform: translateY(40px) scale(0.95); 
@@ -665,7 +662,7 @@
                 <div class="relative w-36 h-36 sm:w-44 sm:h-44 md:w-56 md:h-56 mx-auto mb-8 md:mb-10 avatar-ring transition-transform duration-700 hover:scale-110 group overflow-hidden shadow-[0_0_40px_rgba(var(--color-primary-rgb),0.5)] animate__animated animate__zoomIn">
                     <div class="scanner-container w-full h-full bg-[var(--bg-card-heavy)] overflow-hidden" style="border-radius: inherit;">
                         <div class="scanner-line" aria-hidden="true"></div>
-                        <img id="ui-foto" itemprop="image" src="/axalogo.png" alt="Foto Profil drg. M. Aksa Arsyad" width="224" height="224" fetchpriority="high" loading="eager" decoding="sync" onerror="this.src='https://ui-avatars.com/api/?name=M+Aksa+Arsyad&background=00E5FF&color=fff&size=256'" class="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-110 group-hover:rotate-3" style="border-radius: inherit;">
+                        <img id="ui-foto" itemprop="image" src="/axalogo.png" alt="Foto Profil drg. M. Aksa Arsyad" width="224" height="224" fetchpriority="high" loading="eager" decoding="sync" onerror="this.src='https://ui-avatars.com/api/?name=M+Aksa+Arsyad&background=00E5FF&color=fff&size=256'" class="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-110 group-hover:rotate-3" style="border-radius: inherit; aspect-ratio: 1/1;">
                     </div>
                 </div>
                 
@@ -754,14 +751,14 @@
                                 <span class="text-[9px] md:text-[10px] font-black text-[var(--text-main)] leading-tight break-words min-w-0">Google Scholar</span>
                             </a>
                             <a id="ui-orcid" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil ORCID iD" class="social-lift flex flex-col items-center justify-center gap-1.5 p-2.5 md:p-3 bg-[var(--bg-overlay)] rounded-xl border border-[var(--border-color)] outline-none focus-visible:ring-2 focus-visible:ring-[#a6ce39] text-center w-full min-w-0">
-                                <svg viewBox="0 0 256 256" class="w-[22px] h-[22px] md:w-[26px] md:h-[26px] mb-1 drop-shadow-md shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <svg viewBox="0 0 256 256" width="26" height="26" style="aspect-ratio: 1/1;" class="w-[22px] h-[22px] md:w-[26px] md:h-[26px] mb-1 drop-shadow-md shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <circle cx="128" cy="128" r="128" fill="#a6ce39"/>
                                     <path d="M86.3 186.2H70.9V79.1h15.4v107.1zM108.9 79.1h41.6c39.6 0 57 28.3 57 53.6 0 27.5-21.5 53.6-56.8 53.6h-41.8V79.1zm15.4 93.3h24.5c34.9 0 42.9-26.5 42.9-39.7 0-21.5-13.7-39.7-43.7-39.7h-23.7v79.4zM88.7 56.8c0 5.5-4.5 10.1-10.1 10.1-5.6 0-10.1-4.6-10.1-10.1 0-5.6 4.5-10.1 10.1-10.1 5.5 0 10.1 4.6 10.1 10.1z" fill="#ffffff"/>
                                 </svg>
                                 <span class="text-[9px] md:text-[10px] font-black text-[var(--text-main)] leading-tight break-words min-w-0">ORCID iD</span>
                             </a>
                             <a id="ui-sciprofiles" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil SciProfiles" class="social-lift flex flex-col items-center justify-center gap-1.5 p-2.5 md:p-3 bg-[var(--bg-overlay)] rounded-xl border border-[var(--border-color)] outline-none focus-visible:ring-2 focus-visible:ring-[#3bc6e8] text-center w-full min-w-0">
-                                <svg viewBox="0 0 100 100" class="w-[22px] h-[22px] md:w-[26px] md:h-[26px] mb-1 drop-shadow-md shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <svg viewBox="0 0 100 100" width="26" height="26" style="aspect-ratio: 1/1;" class="w-[22px] h-[22px] md:w-[26px] md:h-[26px] mb-1 drop-shadow-md shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <path d="M7 44.5C2 22 17 5 39 12C61 19 82 8 91 29C100 50 99 74 81 87C63 100 24 100 13 83C2 66 12 67 7 44.5Z" fill="#327c8e" opacity="0.9"/>
                                     <path d="M21 21C38 3 71 -4 87 14C103 32 94 65 83 83C72 101 32 96 16 83C0 70 4 39 21 21Z" fill="#3bc6e8" opacity="0.95"/>
                                     <text x="50" y="66" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="44" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="-1">Sci</text>
@@ -769,7 +766,7 @@
                                 <span class="text-[9px] md:text-[10px] font-black text-[var(--text-main)] leading-tight break-words min-w-0">SciProfiles</span>
                             </a>
                             <a id="ui-semanticscholar" href="https://www.semanticscholar.org/author/M.-Aksa-Arsyad/2328471622" target="_blank" rel="noopener noreferrer" aria-label="Profil Semantic Scholar" class="social-lift flex flex-col items-center justify-center gap-1.5 p-2.5 md:p-3 bg-[var(--bg-overlay)] rounded-xl border border-[var(--border-color)] outline-none focus-visible:ring-2 focus-visible:ring-[#F4C443] text-center w-full min-w-0">
-                                <svg viewBox="0 0 200 200" class="w-[22px] h-[22px] md:w-[26px] md:h-[26px] mb-1 drop-shadow-md shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <svg viewBox="0 0 200 200" width="26" height="26" style="aspect-ratio: 1/1;" class="w-[22px] h-[22px] md:w-[26px] md:h-[26px] mb-1 drop-shadow-md shrink-0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <path d="M 60 40 L 160 40 L 170 90 C 160 110 130 130 100 120 L 75 120 C 65 90 60 60 60 40 Z" fill="var(--text-main)" />
                                     <path d="M 45 50 C 50 70 65 95 85 115 L 75 115 C 55 90 40 65 35 45 Z" fill="var(--text-main)" opacity="0.8"/>
                                     <path d="M 30 60 C 35 80 50 105 70 120 L 60 120 C 40 100 25 75 20 55 Z" fill="var(--text-main)" opacity="0.6"/>
@@ -842,22 +839,23 @@
                 </section>
             </div>
 
+            <!-- KEAHLIAN TECH & GITHUB API -->
             <section id="keahlian-tech" class="mb-20 md:mb-32 animate-on-scroll w-full pt-10 scroll-mt-32 max-w-full">
                 <h2 class="text-3xl md:text-4xl font-black text-center mb-12 text-[var(--text-main)] drop-shadow-[0_0_10px_rgba(var(--color-primary-rgb),0.3)] tracking-tight w-full break-words">
                     <i class="ph-fill ph-code text-[var(--color-primary)] mr-3"></i> Keahlian & <span class="text-stroke-gradient">Kemampuan</span>
                 </h2>
                 
                 <div class="flex flex-wrap justify-center gap-5 md:gap-8 mb-20 max-w-5xl mx-auto bg-[var(--bg-card)] p-6 md:p-8 rounded-3xl border border-[var(--border-heavy)] backdrop-blur-2xl shadow-[0_15px_40px_rgba(0,0,0,0.5)]">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn" title="JavaScript">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-1s" title="HTML5">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-1s" title="CSS3">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-2s" title="React JS">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="NodeJS" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-2s" title="Node.js">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-3s" title="Python">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-3s" title="PHP">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-4s" title="MySQL">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-4s" title="Git">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg dark:invert animate__animated animate__zoomIn animate__delay-5s" title="GitHub">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn object-contain" title="JavaScript">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-1s object-contain" title="HTML5">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-1s object-contain" title="CSS3">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-2s object-contain" title="React JS">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="NodeJS" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-2s object-contain" title="Node.js">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-3s object-contain" title="Python">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-3s object-contain" title="PHP">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-4s object-contain" title="MySQL">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-4s object-contain" title="Git">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg dark:invert animate__animated animate__zoomIn animate__delay-5s object-contain" title="GitHub">
                 </div>
 
                 <h2 class="text-3xl md:text-4xl font-black text-center mb-12 text-[var(--text-main)] drop-shadow-[0_0_10px_rgba(var(--color-primary-rgb),0.3)] tracking-tight w-full break-words">
@@ -866,19 +864,19 @@
 
                 <div class="mb-10 flex justify-center w-full overflow-hidden animate-on-scroll max-w-full">
                     <a href="https://www.maksaarsyad.xyz/" target="_blank" rel="noopener noreferrer" class="max-w-full">
-                        <img src="https://trophygithubreadmelang.cybee.dpdns.org/?username=raphunteks&theme=dracula&no-frame=true&no-bg=true&margin-w=15&v=1" alt="GitHub Trophies" class="max-w-full h-auto drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] hover:scale-105 transition-transform duration-700">
+                        <img src="https://trophygithubreadmelang.cybee.dpdns.org/?username=raphunteks&theme=dracula&no-frame=true&no-bg=true&margin-w=15&v=1" alt="GitHub Trophies" width="1000" height="150" loading="lazy" decoding="async" style="aspect-ratio: 1000/150;" class="max-w-full h-auto drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] hover:scale-105 transition-transform duration-700 object-contain">
                     </a>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full mb-10 animate-on-scroll max-w-full">
                     <div class="premium-card p-4 md:p-8 flex justify-center items-center group max-w-full overflow-hidden">
                         <div class="w-full overflow-x-auto no-scrollbar flex justify-center items-center min-w-0">
-                            <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/stats-output/stats.svg?hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false" alt="GitHub Stats" class="w-full h-auto max-w-[450px] group-hover:scale-105 transition-transform duration-700 drop-shadow-lg">
+                            <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/stats-output/stats.svg?hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false" alt="GitHub Stats" width="450" height="150" loading="lazy" decoding="async" style="aspect-ratio: 450/150;" class="w-full h-auto max-w-[450px] group-hover:scale-105 transition-transform duration-700 drop-shadow-lg object-contain">
                         </div>
                     </div>
                     <div class="premium-card p-4 md:p-8 flex justify-center items-center group max-w-full overflow-hidden">
                         <div class="w-full overflow-x-auto no-scrollbar flex justify-center items-center min-w-0">
-                            <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/languages-output/languages.svg?locale=en&hide_title=false&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false" alt="GitHub Languages" class="w-full h-auto max-w-[450px] group-hover:scale-105 transition-transform duration-700 drop-shadow-lg">
+                            <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/languages-output/languages.svg?locale=en&hide_title=false&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false" alt="GitHub Languages" width="320" height="285" loading="lazy" decoding="async" style="aspect-ratio: 320/285;" class="w-full h-auto max-w-[450px] group-hover:scale-105 transition-transform duration-700 drop-shadow-lg object-contain">
                         </div>
                     </div>
                 </div>
@@ -886,27 +884,28 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full mb-10 animate-on-scroll max-w-full">
                     <div class="premium-card p-4 md:p-8 flex justify-center items-center group max-w-full overflow-hidden">
                         <div class="w-full overflow-x-auto no-scrollbar flex justify-center items-center min-w-0">
-                            <img src="https://github-readme-streak-stats.herokuapp.com/?user=raphunteks&theme=dracula&hide_border=true" alt="GitHub Streak" class="w-full h-auto max-w-[450px] group-hover:scale-105 transition-transform duration-700 drop-shadow-lg">
+                            <img src="https://github-readme-streak-stats.herokuapp.com/?user=raphunteks&theme=dracula&hide_border=true" alt="GitHub Streak" width="450" height="150" loading="lazy" decoding="async" style="aspect-ratio: 450/150;" class="w-full h-auto max-w-[450px] group-hover:scale-105 transition-transform duration-700 drop-shadow-lg object-contain">
                         </div>
                     </div>
                     <div class="premium-card p-4 md:p-8 flex justify-center items-center group max-w-full overflow-hidden">
                         <div class="w-full overflow-x-auto no-scrollbar flex justify-center items-center min-w-0">
-                            <img src="https://readme-jokes.vercel.app/api?theme=dracula&hideBorder=true" alt="Developer Joke" class="w-full h-auto max-w-[450px] group-hover:scale-105 transition-transform duration-700 drop-shadow-lg">
+                            <img src="https://readme-jokes.vercel.app/api?theme=dracula&hideBorder=true" alt="Developer Joke" width="400" height="200" loading="lazy" decoding="async" style="aspect-ratio: 400/200;" class="w-full h-auto max-w-[450px] group-hover:scale-105 transition-transform duration-700 drop-shadow-lg object-contain">
                         </div>
                     </div>
                 </div>
 
                 <div class="premium-card p-4 md:p-12 flex flex-col justify-center items-center relative min-h-[350px] shadow-[0_20px_50px_rgba(0,0,0,0.6)] animate-on-scroll border-[rgba(var(--color-primary-rgb),0.3)] max-w-full overflow-hidden">
                     <div class="w-full overflow-x-auto no-scrollbar max-w-full flex justify-center mb-8 md:mb-10">
-                        <img src="https://github-readme-activity-graph.vercel.app/graph?username=raphunteks&theme=dracula&hide_border=true&area=true" alt="Activity Graph" class="w-auto min-w-[500px] max-w-full object-contain drop-shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.2)] hover:scale-[1.02] transition-transform duration-700">
+                        <img src="https://github-readme-activity-graph.vercel.app/graph?username=raphunteks&theme=dracula&hide_border=true&area=true" alt="Activity Graph" width="1000" height="300" loading="lazy" decoding="async" style="aspect-ratio: 1000/300;" class="w-auto min-w-[500px] max-w-full object-contain drop-shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.2)] hover:scale-[1.02] transition-transform duration-700">
                     </div>
                     
                     <div class="w-full overflow-x-auto flex justify-start md:justify-center no-scrollbar max-w-full relative">
-                        <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/snake-output/snake.svg?v=1" alt="Snake Animation" class="min-w-[600px] w-auto max-w-none object-contain drop-shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.4)]">
+                        <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/snake-output/snake.svg?v=1" alt="Snake Animation" width="800" height="250" loading="lazy" decoding="async" style="aspect-ratio: 800/250;" class="min-w-[600px] w-auto max-w-none object-contain drop-shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.4)]">
                     </div>
                 </div>
             </section>
 
+            <!-- PROYEK WEB -->
             <section id="proyek" class="mb-20 md:mb-32 animate-on-scroll w-full pt-10 scroll-mt-32 max-w-full">
                 <h2 class="text-3xl md:text-4xl font-black text-center mb-12 text-[var(--text-main)] drop-shadow-md tracking-tight w-full break-words">
                     <i class="ph-bold ph-browsers text-[var(--color-secondary)] mr-3"></i> Proyek <span class="text-stroke-gradient">Saya</span>
@@ -916,6 +915,7 @@
                 </div>
             </section>
 
+            <!-- SERTIFIKASI -->
             <section id="sertifikasi" class="mb-20 md:mb-32 animate-on-scroll w-full pt-10 scroll-mt-32 max-w-full">
                 <h2 class="text-3xl md:text-4xl font-black text-center mb-16 text-[var(--text-main)] drop-shadow-md tracking-tight w-full break-words">
                     <i class="ph-fill ph-certificate text-[var(--color-primary)] mr-3"></i> Sertifikasi & <span class="text-stroke-gradient">Pelatihan</span>
@@ -936,6 +936,7 @@
                 </div>
             </section>
 
+            <!-- KIRIM PESAN -->
             <section class="max-w-4xl mx-auto animate-on-scroll mb-16 md:mb-20 w-full" aria-labelledby="heading-pesan">
                 <div class="premium-card p-6 sm:p-10 md:p-16 text-center relative overflow-hidden group w-full border-[rgba(var(--color-primary-rgb),0.4)]">
                     <div class="absolute -top-32 -right-32 w-72 h-72 bg-[var(--color-primary)] rounded-full blur-[120px] opacity-15 group-hover:opacity-40 transition-opacity duration-700 pointer-events-none" aria-hidden="true"></div>
@@ -1188,21 +1189,24 @@
                         globalCVData = res.data;
                         globalSheetData = res.sheets || { proyek: [], sertifHobi: [], sertifPDGI: [] }; 
                         
-                        renderSeluruhUI(globalCVData, globalSheetData);
-                        
+                        // FIX PERFORMA: Unblock main-thread untuk PageSpeed Insight LCP / TBT
                         setTimeout(() => {
-                            const loader = document.getElementById('loader-screen');
-                            loader.style.opacity = '0';
-                            // Menghapus elemen secara mutlak setelah animasi selesai
-                            // Mencegah overlay yang menyebabkan masalah klik atau scroll
-                            setTimeout(() => {
-                                loader.style.display = 'none';
-                            }, 800);
-                            document.getElementById('main-content').classList.remove('opacity-0');
-                            initObserver();
-                        }, 500); 
+                            renderSeluruhUI(globalCVData, globalSheetData);
+                            
+                            requestAnimationFrame(() => {
+                                const loader = document.getElementById('loader-screen');
+                                loader.style.opacity = '0';
+                                setTimeout(() => {
+                                    loader.style.display = 'none';
+                                }, 800);
+                                document.getElementById('main-content').classList.remove('opacity-0');
+                                initObserver();
+                            });
+                            
+                            // Delay tracker agar tidak memblokir render utama LCP
+                            setTimeout(catatViewPengunjungDenganIP, 2500);
+                        }, 0);
                         
-                        catatViewPengunjungDenganIP();
                     } else { throw new Error(res.message || "Unknown Backend Error"); }
                 } catch (e) {
                     console.error("Axa Xyz Error:", e.message);
@@ -1300,11 +1304,12 @@
                 return url; 
             };
 
+            // FIX PERFORMA LCP: Atribut ukuran gambar dan lazy-load ditambahkan pada innerHTML dinamis
             if(sheetData.proyek && document.getElementById('ui-proyek-container')) {
                 const proyekHTML = sheetData.proyek.map((p, i) => `
                     <article class="premium-card overflow-hidden group hover:-translate-y-2 transition-all duration-300 animate-on-scroll flex flex-col bg-[var(--bg-card-heavy)] w-full max-w-full" style="transition-delay: ${i*100}ms">
                         <div class="h-48 md:h-56 w-full overflow-hidden bg-[var(--bg-overlay)] border-b border-[var(--border-color)] relative">
-                            <img src="${convertDriveLink(p.Gambar)}" alt="${p.Judul}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            <img src="${convertDriveLink(p.Gambar)}" alt="${p.Judul}" width="800" height="450" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                         </div>
                         <div class="p-5 md:p-6 flex flex-col flex-grow relative z-10 w-full min-w-0">
                             <h3 class="text-lg md:text-xl font-bold text-[var(--text-main)] mb-3 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2 drop-shadow-sm w-full break-words">${p.Judul}</h3>
@@ -1321,7 +1326,7 @@
                 return arr.map((s, i) => `
                     <article class="premium-card p-4 md:p-5 group hover:-translate-y-2 md:hover:-translate-y-3 transition-all duration-300 animate-on-scroll flex flex-col h-full bg-[var(--bg-card-heavy)] w-full max-w-full" style="transition-delay: ${i*100}ms">
                         <div class="h-40 md:h-48 w-full rounded-xl overflow-hidden border border-[var(--border-heavy)] mb-4 md:mb-5 bg-[var(--bg-overlay)] relative shadow-inner">
-                            <img src="${convertDriveLink(s.Gambar)}" alt="${s.Judul}" loading="lazy" class="w-full h-full object-contain p-2 md:p-3 group-hover:scale-110 transition-transform duration-700">
+                            <img src="${convertDriveLink(s.Gambar)}" alt="${s.Judul}" width="800" height="600" loading="lazy" decoding="async" class="w-full h-full object-contain p-2 md:p-3 group-hover:scale-110 transition-transform duration-700">
                         </div>
                         <div class="flex-grow flex flex-col justify-center text-center relative z-10 w-full min-w-0">
                             <h3 class="text-sm md:text-base font-black text-[var(--text-main)] mb-1.5 md:mb-2 group-hover:text-[var(--color-secondary)] transition-colors line-clamp-2 drop-shadow-sm break-words">${s.Judul}</h3>
