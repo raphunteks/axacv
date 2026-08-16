@@ -1,7 +1,7 @@
 {
   "name": "axa-cv-enterprise",
-  "version": "3.0.0",
-  "description": "CV & Portofolio drg. M. Aksa Arsyad SEO Optimized",
+  "version": "4.0.0",
+  "description": "CV & Portofolio drg. M. Aksa Arsyad SEO Optimized - Supabase Edition",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -14,13 +14,16 @@
     "ma arsyad",
     "m. axa arsyad",
     "aksa arsyad",
-    "seo optimized"
+    "seo optimized",
+    "supabase"
   ],
   "author": "Axa Xyz",
   "license": "MIT",
   "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
     "ejs": "^3.1.9",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "pg": "^8.11.3"
   },
   "engines": {
     "node": "24.x"
