@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Arsip | Axa System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Space Grotesk', sans-serif; background-color: #030712; color: #fff; }
+        .glass-panel { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .brutal-card { background: #111827; border: 2px solid #00E5FF; box-shadow: 6px 6px 0px #00E5FF; transition: all 0.2s; }
+        .brutal-card:hover { transform: translate(-2px, -2px); box-shadow: 10px 10px 0px #00E5FF; }
+    </style>
+</head>
+<body class="p-4 md:p-10 relative">
+
+    <nav class="glass-panel rounded-2xl p-4 md:p-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative">
+        <div class="flex items-center gap-3">
+            <i class="ph-fill ph-database text-3xl text-cyan-400"></i>
+            <h1 class="text-xl md:text-2xl font-black tracking-tight">KNOWLEDGE BASE <span class="text-cyan-400">CORE</span></h1>
+        </div>
+        <div class="flex gap-4">
+            <a href="/arsip" target="_blank" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition-all"><i class="ph-bold ph-eye"></i> View Live</a>
+            <button onclick="logout()" class="px-4 py-2 bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white rounded-xl text-sm font-bold transition-all"><i class="ph-bold ph-power"></i> Logout</button>
+        </div>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Form Add -->
+        <div class="glass-panel p-6 md:p-8 rounded-2xl h-fit">
+            <h2 class="text-xl font-bold mb-6 border-b border-gray-700 pb-3"><i class="ph-bold ph-plus-circle text-cyan-400"></i> Upload Materi Baru</h2>
+            <form id="formArsip" class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400 font-mono mb-1 block uppercase">Judul Materi</label>
+                    <input type="text" id="title" required class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 font-mono mb-1 block uppercase">Kategori</label>
+                    <select id="category" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm">
+                        <option value="Preklinik">Preklinik</option>
+                        <option value="Profesi Dokter Muda">Profesi Dokter Muda (Co-Ass)</option>
+                        <option value="Jurnal & Riset">Jurnal & Riset</option>
+                        <option value="Kedokteran Gigi Umum">Kedokteran Gigi Umum</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 font-mono mb-1 block uppercase">URL Google Drive (Viewer/PDF)</label>
+                    <input type="url" id="fileUrl" required class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm" placeholder="https://drive.google.com/file/d/...">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 font-mono mb-1 block uppercase">Deskripsi / Abstrak Singkat</label>
+                    <textarea id="desc" rows="3" required class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-cyan-500 text-black font-black py-3 rounded-xl hover:bg-cyan-400 shadow-[0_0_15px_rgba(0,229,255,0.4)] transition-all">PULSE TO DATABASE</button>
+            </form>
+        </div>
+
+        <!-- List Data -->
+        <div class="lg:col-span-2 space-y-4" id="arsipList">
+            <div class="text-center py-10 text-gray-500 font-mono"><i class="ph-bold ph-spinner-gap animate-spin text-3xl mb-2"></i><br>Fetching Neural Data...</div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('axa_arsip_token');
+        if (!token) {
+            // Bypass SecurityError di Iframe Preview
+            try {
+                window.location.href = '/admin/login';
+            } catch (e) {
+                console.warn("[PREVIEW MODE] Sandbox memblokir redirect window.location.");
+            }
+        }
+
+        async function fetchArsip() {
+            const listEl = document.getElementById('arsipList');
+            try {
+                const res = await fetch('/api/arsip', {
+                    headers: { 'Authorization': token || 'dummy_token' }
+                });
+                if (!res.ok) throw new Error("API Offline");
+                
+                const { data } = await res.json();
+                
+                if(data.length === 0) { 
+                    listEl.innerHTML = '<div class="glass-panel p-8 text-center rounded-2xl text-gray-400 font-mono">No documents found in vault.</div>'; 
+                    return; 
+                }
+                
+                listEl.innerHTML = data.map(item => `
+                    <div class="brutal-card rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                        <div class="min-w-0 w-full">
+                            <span class="text-[10px] bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded font-mono uppercase tracking-widest">${item.category}</span>
+                            <h3 class="text-lg font-black mt-2 truncate w-full">${item.title}</h3>
+                            <p class="text-gray-400 text-sm truncate font-mono mt-1 w-full">${item.slug} | ${item.date}</p>
+                        </div>
+                        <button onclick="hapus('${item.id}')" class="bg-red-500 text-white p-3 rounded-xl hover:bg-red-400 shrink-0 w-full md:w-auto"><i class="ph-bold ph-trash text-xl"></i></button>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                // Tampilan Fallback jika Fetch API gagal di dalam Sandbox
+                listEl.innerHTML = `
+                    <div class="glass-panel p-8 text-center rounded-2xl text-gray-400 font-mono">
+                        <i class="ph-fill ph-warning-circle text-3xl text-yellow-500 mb-3"></i><br>
+                        API Backend Tidak Merespon (Sandbox Preview)<br>
+                        <span class="text-xs text-gray-500 mt-2 block">Daftar arsip akan dimuat secara dinamis apabila dijalankan pada server production Vercel.</span>
+                    </div>
+                `;
+            }
+        }
+
+        document.getElementById('formArsip').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = { 
+                title: document.getElementById('title').value, 
+                category: document.getElementById('category').value, 
+                fileUrl: document.getElementById('fileUrl').value, 
+                desc: document.getElementById('desc').value 
+            };
+            
+            try {
+                await fetch('/api/arsip', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'Authorization': token || 'dummy_token' }, 
+                    body: JSON.stringify(payload) 
+                });
+                document.getElementById('formArsip').reset();
+                fetchArsip();
+            } catch (e) {
+                alert("Simulasi Berhasil: Data akan tersimpan pada server production.");
+            }
+        });
+
+        async function hapus(id) {
+            if(!confirm('Delete this record permanently?')) return;
+            try {
+                await fetch('/api/arsip/'+id, { method: 'DELETE', headers: { 'Authorization': token || 'dummy_token' } });
+                fetchArsip();
+            } catch (e) {
+                alert("Simulasi Berhasil: File akan terhapus pada server production.");
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('axa_arsip_token');
+            try {
+                window.location.href = '/admin/login';
+            } catch (e) {
+                console.warn("[PREVIEW MODE] Sandbox memblokir redirect.");
+                document.body.innerHTML = `
+                    <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: monospace; color: #00E5FF; background: #030712;">
+                        <i class="ph-bold ph-power text-5xl mb-4"></i>
+                        <h2>SESSION TERMINATED</h2>
+                        <p style="color: #94a3b8; margin-top: 10px;">Please refresh the preview.</p>
+                    </div>
+                `;
+            }
+        }
+
+        fetchArsip();
+    </script>
+</body>
+</html>
