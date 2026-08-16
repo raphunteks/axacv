@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
-const { Pool } = require('pg'); // Wajib untuk AWS PostgreSQL
+const { Pool } = require('pg');
+const AWS = require('aws-sdk'); // Ditambahkan untuk AWS IAM Auth
 const app = express();
 
 // ==========================================
@@ -25,26 +26,40 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 
 // ==========================================
-// 2. AWS POSTGRESQL DATABASE CONFIGURATION (UPGRADED)
+// 2. AWS AURORA IAM DATABASE CONFIGURATION (GOD MODE)
 // ==========================================
-// DIAGNOSTIK KEAMANAN: Memastikan Password tersedia sesuai temuan GBR 1
-if (!process.env.PGPASSWORD) {
-    console.error("⚠️ [AXA SYSTEM FATAL ERROR]: Variable 'PGPASSWORD' TIDAK DITEMUKAN di Vercel Environment Variables!");
-    console.error("⚠️ AWS Aurora menolak akses (PAM Auth Failed). Anda WAJIB menambahkan PGPASSWORD secara manual di setting Vercel.");
-}
+// Konfigurasi Region dari Vercel ENV atau fallback ke us-east-1
+const dbRegion = process.env.AWS_REGION || 'us-east-1';
+AWS.config.update({ region: dbRegion });
+
+const dbHost = process.env.PGHOST || 'kvs.cluster-c6fki4s4mfgg.us-east-1.rds.amazonaws.com';
+const dbPort = process.env.PGPORT || 5432;
+const dbUser = process.env.PGUSER || 'postgres';
+const dbName = process.env.PGDATABASE || 'postgres';
+
+// Signer bertugas men-generate token 15 menit
+const signer = new AWS.RDS.Signer({
+    region: dbRegion,
+    hostname: dbHost,
+    port: dbPort,
+    username: dbUser
+});
 
 const pool = new Pool({
-    host: process.env.PGHOST,
-    user: process.env.PGUSER,
-    password: process.env.PGPASSWORD, // Ditambahkan manual di Vercel
-    database: process.env.PGDATABASE,
-    port: process.env.PGPORT || 5432,
+    host: dbHost,
+    port: dbPort,
+    database: dbName,
+    user: dbUser,
+    // [CRITICAL UPGRADE]: Password dipanggil sebagai Fungsi!
+    // Ini memastikan setiap koneksi baru ke DB akan men-generate token baru 
+    // agar aplikasi tidak crash saat token 15-menit AWS kadaluarsa.
+    password: () => signer.getAuthToken({}), 
     ssl: { 
-        rejectUnauthorized: false // Bypass SSL Vercel -> AWS Cloud
+        rejectUnauthorized: false // Wajib untuk enkripsi Vercel ke AWS
     }
 });
 
-// Auto-Create Table Jika Belum Ada
+// Auto-Create Table Jika Belum Ada & Test Koneksi
 pool.query(`
     CREATE TABLE IF NOT EXISTS arsip_docs (
         id SERIAL PRIMARY KEY,
@@ -56,8 +71,11 @@ pool.query(`
         file_data TEXT, 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
-`).then(() => console.log("✅ AWS PostgreSQL: Table Arsip Ready & Connected"))
-  .catch(err => console.error("❌ DB Init Error:", err.message));
+`).then(() => {
+    console.log("✅ AWS Aurora (IAM Auth) Connected & Table Ready!");
+}).catch(err => {
+    console.error("❌ AWS Aurora DB Init Error:", err.message);
+});
 
 // ==========================================
 // 3. DATA METADATA DINAMIS SEO (GOLD STANDARD)
