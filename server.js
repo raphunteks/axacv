@@ -1,11 +1,14 @@
 const express = require('express');
 const path = require('path');
+const { Pool } = require('pg'); // Wajib: npm install pg
 const app = express();
 
 // ==========================================
 // 1. SETUP MIDDLEWARE & CORS
 // ==========================================
-app.use(express.json({ limit: '10mb' })); // Limit ditingkatkan untuk antisipasi payload besar
+// LIMIT DIPERBESAR KE 50MB UNTUK MENERIMA UPLOAD FILE PDF BASE64
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -23,94 +26,45 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 
 // ==========================================
-// 2. DATA METADATA DINAMIS SEO (GOLD STANDARD)
+// 2. AWS POSTGRESQL DATABASE CONFIGURATION
+// ==========================================
+// Menggunakan ENV Variables PGHOST, PGUSER, PGPASSWORD, PGDATABASE, PGPORT
+const pool = new Pool({
+    ssl: process.env.PGSSLMODE === 'require' ? { rejectUnauthorized: false } : false
+});
+
+// Auto-Create Table Jika Belum Ada
+pool.query(`
+    CREATE TABLE IF NOT EXISTS arsip_docs (
+        id SERIAL PRIMARY KEY,
+        slug VARCHAR(255) UNIQUE NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        category VARCHAR(100),
+        description TEXT,
+        file_name VARCHAR(255),
+        file_data TEXT, -- Menyimpan Base64 PDF
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+`).then(() => console.log("AWS PostgreSQL: Table Ready")).catch(err => console.error("DB Init Error:", err));
+
+// ==========================================
+// 3. DATA METADATA DINAMIS SEO UTAMA
 // ==========================================
 const baseUrl = 'https://www.maksaarsyad.xyz';
-
 const routesMeta = {
-    '/': {
-        title: 'CV & Portofolio | drg. M. Aksa Arsyad, S.KG',
-        desc: 'Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum. Lihat pengalaman kerja, riwayat pendidikan, riwayat organisasi, publikasi ilmiah, dan hubungi langsung.',
-        keywords: 'Riwayat Pendidikan drg. M. Aksa Arsyad, Pengalaman Kerja drg. M. Aksa Arsyad, Dokter Gigi Umum, Aksa Arsyad, S.KG, Makassar, UMI, Dokter Gigi Makassar, Kedokteran Gigi, Klinik Gigi, Publikasi Ilmiah',
-        ogImage: '/axalogo.png',
-        type: 'profile'
-    },
-    '/pendidikan': {
-        title: 'Riwayat Pendidikan | drg. M. Aksa Arsyad, S.KG',
-        desc: 'Latar belakang pendidikan, institusi, dan almamater Universitas Muslim Indonesia & Universitas Hasanuddin drg. M. Aksa Arsyad, S.KG.',
-        keywords: 'Pendidikan drg. M. Aksa Arsyad, UMI Kedokteran Gigi, Universitas Hasanuddin, S.KG Makassar',
-        ogImage: '/axalogo.png',
-        type: 'website'
-    },
-    '/pengalaman': {
-        title: 'Pengalaman Kerja | drg. M. Aksa Arsyad, S.KG',
-        desc: 'Riwayat karir klinis, pekerjaan, dan pengalaman profesional drg. M. Aksa Arsyad di berbagai klinik serta rumah sakit.',
-        keywords: 'Pengalaman Kerja Dokter Gigi, Karir drg. Aksa Arsyad, Klinik Gigi Makassar, Praktek Dokter Gigi',
-        ogImage: '/axalogo.png',
-        type: 'website'
-    },
-    '/organisasi': {
-        title: 'Riwayat Organisasi | drg. M. Aksa Arsyad, S.KG',
-        desc: 'Pengalaman keanggotaan dan aktivitas dalam organisasi profesi (PDGI) maupun kemahasiswaan drg. M. Aksa Arsyad.',
-        keywords: 'Organisasi drg. Aksa Arsyad, Anggota PDGI, BEM FKG UMI',
-        ogImage: '/axalogo.png',
-        type: 'website'
-    },
-    '/publikasi': {
-        title: 'Publikasi Ilmiah & Jurnal | drg. M. Aksa Arsyad, S.KG',
-        desc: 'Kumpulan jurnal, penelitian, dan publikasi ilmiah di bidang kedokteran gigi oleh drg. M. Aksa Arsyad, S.KG.',
-        keywords: 'Publikasi Ilmiah Kedokteran Gigi, Jurnal drg. Aksa Arsyad, Penelitian Gigi, Google Scholar Aksa Arsyad',
-        ogImage: '/axalogo.png',
-        type: 'article'
-    },
-    '/keahlian-tech': {
-        title: 'Keahlian Klinis & Teknologi | drg. M. Aksa Arsyad, S.KG',
-        desc: 'Daftar keahlian klinis medis, bahasa pemrograman, dan kemampuan teknologi (Web Development) drg. M. Aksa Arsyad.',
-        keywords: 'Keahlian Dokter Gigi, Web Developer Makassar, Node.js, React, Keterampilan Klinis Gigi',
-        ogImage: '/axalogo.png',
-        type: 'website'
-    },
-    '/proyek': {
-        title: 'Portofolio Proyek Web | drg. M. Aksa Arsyad, S.KG',
-        desc: 'Portofolio pengembangan website, sistem, dan aplikasi yang dibangun oleh drg. M. Aksa Arsyad.',
-        keywords: 'Proyek Web drg. Aksa Arsyad, Web Portofolio, Sistem Informasi Klinik, Web Developer Gigi',
-        ogImage: '/axalogo.png',
-        type: 'website'
-    },
-    '/sertifikasi': {
-        title: 'Sertifikasi Medis & Tech | drg. M. Aksa Arsyad, S.KG',
-        desc: 'Kumpulan sertifikasi kompetensi medis (PDGI) dan penghargaan pemrograman teknologi drg. M. Aksa Arsyad.',
-        keywords: 'Sertifikasi PDGI, Sertifikat Web Developer, Penghargaan drg. Aksa Arsyad, Pelatihan Kedokteran Gigi',
-        ogImage: '/axalogo.png',
-        type: 'website'
-    },
-    // Meta Arsip ditambahkan untuk di-loop di sitemap, tapi di-handle secara khusus di route /arsip
-    '/arsip': {
-        title: 'Arsip Materi & Jurnal | drg. M. Aksa Arsyad, S.KG',
-        desc: 'Kumpulan catatan preklinik, profesi dokter muda, dan materi kedokteran gigi (Knowledge Base).',
-        keywords: 'Arsip Kedokteran Gigi, Catatan Preklinik, Co-Ass',
-        ogImage: '/axalogo.png',
-        type: 'website'
-    }
+    '/': { title: 'CV & Portofolio | drg. M. Aksa Arsyad, S.KG', desc: 'Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG.', ogImage: '/axalogo.png', type: 'profile' },
+    '/pendidikan': { title: 'Riwayat Pendidikan | drg. M. Aksa Arsyad, S.KG', desc: 'Latar belakang pendidikan Universitas Muslim Indonesia & Universitas Hasanuddin.', ogImage: '/axalogo.png', type: 'website' },
+    '/pengalaman': { title: 'Pengalaman Kerja | drg. M. Aksa Arsyad, S.KG', desc: 'Riwayat karir klinis, pekerjaan, dan pengalaman profesional drg. M. Aksa Arsyad.', ogImage: '/axalogo.png', type: 'website' },
+    '/organisasi': { title: 'Riwayat Organisasi | drg. M. Aksa Arsyad, S.KG', desc: 'Pengalaman keanggotaan dalam organisasi profesi maupun kemahasiswaan.', ogImage: '/axalogo.png', type: 'website' },
+    '/publikasi': { title: 'Publikasi Ilmiah & Jurnal | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan jurnal dan publikasi ilmiah di bidang kedokteran gigi.', ogImage: '/axalogo.png', type: 'article' },
+    '/keahlian-tech': { title: 'Keahlian Klinis & Teknologi | drg. M. Aksa Arsyad, S.KG', desc: 'Daftar keahlian klinis medis dan Web Development drg. M. Aksa Arsyad.', ogImage: '/axalogo.png', type: 'website' },
+    '/proyek': { title: 'Portofolio Proyek Web | drg. M. Aksa Arsyad, S.KG', desc: 'Portofolio pengembangan website, sistem, dan aplikasi.', ogImage: '/axalogo.png', type: 'website' },
+    '/sertifikasi': { title: 'Sertifikasi Medis & Tech | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan sertifikasi kompetensi medis dan penghargaan teknologi.', ogImage: '/axalogo.png', type: 'website' },
+    '/arsip': { title: 'Arsip Materi & Jurnal | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan catatan preklinik, profesi dokter muda, dan materi kedokteran gigi.', ogImage: '/axalogo.png', type: 'website' }
 };
 
 // ==========================================
-// 3. DATABASE IN-MEMORY UNTUK ARSIP (VERCEL COMPATIBLE)
-// ==========================================
-let arsipDB = [
-    { 
-        id: '1', 
-        slug: 'catatan-lengkap-anatomi-gigi-preklinik', 
-        title: 'Catatan Lengkap Anatomi Gigi (Preklinik)', 
-        category: 'Preklinik', 
-        desc: 'Dokumen ringkasan lengkap mengenai morfologi, anatomi, dan histologi gigi geligi untuk persiapan ujian blok preklinik.', 
-        fileUrl: 'https://drive.google.com/file/d/1Uv_ContohIDDriveSaja_XYZ/view', 
-        date: '2024-05-12' 
-    }
-];
-
-// ==========================================
-// 4. ADMIN AUTHENTICATION API & CRUD
+// 4. ADMIN AUTHENTICATION API & CRUD ARSIP (AWS POSTGRES)
 // ==========================================
 const ADMIN_USER = process.env.ADMIN_USER || 'axaaxyz_01';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'axaxyz999';
@@ -118,72 +72,94 @@ const SECRET_TOKEN = 'axa-super-secure-token-2026';
 
 app.post('/api/auth/login', (req, res) => {
     const { username, password } = req.body;
-    if (username === ADMIN_USER && password === ADMIN_PASS) {
-        res.json({ status: 'success', token: SECRET_TOKEN });
-    } else {
-        res.status(401).json({ status: 'error', message: 'Kredensial tidak valid!' });
-    }
+    if (username === ADMIN_USER && password === ADMIN_PASS) res.json({ status: 'success', token: SECRET_TOKEN });
+    else res.status(401).json({ status: 'error', message: 'Kredensial tidak valid!' });
 });
 
 app.post('/api/auth/verify', (req, res) => {
-    const { token } = req.body;
-    if (token === SECRET_TOKEN) res.json({ status: 'success' });
+    if (req.body.token === SECRET_TOKEN) res.json({ status: 'success' });
     else res.status(401).json({ status: 'error' });
 });
 
-// Middleware Proteksi Endpoints
 const protectAdmin = (req, res, next) => {
-    const token = req.headers.authorization;
-    if (token === SECRET_TOKEN) next();
+    if (req.headers.authorization === SECRET_TOKEN) next();
     else res.status(403).json({ status: 'error', message: 'Akses Ditolak' });
 };
 
-// API Arsip (Admin CRUD)
-app.get('/api/arsip', (req, res) => res.json({ status: 'success', data: arsipDB }));
-
-app.post('/api/arsip', protectAdmin, (req, res) => {
-    const newItem = { id: Date.now().toString(), date: new Date().toISOString().split('T')[0], ...req.body };
-    // Auto-generate slug dari judul
-    newItem.slug = newItem.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    arsipDB.push(newItem);
-    res.json({ status: 'success', data: newItem });
+// API Fetch Arsip List (Tanpa File Data agar ringan)
+app.get('/api/arsip', async (req, res) => {
+    try {
+        const { rows } = await pool.query('SELECT id, slug, title, category, description, file_name, created_at as date FROM arsip_docs ORDER BY id DESC');
+        // Format tanggal
+        rows.forEach(r => r.date = new Date(r.date).toISOString().split('T')[0]);
+        res.json({ status: 'success', data: rows });
+    } catch (e) {
+        res.status(500).json({ status: 'error', message: e.message });
+    }
 });
 
-app.delete('/api/arsip/:id', protectAdmin, (req, res) => {
-    arsipDB = arsipDB.filter(item => item.id !== req.params.id);
-    res.json({ status: 'success' });
+// API Upload Arsip Baru
+app.post('/api/arsip', protectAdmin, async (req, res) => {
+    try {
+        const { title, category, desc, fileName, fileData } = req.body;
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Date.now().toString().slice(-4);
+        
+        await pool.query(
+            'INSERT INTO arsip_docs (slug, title, category, description, file_name, file_data) VALUES ($1, $2, $3, $4, $5, $6)',
+            [slug, title, category, desc, fileName, fileData]
+        );
+        res.json({ status: 'success' });
+    } catch (e) {
+        res.status(500).json({ status: 'error', message: e.message });
+    }
 });
 
+// API Delete Arsip
+app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
+    try {
+        await pool.query('DELETE FROM arsip_docs WHERE id = $1', [req.params.id]);
+        res.json({ status: 'success' });
+    } catch (e) {
+        res.status(500).json({ status: 'error', message: e.message });
+    }
+});
 
 // ==========================================
-// 5. SITEMAP & ROBOTS.TXT (DINAMIS 100%)
+// 5. NATIVE PDF STREAMING ENDPOINT (PENGGANTI GOOGLE DRIVE)
 // ==========================================
-app.get('/sitemap.xml', (req, res) => {
+app.get('/arsip/stream/:slug', async (req, res) => {
+    try {
+        const { rows } = await pool.query('SELECT file_name, file_data FROM arsip_docs WHERE slug = $1', [req.params.slug]);
+        if(rows.length === 0) return res.status(404).send("Dokumen tidak ditemukan.");
+        
+        // Convert Base64 back to Binary PDF Buffer
+        const buffer = Buffer.from(rows[0].file_data, 'base64');
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `inline; filename="${rows[0].file_name}"`);
+        res.send(buffer);
+    } catch (e) {
+        res.status(500).send("Error streaming document.");
+    }
+});
+
+// ==========================================
+// 6. SITEMAP & ROBOTS.TXT (DINAMIS 100% INCL. DATABASE)
+// ==========================================
+app.get('/sitemap.xml', async (req, res) => {
     res.set('Content-Type', 'text/xml; charset=utf-8');
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
     
-    // Inject Static & Navigation Routes
     for (const [path, meta] of Object.entries(routesMeta)) {
-        const priority = path === '/' ? '1.0' : '0.8';
-        const changefreq = path === '/' ? 'daily' : 'weekly';
-        xml += `  <url>\n`;
-        xml += `    <loc>${baseUrl}${path === '/' ? '' : path}</loc>\n`;
-        xml += `    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n`;
-        xml += `    <changefreq>${changefreq}</changefreq>\n`;
-        xml += `    <priority>${priority}</priority>\n`;
-        xml += `  </url>\n`;
+        xml += `  <url>\n    <loc>${baseUrl}${path === '/' ? '' : path}</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <changefreq>${path === '/' ? 'daily' : 'weekly'}</changefreq>\n    <priority>${path === '/' ? '1.0' : '0.8'}</priority>\n  </url>\n`;
     }
 
-    // Inject Dynamic Arsip Documents Routes
-    arsipDB.forEach(doc => {
-        xml += `  <url>\n`;
-        xml += `    <loc>${baseUrl}/arsip/${doc.slug}</loc>\n`;
-        xml += `    <lastmod>${doc.date.split('T')[0] || new Date().toISOString().split('T')[0]}</lastmod>\n`;
-        xml += `    <changefreq>monthly</changefreq>\n`;
-        xml += `    <priority>0.7</priority>\n`;
-        xml += `  </url>\n`;
-    });
+    try {
+        const { rows } = await pool.query('SELECT slug, created_at FROM arsip_docs');
+        rows.forEach(doc => {
+            const date = new Date(doc.created_at).toISOString().split('T')[0];
+            xml += `  <url>\n    <loc>${baseUrl}/arsip/${doc.slug}</loc>\n    <lastmod>${date}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+        });
+    } catch (e) { console.error("Sitemap DB Error", e); }
     
     xml += `</urlset>`;
     res.send(xml);
@@ -191,160 +167,90 @@ app.get('/sitemap.xml', (req, res) => {
 
 app.get('/robots.txt', (req, res) => {
     res.set('Content-Type', 'text/plain; charset=utf-8');
-    let txt = `User-agent: *\n`;
-    txt += `Allow: /\n`;
-    txt += `Disallow: /admin/\n\n`; // Melarang Google meng-crawl Dashboard Admin
-    txt += `Sitemap: ${baseUrl}/sitemap.xml\n`;
-    res.send(txt);
+    res.send(`User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: ${baseUrl}/sitemap.xml\n`);
 });
 
-
 // ==========================================
-// 6. FOLDER PUBLIC & ROUTING HALAMAN VIEWS
+// 7. FOLDER PUBLIC & ROUTING HALAMAN VIEWS
 // ==========================================
 app.use(express.static(path.join(process.cwd(), 'public')));
 
-// Panel Admin Halaman (CMS)
-app.get('/admin/login', (req, res) => res.render('admin-login'));
-app.get('/admin/dashboard', (req, res) => res.render('admin-dashboard'));
+const safeRender = (res, viewName, data = {}) => {
+    res.render(viewName, data, (err, html) => {
+        if (err) return res.status(500).send(`<div style="font-family: monospace; padding: 2rem; background: #050505; color: #ff4444; min-height: 100vh;"><h2>[AXA SYSTEM] FATAL ERROR 500</h2><p><b>File View Tidak Ditemukan:</b> Pastikan <code>views/${viewName}.ejs</code> telah di-upload ke Vercel.</p></div>`);
+        res.send(html);
+    });
+};
+
+app.get('/admin/login', (req, res) => safeRender(res, 'admin-login'));
+app.get('/admin/dashboard', (req, res) => safeRender(res, 'admin-dashboard'));
 
 // Halaman Publik Arsip Utama
-app.get('/arsip', (req, res) => {
-    const meta = routesMeta['/arsip'];
-    meta.canonical = `${baseUrl}/arsip`;
-    res.render('arsip-list', { meta, baseUrl, arsipData: arsipDB });
+app.get('/arsip', async (req, res) => {
+    try {
+        const { rows } = await pool.query('SELECT slug, title, category, description as desc, created_at as date FROM arsip_docs ORDER BY id DESC');
+        rows.forEach(r => r.date = new Date(r.date).toISOString().split('T')[0]);
+        const meta = { ...routesMeta['/arsip'], canonical: `${baseUrl}/arsip` };
+        safeRender(res, 'arsip-list', { meta, baseUrl, arsipData: rows });
+    } catch (error) {
+        res.status(500).send(`Error DB: ${error.message}`);
+    }
 });
 
 // Halaman Viewer Arsip Satuan (Scribd-like Blur)
-app.get('/arsip/:slug', (req, res) => {
-    const arsip = arsipDB.find(d => d.slug === req.params.slug);
-    if (!arsip) return res.status(404).send('Dokumen tidak ditemukan.');
+app.get('/arsip/:slug', async (req, res) => {
+    try {
+        const { rows } = await pool.query('SELECT slug, title, category, description as desc, file_name, created_at as date FROM arsip_docs WHERE slug = $1', [req.params.slug]);
+        if (rows.length === 0) return res.status(404).send('<h2 style="font-family:sans-serif;text-align:center;margin-top:20vh;color:#fff;background:#000;">Dokumen tidak ditemukan. (Error 404)</h2>');
 
-    const meta = {
-        title: `${arsip.title} | drg. M. Aksa Arsyad`,
-        desc: arsip.desc,
-        keywords: `Arsip, ${arsip.category}, Kedokteran Gigi`,
-        canonical: `${baseUrl}/arsip/${arsip.slug}`,
-        ogImage: '/axalogo.png',
-        type: 'article'
-    };
-    res.render('arsipfile', { meta, baseUrl, arsip });
+        const arsip = rows[0];
+        arsip.date = new Date(arsip.date).toISOString().split('T')[0];
+        const meta = { title: `${arsip.title} | drg. M. Aksa Arsyad`, desc: arsip.desc, keywords: `Arsip, ${arsip.category}, Kedokteran Gigi`, canonical: `${baseUrl}/arsip/${arsip.slug}`, ogImage: '/axalogo.png', type: 'article' };
+        
+        safeRender(res, 'arsipfile', { meta, baseUrl, arsip });
+    } catch (error) {
+        res.status(500).send(`Error DB: ${error.message}`);
+    }
 });
 
-// Halaman Portofolio Utama (Filter '/arsip' karena sudah di-handle di atas)
+// Halaman Portofolio Utama
 const routeKeys = Object.keys(routesMeta).filter(k => k !== '/arsip');
 app.get(routeKeys, (req, res) => {
     try {
         const currentPath = req.path;
-        const meta = routesMeta[currentPath];
-        meta.canonical = `${baseUrl}${currentPath === '/' ? '' : currentPath}`;
-        
-        // Merender view dengan menyuntikkan data Meta Dynamic
-        res.render('index', { meta, currentPath, baseUrl });
+        const meta = { ...routesMeta[currentPath], canonical: `${baseUrl}${currentPath === '/' ? '' : currentPath}` };
+        safeRender(res, 'index', { meta, currentPath, baseUrl });
     } catch (error) {
-        console.error("Gagal merender index.ejs:", error);
-        res.status(500).send("Internal Server Error: Gagal memuat file EJS.");
+        res.status(500).send(`Internal Server Error: ${error.message}`);
     }
 });
 
 // ==========================================
-// 7. ROUTE API GITHUB STATS (SCRIPT PROXY)
+// 8. ROUTE API GITHUB STATS
 // ==========================================
 app.post('/api/github', async (req, res) => {
+    // ... [Kode GitHub API Anda tetap UTUH persis seperti sebelumnya] ...
     try {
         const { username, token } = req.body || {};
         const authToken = token || process.env.GITHUB_TOKEN;
         const ghUser = username || process.env.GITHUB_USERNAME || "raphunteks"; 
+        if (!authToken) return res.status(401).json({ status: 'error', message: 'Token GitHub tidak ditemukan.' });
 
-        if (!authToken) {
-             return res.status(401).json({ status: 'error', message: 'Token GitHub tidak ditemukan.' });
-        }
+        const query = `query { user(login: "${ghUser}") { repositories(first: 100, ownerAffiliations: OWNER, isFork: false) { nodes { stargazerCount languages(first: 10, orderBy: {field: SIZE, direction: DESC}) { edges { size node { name color } } } } } contributionsCollection { totalCommitContributions restrictedContributionsCount } pullRequests(first: 1) { totalCount } issues(first: 1) { totalCount } } }`;
+        const response = await fetch('https://api.github.com/graphql', { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json', 'User-Agent': 'Axa-Portfolio-App' }, body: JSON.stringify({ query }) });
+        const result = JSON.parse(await response.text());
+        if (result.errors) return res.status(400).json({ status: 'error', message: result.errors[0].message });
 
-        const query = `
-        query {
-          user(login: "${ghUser}") {
-            repositories(first: 100, ownerAffiliations: OWNER, isFork: false) {
-              nodes {
-                stargazerCount
-                languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
-                  edges { size node { name color } }
-                }
-              }
-            }
-            contributionsCollection {
-              totalCommitContributions
-              restrictedContributionsCount
-            }
-            pullRequests(first: 1) { totalCount }
-            issues(first: 1) { totalCount }
-          }
-        }`;
-
-        const response = await fetch('https://api.github.com/graphql', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${authToken}`,
-                'Content-Type': 'application/json',
-                'User-Agent': 'Axa-Portfolio-App'
-            },
-            body: JSON.stringify({ query })
-        });
-
-        const responseText = await response.text();
-
-        let result;
-        try {
-            result = JSON.parse(responseText);
-        } catch(e) {
-            return res.status(500).json({ status: 'error', message: 'GitHub API tidak mengembalikan format JSON yang valid.' });
-        }
-
-        if (result.errors) {
-            return res.status(400).json({ status: 'error', message: result.errors[0].message });
-        }
-
-        const data = result.data.user;
-        let totalStars = 0;
-        let langMap = {};
-        let totalSize = 0;
-
-        data.repositories.nodes.forEach(repo => {
-            totalStars += repo.stargazerCount;
-            repo.languages.edges.forEach(edge => {
-                const langName = edge.node.name;
-                const langColor = edge.node.color || '#cccccc';
-                if (!langMap[langName]) langMap[langName] = { size: 0, color: langColor };
-                langMap[langName].size += edge.size;
-                totalSize += edge.size;
-            });
-        });
-
-        const sortedLangs = Object.keys(langMap)
-            .map(k => ({ name: k, size: langMap[k].size, color: langMap[k].color, percent: ((langMap[k].size / totalSize) * 100).toFixed(2) }))
-            .sort((a, b) => b.size - a.size)
-            .slice(0, 5);
-
-        const stats = {
-            stars: totalStars,
-            commits: data.contributionsCollection.totalCommitContributions + data.contributionsCollection.restrictedContributionsCount,
-            prs: data.pullRequests.totalCount,
-            issues: data.issues.totalCount,
-            topLangs: sortedLangs
-        };
-
-        res.status(200).json({ status: 'success', data: stats });
-
-    } catch (error) {
-        console.error("Vercel Serverless Error:", error);
-        res.status(500).json({ status: 'error', message: error.message || 'Internal Server Error' });
-    }
+        const data = result.data.user; let totalStars = 0; let langMap = {}; let totalSize = 0;
+        data.repositories.nodes.forEach(repo => { totalStars += repo.stargazerCount; repo.languages.edges.forEach(edge => { const langName = edge.node.name; const langColor = edge.node.color || '#cccccc'; if (!langMap[langName]) langMap[langName] = { size: 0, color: langColor }; langMap[langName].size += edge.size; totalSize += edge.size; }); });
+        const sortedLangs = Object.keys(langMap).map(k => ({ name: k, size: langMap[k].size, color: langMap[k].color, percent: ((langMap[k].size / totalSize) * 100).toFixed(2) })).sort((a, b) => b.size - a.size).slice(0, 5);
+        
+        res.status(200).json({ status: 'success', data: { stars: totalStars, commits: data.contributionsCollection.totalCommitContributions + data.contributionsCollection.restrictedContributionsCount, prs: data.pullRequests.totalCount, issues: data.issues.totalCount, topLangs: sortedLangs } });
+    } catch (error) { res.status(500).json({ status: 'error', message: error.message || 'Internal Server Error' }); }
 });
 
 module.exports = app;
-
 if (require.main === module) {
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-        console.log(`Server is running on http://localhost:${PORT}`);
-    });
+    app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
 }
