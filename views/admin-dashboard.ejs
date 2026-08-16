@@ -4,41 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Arsip | Axa System</title>
+    <!-- FIX GBR 1: Favicon Absolute Path -->
+    <link rel="icon" type="image/png" href="/axalogo.png">
+    <link rel="apple-touch-icon" href="/axalogo.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Space Grotesk', sans-serif; background-color: #030712; color: #fff; }
-        .glass-panel { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .brutal-card { background: #111827; border: 2px solid #00E5FF; box-shadow: 6px 6px 0px #00E5FF; transition: all 0.2s; }
-        .brutal-card:hover { transform: translate(-2px, -2px); box-shadow: 10px 10px 0px #00E5FF; }
+        /* Holographic & Brutalism Glassmorphism */
+        .glass-panel { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(24px); border: 1px solid rgba(0, 229, 255, 0.2); box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05); }
+        .brutal-card { background: #0b0f19; border: 2px solid #00E5FF; box-shadow: 6px 6px 0px rgba(0, 229, 255, 0.8); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .brutal-card:hover { transform: translate(-3px, -3px); box-shadow: 9px 9px 0px #FF10F0; border-color: #FF10F0; }
+        
+        /* Drag & Drop Zone Styles */
+        .dropzone { border: 2px dashed #00E5FF; transition: all 0.3s ease; background: rgba(0, 229, 255, 0.05); }
+        .dropzone.dragover { background: rgba(0, 229, 255, 0.2); border-color: #FF10F0; transform: scale(1.02); }
+        .dropzone.has-file { border: 2px solid #00E5FF; background: rgba(16, 185, 129, 0.1); }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #030712; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #00E5FF; border-radius: 10px; }
     </style>
 </head>
-<body class="p-4 md:p-10 relative">
+<body class="p-4 md:p-10 relative custom-scrollbar h-screen overflow-y-auto">
 
     <nav class="glass-panel rounded-2xl p-4 md:p-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative">
         <div class="flex items-center gap-3">
-            <i class="ph-fill ph-database text-3xl text-cyan-400"></i>
-            <h1 class="text-xl md:text-2xl font-black tracking-tight">KNOWLEDGE BASE <span class="text-cyan-400">CORE</span></h1>
+            <i class="ph-fill ph-database text-4xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500"></i>
+            <div>
+                <h1 class="text-xl md:text-2xl font-black tracking-tight uppercase">AWS Database <span class="text-cyan-400">Core</span></h1>
+                <p class="text-[10px] text-gray-400 font-mono tracking-widest">PostgreSQL Knowledge Base Server</p>
+            </div>
         </div>
-        <div class="flex gap-4">
-            <a href="/arsip" target="_blank" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition-all"><i class="ph-bold ph-eye"></i> View Live</a>
-            <button onclick="logout()" class="px-4 py-2 bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white rounded-xl text-sm font-bold transition-all"><i class="ph-bold ph-power"></i> Logout</button>
+        <div class="flex gap-3 w-full md:w-auto">
+            <a href="/arsip" target="_blank" class="flex-1 md:flex-none text-center px-5 py-2.5 border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(0,229,255,0.3)]"><i class="ph-bold ph-eye"></i> View Live</a>
+            <button onclick="logout()" class="flex-1 md:flex-none text-center px-5 py-2.5 bg-red-500/10 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-xl text-sm font-bold transition-all"><i class="ph-bold ph-power"></i> Logout</button>
         </div>
     </nav>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Form Add -->
-        <div class="glass-panel p-6 md:p-8 rounded-2xl h-fit">
-            <h2 class="text-xl font-bold mb-6 border-b border-gray-700 pb-3"><i class="ph-bold ph-plus-circle text-cyan-400"></i> Upload Materi Baru</h2>
-            <form id="formArsip" class="space-y-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Form Add (Kiri) -->
+        <div class="lg:col-span-4 glass-panel p-6 md:p-8 rounded-2xl h-fit border-t-4 border-t-cyan-400">
+            <h2 class="text-xl font-black mb-6 flex items-center gap-2 text-cyan-400 uppercase tracking-wide"><i class="ph-bold ph-cloud-arrow-up text-2xl"></i> Ingest Materi Baru</h2>
+            <form id="formArsip" class="space-y-5">
+                
+                <!-- PDF DRAG & DROP ZONE -->
                 <div>
-                    <label class="text-xs text-gray-400 font-mono mb-1 block uppercase">Judul Materi</label>
-                    <input type="text" id="title" required class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm">
+                    <label class="text-[10px] text-gray-400 font-mono mb-2 block uppercase font-bold tracking-widest">Upload File Jurnal/Materi (PDF)</label>
+                    <div id="dropzoneContainer" class="dropzone rounded-xl p-6 text-center cursor-pointer flex flex-col items-center justify-center relative overflow-hidden h-32 group" onclick="document.getElementById('fileInput').click()">
+                        <input type="file" id="fileInput" accept=".pdf" class="hidden">
+                        <i id="dropIcon" class="ph-bold ph-file-pdf text-4xl text-cyan-400 mb-2 group-hover:scale-110 transition-transform"></i>
+                        <p id="dropText" class="text-xs font-bold text-gray-300">Drag & Drop PDF di sini<br><span class="text-[10px] text-gray-500 font-mono font-normal">atau klik untuk menelusuri (Max ~4MB)</span></p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Judul Dokumen</label>
+                    <input type="text" id="title" required class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner transition-colors placeholder-gray-600" placeholder="Contoh: Jurnal Konservasi Gigi...">
                 </div>
                 <div>
-                    <label class="text-xs text-gray-400 font-mono mb-1 block uppercase">Kategori</label>
-                    <select id="category" class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm">
+                    <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Kategori Ilmu</label>
+                    <select id="category" class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner cursor-pointer">
                         <option value="Preklinik">Preklinik</option>
                         <option value="Profesi Dokter Muda">Profesi Dokter Muda (Co-Ass)</option>
                         <option value="Jurnal & Riset">Jurnal & Riset</option>
@@ -46,118 +74,181 @@
                     </select>
                 </div>
                 <div>
-                    <label class="text-xs text-gray-400 font-mono mb-1 block uppercase">URL Google Drive (Viewer/PDF)</label>
-                    <input type="url" id="fileUrl" required class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm" placeholder="https://drive.google.com/file/d/...">
+                    <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Deskripsi / Abstrak Singkat</label>
+                    <textarea id="desc" rows="4" required class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm resize-none shadow-inner" placeholder="Tuliskan rangkuman atau abstrak materi..."></textarea>
                 </div>
-                <div>
-                    <label class="text-xs text-gray-400 font-mono mb-1 block uppercase">Deskripsi / Abstrak Singkat</label>
-                    <textarea id="desc" rows="3" required class="w-full bg-black/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-cyan-500 text-black font-black py-3 rounded-xl hover:bg-cyan-400 shadow-[0_0_15px_rgba(0,229,255,0.4)] transition-all">PULSE TO DATABASE</button>
+                
+                <button type="submit" id="btnSubmit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-black font-black py-4 rounded-xl hover:brightness-110 shadow-[0_10px_20px_rgba(0,229,255,0.3)] transition-all uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95">
+                    <i class="ph-bold ph-database"></i> Push to Database
+                </button>
             </form>
         </div>
 
-        <!-- List Data -->
-        <div class="lg:col-span-2 space-y-4" id="arsipList">
-            <div class="text-center py-10 text-gray-500 font-mono"><i class="ph-bold ph-spinner-gap animate-spin text-3xl mb-2"></i><br>Fetching Neural Data...</div>
+        <!-- List Data (Kanan) -->
+        <div class="lg:col-span-8 flex flex-col h-[80vh]">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
+                <h3 class="text-sm font-mono text-gray-400 uppercase tracking-widest">Server Live Records</h3>
+            </div>
+            <div class="flex-grow overflow-y-auto pr-2 custom-scrollbar space-y-4" id="arsipList">
+                <div class="glass-panel p-10 text-center rounded-2xl flex flex-col items-center justify-center h-full">
+                    <i class="ph-bold ph-spinner-gap animate-spin text-5xl text-cyan-400 mb-4 drop-shadow-[0_0_15px_rgba(0,229,255,0.8)]"></i>
+                    <p class="text-gray-400 font-mono uppercase tracking-widest">Querying AWS Cluster...</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        // PROTEKSI IFRAME & AUTH
         const token = localStorage.getItem('axa_arsip_token');
         if (!token) {
-            // Bypass SecurityError di Iframe Preview
-            try {
-                window.location.href = '/admin/login';
-            } catch (e) {
-                console.warn("[PREVIEW MODE] Sandbox memblokir redirect window.location.");
-            }
+            try { window.location.href = '/admin/login'; } catch (e) { /* Silent Catch Iframe Error */ }
         }
 
+        let base64File = null;
+        let selectedFileName = "";
+
+        // DRAG & DROP LOGIC
+        const dropzone = document.getElementById('dropzoneContainer');
+        const fileInput = document.getElementById('fileInput');
+        const dropText = document.getElementById('dropText');
+        const dropIcon = document.getElementById('dropIcon');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, preventDefaults, false);
+        });
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
+        });
+
+        dropzone.addEventListener('drop', handleDrop, false);
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        function handleDrop(e) { handleFiles(e.dataTransfer.files); }
+
+        function handleFiles(files) {
+            if (files.length === 0) return;
+            const file = files[0];
+            if (file.type !== "application/pdf") {
+                alert("Hanya file PDF yang diizinkan!");
+                return;
+            }
+            
+            // Limit ~4MB untuk Vercel Serverless
+            if (file.size > 4.5 * 1024 * 1024) {
+                alert("Ukuran file terlalu besar! Batas maksimal Vercel adalah ~4MB per file PDF.");
+                return;
+            }
+
+            selectedFileName = file.name;
+            dropText.innerHTML = `<span class="text-green-400 font-black">${file.name}</span><br><span class="text-gray-400">${(file.size/1024/1024).toFixed(2)} MB Ready</span>`;
+            dropIcon.className = "ph-fill ph-check-circle text-4xl text-green-400 mb-2";
+            dropzone.classList.add('has-file');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                // Hapus awalan data:application/pdf;base64,
+                base64File = e.target.result.split(',')[1]; 
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // FETCH DATA DARI AWS POSTGRESQL
         async function fetchArsip() {
             const listEl = document.getElementById('arsipList');
             try {
-                const res = await fetch('/api/arsip', {
-                    headers: { 'Authorization': token || 'dummy_token' }
-                });
+                const res = await fetch('/api/arsip', { headers: { 'Authorization': token } });
                 if (!res.ok) throw new Error("API Offline");
                 
                 const { data } = await res.json();
-                
                 if(data.length === 0) { 
-                    listEl.innerHTML = '<div class="glass-panel p-8 text-center rounded-2xl text-gray-400 font-mono">No documents found in vault.</div>'; 
+                    listEl.innerHTML = '<div class="glass-panel p-8 text-center rounded-2xl text-gray-400 font-mono">No documents found in AWS Vault.</div>'; 
                     return; 
                 }
                 
                 listEl.innerHTML = data.map(item => `
-                    <div class="brutal-card rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-                        <div class="min-w-0 w-full">
-                            <span class="text-[10px] bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded font-mono uppercase tracking-widest">${item.category}</span>
-                            <h3 class="text-lg font-black mt-2 truncate w-full">${item.title}</h3>
-                            <p class="text-gray-400 text-sm truncate font-mono mt-1 w-full">${item.slug} | ${item.date}</p>
+                    <div class="brutal-card rounded-2xl p-5 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-cyan-500/10 to-transparent pointer-events-none"></div>
+                        <div class="min-w-0 w-full z-10">
+                            <span class="text-[9px] bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 px-2.5 py-1 rounded font-mono uppercase tracking-widest font-bold">${item.category}</span>
+                            <h3 class="text-lg md:text-xl font-black mt-2.5 truncate w-full drop-shadow-sm text-white">${item.title}</h3>
+                            <p class="text-gray-400 text-xs truncate font-mono mt-1 w-full"><i class="ph-bold ph-file-pdf"></i> ${item.file_name} <span class="mx-2">|</span> <i class="ph-bold ph-calendar"></i> ${item.date}</p>
                         </div>
-                        <button onclick="hapus('${item.id}')" class="bg-red-500 text-white p-3 rounded-xl hover:bg-red-400 shrink-0 w-full md:w-auto"><i class="ph-bold ph-trash text-xl"></i></button>
+                        <div class="flex gap-2 z-10 shrink-0 w-full md:w-auto">
+                            <a href="/arsip/${item.slug}" target="_blank" class="flex-1 md:flex-none text-center bg-gray-800 text-white p-3 rounded-xl hover:bg-gray-700 transition-colors"><i class="ph-bold ph-arrow-square-out text-lg"></i></a>
+                            <button onclick="hapus('${item.id}')" class="flex-1 md:flex-none text-center bg-red-500 text-white p-3 rounded-xl hover:bg-red-400 transition-colors shadow-[0_0_10px_rgba(239,68,68,0.5)]"><i class="ph-bold ph-trash text-lg"></i></button>
+                        </div>
                     </div>
                 `).join('');
                 
             } catch (error) {
-                // Tampilan Fallback jika Fetch API gagal di dalam Sandbox
-                listEl.innerHTML = `
-                    <div class="glass-panel p-8 text-center rounded-2xl text-gray-400 font-mono">
-                        <i class="ph-fill ph-warning-circle text-3xl text-yellow-500 mb-3"></i><br>
-                        API Backend Tidak Merespon (Sandbox Preview)<br>
-                        <span class="text-xs text-gray-500 mt-2 block">Daftar arsip akan dimuat secara dinamis apabila dijalankan pada server production Vercel.</span>
-                    </div>
-                `;
+                listEl.innerHTML = `<div class="glass-panel p-8 text-center rounded-2xl text-red-400 font-mono border-red-500/50"><i class="ph-fill ph-warning-circle text-4xl mb-3"></i><br>Koneksi Database AWS Terputus.<br><span class="text-xs text-gray-500 mt-2 block">${error.message}</span></div>`;
             }
         }
 
+        // SUBMIT UPLOAD KE SERVER
         document.getElementById('formArsip').addEventListener('submit', async (e) => {
             e.preventDefault();
+            if(!base64File) return alert("Harap masukkan file PDF terlebih dahulu!");
+
+            const btn = document.getElementById('btnSubmit');
+            const ogText = btn.innerHTML;
+            btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin text-xl"></i> INGESTING TO AWS...';
+            btn.disabled = true;
+
             const payload = { 
                 title: document.getElementById('title').value, 
                 category: document.getElementById('category').value, 
-                fileUrl: document.getElementById('fileUrl').value, 
-                desc: document.getElementById('desc').value 
+                desc: document.getElementById('desc').value,
+                fileName: selectedFileName,
+                fileData: base64File
             };
             
             try {
-                await fetch('/api/arsip', { 
+                const res = await fetch('/api/arsip', { 
                     method: 'POST', 
-                    headers: { 'Content-Type': 'application/json', 'Authorization': token || 'dummy_token' }, 
+                    headers: { 'Content-Type': 'application/json', 'Authorization': token }, 
                     body: JSON.stringify(payload) 
                 });
-                document.getElementById('formArsip').reset();
-                fetchArsip();
+                
+                if(res.ok) {
+                    document.getElementById('formArsip').reset();
+                    base64File = null;
+                    dropzone.classList.remove('has-file');
+                    dropIcon.className = "ph-bold ph-file-pdf text-4xl text-cyan-400 mb-2 group-hover:scale-110 transition-transform";
+                    dropText.innerHTML = `Drag & Drop PDF di sini<br><span class="text-[10px] text-gray-500 font-mono font-normal">atau klik untuk menelusuri</span>`;
+                    fetchArsip();
+                } else {
+                    const err = await res.json();
+                    alert("Gagal upload: " + err.message);
+                }
             } catch (e) {
-                alert("Simulasi Berhasil: Data akan tersimpan pada server production.");
+                alert("Koneksi gagal. File mungkin terlalu besar untuk Vercel Payload Limit.");
+            } finally {
+                btn.innerHTML = ogText;
+                btn.disabled = false;
             }
         });
 
         async function hapus(id) {
-            if(!confirm('Delete this record permanently?')) return;
+            if(!confirm('Hapus dokumen ini secara permanen dari Database AWS?')) return;
             try {
-                await fetch('/api/arsip/'+id, { method: 'DELETE', headers: { 'Authorization': token || 'dummy_token' } });
+                await fetch('/api/arsip/'+id, { method: 'DELETE', headers: { 'Authorization': token } });
                 fetchArsip();
             } catch (e) {
-                alert("Simulasi Berhasil: File akan terhapus pada server production.");
+                alert("Gagal menghapus.");
             }
         }
 
         function logout() {
             localStorage.removeItem('axa_arsip_token');
-            try {
-                window.location.href = '/admin/login';
-            } catch (e) {
-                console.warn("[PREVIEW MODE] Sandbox memblokir redirect.");
-                document.body.innerHTML = `
-                    <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: monospace; color: #00E5FF; background: #030712;">
-                        <i class="ph-bold ph-power text-5xl mb-4"></i>
-                        <h2>SESSION TERMINATED</h2>
-                        <p style="color: #94a3b8; margin-top: 10px;">Please refresh the preview.</p>
-                    </div>
-                `;
-            }
+            try { window.location.href = '/admin/login'; } catch (e) { /* Silent Catch */ }
         }
 
         fetchArsip();
