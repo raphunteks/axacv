@@ -6,7 +6,6 @@ const app = express();
 
 // Konfigurasi Klien Supabase menggunakan Environment Variables
 const supabaseUrl = process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL;
-// Disarankan menggunakan SERVICE_ROLE_KEY untuk akses CRUD backend penuh (bypass RLS)
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.KVVSUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
@@ -89,14 +88,17 @@ const protectAdmin = (req, res, next) => {
 // Ambil seluruh direktori arsip
 app.get('/api/arsip', async (req, res) => {
     try {
+        if(!supabaseUrl || !supabaseKey) throw new Error("ENV Supabase Kosong!");
+        
         const { data, error } = await supabase
             .from('arsip')
             .select('*')
             .order('date', { ascending: false });
 
-        if (error) throw error;
+        if (error) throw new Error(`Supabase DB Error: ${error.message}`);
         res.json({ status: 'success', data });
     } catch (err) {
+        console.error("Fetch Arsip Error:", err);
         res.status(500).json({ status: 'error', message: err.message });
     }
 });
@@ -109,9 +111,8 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
         // Ciptakan ID Unik & Slug
         const uniqueId = Date.now().toString();
         const rawSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-        const slug = `${rawSlug}-${Math.random().toString(36).substr(2, 4)}`; // Prevent collision
+        const slug = `${rawSlug}-${Math.random().toString(36).substr(2, 4)}`;
 
-        // Konversi Base64 ke Buffer untuk Storage
         const buffer = Buffer.from(fileData, 'base64');
         const cleanFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
         const filePath = `${uniqueId}_${cleanFileName}`;
@@ -125,7 +126,7 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
                 upsert: false
             });
 
-        if (storageError) throw new Error(`Storage Error: ${storageError.message}`);
+        if (storageError) throw new Error(`Supabase Storage Error: ${storageError.message}`);
 
         // 2. Simpan Metadata ke Supabase Postgres
         const newItem = {
@@ -135,7 +136,7 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
             category: category,
             desc: desc,
             file_name: fileName,
-            file_path: filePath, // Referensi file di Storage
+            file_path: filePath, 
             date: new Date().toISOString().split('T')[0]
         };
 
@@ -147,7 +148,7 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
         if (dbError) {
             // Rollback jika insert DB gagal
             await supabase.storage.from('arsip_files').remove([filePath]);
-            throw new Error(`DB Error: ${dbError.message}`);
+            throw new Error(`Supabase DB Insert Error: ${dbError.message}`);
         }
 
         res.json({ status: 'success', data: dbData[0] });
@@ -169,7 +170,7 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
             .eq('id', docId)
             .single();
 
-        if (fetchError || !item) throw new Error("Dokumen tidak ditemukan di DB.");
+        if (fetchError || !item) throw new Error(`Fetch Error: ${fetchError?.message || "Dokumen tidak ditemukan."}`);
 
         // Hapus dari Storage
         if (item.file_path) {
@@ -179,10 +180,11 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
 
         // Hapus dari DB
         const { error: dbError } = await supabase.from('arsip').delete().eq('id', docId);
-        if (dbError) throw dbError;
+        if (dbError) throw new Error(`Delete DB Error: ${dbError.message}`);
 
         res.json({ status: 'success' });
     } catch (err) {
+        console.error("Delete Error:", err);
         res.status(500).json({ status: 'error', message: err.message });
     }
 });
@@ -210,17 +212,19 @@ app.get('/sitemap.xml', async (req, res) => {
         }
 
         // Inject Dynamic Arsip Documents dari Supabase Database
-        const { data: arsipDB } = await supabase.from('arsip').select('slug, date');
-        if (arsipDB) {
-            arsipDB.forEach(doc => {
-                xml += `  <url>\n`;
-                xml += `    <loc>${baseUrl}/arsip/${doc.slug}</loc>\n`;
-                xml += `    <lastmod>${doc.date || new Date().toISOString().split('T')[0]}</lastmod>\n`;
-                xml += `    <changefreq>monthly</changefreq>\n`;
-                xml += `    <priority>0.7</priority>\n`;
-                xml += `  </url>\n`;
-            });
-        }
+        try {
+            const { data: arsipDB } = await supabase.from('arsip').select('slug, date');
+            if (arsipDB) {
+                arsipDB.forEach(doc => {
+                    xml += `  <url>\n`;
+                    xml += `    <loc>${baseUrl}/arsip/${doc.slug}</loc>\n`;
+                    xml += `    <lastmod>${doc.date || new Date().toISOString().split('T')[0]}</lastmod>\n`;
+                    xml += `    <changefreq>monthly</changefreq>\n`;
+                    xml += `    <priority>0.7</priority>\n`;
+                    xml += `  </url>\n`;
+                });
+            }
+        } catch(e) { /* Abaikan sitemap error db jika tabel belum ada */ }
         
         xml += `</urlset>`;
         res.send(xml);
@@ -254,10 +258,14 @@ app.get('/arsip', async (req, res) => {
         const meta = routesMeta['/arsip'];
         meta.canonical = `${baseUrl}/arsip`;
         
-        // Tarik data arsip dari Supabase PostgreSQL
-        const { data: arsipDB } = await supabase.from('arsip').select('*').order('date', { ascending: false });
+        let arsipDB = [];
+        try {
+            // Tarik data arsip dari Supabase PostgreSQL
+            const result = await supabase.from('arsip').select('*').order('date', { ascending: false });
+            if(result.data) arsipDB = result.data;
+        } catch(dbErr) { console.error("Database fetch failed on /arsip", dbErr.message); }
         
-        res.render('arsip-list', { meta, baseUrl, arsipData: arsipDB || [] });
+        res.render('arsip-list', { meta, baseUrl, arsipData: arsipDB });
     } catch (e) {
         res.status(500).send("Internal Server Error");
     }
