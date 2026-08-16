@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="theme-color" content="#030712">
-    
+
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
@@ -18,49 +18,48 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
     <link rel="preconnect" href="https://github-readme-streak-stats.herokuapp.com" crossorigin>
-    
+
     <link rel="dns-prefetch" href="https://script.google.com">
     <link rel="dns-prefetch" href="https://ui-avatars.com">
-    
-    <link rel="preload" href="/axalogo.png" as="image" type="image/png" fetchpriority="high">
 
-    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://maksaarsyad.xyz/sitemap.xml">
-    <link rel="alternate" type="application/xml" title="XML Sitemap" href="https://maksaarsyad.xyz/sitemap.xml">
-    <link rel="prefetch" href="/sitemap.xml" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="<%= meta.ogImage %>" as="image" type="image/png" fetchpriority="high">
+
     <!-- TAG GOOGLE ADSENSE -->
     <meta name="google-adsense-account" content="ca-pub-3213968627395082">
     <meta name="google-site-verification" content="AAKLVErwuFUspLpKD6XZwRxIZ5XqaTwy1BEK6-Rl0Ig" />
 
-    <title>CV & Portofolio | drg. M. Aksa Arsyad, S.KG</title>
-    
-    <meta name="description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum. Lihat pengalaman kerja, riwayat pendidikan, riwayat organisasi, publikasi ilmiah, dan hubungi langsung.">
-    <meta name="keywords" content="Riwayat Pendidikan drg. M. Aksa Arsyad, Pengalaman Kerja drg. M. Aksa Arsyad, Dokter Gigi Umum, Aksa Arsyad, S.KG, Makassar, UMI, Dokter Gigi Makassar, Kedokteran Gigi, Klinik Gigi, Publikasi Ilmiah">
+    <!-- METADATA DINAMIS SEO -->
+    <title><%= meta.title %></title>
+    <meta name="description" content="<%= meta.desc %>">
+    <meta name="keywords" content="<%= meta.keywords %>">
     <meta name="author" content="drg. M. Aksa Arsyad, S.KG">
-    <link rel="canonical" href="https://maksaarsyad.xyz/">
+    <link rel="canonical" href="<%= meta.canonical %>">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Axa CV">
     <meta name="application-name" content="Axa CV">
 
+    <!-- OPEN GRAPH DINAMIS -->
     <meta property="og:site_name" content="Portofolio drg. M. Aksa Arsyad">
-    <meta property="og:type" content="profile">
+    <meta property="og:type" content="<%= meta.type %>">
     <meta property="og:locale" content="id_ID">
-    <meta property="og:url" content="https://maksaarsyad.xyz/">
-    <meta property="og:title" content="drg. M. Aksa Arsyad, S.KG | Dokter Gigi Umum">
-    <meta property="og:description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG. Lihat pengalaman klinis, akademik, dan publikasi ilmiah.">
-    <meta property="og:image" content="https://maksaarsyad.xyz/axalogo.png">
+    <meta property="og:url" content="<%= meta.canonical %>">
+    <meta property="og:title" content="<%= meta.title %>">
+    <meta property="og:description" content="<%= meta.desc %>">
+    <meta property="og:image" content="<%= baseUrl %><%= meta.ogImage %>">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Logo Portofolio drg. M. Aksa Arsyad">
+    <meta property="og:image:alt" content="<%= meta.title %>">
 
+    <!-- TWITTER CARDS DINAMIS -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@axaaxyz_01">
     <meta name="twitter:creator" content="@axaaxyz_01">
-    <meta name="twitter:title" content="drg. M. Aksa Arsyad, S.KG | Dokter Gigi Umum">
-    <meta name="twitter:description" content="Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG. Lihat pengalaman klinis dan hubungi saya.">
-    <meta name="twitter:image" content="https://maksaarsyad.xyz/axalogo.png">
-    <meta name="twitter:image:alt" content="Logo Portofolio drg. M. Aksa Arsyad">
+    <meta name="twitter:title" content="<%= meta.title %>">
+    <meta name="twitter:description" content="<%= meta.desc %>">
+    <meta name="twitter:image" content="<%= baseUrl %><%= meta.ogImage %>">
+    <meta name="twitter:image:alt" content="<%= meta.title %>">
 
     <script type="application/ld+json">
     {
@@ -68,38 +67,29 @@
       "@graph": [
         {
           "@type": "WebSite",
-          "@id": "https://maksaarsyad.xyz/#website",
-          "url": "https://maksaarsyad.xyz/",
+          "@id": "<%= baseUrl %>/#website",
+          "url": "<%= baseUrl %>/",
           "name": "CV & Portofolio drg. M. Aksa Arsyad",
           "description": "Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG.",
           "inLanguage": "id-ID"
         },
         {
           "@type": "ProfilePage",
-          "@id": "https://maksaarsyad.xyz/#webpage",
-          "url": "https://maksaarsyad.xyz/",
-          "name": "CV & Portofolio | drg. M. Aksa Arsyad, S.KG",
-          "isPartOf": { "@id": "https://maksaarsyad.xyz/#website" },
-          "mainEntity": { "@id": "https://maksaarsyad.xyz/#person" },
+          "@id": "<%= meta.canonical %>#webpage",
+          "url": "<%= meta.canonical %>",
+          "name": "<%= meta.title %>",
+          "isPartOf": { "@id": "<%= baseUrl %>/#website" },
+          "mainEntity": { "@id": "<%= baseUrl %>/#person" },
           "inLanguage": "id-ID",
-          "hasPart": [
-            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#beranda", "name": "Beranda", "description": "Halaman Utama Profil drg. M. Aksa Arsyad, S.KG.", "url": "https://maksaarsyad.xyz/#beranda" },
-            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#pendidikan", "name": "Riwayat Pendidikan", "description": "Latar belakang pendidikan, institusi, dan almamater Universitas Muslim Indonesia & Hasanuddin.", "url": "https://maksaarsyad.xyz/#pendidikan" },
-            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#pengalaman", "name": "Pengalaman Kerja", "description": "Riwayat karir klinis, pekerjaan, dan pengalaman profesional di klinik serta rumah sakit.", "url": "https://maksaarsyad.xyz/#pengalaman" },
-            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#organisasi", "name": "Riwayat Organisasi", "description": "Pengalaman keanggotaan dan aktivitas dalam organisasi profesi maupun kemahasiswaan.", "url": "https://maksaarsyad.xyz/#organisasi" },
-            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#publikasi", "name": "Publikasi Ilmiah", "description": "Kumpulan jurnal, penelitian, dan publikasi ilmiah di bidang kedokteran gigi.", "url": "https://maksaarsyad.xyz/#publikasi" },
-            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#keahlian-tech", "name": "Keahlian & Tech", "description": "Daftar keahlian klinis medis, bahasa pemrograman, dan kemampuan teknologi.", "url": "https://maksaarsyad.xyz/#keahlian-tech" },
-            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#proyek", "name": "Proyek Web", "description": "Portofolio pengembangan website, sistem, dan aplikasi.", "url": "https://maksaarsyad.xyz/#proyek" },
-            { "@type": "WebPageElement", "@id": "https://maksaarsyad.xyz/#sertifikasi", "name": "Sertifikasi", "description": "Kumpulan sertifikasi kompetensi medis dan penghargaan pemrograman.", "url": "https://maksaarsyad.xyz/#sertifikasi" }
-          ]
+          "description": "<%= meta.desc %>"
         },
         {
           "@type": ["Person", "Physician"],
-          "@id": "https://maksaarsyad.xyz/#person",
+          "@id": "<%= baseUrl %>/#person",
           "name": "drg. M. Aksa Arsyad, S.KG",
           "jobTitle": "Dokter Gigi Umum / General Practitioner",
-          "image": "https://maksaarsyad.xyz/axalogo.png",
-          "url": "https://maksaarsyad.xyz/",
+          "image": "<%= baseUrl %>/axalogo.png",
+          "url": "<%= baseUrl %>/",
           "sameAs": [
             "https://www.instagram.com/axaaxyz_01",
             "https://scholar.google.com/citations?user=hQlIsLoAAAAJ&hl=id",
@@ -117,40 +107,36 @@
         },
         {
           "@type": "ItemList",
-          "@id": "https://maksaarsyad.xyz/#sitelinks",
+          "@id": "<%= baseUrl %>/#sitelinks",
           "name": "Navigasi Portofolio drg. M. Aksa Arsyad",
           "itemListElement": [
-            { "@type": "SiteNavigationElement", "position": 1, "name": "Beranda", "url": "https://maksaarsyad.xyz/#beranda" },
-            { "@type": "SiteNavigationElement", "position": 2, "name": "Riwayat Pendidikan", "url": "https://maksaarsyad.xyz/#pendidikan" },
-            { "@type": "SiteNavigationElement", "position": 3, "name": "Pengalaman Kerja", "url": "https://maksaarsyad.xyz/#pengalaman" },
-            { "@type": "SiteNavigationElement", "position": 4, "name": "Riwayat Organisasi", "url": "https://maksaarsyad.xyz/#organisasi" },
-            { "@type": "SiteNavigationElement", "position": 5, "name": "Publikasi Ilmiah", "url": "https://maksaarsyad.xyz/#publikasi" },
-            { "@type": "SiteNavigationElement", "position": 6, "name": "Keahlian & Tech", "url": "https://maksaarsyad.xyz/#keahlian-tech" },
-            { "@type": "SiteNavigationElement", "position": 7, "name": "Proyek Web", "url": "https://maksaarsyad.xyz/#proyek" },
-            { "@type": "SiteNavigationElement", "position": 8, "name": "Sertifikasi", "url": "https://maksaarsyad.xyz/#sertifikasi" }
+            { "@type": "SiteNavigationElement", "position": 1, "name": "Beranda", "url": "<%= baseUrl %>/" },
+            { "@type": "SiteNavigationElement", "position": 2, "name": "Riwayat Pendidikan", "url": "<%= baseUrl %>/pendidikan" },
+            { "@type": "SiteNavigationElement", "position": 3, "name": "Pengalaman Kerja", "url": "<%= baseUrl %>/pengalaman" },
+            { "@type": "SiteNavigationElement", "position": 4, "name": "Riwayat Organisasi", "url": "<%= baseUrl %>/organisasi" },
+            { "@type": "SiteNavigationElement", "position": 5, "name": "Publikasi Ilmiah", "url": "<%= baseUrl %>/publikasi" },
+            { "@type": "SiteNavigationElement", "position": 6, "name": "Keahlian & Tech", "url": "<%= baseUrl %>/keahlian-tech" },
+            { "@type": "SiteNavigationElement", "position": 7, "name": "Proyek Web", "url": "<%= baseUrl %>/proyek" },
+            { "@type": "SiteNavigationElement", "position": 8, "name": "Sertifikasi", "url": "<%= baseUrl %>/sertifikasi" }
           ]
         },
         {
           "@type": "BreadcrumbList",
-          "@id": "https://maksaarsyad.xyz/#breadcrumbs",
+          "@id": "<%= baseUrl %>/#breadcrumbs",
           "itemListElement": [
-            { "@type": "ListItem", "position": 1, "item": { "@id": "https://maksaarsyad.xyz/#beranda", "name": "Beranda" } },
-            { "@type": "ListItem", "position": 2, "item": { "@id": "https://maksaarsyad.xyz/#pendidikan", "name": "Riwayat Pendidikan" } },
-            { "@type": "ListItem", "position": 3, "item": { "@id": "https://maksaarsyad.xyz/#pengalaman", "name": "Pengalaman Kerja" } },
-            { "@type": "ListItem", "position": 4, "item": { "@id": "https://maksaarsyad.xyz/#organisasi", "name": "Riwayat Organisasi" } },
-            { "@type": "ListItem", "position": 5, "item": { "@id": "https://maksaarsyad.xyz/#publikasi", "name": "Publikasi Ilmiah" } },
-            { "@type": "ListItem", "position": 6, "item": { "@id": "https://maksaarsyad.xyz/#keahlian-tech", "name": "Keahlian & Tech" } },
-            { "@type": "ListItem", "position": 7, "item": { "@id": "https://maksaarsyad.xyz/#proyek", "name": "Proyek Web" } },
-            { "@type": "ListItem", "position": 8, "item": { "@id": "https://maksaarsyad.xyz/#sertifikasi", "name": "Sertifikasi" } }
+            { "@type": "ListItem", "position": 1, "item": { "@id": "<%= baseUrl %>/", "name": "Beranda" } }
+            <% if (currentPath !== '/') { %>
+            ,{ "@type": "ListItem", "position": 2, "item": { "@id": "<%= meta.canonical %>", "name": "<%= meta.title.split(' |')[0] %>" } }
+            <% } %>
           ]
         }
       ]
     }
     </script>
-    
+
     <link rel="icon" type="image/png" href="/axalogo.png">
     <link rel="apple-touch-icon" href="/axalogo.png">
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -160,13 +146,13 @@
         function initThemeSettings() {
             const savedBg = localStorage.getItem('axa-bg-theme') || 'dark';
             const savedColor = localStorage.getItem('axa-theme-color') || 'theme-cyan';
-            
+
             if(savedBg === 'dark') {
                 document.documentElement.removeAttribute('data-theme');
             } else {
                 document.documentElement.setAttribute('data-theme', savedBg);
             }
-            
+
             document.documentElement.className = `scroll-smooth ${savedColor}`;
         }
         initThemeSettings();
@@ -242,7 +228,7 @@
         .theme-green { --color-primary: #22C55E; --color-primary-rgb: 34, 197, 94; --color-secondary: #14b8a6; --color-secondary-rgb: 20, 184, 166; }
         .theme-pink { --color-primary: #EC4899; --color-primary-rgb: 236, 72, 153; --color-secondary: #f43f5e; --color-secondary-rgb: 244, 63, 94; }
         .theme-red { --color-primary: #EF4444; --color-primary-rgb: 239, 68, 68; --color-secondary: #f97316; --color-secondary-rgb: 249, 115, 22; }
-        
+
         .theme-neon-green { --color-primary: #39FF14; --color-primary-rgb: 57, 255, 20; --color-secondary: #00E5FF; }
         .theme-neon-pink { --color-primary: #FF10F0; --color-primary-rgb: 255, 16, 240; --color-secondary: #8B5CF6; }
         .theme-cyber-yellow { --color-primary: #FFD300; --color-primary-rgb: 255, 211, 0; --color-secondary: #FF10F0; }
@@ -309,7 +295,7 @@
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%, transparent 100%);
         }
         @keyframes grid-move { 0% { background-position: 0 0; } 100% { background-position: 0 40px; } }
-        
+
         .bg-noise {
             position: fixed; inset: 0; z-index: -15; opacity: 0.05; pointer-events: none; mix-blend-mode: overlay;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
@@ -326,7 +312,7 @@
         .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; min-width: 300px; min-height: 300px; background-color: var(--color-primary); }
         .orb-2 { bottom: -10%; right: -10%; width: 45vw; height: 45vw; min-width: 250px; min-height: 250px; background-color: var(--color-secondary); animation-delay: -7s; animation-direction: alternate-reverse;}
         .orb-3 { top: 40%; left: 30%; width: 40vw; height: 40vw; min-width: 200px; min-height: 200px; background-color: var(--color-primary); opacity: 0.1; filter: blur(150px); animation-delay: -12s; }
-        
+
         [data-theme="light"] .glow-orb { opacity: 0.35; filter: blur(100px); mix-blend-mode: multiply; }
 
         @keyframes orb-breathe { 
@@ -346,7 +332,7 @@
         .pulse-ring { width: 90px; height: 90px; border-radius: 50%; border: 3px solid transparent; border-top-color: var(--color-primary); border-bottom-color: var(--color-secondary); animation: spin-ring 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; position: relative; box-shadow: 0 0 20px rgba(var(--color-primary-rgb),0.4);}
         .pulse-ring::before { content: ''; position: absolute; top: 12px; left: 12px; right: 12px; bottom: 12px; border-radius: 50%; border: 3px solid transparent; border-left-color: var(--color-secondary); border-right-color: var(--color-primary); animation: spin-ring 0.6s linear infinite reverse;}
         @keyframes spin-ring { 100% { transform: rotate(360deg); } }
-        
+
         .shimmer-text {
             background: linear-gradient(90deg, var(--color-primary) 0%, var(--text-main) 50%, var(--color-primary) 100%);
             background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -389,7 +375,7 @@
             mix-blend-mode: overlay;
         }
         @keyframes scan-anim { 0% { top: -10%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 110%; opacity: 0; } }
-        
+
         .avatar-ring {
             background: conic-gradient(from 0deg, var(--color-secondary) 0%, var(--color-primary) 50%, var(--color-secondary) 100%);
             animation: spin-ring 6s linear infinite, morph-blob-extreme 8s ease-in-out infinite alternate; 
@@ -401,9 +387,9 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
             background-size: 200% auto; animation: shine 4s linear infinite;
         }
-        
+
         .cyber-glitch:hover { animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite; text-shadow: 3px 3px var(--color-primary), -3px -3px var(--color-secondary); }
-        
+
         .text-stroke-gradient {
             background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -425,7 +411,7 @@
             background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.2) 10px, rgba(255,255,255,0.2) 20px);
             background-size: 200% 100%; animation: move-stripes 1.5s linear infinite;
         }
-        
+
         .animate-on-scroll { 
             opacity: 0; 
             transform: translateY(40px) scale(0.95); 
@@ -448,7 +434,7 @@
         .link-hover::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 50%; background-color: var(--color-primary); transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), left 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 0 8px var(--color-primary);}
         .link-hover:hover, .link-hover:focus-visible { color: var(--color-primary); text-shadow: 0 0 12px rgba(var(--color-primary-rgb), 0.6); }
         .link-hover:hover::after, .link-hover:focus-visible::after { width: 100%; left: 0; }
-        
+
         .icon-bounce-group:hover .icon-bounce { animation: bounce-micro 0.5s ease, icon-glitch 0.2s 0.2s; filter: drop-shadow(0 0 8px var(--color-primary));}
 
         .btn-pulse { position: relative; overflow: hidden; z-index: 1; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
@@ -467,7 +453,7 @@
         }
         .btn-pulse:hover::after { opacity: 1; }
         @keyframes pulse-glow { from { transform: scale(0.95); opacity: 0.6;} to { transform: scale(1.05); opacity: 1;} }
-        
+
         .input-ripple { transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .input-ripple:focus { box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.2), inset 0 2px 10px rgba(0,0,0,0.2); border-color: var(--color-primary); border-radius: 12px; transform: scale(1.01); }
 
@@ -495,7 +481,7 @@
         }
         .theme-btn:hover { border-color: var(--color-primary); transform: scale(1.2) rotate(20deg); color: var(--color-primary); box-shadow: 0 10px 30px rgba(var(--color-primary-rgb), 0.5);}
         .theme-btn:active { transform: scale(0.95); }
-        
+
         .theme-options {
             background: var(--bg-card-heavy); border: 1px solid var(--border-color);
             padding: 18px; border-radius: 20px; backdrop-filter: blur(30px) saturate(200%);
@@ -503,17 +489,17 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.6); width: 300px; transform-origin: bottom right; max-width: calc(100vw - 40px);
         }
         .theme-options.open { display: block; opacity: 1; transform: perspective(800px) rotateX(0deg) translateY(0) scale(1); }
-        
+
         .color-swatch, .bg-swatch {
             width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; 
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative;
         }
         .color-swatch:hover, .bg-swatch:hover { transform: scale(1.3) translateY(-3px); border-color: var(--text-main); box-shadow: 0 8px 20px rgba(0,0,0,0.5); z-index: 10; }
-        
+
         #admin-modal { transition: opacity 0.5s; }
         #admin-login, #admin-dashboard { transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1); transform: perspective(1000px) rotateX(15deg) scale(0.8) translateY(40px); opacity: 0; }
         #admin-modal:not(.hidden) #admin-login, #admin-modal:not(.hidden) #admin-dashboard:not(.hidden) { transform: perspective(1000px) rotateX(0deg) scale(1) translateY(0); opacity: 1; }
-        
+
         #scrollToTopBtn {
             position: fixed; bottom: 90px; right: 25px; z-index: 9998;
             width: 50px; height: 50px; border-radius: 50%;
@@ -578,7 +564,7 @@
                 <div class="color-swatch bg-[#22C55E]" onclick="setColorTheme('theme-green', this)" title="Green"></div>
                 <div class="color-swatch bg-[#EC4899]" onclick="setColorTheme('theme-pink', this)" title="Pink"></div>
                 <div class="color-swatch bg-[#EF4444]" onclick="setColorTheme('theme-red', this)" title="Red"></div>
-                
+
                 <div class="color-swatch bg-[#39FF14]" onclick="setColorTheme('theme-neon-green', this)" title="Neon Green"></div>
                 <div class="color-swatch bg-[#FF10F0]" onclick="setColorTheme('theme-neon-pink', this)" title="Neon Pink"></div>
                 <div class="color-swatch bg-[#FFD300]" onclick="setColorTheme('theme-cyber-yellow', this)" title="Cyber Yellow"></div>
@@ -641,24 +627,25 @@
 
     <!-- Tidak menggunakan overflow-hidden di sini agar scroll tidak macet -->
     <main class="relative z-10 transition-opacity duration-1000 opacity-0 w-full" id="main-content" role="main">
-        
+
+        <!-- NAVIGASI MENGGUNAKAN /SLUG UNTUK SEO -->
         <nav aria-label="Navigasi Utama Portofolio" class="sticky top-0 z-[100] bg-[var(--bg-card-heavy)]/80 backdrop-blur-3xl saturate-[200%] border-b border-[var(--border-heavy)] shadow-[0_5px_25px_rgba(0,0,0,0.3)] w-full mb-10 transition-all animate__animated animate__fadeInDown max-w-full" itemscope itemtype="https://schema.org/SiteNavigationElement">
             <div class="container mx-auto px-4 w-full max-w-[1200px]">
-                <ul class="flex overflow-x-auto py-4 gap-6 md:gap-10 lg:gap-12 text-[12px] md:text-[14px] font-bold text-[var(--text-muted)] no-scrollbar items-center justify-start lg:justify-center whitespace-nowrap scroll-smooth min-w-full box-border">
-                    <li><a itemprop="url" href="#beranda" title="Halaman Utama Profil" aria-label="Beranda" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Beranda</span></a></li>
-                    <li><a itemprop="url" href="#pendidikan" title="Riwayat Pendidikan Akademis" aria-label="Riwayat Pendidikan" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Riwayat Pendidikan</span></a></li>
-                    <li><a itemprop="url" href="#pengalaman" title="Riwayat Pengalaman Kerja" aria-label="Pengalaman Kerja" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Pengalaman Kerja</span></a></li>
-                    <li><a itemprop="url" href="#organisasi" title="Riwayat Organisasi" aria-label="Riwayat Organisasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Riwayat Organisasi</span></a></li>
-                    <li><a itemprop="url" href="#publikasi" title="Kumpulan Publikasi Ilmiah" aria-label="Publikasi Ilmiah" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Publikasi Ilmiah</span></a></li>
-                    <li><a itemprop="url" href="#keahlian-tech" title="Keahlian & Kemampuan" aria-label="Keahlian" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Keahlian & Tech</span></a></li>
-                    <li><a itemprop="url" href="#proyek" title="Proyek Web" aria-label="Proyek" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Proyek Web</span></a></li>
-                    <li><a itemprop="url" href="#sertifikasi" title="Sertifikasi & Pelatihan" aria-label="Sertifikasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Sertifikasi</span></a></li>
+                <ul class="flex overflow-x-auto py-4 gap-6 md:gap-10 lg:gap-12 text-[12px] md:text-[14px] font-bold text-[var(--text-muted)] no-scrollbar items-center justify-start lg:justify-center whitespace-nowrap scroll-smooth min-w-full box-border" id="dynamic-nav">
+                    <li><a itemprop="url" href="/" title="Halaman Utama Profil" aria-label="Beranda" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Beranda</span></a></li>
+                    <li><a itemprop="url" href="/pendidikan" title="Riwayat Pendidikan Akademis" aria-label="Riwayat Pendidikan" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Riwayat Pendidikan</span></a></li>
+                    <li><a itemprop="url" href="/pengalaman" title="Riwayat Pengalaman Kerja" aria-label="Pengalaman Kerja" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Pengalaman Kerja</span></a></li>
+                    <li><a itemprop="url" href="/organisasi" title="Riwayat Organisasi" aria-label="Riwayat Organisasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Riwayat Organisasi</span></a></li>
+                    <li><a itemprop="url" href="/publikasi" title="Kumpulan Publikasi Ilmiah" aria-label="Publikasi Ilmiah" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Publikasi Ilmiah</span></a></li>
+                    <li><a itemprop="url" href="/keahlian-tech" title="Keahlian & Kemampuan" aria-label="Keahlian" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Keahlian & Tech</span></a></li>
+                    <li><a itemprop="url" href="/proyek" title="Proyek Web" aria-label="Proyek" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Proyek Web</span></a></li>
+                    <li><a itemprop="url" href="/sertifikasi" title="Sertifikasi & Pelatihan" aria-label="Sertifikasi" class="hover:text-[var(--color-primary)] transition-colors hover:scale-105 inline-block link-hover min-h-[44px] flex items-center"><span itemprop="name">Sertifikasi</span></a></li>
                 </ul>
             </div>
         </nav>
 
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 pb-12 md:pb-16 w-full max-w-[1200px]">
-            
+
             <header id="beranda" class="text-center mb-20 md:mb-28 flex flex-col items-center pt-4 scroll-mt-32 max-w-full" role="banner" itemscope itemtype="https://schema.org/Person">
                 <div class="relative w-36 h-36 sm:w-44 sm:h-44 md:w-56 md:h-56 mx-auto mb-8 md:mb-10 avatar-ring transition-transform duration-700 hover:scale-110 group overflow-hidden shadow-[0_0_40px_rgba(var(--color-primary-rgb),0.5)] animate__animated animate__zoomIn">
                     <div class="scanner-container w-full h-full bg-[var(--bg-card-heavy)] overflow-hidden" style="border-radius: inherit;">
@@ -666,12 +653,12 @@
                         <img id="ui-foto" itemprop="image" src="/axalogo.png" alt="Foto Profil drg. M. Aksa Arsyad" width="224" height="224" fetchpriority="high" loading="eager" decoding="sync" onerror="this.src='https://ui-avatars.com/api/?name=M+Aksa+Arsyad&background=00E5FF&color=fff&size=256'" class="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-110 group-hover:rotate-3" style="border-radius: inherit; aspect-ratio: 1/1;">
                     </div>
                 </div>
-                
+
                 <h1 class="cyber-glitch text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-5 px-2 w-full max-w-5xl mx-auto break-words leading-tight transition-all" itemprop="name">
                     <span id="ui-namaDepan" class="text-[var(--text-main)] drop-shadow-lg animate__animated animate__fadeInLeft inline-block">Memuat</span> <br class="md:hidden" />
                     <span class="text-gradient drop-shadow-[0_0_25px_rgba(var(--color-primary-rgb),0.5)] animate__animated animate__fadeInRight animate__delay-1s inline-block" id="ui-namaBelakang">Data...</span>
                 </h1>
-                
+
                 <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 mt-6 md:mt-8 max-w-3xl mx-auto w-full animate__animated animate__fadeInUp animate__delay-1s">
                     <div class="icon-bounce-group inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 rounded-full bg-[rgba(var(--color-primary-rgb),0.15)] border border-[rgba(var(--color-primary-rgb),0.4)] backdrop-blur-xl text-[var(--color-primary)] font-black tracking-widest text-[11px] sm:text-xs md:text-sm shadow-[0_0_30px_rgba(var(--color-primary-rgb),0.3)] text-center break-words cursor-default" itemprop="jobTitle">
                         <i class="ph-fill ph-shield-check text-xl shrink-0 icon-bounce" aria-hidden="true"></i>
@@ -721,12 +708,12 @@
                             <div class="p-2.5 bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl text-[var(--text-muted)] group-hover:text-[#2dd4bf] group-hover:border-[#2dd4bf] group-hover:bg-[#2dd4bf]/10 group-hover:scale-110 transition-all shrink-0"><i class="ph-bold ph-whatsapp-logo text-xl md:text-2xl" aria-hidden="true"></i></div>
                             <div class="min-w-0 overflow-hidden w-full pt-1"><p class="text-[10px] md:text-[11px] uppercase tracking-widest text-[var(--text-muted)] font-bold mb-1.5">WhatsApp Direct</p><div class="font-bold text-[var(--text-main)] text-xs md:text-sm min-w-0 break-words" id="ui-hp-container">...</div></div>
                         </div>
-                        
+
                         <div class="group flex items-start gap-4 overflow-hidden w-full">
                             <div class="p-2.5 bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl text-[var(--text-muted)] group-hover:text-pink-500 group-hover:border-pink-500 group-hover:bg-pink-500/10 group-hover:scale-110 transition-all shrink-0"><i class="ph-bold ph-instagram-logo text-xl md:text-2xl" aria-hidden="true"></i></div>
                             <div class="min-w-0 overflow-hidden w-full pt-1"><p class="text-[10px] md:text-[11px] uppercase tracking-widest text-[var(--text-muted)] font-bold mb-1.5">Sosial Media</p><div class="font-bold text-[var(--text-main)] text-xs md:text-sm min-w-0 break-words" id="ui-sosmed-container">...</div></div>
                         </div>
-                        
+
                         <div class="group flex items-start gap-4 overflow-hidden w-full">
                             <div class="p-2.5 bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl text-[var(--text-muted)] group-hover:text-[#0A66C2] group-hover:border-[#0A66C2] group-hover:bg-[#0A66C2]/10 group-hover:scale-110 transition-all shrink-0">
                                 <svg viewBox="0 0 24 24" class="w-[20px] h-[20px] md:w-[24px] md:h-[24px] fill-current" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -745,7 +732,7 @@
                             <div class="p-2.5 bg-[var(--bg-overlay)] border border-[var(--border-color)] rounded-xl text-[var(--text-muted)] group-hover:text-red-400 group-hover:border-red-400 group-hover:bg-red-400/10 group-hover:scale-110 transition-all shrink-0"><i class="ph-bold ph-map-pin text-xl md:text-2xl" aria-hidden="true"></i></div>
                             <div class="min-w-0 overflow-hidden w-full pt-1"><p class="text-[10px] md:text-[11px] uppercase tracking-widest text-[var(--text-muted)] font-bold mb-1.5">Domisili Ops</p><address class="text-[var(--text-main)] text-xs md:text-sm leading-relaxed break-words font-semibold not-italic min-w-0" id="ui-alamat">...</address></div>
                         </div>
-                        
+
                         <div class="pt-5 mt-3 border-t border-[var(--border-heavy)] grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3 w-full">
                             <a id="ui-scholar" href="#" target="_blank" rel="noopener noreferrer" aria-label="Profil Google Scholar" class="social-lift flex flex-col items-center justify-center gap-1.5 p-2.5 md:p-3 bg-[var(--bg-overlay)] rounded-xl border border-[var(--border-color)] outline-none focus-visible:ring-2 focus-visible:ring-blue-400 text-center w-full min-w-0">
                                 <i class="ph-fill ph-graduation-cap text-blue-400 text-[22px] md:text-[26px] mb-1 drop-shadow-md" aria-hidden="true"></i>
@@ -812,7 +799,7 @@
                     </div>
                     <div class="h-[2px] flex-grow bg-gradient-to-r from-transparent via-[rgba(var(--color-primary-rgb),0.6)] to-transparent hidden md:block mx-10 mb-3 shadow-[0_0_10px_var(--color-primary)]" aria-hidden="true"></div>
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full max-w-full" id="ui-pengalaman-container">
                     <!-- Konten diisi JS -->
                 </div>
@@ -845,7 +832,7 @@
                 <h2 class="text-3xl md:text-4xl font-black text-center mb-12 text-[var(--text-main)] drop-shadow-[0_0_10px_rgba(var(--color-primary-rgb),0.3)] tracking-tight w-full break-words">
                     <i class="ph-fill ph-code text-[var(--color-primary)] mr-3"></i> Keahlian & <span class="text-stroke-gradient">Kemampuan</span>
                 </h2>
-                
+
                 <div class="flex flex-wrap justify-center gap-5 md:gap-8 mb-20 max-w-5xl mx-auto bg-[var(--bg-card)] p-6 md:p-8 rounded-3xl border border-[var(--border-heavy)] backdrop-blur-2xl shadow-[0_15px_40px_rgba(0,0,0,0.5)]">
                     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn object-contain" title="JavaScript">
                     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" width="64" height="64" loading="lazy" decoding="async" class="w-10 h-10 md:w-16 md:h-16 hover:scale-125 transition-transform duration-300 drop-shadow-lg animate__animated animate__zoomIn animate__delay-1s object-contain" title="HTML5">
@@ -899,7 +886,7 @@
                     <div class="w-full overflow-x-auto no-scrollbar max-w-full flex justify-center mb-8 md:mb-10">
                         <img src="https://github-readme-activity-graph.vercel.app/graph?username=raphunteks&theme=dracula&hide_border=true&area=true" alt="Activity Graph" width="1000" height="300" loading="lazy" decoding="async" style="aspect-ratio: 1000/300;" class="w-auto min-w-[500px] max-w-full object-contain drop-shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.2)] hover:scale-[1.02] transition-transform duration-700">
                     </div>
-                    
+
                     <div class="w-full overflow-x-auto flex justify-start md:justify-center no-scrollbar max-w-full relative">
                         <img src="https://raw.githubusercontent.com/raphunteks/raphunteks/snake-output/snake.svg?v=1" alt="Snake Animation" width="800" height="250" loading="lazy" decoding="async" style="aspect-ratio: 800/250;" class="min-w-[600px] w-auto max-w-none object-contain drop-shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.4)]">
                     </div>
@@ -921,7 +908,7 @@
                 <h2 class="text-3xl md:text-4xl font-black text-center mb-16 text-[var(--text-main)] drop-shadow-md tracking-tight w-full break-words">
                     <i class="ph-fill ph-certificate text-[var(--color-primary)] mr-3"></i> Sertifikasi & <span class="text-stroke-gradient">Pelatihan</span>
                 </h2>
-                
+
                 <h3 class="text-xl md:text-2xl font-black mb-8 text-[var(--text-main)] border-b border-[var(--border-heavy)] pb-4 drop-shadow-sm flex items-center gap-3 w-full break-words">
                     <i class="ph-fill ph-code-block text-[var(--color-secondary)] animate__animated animate__pulse animate__infinite"></i> Sertifikasi Programming & Hobi
                 </h3>
@@ -942,11 +929,11 @@
                 <div class="premium-card p-6 sm:p-10 md:p-16 text-center relative overflow-hidden group w-full border-[rgba(var(--color-primary-rgb),0.4)]">
                     <div class="absolute -top-32 -right-32 w-72 h-72 bg-[var(--color-primary)] rounded-full blur-[120px] opacity-15 group-hover:opacity-40 transition-opacity duration-700 pointer-events-none" aria-hidden="true"></div>
                     <div class="absolute -bottom-32 -left-32 w-72 h-72 bg-[var(--color-secondary)] rounded-full blur-[120px] opacity-15 group-hover:opacity-40 transition-opacity duration-700 pointer-events-none" aria-hidden="true"></div>
-                    
+
                     <i class="ph-fill ph-paper-plane-tilt text-4xl md:text-5xl text-[var(--color-primary)] mb-5 inline-block drop-shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.8)] transition-transform group-hover:-translate-y-4 group-hover:rotate-12 group-hover:scale-110 duration-500 animate__animated animate__tada animate__infinite animate__slower" aria-hidden="true"></i>
                     <h2 id="heading-pesan" class="text-3xl md:text-4xl font-black mb-4 text-[var(--text-main)] truncate px-2 drop-shadow-md tracking-tight w-full break-words">Kirim Pesan Koneksi</h2>
                     <p class="text-[var(--text-muted)] mb-10 md:mb-12 text-sm md:text-base max-w-xl mx-auto px-2 leading-relaxed font-medium">Untuk keperluan diskusi klinis, kolaborasi riset, atau konsultasi, silakan hubungkan terminal pesan Anda di bawah ini.</p>
-                    
+
                     <form id="formKontak" onsubmit="event.preventDefault(); prosesPesan();" class="space-y-6 md:space-y-8 text-left relative z-10 w-full" aria-label="Formulir Kontak">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-8 w-full">
                             <div class="w-full">
@@ -971,7 +958,7 @@
 
             <footer class="mt-20 md:mt-24 pb-10 border-t-2 border-[var(--border-heavy)] pt-12 w-full relative max-w-full" role="contentinfo">
                 <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--color-primary)] to-transparent opacity-50 shadow-[0_0_15px_var(--color-primary)] w-full"></div>
-                
+
                 <div class="flex flex-wrap justify-center gap-3 md:gap-6 mb-10 animate-on-scroll px-2 w-full" aria-label="Statistik Pengunjung">
                     <div class="stat-breathe bg-[var(--bg-card)] border border-[var(--border-heavy)] px-4 md:px-6 py-3 md:py-4 rounded-2xl text-center flex-1 sm:flex-none min-w-[100px] md:min-w-[140px] backdrop-blur-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] max-w-full">
                         <p class="text-[8px] md:text-[10px] text-[var(--text-muted)] uppercase tracking-widest mb-1.5 font-bold truncate">Views Today</p>
@@ -996,14 +983,14 @@
                 </div>
 
                 <div class="text-center mt-6 w-full">
-                    <a href="https://maksaarsyad.xyz/sitemap.xml" target="_blank" aria-label="Peta Situs XML" class="text-[9px] md:text-[10px] text-[var(--text-muted)] hover:text-[var(--color-primary)] font-mono transition-colors tracking-widest uppercase">/Sitemap.xml</a>
+                    <a href="<%= baseUrl %>/sitemap.xml" target="_blank" aria-label="Peta Situs XML" class="text-[9px] md:text-[10px] text-[var(--text-muted)] hover:text-[var(--color-primary)] font-mono transition-colors tracking-widest uppercase">/Sitemap.xml</a>
                 </div>
             </footer>
         </div>
     </main>
 
     <div id="admin-modal" class="fixed inset-0 bg-[var(--bg-main)]/95 backdrop-blur-2xl z-[9999] hidden flex items-center justify-center p-4 transition-all max-w-[100vw] overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="admin-title">
-        
+
         <div id="admin-login" class="premium-card p-6 md:p-10 max-w-md w-full text-center mx-auto border-[var(--color-primary)] shadow-[0_0_50px_rgba(var(--color-primary-rgb),0.3)]">
             <div class="w-16 h-16 md:w-20 md:h-20 mx-auto bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.3)] to-transparent rounded-2xl flex items-center justify-center mb-6 text-[var(--color-primary)] border border-[rgba(var(--color-primary-rgb),0.5)] shadow-[inset_0_0_20px_rgba(var(--color-primary-rgb),0.4)] transform rotate-3"><i class="ph-bold ph-fingerprint text-4xl md:text-5xl animate-pulse" aria-hidden="true"></i></div>
             <h2 id="admin-title" class="text-2xl md:text-3xl font-black text-[var(--text-main)] mb-2 tracking-tight w-full truncate">Admin Override</h2>
@@ -1014,13 +1001,13 @@
             <button onclick="tutupAdmin()" class="w-full mt-4 md:mt-5 text-[var(--text-muted)] hover:text-white text-xs md:text-sm transition-colors font-bold py-2 outline-none uppercase tracking-widest active:scale-95">Abort</button>
             <p id="loginErr" class="text-red-500 text-xs md:text-sm mt-4 md:mt-5 hidden font-mono bg-red-500/10 border border-red-500/30 py-3 rounded-lg break-words w-full" aria-live="assertive">ACCESS DENIED.</p>
         </div>
-        
+
         <div id="admin-dashboard" class="premium-card p-4 sm:p-8 max-w-6xl w-full h-[95vh] md:h-[90vh] flex flex-col hidden mx-auto relative overflow-hidden border-[var(--color-primary)] shadow-[0_0_50px_rgba(var(--color-primary-rgb),0.2)]">
             <div class="flex justify-between items-center mb-4 md:mb-6 border-b-2 border-[var(--border-heavy)] pb-4 md:pb-5 gap-2 w-full min-w-0">
                 <h2 class="text-lg md:text-2xl font-black text-[var(--text-main)] flex items-center gap-2 md:gap-3 truncate tracking-tight min-w-0"><i class="ph-fill ph-database text-[var(--color-primary)] shrink-0 animate-pulse" aria-hidden="true"></i> <span class="truncate">Master Core Editor</span></h2>
                 <button onclick="tutupAdmin()" aria-label="Tutup Editor" class="text-[var(--text-muted)] hover:text-red-500 transition-colors bg-[var(--bg-main)] hover:bg-red-500/20 p-2 rounded-xl shrink-0 border border-[var(--border-color)] hover:border-red-500/50 outline-none active:scale-95"><i class="ph-bold ph-power text-xl" aria-hidden="true"></i></button>
             </div>
-            
+
             <div class="flex gap-2 md:gap-3 mb-4 md:mb-5 overflow-x-auto custom-scrollbar pb-3 shrink-0 w-full">
                 <button onclick="switchAdminTab('cv')" id="tab-cv" class="admin-tab active bg-[var(--color-primary)] text-[var(--bg-main)] px-4 md:px-5 py-2 md:py-2.5 rounded-xl font-black text-[11px] md:text-sm transition-all shrink-0 shadow-[0_5px_15px_rgba(var(--color-primary-rgb),0.4)] tracking-wide active:scale-95">Data Core (CV)</button>
                 <button onclick="switchAdminTab('proyek')" id="tab-proyek" class="admin-tab bg-[var(--bg-overlay)] text-[var(--text-main)] hover:bg-[rgba(var(--color-primary-rgb),0.2)] px-4 md:px-5 py-2 md:py-2.5 rounded-xl font-bold text-[11px] md:text-sm transition-all shrink-0 border border-[var(--border-heavy)] hover:border-[var(--color-primary)] tracking-wide active:scale-95">Proyek Web</button>
@@ -1036,7 +1023,7 @@
             <div id="admin-gui-view" class="hidden flex-col flex-grow min-h-0 relative w-full">
                 <div id="admin-item-list" class="flex-grow overflow-y-auto space-y-4 pr-3 custom-scrollbar pb-20 w-full">
                 </div>
-                
+
                 <div class="absolute bottom-0 left-0 right-0 pt-4 pb-2 bg-gradient-to-t from-[var(--bg-card-heavy)] via-[var(--bg-card-heavy)] to-transparent w-full">
                     <button onclick="bukaFormItem(-1)" class="w-full py-3 md:py-3.5 bg-[rgba(var(--color-primary-rgb),0.1)] border-2 border-dashed border-[var(--color-primary)] text-[var(--color-primary)] font-black text-xs md:text-sm uppercase tracking-widest rounded-xl hover:bg-[var(--color-primary)] hover:text-[var(--bg-main)] transition-all shadow-lg hover:shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.5)] active:scale-95">
                         + Tambah Data Baru
@@ -1045,13 +1032,13 @@
 
                 <div id="admin-item-form" class="hidden absolute inset-0 bg-[var(--bg-card-heavy)] backdrop-blur-3xl p-4 sm:p-8 flex flex-col z-20 rounded-2xl border-2 border-[var(--color-primary)] overflow-y-auto shadow-[0_0_40px_rgba(var(--color-primary-rgb),0.3)] w-full">
                     <h3 id="form-item-title" class="font-black text-lg md:text-2xl mb-4 md:mb-5 text-[var(--text-main)] border-b-2 border-[var(--border-heavy)] pb-3 w-full truncate">Tambah Data</h3>
-                    
+
                     <div class="space-y-4 flex-grow w-full">
                         <div class="w-full">
                             <label class="block text-[10px] md:text-[11px] text-[var(--text-muted)] font-bold mb-1.5 uppercase tracking-wide">Judul *</label>
                             <input type="text" id="adm-judul" placeholder="Masukkan Judul..." class="w-full bg-[var(--bg-main)] border border-[var(--border-heavy)] rounded-xl px-3 md:px-4 py-2.5 md:py-3 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none font-medium">
                         </div>
-                        
+
                         <div class="w-full">
                             <label class="block text-[10px] md:text-[11px] text-[var(--text-muted)] font-bold mb-1.5 uppercase tracking-wide">Gambar (Upload File / Paste URL) *</label>
                             <div class="flex flex-col md:flex-row gap-3 md:items-center w-full">
@@ -1063,7 +1050,7 @@
                             </div>
                             <p id="upload-status" class="text-[9px] md:text-[10px] text-[var(--color-primary)] mt-2 hidden font-bold break-words w-full"></p>
                         </div>
-                        
+
                         <div id="field-deskripsi" class="w-full">
                             <label class="block text-[10px] md:text-[11px] text-[var(--text-muted)] font-bold mb-1.5 uppercase tracking-wide">Deskripsi Singkat (Proyek)</label>
                             <textarea id="adm-deskripsi" rows="4" placeholder="Deskripsi..." class="w-full bg-[var(--bg-main)] border border-[var(--border-heavy)] rounded-xl px-3 md:px-4 py-2.5 md:py-3 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none resize-none font-medium"></textarea>
@@ -1072,7 +1059,7 @@
                             <label class="block text-[10px] md:text-[11px] text-[var(--text-muted)] font-bold mb-1.5 uppercase tracking-wide">Link URL Proyek (Opsional)</label>
                             <input type="text" id="adm-link" placeholder="https://..." class="w-full bg-[var(--bg-main)] border border-[var(--border-heavy)] rounded-xl px-3 md:px-4 py-2.5 md:py-3 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none font-medium">
                         </div>
-                        
+
                         <div id="field-subjudul" class="hidden w-full">
                             <label class="block text-[10px] md:text-[11px] text-[var(--text-muted)] font-bold mb-1.5 uppercase tracking-wide">Penyelenggara Sertifikat</label>
                             <input type="text" id="adm-subjudul" placeholder="e.g. Kementerian Kominfo" class="w-full bg-[var(--bg-main)] border border-[var(--border-heavy)] rounded-xl px-3 md:px-4 py-2.5 md:py-3 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none font-medium">
@@ -1082,7 +1069,7 @@
                             <input type="text" id="adm-tanggal" placeholder="e.g. 20 Agustus 2026" class="w-full bg-[var(--bg-main)] border border-[var(--border-heavy)] rounded-xl px-3 md:px-4 py-2.5 md:py-3 text-sm text-[var(--text-main)] focus:border-[var(--color-primary)] outline-none font-medium">
                         </div>
                     </div>
-                    
+
                     <div class="flex flex-col md:flex-row gap-3 md:gap-4 mt-6 md:mt-8 pt-4 md:pt-5 border-t border-[var(--border-heavy)] shrink-0 w-full">
                         <button onclick="simpanFormItem()" class="flex-1 bg-[var(--color-primary)] hover:brightness-125 text-[var(--bg-main)] font-black py-3 md:py-3.5 rounded-xl transition-all text-xs md:text-sm uppercase tracking-wider shadow-[0_5px_20px_rgba(var(--color-primary-rgb),0.4)] hover:-translate-y-1 active:scale-95 w-full">
                             <i class="ph-bold ph-floppy-disk mr-1"></i> Simpan & Update
@@ -1091,7 +1078,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div id="master-save-container" class="mt-4 md:mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 md:gap-4 shrink-0 border-t border-[var(--border-color)] pt-4 md:pt-5 w-full">
                 <span id="adminNotif" class="text-[10px] md:text-sm font-mono font-bold hidden px-4 md:px-5 py-2 md:py-2.5 rounded-xl text-center w-full sm:w-auto break-words shadow-inner min-w-0 flex-grow" aria-live="polite"></span>
                 <button onclick="simpanDatabaseMain()" id="btnSimpanCV" class="w-full sm:w-auto bg-[var(--color-primary)] hover:brightness-125 text-[var(--bg-main)] font-black px-6 md:px-8 py-3 md:py-3.5 rounded-xl shadow-[0_0_25px_rgba(var(--color-primary-rgb),0.5)] transition-all flex items-center justify-center gap-2 md:gap-3 text-[11px] md:text-base uppercase tracking-widest outline-none hover:-translate-y-1 active:scale-95 shrink-0">
@@ -1105,7 +1092,7 @@
         function toggleMode() {
             const isLight = document.documentElement.getAttribute('data-theme') === 'light';
             const modeIconEl = document.getElementById('mode-icon');
-            
+
             if(isLight) {
                 document.documentElement.removeAttribute('data-theme');
                 localStorage.setItem('axa-bg-theme', 'dark');
@@ -1132,11 +1119,11 @@
             const currentBg = localStorage.getItem('axa-bg-theme') || 'dark';
             document.documentElement.className = `scroll-smooth ${themeClass}`;
             localStorage.setItem('axa-theme-color', themeClass);
-            
+
             document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('active', 'ring-2', 'ring-[var(--text-main)]', 'scale-110'));
             if(el) el.classList.add('active', 'ring-2', 'ring-[var(--text-main)]', 'scale-110');
         }
-        
+
         function updateActiveBgSwatch(bgClass) {
             document.querySelectorAll('.bg-swatch').forEach(sw => sw.classList.remove('ring-2', 'ring-[var(--color-primary)]', 'scale-110'));
             const map = {'dark':0, 'light':1, 'obsidian':2, 'cosmic':3, 'abyssal':4, 'matrix':5, 'sepia':6};
@@ -1150,7 +1137,7 @@
             if(localStorage.getItem('axa-bg-theme') === 'light') initialModeIcon.className = 'ph-fill ph-moon';
             else initialModeIcon.className = 'ph-fill ph-sun';
         }
-        
+
         const savedColor = localStorage.getItem('axa-theme-color') || 'theme-cyan';
         document.querySelectorAll('.color-swatch').forEach(sw => {
             if(sw.getAttribute('onclick').includes(savedColor)) sw.classList.add('active', 'ring-2', 'ring-[var(--text-main)]', 'scale-110');
@@ -1171,10 +1158,31 @@
             }
         });
 
+        // ==========================================
+        // SEO NAVIGATION INTERCEPTOR (GSC READY)
+        // ==========================================
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href && href.startsWith('/')) {
+                    e.preventDefault(); // Mencegah reload halaman secara utuh
+                    const targetId = href === '/' ? 'beranda' : href.substring(1);
+                    const targetEl = document.getElementById(targetId);
+                    
+                    if (targetEl) {
+                        if (window.location.pathname !== href) {
+                            history.pushState(null, null, href); // Update URL di browser tanpa reload
+                        }
+                        targetEl.scrollIntoView({ behavior: 'smooth' }); // Scroll mulus layaknya SPA murni
+                    }
+                }
+            });
+        });
+
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxv7LpGFB37qXUvpPYapXUIaaMv0nV06AnGbwQ_CRBSj4zIoxo7N3NwAn9WSsphDrtR/exec";
         let globalCVData = {}; 
         let globalSheetData = {}; 
-        
+
         document.addEventListener("DOMContentLoaded", () => {
             const urlWithCacheBuster = GAS_URL + "?endpoint=cv&t=" + new Date().getTime();
 
@@ -1189,11 +1197,10 @@
                     if(res.status === 'success') {
                         globalCVData = res.data;
                         globalSheetData = res.sheets || { proyek: [], sertifHobi: [], sertifPDGI: [] }; 
-                        
-                        // FIX PERFORMA: Unblock main-thread untuk PageSpeed Insight LCP / TBT
+
                         setTimeout(() => {
                             renderSeluruhUI(globalCVData, globalSheetData);
-                            
+
                             requestAnimationFrame(() => {
                                 const loader = document.getElementById('loader-screen');
                                 loader.style.opacity = '0';
@@ -1202,12 +1209,23 @@
                                 }, 800);
                                 document.getElementById('main-content').classList.remove('opacity-0');
                                 initObserver();
+
+                                // AUTO-SCROLL UNTUK AKSES LANGSUNG KE URL /SLUG TERTENTU
+                                const initialPath = window.location.pathname;
+                                if (initialPath !== '/' && initialPath.length > 1) {
+                                    const targetId = initialPath.substring(1);
+                                    const targetEl = document.getElementById(targetId);
+                                    if (targetEl) {
+                                        setTimeout(() => {
+                                            targetEl.scrollIntoView({ behavior: 'smooth' });
+                                        }, 300); 
+                                    }
+                                }
                             });
-                            
-                            // Delay tracker agar tidak memblokir render utama LCP
+
                             setTimeout(catatViewPengunjungDenganIP, 2500);
                         }, 0);
-                        
+
                     } else { throw new Error(res.message || "Unknown Backend Error"); }
                 } catch (e) {
                     console.error("Axa Xyz Error:", e.message);
@@ -1262,7 +1280,7 @@
             document.getElementById('ui-namaBelakang').textContent = data.profil.namaBelakang;
             document.getElementById('ui-gelar').textContent = data.profil.gelar;
             document.getElementById('ui-subGelar').textContent = data.profil.subGelar;
-            
+
             document.getElementById('ui-foto').src = data.profil.foto === "axalogo.jpg" ? "/axalogo.png" : "/" + data.profil.foto;
 
             document.getElementById('ui-lahir').textContent = data.dataPribadi.lahir;
@@ -1270,7 +1288,7 @@
             document.getElementById('ui-agama').textContent = data.dataPribadi.agama;
             document.getElementById('ui-warga').textContent = data.dataPribadi.kewarganegaraan;
             document.getElementById('ui-status').textContent = data.dataPribadi.status;
-            
+
             const rawEmail = data.kontak.email;
             const rawHp = data.kontak.hp;
             const rawSosmed = data.kontak.sosmed; 
@@ -1283,11 +1301,11 @@
             document.getElementById('ui-alamat').textContent = data.kontak.alamat;
             document.getElementById('ui-scholar').href = data.kontak.scholar;
             document.getElementById('ui-orcid').href = data.kontak.orcid;
-            
+
             if (document.getElementById('ui-sciprofiles') && data.kontak.sciprofiles) {
                 document.getElementById('ui-sciprofiles').href = data.kontak.sciprofiles;
             }
-            
+
             if (document.getElementById('ui-semanticscholar')) {
                 document.getElementById('ui-semanticscholar').href = data.kontak.semanticscholar || "https://www.semanticscholar.org/author/M.-Aksa-Arsyad/2328471622";
             }
@@ -1305,7 +1323,6 @@
                 return url; 
             };
 
-            // FIX PERFORMA LCP: Atribut ukuran gambar dan lazy-load ditambahkan pada innerHTML dinamis
             if(sheetData.proyek && document.getElementById('ui-proyek-container')) {
                 const proyekHTML = sheetData.proyek.map((p, i) => `
                     <article class="premium-card overflow-hidden group hover:-translate-y-2 transition-all duration-300 animate-on-scroll flex flex-col bg-[var(--bg-card-heavy)] w-full max-w-full" style="transition-delay: ${i*100}ms">
@@ -1372,10 +1389,10 @@
                 const isLeft = i % 2 === 0;
                 const posClass = isLeft ? "md:w-1/2 md:pr-14 md:ml-0 md:text-right pl-12 md:pl-0 w-full" : "md:w-1/2 md:pl-14 md:ml-[50%] pl-12 w-full";
                 const dotPos = isLeft ? "left-[18px] md:left-auto md:right-[-10px]" : "left-[18px] md:left-[-10px]";
-                
+
                 let dotClass = i === 0 ? "bg-[var(--color-primary)] shadow-[0_0_25px_var(--color-primary)] border-4 border-[var(--bg-main)] animate-pulse scale-125" : "bg-[var(--bg-card-heavy)] border-4 border-[var(--color-secondary)] hover:scale-125 transition-transform hover:bg-[var(--color-secondary)]";
                 let boxOp = i === 0 ? "border-[rgba(var(--color-primary-rgb),0.6)] bg-gradient-to-br from-[rgba(var(--color-primary-rgb),0.1)] to-[var(--bg-card)] shadow-[0_0_30px_rgba(var(--color-primary-rgb),0.2)] scale-[1.02]" : "";
-                
+
                 return `<article itemscope itemtype="https://schema.org/EducationalOrganization" class="relative mb-10 md:mb-16 animate-on-scroll flex ${posClass} max-w-full"><div class="absolute w-5 h-5 ${dotClass} rounded-full ${dotPos} top-7 md:top-8 z-10 shrink-0" aria-hidden="true"></div><div class="premium-card p-5 md:p-8 ${boxOp} w-full max-w-full min-w-0 badge-lift"><span class="${i===0 ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)]'} font-mono text-[9px] md:text-xs uppercase tracking-widest font-black block mb-2 break-words shadow-inner inline-block px-2.5 md:px-3 py-1 rounded-lg border border-[var(--border-color)] bg-[var(--bg-overlay)] w-max max-w-full truncate">${p.tahun}</span><h3 itemprop="name" class="text-base md:text-xl font-black ${i===0 ? 'text-[var(--text-main)] drop-shadow-[0_0_5px_rgba(var(--color-primary-rgb),0.5)]' : 'text-[var(--text-main)]'} leading-snug break-words group-hover:text-[var(--color-primary)] transition-colors tracking-wide">${p.jurusan}</h3><p itemprop="description" class="text-[var(--text-muted)] text-xs md:text-base mt-2 md:mt-2.5 font-medium break-words leading-relaxed">${p.institusi}</p></div></article>`;
             }).join('');
             document.getElementById('ui-pendidikan-container').innerHTML = pendHTML;
@@ -1394,6 +1411,9 @@
             document.getElementById('ui-publikasi-container').innerHTML = pubHTML;
         }
 
+        // ==========================================
+        // UPDATE PATH PADA SAAT SCROLL (TERBACA CRAWLER & SHAREABLE)
+        // ==========================================
         function initObserver() {
             const observer = new IntersectionObserver((entries, obs) => {
                 entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); obs.unobserve(entry.target); } });
@@ -1403,14 +1423,14 @@
             const sectionObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting && entry.target.id) {
-                        const hash = '#' + entry.target.id;
-                        if (history.replaceState && window.location.hash !== hash) {
-                            history.replaceState(null, null, hash);
+                        const newPath = entry.target.id === 'beranda' ? '/' : '/' + entry.target.id;
+                        if (history.replaceState && window.location.pathname !== newPath) {
+                            history.replaceState(null, null, newPath);
                         }
                     }
                 });
             }, { root: null, rootMargin: '-40% 0px -40% 0px', threshold: 0.1 });
-            
+
             ['beranda', 'pendidikan', 'pengalaman', 'organisasi', 'publikasi', 'keahlian-tech', 'proyek', 'sertifikasi'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) sectionObserver.observe(el);
@@ -1463,15 +1483,15 @@
         function tutupAdmin() { 
             document.getElementById('admin-modal').classList.add('hidden'); 
         }
-        
+
         function cekLogin() {
             const u = document.getElementById('adminUser').value.trim();
             const p = document.getElementById('adminPass').value.trim();
-            
+
             if(u === 'axaaxyz_01' && p === 'axaxyz999') {
                 document.getElementById('admin-login').classList.add('hidden'); 
                 document.getElementById('admin-dashboard').classList.remove('hidden');
-                
+
                 switchAdminTab('cv');
                 document.getElementById('loginErr').classList.add('hidden');
             } else { 
@@ -1481,7 +1501,7 @@
 
         function switchAdminTab(tab) {
             currentAdminTab = tab;
-            
+
             document.querySelectorAll('.admin-tab').forEach(el => {
                 el.classList.remove('bg-[var(--color-primary)]', 'text-[var(--bg-main)]', 'shadow-[0_5px_15px_rgba(var(--color-primary-rgb),0.4)]');
                 el.classList.add('bg-[var(--bg-overlay)]', 'text-[var(--text-main)]', 'border', 'border-[var(--border-heavy)]');
@@ -1489,17 +1509,17 @@
             const activeEl = document.getElementById('tab-' + tab);
             activeEl.classList.remove('bg-[var(--bg-overlay)]', 'text-[var(--text-main)]', 'border', 'border-[var(--border-heavy)]');
             activeEl.classList.add('bg-[var(--color-primary)]', 'text-[var(--bg-main)]', 'shadow-[0_5px_15px_rgba(var(--color-primary-rgb),0.4)]');
-            
+
             if(tab === 'cv') {
                 document.getElementById('admin-json-view').classList.remove('hidden');
                 document.getElementById('admin-json-view').classList.add('flex');
                 document.getElementById('admin-gui-view').classList.add('hidden');
                 document.getElementById('admin-gui-view').classList.remove('flex');
-                
+
                 if(!globalCVData.kontak) globalCVData.kontak = {};
                 if(!globalCVData.kontak.github) globalCVData.kontak.github = "raphunteks";
                 document.getElementById('jsonEditor').value = JSON.stringify(globalCVData, null, 4);
-                
+
                 document.getElementById('master-save-container').classList.remove('hidden');
                 document.getElementById('master-save-container').classList.add('flex');
             } else {
@@ -1507,10 +1527,10 @@
                 document.getElementById('admin-json-view').classList.remove('flex');
                 document.getElementById('admin-gui-view').classList.remove('hidden');
                 document.getElementById('admin-gui-view').classList.add('flex');
-                
+
                 document.getElementById('master-save-container').classList.add('hidden');
                 document.getElementById('master-save-container').classList.remove('flex');
-                
+
                 renderAdminGUIList();
                 tutupFormItem(); 
             }
@@ -1566,11 +1586,11 @@
                 if(currentAdminTab === 'proyek') dataArray = globalSheetData.proyek;
                 if(currentAdminTab === 'hobi') dataArray = globalSheetData.sertifHobi;
                 if(currentAdminTab === 'pdgi') dataArray = globalSheetData.sertifPDGI;
-                
+
                 const item = dataArray[index];
                 document.getElementById('adm-judul').value = item.Judul || '';
                 document.getElementById('adm-gambar').value = item.Gambar || '';
-                
+
                 if(isProyek) {
                     document.getElementById('adm-deskripsi').value = item.Deskripsi || '';
                     document.getElementById('adm-link').value = item.Link || '';
@@ -1585,21 +1605,21 @@
             if(!input.files || input.files.length === 0) return;
             const file = input.files[0];
             const reader = new FileReader();
-            
+
             const statusEl = document.getElementById('upload-status');
             const urlInput = document.getElementById('adm-gambar');
-            
+
             statusEl.classList.remove('hidden');
             statusEl.classList.replace('text-green-400', 'text-[var(--color-primary)]');
             statusEl.classList.replace('text-red-400', 'text-[var(--color-primary)]');
             statusEl.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin inline-block"></i> Uploading to Secure Cloud...';
             urlInput.disabled = true;
-            
+
             reader.onload = function(e) {
                 const dataUrl = e.target.result;
                 const base64 = dataUrl.split(',')[1];
                 const mimeType = dataUrl.split(';')[0].split(':')[1];
-                
+
                 const payload = {
                     action: 'uploadImage',
                     user: 'axaaxyz_01',
@@ -1608,7 +1628,7 @@
                     mimeType: mimeType,
                     base64: base64
                 };
-                
+
                 fetch(GAS_URL, {
                     method: 'POST',
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -1689,7 +1709,7 @@
 
             tutupFormItem();
             renderAdminGUIList();
-            
+
             simpanDatabaseMain();
         }
 
@@ -1723,10 +1743,10 @@
                 simpanDatabaseMain();
             });
         }
-        
+
         function simpanDatabaseMain() {
             let payload = { user: 'axaaxyz_01', pass: 'axaxyz999' };
-            
+
             if (currentAdminTab === 'cv') {
                 const btn = document.getElementById('btnSimpanCV'); 
                 const notif = document.getElementById('adminNotif');
@@ -1737,7 +1757,7 @@
                     return; 
                 }
                 payload.action = 'updateCV';
-                
+
                 btn.disabled = true; btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin mr-2" aria-hidden="true"></i> SYNCING...'; notif.classList.add('hidden');
 
                 fetch(GAS_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
@@ -1763,7 +1783,7 @@
                     btn.disabled = false; 
                     btn.innerHTML = '<i class="ph-bold ph-cloud-arrow-up text-lg md:text-xl" aria-hidden="true"></i> PUSH OVERRIDE'; 
                 });
-                
+
             } else {
                 let toast = document.createElement('div');
                 toast.className = "fixed bottom-6 right-6 left-6 md:left-auto bg-yellow-500 text-black px-5 py-3 rounded-xl font-bold shadow-[0_5px_20px_rgba(234,179,8,0.5)] z-[100000] flex items-center justify-center md:justify-start gap-3 animate__animated animate__fadeInUp break-words";
@@ -1774,7 +1794,7 @@
                 if(currentAdminTab === 'proyek') { payload.sheetName = 'Proyek_Web'; payload.data = globalSheetData.proyek; }
                 if(currentAdminTab === 'hobi') { payload.sheetName = 'Sertifikasi_Hobi'; payload.data = globalSheetData.sertifHobi; }
                 if(currentAdminTab === 'pdgi') { payload.sheetName = 'Sertifikasi_PDGI'; payload.data = globalSheetData.sertifPDGI; }
-                
+
                 fetch(GAS_URL, { method: 'POST', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
                 .then(res => res.json())
                 .then(res => {
@@ -1802,7 +1822,6 @@
             }
         }
     </script>
-    
     <script src="protect-devtools.js" defer></script>
 </body>
 </html>
