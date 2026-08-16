@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= meta.title %></title>
+    
+    <!-- DYNAMIC SEO GOLD STANDARD -->
+    <meta name="description" content="<%= meta.desc %>">
+    <meta name="keywords" content="<%= meta.keywords %>">
+    <link rel="canonical" href="<%= meta.canonical %>">
+    
+    <!-- OPEN GRAPH -->
+    <meta property="og:type" content="<%= meta.type %>">
+    <meta property="og:url" content="<%= meta.canonical %>">
+    <meta property="og:title" content="<%= meta.title %>">
+    <meta property="og:description" content="<%= meta.desc %>">
+    <meta property="og:image" content="<%= baseUrl %><%= meta.ogImage %>">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "<%= arsip.title %>",
+      "author": { "@type": "Person", "name": "drg. M. Aksa Arsyad, S.KG" },
+      "datePublished": "<%= arsip.date %>",
+      "description": "<%= arsip.desc %>"
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #030712; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-header { background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        
+        /* SCRIBD BLUR EFFECT CORE */
+        .doc-wrapper { position: relative; width: 100%; height: 75vh; max-height: 800px; overflow: hidden; border-radius: 1.5rem; background: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5);}
+        .doc-iframe { width: 100%; height: 100%; border: none; }
+        
+        .blur-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 60%;
+            background: linear-gradient(to bottom, transparent 0%, rgba(3,7,18,0.9) 60%, rgba(3,7,18,1) 100%);
+            backdrop-filter: blur(4px);
+            display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 3rem;
+            z-index: 10;
+        }
+
+        .brutal-btn {
+            background: #00E5FF; color: #000; font-family: 'Space Grotesk', sans-serif; font-weight: 900;
+            border: 2px solid #fff; box-shadow: 4px 4px 0px #fff; transition: all 0.2s;
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+        .brutal-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #fff; }
+        .brutal-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #fff; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="glass-header sticky top-0 z-50 w-full">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center max-w-5xl">
+            <a href="/arsip" class="text-sm font-bold text-gray-300 hover:text-cyan-400 flex items-center gap-2 transition-colors">
+                <i class="ph-bold ph-arrow-left"></i> Direktori Utama
+            </a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8 max-w-4xl min-h-screen">
+        
+        <!-- METADATA DOKUMEN -->
+        <header class="mb-10 text-center">
+            <span class="inline-block text-[10px] font-mono font-bold uppercase tracking-widest text-purple-400 bg-purple-400/10 px-3 py-1.5 rounded-full border border-purple-400/30 mb-4"><i class="ph-fill ph-folder"></i> <%= arsip.category %></span>
+            <h1 class="text-3xl md:text-5xl font-black font-['Space_Grotesk'] mb-4 leading-tight"><%= arsip.title %></h1>
+            <p class="text-gray-400 text-sm max-w-2xl mx-auto leading-relaxed"><%= arsip.desc %></p>
+            <div class="mt-6 flex justify-center items-center gap-4 text-xs font-mono text-gray-500">
+                <span><i class="ph-fill ph-calendar-blank"></i> <%= arsip.date %></span>
+                <span>•</span>
+                <span><i class="ph-fill ph-lock-key"></i> Restricted Access</span>
+            </div>
+        </header>
+
+        <!-- SCRIBD BLUR EFFECT VIEWER -->
+        <div class="doc-wrapper">
+            <!-- Jika link Google Drive, ubah mode view ke mode preview agar bisa di-embed iFrame -->
+            <% 
+                let embedUrl = arsip.fileUrl;
+                if(embedUrl.includes('drive.google.com') && embedUrl.includes('/view')) {
+                    embedUrl = embedUrl.replace('/view', '/preview');
+                }
+            %>
+            <iframe class="doc-iframe" src="<%= embedUrl %>" allow="autoplay" allowfullscreen></iframe>
+            
+            <div class="blur-overlay">
+                <div class="bg-black/60 backdrop-blur-xl border border-white/10 p-6 rounded-2xl text-center max-w-md mx-4 shadow-2xl">
+                    <i class="ph-fill ph-lock-key text-5xl text-cyan-400 mb-3 drop-shadow-[0_0_15px_rgba(0,229,255,0.6)]"></i>
+                    <h3 class="text-2xl font-black font-['Space_Grotesk'] mb-2">Pratinjau Dibatasi</h3>
+                    <p class="text-sm text-gray-300 mb-6 font-medium">Halaman ini mengunci tampilan penuh dokumen untuk mencegah penyalinan robot. Silakan unduh dokumen untuk akses utuh.</p>
+                    <a href="<%= arsip.fileUrl %>" target="_blank" rel="noopener noreferrer" class="brutal-btn inline-flex items-center justify-center gap-2 px-8 py-4 w-full rounded-xl">
+                        <i class="ph-bold ph-download-simple text-xl"></i> Akses Dokumen Full
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>
