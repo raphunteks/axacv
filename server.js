@@ -33,7 +33,8 @@ const dbRegion = process.env.AWS_REGION || 'us-east-1';
 AWS.config.update({ region: dbRegion });
 
 const dbHost = process.env.PGHOST || 'kvs.cluster-c6fki4s4mfgg.us-east-1.rds.amazonaws.com';
-const dbPort = process.env.PGPORT || 5432;
+// [FIX/PATCH BUG]: Memaksa tipe data PORT menjadi Number agar AWS Signer dan pg Pool tidak crash
+const dbPort = parseInt(process.env.PGPORT || '5432', 10); 
 const dbUser = process.env.PGUSER || 'postgres';
 const dbName = process.env.PGDATABASE || 'postgres';
 
@@ -41,7 +42,7 @@ const dbName = process.env.PGDATABASE || 'postgres';
 const signer = new AWS.RDS.Signer({
     region: dbRegion,
     hostname: dbHost,
-    port: dbPort,
+    port: dbPort, // Sekarang sudah bertipe Number murni
     username: dbUser
 });
 
