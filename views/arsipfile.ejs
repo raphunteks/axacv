@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= meta.title %></title>
     
+    <!-- FIX GBR 1: Favicon Absolute Path -->
+    <link rel="icon" type="image/png" href="/axalogo.png">
+    <link rel="apple-touch-icon" href="/axalogo.png">
+
     <!-- DYNAMIC SEO GOLD STANDARD -->
     <meta name="description" content="<%= meta.desc %>">
     <meta name="keywords" content="<%= meta.keywords %>">
@@ -35,69 +39,78 @@
         body { background-color: #030712; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
         .glass-header { background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
         
-        /* SCRIBD BLUR EFFECT CORE */
-        .doc-wrapper { position: relative; width: 100%; height: 75vh; max-height: 800px; overflow: hidden; border-radius: 1.5rem; background: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5);}
-        .doc-iframe { width: 100%; height: 100%; border: none; }
+        /* SCRIBD BLUR EFFECT CORE - NATIVE PDF FIX */
+        .doc-wrapper { position: relative; width: 100%; height: 80vh; max-height: 850px; overflow: hidden; border-radius: 1.5rem; background: #222; border: 1px solid rgba(0,229,255,0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0,229,255,0.1);}
+        
+        /* Native Object/Iframe fill */
+        .doc-object { width: 100%; height: 100%; border: none; background: transparent; }
         
         .blur-overlay {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 60%;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 65%;
             background: linear-gradient(to bottom, transparent 0%, rgba(3,7,18,0.9) 60%, rgba(3,7,18,1) 100%);
-            backdrop-filter: blur(4px);
-            display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 3rem;
+            backdrop-filter: blur(6px);
+            display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 4rem;
             z-index: 10;
         }
 
         .brutal-btn {
             background: #00E5FF; color: #000; font-family: 'Space Grotesk', sans-serif; font-weight: 900;
-            border: 2px solid #fff; box-shadow: 4px 4px 0px #fff; transition: all 0.2s;
+            border: 2px solid #fff; box-shadow: 6px 6px 0px rgba(255,255,255,0.9); transition: all 0.2s;
             text-transform: uppercase; letter-spacing: 0.1em;
         }
-        .brutal-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #fff; }
-        .brutal-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #fff; }
+        .brutal-btn:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px #fff; }
+        .brutal-btn:active { transform: translate(3px, 3px); box-shadow: 0px 0px 0px #fff; }
     </style>
 </head>
 <body class="antialiased">
 
-    <nav class="glass-header sticky top-0 z-50 w-full">
+    <nav class="glass-header sticky top-0 z-50 w-full shadow-lg">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center max-w-5xl">
-            <a href="/arsip" class="text-sm font-bold text-gray-300 hover:text-cyan-400 flex items-center gap-2 transition-colors">
-                <i class="ph-bold ph-arrow-left"></i> Direktori Utama
+            <a href="/arsip" class="text-sm font-bold text-gray-300 hover:text-cyan-400 flex items-center gap-2 transition-colors uppercase tracking-widest font-mono">
+                <i class="ph-bold ph-arrow-left text-lg"></i> Direktori Utama
             </a>
+            <div class="text-[10px] text-gray-500 font-mono hidden sm:flex items-center gap-2">
+                <i class="ph-fill ph-shield-check text-green-400"></i> AWS Secure Stream
+            </div>
         </div>
     </nav>
 
-    <main class="container mx-auto px-4 py-8 max-w-4xl min-h-screen">
+    <main class="container mx-auto px-4 py-10 max-w-4xl min-h-screen">
         
         <!-- METADATA DOKUMEN -->
-        <header class="mb-10 text-center">
-            <span class="inline-block text-[10px] font-mono font-bold uppercase tracking-widest text-purple-400 bg-purple-400/10 px-3 py-1.5 rounded-full border border-purple-400/30 mb-4"><i class="ph-fill ph-folder"></i> <%= arsip.category %></span>
-            <h1 class="text-3xl md:text-5xl font-black font-['Space_Grotesk'] mb-4 leading-tight"><%= arsip.title %></h1>
+        <header class="mb-12 text-center">
+            <span class="inline-block text-[10px] font-mono font-black uppercase tracking-widest text-cyan-400 bg-cyan-400/10 px-4 py-2 rounded-full border border-cyan-400/30 mb-5 shadow-[0_0_15px_rgba(0,229,255,0.2)]"><i class="ph-fill ph-folder mr-1"></i> <%= arsip.category %></span>
+            <h1 class="text-3xl md:text-5xl font-black font-['Space_Grotesk'] mb-5 leading-tight"><%= arsip.title %></h1>
             <p class="text-gray-400 text-sm max-w-2xl mx-auto leading-relaxed"><%= arsip.desc %></p>
-            <div class="mt-6 flex justify-center items-center gap-4 text-xs font-mono text-gray-500">
-                <span><i class="ph-fill ph-calendar-blank"></i> <%= arsip.date %></span>
+            <div class="mt-8 flex justify-center items-center gap-4 text-xs font-mono text-gray-500 bg-gray-900/50 w-max mx-auto px-5 py-2.5 rounded-xl border border-gray-800">
+                <span class="text-white"><i class="ph-bold ph-file-pdf text-red-400"></i> <%= arsip.file_name %></span>
                 <span>•</span>
-                <span><i class="ph-fill ph-lock-key"></i> Restricted Access</span>
+                <span><i class="ph-bold ph-calendar-blank"></i> <%= arsip.date %></span>
+                <span>•</span>
+                <span class="text-yellow-400"><i class="ph-fill ph-lock-key"></i> Restricted</span>
             </div>
         </header>
 
-        <!-- SCRIBD BLUR EFFECT VIEWER -->
+        <!-- FIX GBR 2: NATIVE PDF VIEWER DENGAN EFEK BLUR -->
         <div class="doc-wrapper">
-            <!-- Jika link Google Drive, ubah mode view ke mode preview agar bisa di-embed iFrame -->
-            <% 
-                let embedUrl = arsip.fileUrl;
-                if(embedUrl.includes('drive.google.com') && embedUrl.includes('/view')) {
-                    embedUrl = embedUrl.replace('/view', '/preview');
-                }
-            %>
-            <iframe class="doc-iframe" src="<%= embedUrl %>" allow="autoplay" allowfullscreen></iframe>
+            <!-- Native Object Tag memuat stream buffer langsung dari server.js, bukan dari Google Drive -->
+            <object data="/arsip/stream/<%= arsip.slug %>#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" class="doc-object">
+                <!-- Fallback jika browser tidak mendukung PDF embed -->
+                <div class="flex flex-col items-center justify-center h-full bg-gray-900 text-gray-400 p-8 text-center">
+                    <i class="ph-fill ph-file-pdf text-6xl text-gray-600 mb-4"></i>
+                    <p>Browser Anda tidak mendukung pratinjau PDF Native.</p>
+                </div>
+            </object>
             
             <div class="blur-overlay">
-                <div class="bg-black/60 backdrop-blur-xl border border-white/10 p-6 rounded-2xl text-center max-w-md mx-4 shadow-2xl">
-                    <i class="ph-fill ph-lock-key text-5xl text-cyan-400 mb-3 drop-shadow-[0_0_15px_rgba(0,229,255,0.6)]"></i>
-                    <h3 class="text-2xl font-black font-['Space_Grotesk'] mb-2">Pratinjau Dibatasi</h3>
-                    <p class="text-sm text-gray-300 mb-6 font-medium">Halaman ini mengunci tampilan penuh dokumen untuk mencegah penyalinan robot. Silakan unduh dokumen untuk akses utuh.</p>
-                    <a href="<%= arsip.fileUrl %>" target="_blank" rel="noopener noreferrer" class="brutal-btn inline-flex items-center justify-center gap-2 px-8 py-4 w-full rounded-xl">
-                        <i class="ph-bold ph-download-simple text-xl"></i> Akses Dokumen Full
+                <div class="bg-[#0b0f19]/90 backdrop-blur-2xl border-2 border-cyan-500/50 p-6 md:p-8 rounded-3xl text-center max-w-lg mx-4 shadow-[0_20px_50px_rgba(0,0,0,0.8),inset_0_0_20px_rgba(0,229,255,0.1)]">
+                    <div class="w-20 h-20 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-cyan-400/30">
+                        <i class="ph-fill ph-lock-key text-4xl text-cyan-400 drop-shadow-[0_0_10px_rgba(0,229,255,0.8)]"></i>
+                    </div>
+                    <h3 class="text-2xl md:text-3xl font-black font-['Space_Grotesk'] mb-3 text-white">Pratinjau Terkunci</h3>
+                    <p class="text-xs md:text-sm text-gray-400 mb-8 font-medium leading-relaxed">Halaman ini mengunci tampilan penuh dokumen PDF untuk mencegah penyalinan otomatis (Scraping). Silakan akses dokumen utuh langsung ke penyimpanan lokal Anda.</p>
+                    <a href="/arsip/stream/<%= arsip.slug %>" download="<%= arsip.file_name %>" class="brutal-btn inline-flex items-center justify-center gap-3 px-8 py-4 w-full rounded-xl text-sm md:text-base">
+                        <i class="ph-bold ph-download-simple text-xl"></i> Download PDF Full
                     </a>
                 </div>
             </div>
