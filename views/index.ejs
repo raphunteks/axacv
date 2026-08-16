@@ -1171,7 +1171,11 @@
                     
                     if (targetEl) {
                         if (window.location.pathname !== href) {
-                            history.pushState(null, null, href); // Update URL di browser tanpa reload
+                            try {
+                                history.pushState(null, null, href); // Update URL di browser tanpa reload
+                            } catch (err) {
+                                // Abaikan SecurityError di dalam iframe/sandbox (Canvas Preview)
+                            }
                         }
                         targetEl.scrollIntoView({ behavior: 'smooth' }); // Scroll mulus layaknya SPA murni
                     }
@@ -1425,7 +1429,11 @@
                     if (entry.isIntersecting && entry.target.id) {
                         const newPath = entry.target.id === 'beranda' ? '/' : '/' + entry.target.id;
                         if (history.replaceState && window.location.pathname !== newPath) {
-                            history.replaceState(null, null, newPath);
+                            try {
+                                history.replaceState(null, null, newPath);
+                            } catch (err) {
+                                // Abaikan SecurityError di dalam iframe/sandbox (Canvas Preview)
+                            }
                         }
                     }
                 });
@@ -1822,6 +1830,7 @@
             }
         }
     </script>
+
     <script src="protect-devtools.js" defer></script>
 </body>
 </html>
