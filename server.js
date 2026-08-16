@@ -25,16 +25,23 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 
 // ==========================================
-// 2. AWS POSTGRESQL DATABASE CONFIGURATION (FIXED)
+// 2. AWS POSTGRESQL DATABASE CONFIGURATION (UPGRADED)
 // ==========================================
-// FIX: Hard-mapping process.env agar otentikasi AWS RDS tidak meleset
+// DIAGNOSTIK KEAMANAN: Memastikan Password tersedia sesuai temuan GBR 1
+if (!process.env.PGPASSWORD) {
+    console.error("⚠️ [AXA SYSTEM FATAL ERROR]: Variable 'PGPASSWORD' TIDAK DITEMUKAN di Vercel Environment Variables!");
+    console.error("⚠️ AWS Aurora menolak akses (PAM Auth Failed). Anda WAJIB menambahkan PGPASSWORD secara manual di setting Vercel.");
+}
+
 const pool = new Pool({
     host: process.env.PGHOST,
     user: process.env.PGUSER,
-    password: process.env.PGPASSWORD, // PASTIKAN INI ADA DI VERCEL
+    password: process.env.PGPASSWORD, // Ditambahkan manual di Vercel
     database: process.env.PGDATABASE,
     port: process.env.PGPORT || 5432,
-    ssl: { rejectUnauthorized: false } // FIX: Wajib untuk AWS / Vercel bypass SSL certs
+    ssl: { 
+        rejectUnauthorized: false // Bypass SSL Vercel -> AWS Cloud
+    }
 });
 
 // Auto-Create Table Jika Belum Ada
@@ -49,8 +56,8 @@ pool.query(`
         file_data TEXT, 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
-`).then(() => console.log("AWS PostgreSQL: Table Arsip Ready"))
-  .catch(err => console.error("DB Init Error:", err.message));
+`).then(() => console.log("✅ AWS PostgreSQL: Table Arsip Ready & Connected"))
+  .catch(err => console.error("❌ DB Init Error:", err.message));
 
 // ==========================================
 // 3. DATA METADATA DINAMIS SEO (GOLD STANDARD)
@@ -91,7 +98,6 @@ const protectAdmin = (req, res, next) => {
     else res.status(403).json({ status: 'error', message: 'Akses Ditolak' });
 };
 
-// API Fetch Arsip List
 app.get('/api/arsip', async (req, res) => {
     try {
         const { rows } = await pool.query('SELECT id, slug, title, category, description, file_name, created_at as date FROM arsip_docs ORDER BY id DESC');
@@ -102,7 +108,6 @@ app.get('/api/arsip', async (req, res) => {
     }
 });
 
-// API Upload Arsip Baru (Menerima PDF Base64)
 app.post('/api/arsip', protectAdmin, async (req, res) => {
     try {
         const { title, category, desc, fileName, fileData } = req.body;
@@ -118,7 +123,6 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
     }
 });
 
-// API Delete Arsip
 app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         await pool.query('DELETE FROM arsip_docs WHERE id = $1', [req.params.id]);
@@ -128,7 +132,6 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
     }
 });
 
-// NATIVE PDF STREAMING ENDPOINT (PENGGANTI GOOGLE DRIVE)
 app.get('/arsip/stream/:slug', async (req, res) => {
     try {
         const { rows } = await pool.query('SELECT file_name, file_data FROM arsip_docs WHERE slug = $1', [req.params.slug]);
@@ -176,7 +179,6 @@ app.get('/robots.txt', (req, res) => {
 // ==========================================
 app.use(express.static(path.join(process.cwd(), 'public')));
 
-// Fallback Renderer (Safe Diagnostic Mode)
 const safeRender = (res, viewName, data = {}) => {
     res.render(viewName, data, (err, html) => {
         if (err) return res.status(500).send(`<div style="font-family: monospace; padding: 2rem; background: #050505; color: #ff4444; min-height: 100vh;"><h2>[AXA SYSTEM] FATAL ERROR 500</h2><p><b>File View Tidak Ditemukan:</b> Pastikan <code>views/${viewName}.ejs</code> telah di-upload ke Vercel.</p><p>Error Detail: ${err.message}</p></div>`);
@@ -187,7 +189,6 @@ const safeRender = (res, viewName, data = {}) => {
 app.get('/admin/login', (req, res) => safeRender(res, 'admin-login'));
 app.get('/admin/dashboard', (req, res) => safeRender(res, 'admin-dashboard'));
 
-// Halaman Publik Arsip Utama
 app.get('/arsip', async (req, res) => {
     try {
         const { rows } = await pool.query('SELECT slug, title, category, description as desc, created_at as date FROM arsip_docs ORDER BY id DESC');
@@ -199,7 +200,6 @@ app.get('/arsip', async (req, res) => {
     }
 });
 
-// Halaman Viewer Arsip Satuan (Scribd-like Blur)
 app.get('/arsip/:slug', async (req, res) => {
     try {
         const { rows } = await pool.query('SELECT slug, title, category, description as desc, file_name, created_at as date FROM arsip_docs WHERE slug = $1', [req.params.slug]);
@@ -215,7 +215,6 @@ app.get('/arsip/:slug', async (req, res) => {
     }
 });
 
-// Halaman Portofolio Utama
 const routeKeys = Object.keys(routesMeta).filter(k => k !== '/arsip');
 app.get(routeKeys, (req, res) => {
     try {
