@@ -1,7 +1,12 @@
 const express = require('express');
 const path = require('path');
 const { Pool } = require('pg');
-const AWS = require('aws-sdk'); // Ditambahkan untuk AWS IAM Auth
+
+// DEPENDENSI BARU: Vercel Native AWS OIDC & AWS SDK v3
+const { Signer } = require("@aws-sdk/rds-signer");
+const { awsCredentialsProvider } = require("@vercel/oidc-aws-credentials-provider");
+const { attachDatabasePool } = require("@vercel/functions");
+
 const app = express();
 
 // ==========================================
@@ -26,39 +31,31 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 
 // ==========================================
-// 2. AWS AURORA IAM DATABASE CONFIGURATION (GOD MODE)
+// 2. VERCEL OIDC + AWS AURORA POSTGRESQL (ULTRA GOD MODE)
 // ==========================================
-// Konfigurasi Region dari Vercel ENV atau fallback ke us-east-1
-const dbRegion = process.env.AWS_REGION || 'us-east-1';
-AWS.config.update({ region: dbRegion });
-
-const dbHost = process.env.PGHOST || 'kvs.cluster-c6fki4s4mfgg.us-east-1.rds.amazonaws.com';
-// [FIX/PATCH BUG]: Memaksa tipe data PORT menjadi Number agar AWS Signer dan pg Pool tidak crash
-const dbPort = parseInt(process.env.PGPORT || '5432', 10); 
-const dbUser = process.env.PGUSER || 'postgres';
-const dbName = process.env.PGDATABASE || 'postgres';
-
-// Signer bertugas men-generate token 15 menit
-const signer = new AWS.RDS.Signer({
-    region: dbRegion,
-    hostname: dbHost,
-    port: dbPort, // Sekarang sudah bertipe Number murni
-    username: dbUser
+// Vercel Native Signer Authentication Token via OIDC
+const signer = new Signer({
+    hostname: process.env.PGHOST,
+    port: Number(process.env.PGPORT),
+    username: process.env.PGUSER,
+    region: process.env.AWS_REGION,
+    credentials: awsCredentialsProvider({
+        roleArn: process.env.AWS_ROLE_ARN,
+        clientConfig: { region: process.env.AWS_REGION },
+    }),
 });
 
 const pool = new Pool({
-    host: dbHost,
-    port: dbPort,
-    database: dbName,
-    user: dbUser,
-    // [CRITICAL UPGRADE]: Password dipanggil sebagai Fungsi!
-    // Ini memastikan setiap koneksi baru ke DB akan men-generate token baru 
-    // agar aplikasi tidak crash saat token 15-menit AWS kadaluarsa.
-    password: () => signer.getAuthToken({}), 
-    ssl: { 
-        rejectUnauthorized: false // Wajib untuk enkripsi Vercel ke AWS
-    }
+    host: process.env.PGHOST,
+    user: process.env.PGUSER,
+    database: process.env.PGDATABASE || "postgres",
+    password: () => signer.getAuthToken(),
+    port: Number(process.env.PGPORT),
+    ssl: { rejectUnauthorized: false },
 });
+
+// Melampirkan Pool ke Vercel Functions agar tidak terjadi exhaust connection limit di serverless
+attachDatabasePool(pool);
 
 // Auto-Create Table Jika Belum Ada & Test Koneksi
 pool.query(`
@@ -73,9 +70,9 @@ pool.query(`
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
 `).then(() => {
-    console.log("✅ AWS Aurora (IAM Auth) Connected & Table Ready!");
+    console.log("✅ Vercel OIDC -> AWS Aurora PostgreSQL Connected & Ready!");
 }).catch(err => {
-    console.error("❌ AWS Aurora DB Init Error:", err.message);
+    console.error("❌ Database Init Error:", err.message);
 });
 
 // ==========================================
