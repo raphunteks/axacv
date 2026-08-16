@@ -1,13 +1,12 @@
 const express = require('express');
 const path = require('path');
-const { Pool } = require('pg'); // Wajib: npm install pg
+const { Pool } = require('pg'); // Wajib untuk AWS PostgreSQL
 const app = express();
 
 // ==========================================
 // 1. SETUP MIDDLEWARE & CORS
 // ==========================================
-// LIMIT DIPERBESAR KE 50MB UNTUK MENERIMA UPLOAD FILE PDF BASE64
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: '50mb' })); // Limit besar untuk PDF Base64
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use((req, res, next) => {
@@ -26,11 +25,16 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 
 // ==========================================
-// 2. AWS POSTGRESQL DATABASE CONFIGURATION
+// 2. AWS POSTGRESQL DATABASE CONFIGURATION (FIXED)
 // ==========================================
-// Menggunakan ENV Variables PGHOST, PGUSER, PGPASSWORD, PGDATABASE, PGPORT
+// FIX: Hard-mapping process.env agar otentikasi AWS RDS tidak meleset
 const pool = new Pool({
-    ssl: process.env.PGSSLMODE === 'require' ? { rejectUnauthorized: false } : false
+    host: process.env.PGHOST,
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD, // PASTIKAN INI ADA DI VERCEL
+    database: process.env.PGDATABASE,
+    port: process.env.PGPORT || 5432,
+    ssl: { rejectUnauthorized: false } // FIX: Wajib untuk AWS / Vercel bypass SSL certs
 });
 
 // Auto-Create Table Jika Belum Ada
@@ -42,25 +46,26 @@ pool.query(`
         category VARCHAR(100),
         description TEXT,
         file_name VARCHAR(255),
-        file_data TEXT, -- Menyimpan Base64 PDF
+        file_data TEXT, 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
-`).then(() => console.log("AWS PostgreSQL: Table Ready")).catch(err => console.error("DB Init Error:", err));
+`).then(() => console.log("AWS PostgreSQL: Table Arsip Ready"))
+  .catch(err => console.error("DB Init Error:", err.message));
 
 // ==========================================
-// 3. DATA METADATA DINAMIS SEO UTAMA
+// 3. DATA METADATA DINAMIS SEO (GOLD STANDARD)
 // ==========================================
 const baseUrl = 'https://www.maksaarsyad.xyz';
 const routesMeta = {
-    '/': { title: 'CV & Portofolio | drg. M. Aksa Arsyad, S.KG', desc: 'Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG.', ogImage: '/axalogo.png', type: 'profile' },
-    '/pendidikan': { title: 'Riwayat Pendidikan | drg. M. Aksa Arsyad, S.KG', desc: 'Latar belakang pendidikan Universitas Muslim Indonesia & Universitas Hasanuddin.', ogImage: '/axalogo.png', type: 'website' },
-    '/pengalaman': { title: 'Pengalaman Kerja | drg. M. Aksa Arsyad, S.KG', desc: 'Riwayat karir klinis, pekerjaan, dan pengalaman profesional drg. M. Aksa Arsyad.', ogImage: '/axalogo.png', type: 'website' },
-    '/organisasi': { title: 'Riwayat Organisasi | drg. M. Aksa Arsyad, S.KG', desc: 'Pengalaman keanggotaan dalam organisasi profesi maupun kemahasiswaan.', ogImage: '/axalogo.png', type: 'website' },
-    '/publikasi': { title: 'Publikasi Ilmiah & Jurnal | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan jurnal dan publikasi ilmiah di bidang kedokteran gigi.', ogImage: '/axalogo.png', type: 'article' },
-    '/keahlian-tech': { title: 'Keahlian Klinis & Teknologi | drg. M. Aksa Arsyad, S.KG', desc: 'Daftar keahlian klinis medis dan Web Development drg. M. Aksa Arsyad.', ogImage: '/axalogo.png', type: 'website' },
-    '/proyek': { title: 'Portofolio Proyek Web | drg. M. Aksa Arsyad, S.KG', desc: 'Portofolio pengembangan website, sistem, dan aplikasi.', ogImage: '/axalogo.png', type: 'website' },
-    '/sertifikasi': { title: 'Sertifikasi Medis & Tech | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan sertifikasi kompetensi medis dan penghargaan teknologi.', ogImage: '/axalogo.png', type: 'website' },
-    '/arsip': { title: 'Arsip Materi & Jurnal | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan catatan preklinik, profesi dokter muda, dan materi kedokteran gigi.', ogImage: '/axalogo.png', type: 'website' }
+    '/': { title: 'CV & Portofolio | drg. M. Aksa Arsyad, S.KG', desc: 'Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG.', keywords: 'CV Dokter Gigi', ogImage: '/axalogo.png', type: 'profile' },
+    '/pendidikan': { title: 'Riwayat Pendidikan | drg. M. Aksa Arsyad, S.KG', desc: 'Latar belakang pendidikan Universitas Muslim Indonesia & Universitas Hasanuddin.', keywords: 'Pendidikan Dokter Gigi', ogImage: '/axalogo.png', type: 'website' },
+    '/pengalaman': { title: 'Pengalaman Kerja | drg. M. Aksa Arsyad, S.KG', desc: 'Riwayat karir klinis, pekerjaan, dan pengalaman profesional drg. M. Aksa Arsyad.', keywords: 'Pengalaman Kerja Klinis', ogImage: '/axalogo.png', type: 'website' },
+    '/organisasi': { title: 'Riwayat Organisasi | drg. M. Aksa Arsyad, S.KG', desc: 'Pengalaman keanggotaan dalam organisasi profesi (PDGI) maupun kemahasiswaan.', keywords: 'PDGI, Organisasi Kedokteran', ogImage: '/axalogo.png', type: 'website' },
+    '/publikasi': { title: 'Publikasi Ilmiah & Jurnal | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan jurnal dan publikasi ilmiah di bidang kedokteran gigi.', keywords: 'Jurnal Kedokteran Gigi', ogImage: '/axalogo.png', type: 'article' },
+    '/keahlian-tech': { title: 'Keahlian Klinis & Teknologi | drg. M. Aksa Arsyad, S.KG', desc: 'Daftar keahlian klinis medis dan Web Development drg. M. Aksa Arsyad.', keywords: 'Skill Klinis, Node.js', ogImage: '/axalogo.png', type: 'website' },
+    '/proyek': { title: 'Portofolio Proyek Web | drg. M. Aksa Arsyad, S.KG', desc: 'Portofolio pengembangan website, sistem, dan aplikasi.', keywords: 'Proyek Web Development', ogImage: '/axalogo.png', type: 'website' },
+    '/sertifikasi': { title: 'Sertifikasi Medis & Tech | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan sertifikasi kompetensi medis dan penghargaan teknologi.', keywords: 'Sertifikasi Medis', ogImage: '/axalogo.png', type: 'website' },
+    '/arsip': { title: 'Arsip Materi & Jurnal | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan direktori arsip catatan pembelajaran, preklinik, dan profesi dokter muda.', keywords: 'Arsip Kedokteran Gigi', ogImage: '/axalogo.png', type: 'website' }
 };
 
 // ==========================================
@@ -86,11 +91,10 @@ const protectAdmin = (req, res, next) => {
     else res.status(403).json({ status: 'error', message: 'Akses Ditolak' });
 };
 
-// API Fetch Arsip List (Tanpa File Data agar ringan)
+// API Fetch Arsip List
 app.get('/api/arsip', async (req, res) => {
     try {
         const { rows } = await pool.query('SELECT id, slug, title, category, description, file_name, created_at as date FROM arsip_docs ORDER BY id DESC');
-        // Format tanggal
         rows.forEach(r => r.date = new Date(r.date).toISOString().split('T')[0]);
         res.json({ status: 'success', data: rows });
     } catch (e) {
@@ -98,7 +102,7 @@ app.get('/api/arsip', async (req, res) => {
     }
 });
 
-// API Upload Arsip Baru
+// API Upload Arsip Baru (Menerima PDF Base64)
 app.post('/api/arsip', protectAdmin, async (req, res) => {
     try {
         const { title, category, desc, fileName, fileData } = req.body;
@@ -124,26 +128,23 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
     }
 });
 
-// ==========================================
-// 5. NATIVE PDF STREAMING ENDPOINT (PENGGANTI GOOGLE DRIVE)
-// ==========================================
+// NATIVE PDF STREAMING ENDPOINT (PENGGANTI GOOGLE DRIVE)
 app.get('/arsip/stream/:slug', async (req, res) => {
     try {
         const { rows } = await pool.query('SELECT file_name, file_data FROM arsip_docs WHERE slug = $1', [req.params.slug]);
         if(rows.length === 0) return res.status(404).send("Dokumen tidak ditemukan.");
         
-        // Convert Base64 back to Binary PDF Buffer
         const buffer = Buffer.from(rows[0].file_data, 'base64');
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `inline; filename="${rows[0].file_name}"`);
         res.send(buffer);
     } catch (e) {
-        res.status(500).send("Error streaming document.");
+        res.status(500).send(`Error streaming document: ${e.message}`);
     }
 });
 
 // ==========================================
-// 6. SITEMAP & ROBOTS.TXT (DINAMIS 100% INCL. DATABASE)
+// 5. SITEMAP & ROBOTS.TXT (DINAMIS 100%)
 // ==========================================
 app.get('/sitemap.xml', async (req, res) => {
     res.set('Content-Type', 'text/xml; charset=utf-8');
@@ -159,7 +160,7 @@ app.get('/sitemap.xml', async (req, res) => {
             const date = new Date(doc.created_at).toISOString().split('T')[0];
             xml += `  <url>\n    <loc>${baseUrl}/arsip/${doc.slug}</loc>\n    <lastmod>${date}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
         });
-    } catch (e) { console.error("Sitemap DB Error", e); }
+    } catch (e) { console.error("Sitemap DB Error", e.message); }
     
     xml += `</urlset>`;
     res.send(xml);
@@ -171,13 +172,14 @@ app.get('/robots.txt', (req, res) => {
 });
 
 // ==========================================
-// 7. FOLDER PUBLIC & ROUTING HALAMAN VIEWS
+// 6. FOLDER PUBLIC & ROUTING HALAMAN VIEWS
 // ==========================================
 app.use(express.static(path.join(process.cwd(), 'public')));
 
+// Fallback Renderer (Safe Diagnostic Mode)
 const safeRender = (res, viewName, data = {}) => {
     res.render(viewName, data, (err, html) => {
-        if (err) return res.status(500).send(`<div style="font-family: monospace; padding: 2rem; background: #050505; color: #ff4444; min-height: 100vh;"><h2>[AXA SYSTEM] FATAL ERROR 500</h2><p><b>File View Tidak Ditemukan:</b> Pastikan <code>views/${viewName}.ejs</code> telah di-upload ke Vercel.</p></div>`);
+        if (err) return res.status(500).send(`<div style="font-family: monospace; padding: 2rem; background: #050505; color: #ff4444; min-height: 100vh;"><h2>[AXA SYSTEM] FATAL ERROR 500</h2><p><b>File View Tidak Ditemukan:</b> Pastikan <code>views/${viewName}.ejs</code> telah di-upload ke Vercel.</p><p>Error Detail: ${err.message}</p></div>`);
         res.send(html);
     });
 };
@@ -193,7 +195,7 @@ app.get('/arsip', async (req, res) => {
         const meta = { ...routesMeta['/arsip'], canonical: `${baseUrl}/arsip` };
         safeRender(res, 'arsip-list', { meta, baseUrl, arsipData: rows });
     } catch (error) {
-        res.status(500).send(`Error DB: ${error.message}`);
+        res.status(500).send(`<div style="background:#000; color:red; padding:20px; font-family:monospace;"><h3>Database Connection Failed</h3><p>${error.message}</p></div>`);
     }
 });
 
@@ -209,7 +211,7 @@ app.get('/arsip/:slug', async (req, res) => {
         
         safeRender(res, 'arsipfile', { meta, baseUrl, arsip });
     } catch (error) {
-        res.status(500).send(`Error DB: ${error.message}`);
+        res.status(500).send(`<div style="background:#000; color:red; padding:20px; font-family:monospace;"><h3>Database Error</h3><p>${error.message}</p></div>`);
     }
 });
 
@@ -226,10 +228,9 @@ app.get(routeKeys, (req, res) => {
 });
 
 // ==========================================
-// 8. ROUTE API GITHUB STATS
+// 7. ROUTE API GITHUB STATS
 // ==========================================
 app.post('/api/github', async (req, res) => {
-    // ... [Kode GitHub API Anda tetap UTUH persis seperti sebelumnya] ...
     try {
         const { username, token } = req.body || {};
         const authToken = token || process.env.GITHUB_TOKEN;
