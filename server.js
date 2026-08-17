@@ -19,8 +19,7 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
 // ==========================================
 // 1. SETUP MIDDLEWARE & CORS
 // ==========================================
-// Limit dikembalikan ke ukuran normal (100mb) karena file PDF raksasa kini di-bypass langsung ke Storage dari Browser
-app.use(express.json({ limit: '100mb' })); 
+app.use(express.json({ limit: '10mb' })); 
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -83,10 +82,10 @@ const protectAdmin = (req, res, next) => {
 };
 
 // ==========================================
-// 4. DATABASE API CORE (METADATA ONLY)
+// 4. SUPABASE ARSIP API CORE (FULL CRUD)
 // ==========================================
 
-// Ambil seluruh direktori arsip
+// READ: Ambil seluruh direktori arsip
 app.get('/api/arsip', async (req, res) => {
     try {
         if(!supabaseUrl || !supabaseKey) throw new Error("Database Configuration Missing!");
@@ -103,7 +102,7 @@ app.get('/api/arsip', async (req, res) => {
     }
 });
 
-// Unggah METADATA dokumen baru (File fisiknya sudah dikirim browser ke Storage secara langsung)
+// CREATE: Unggah METADATA dokumen baru
 app.post('/api/arsip', protectAdmin, async (req, res) => {
     try {
         const { id, title, category, desc, fileName, filePath, accessType } = req.body;
@@ -137,7 +136,33 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
     }
 });
 
-// Hapus dokumen secara permanen
+// UPDATE: Modifikasi METADATA dokumen yang ada (Edit Feature)
+app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
+    try {
+        const docId = req.params.id;
+        const { title, category, desc, accessType } = req.body;
+
+        const { data, error } = await supabase
+            .from('arsip')
+            .update({ 
+                title: title, 
+                category: category, 
+                desc: desc, 
+                access_type: accessType 
+            })
+            .eq('id', docId)
+            .select();
+
+        if (error) throw new Error(error.message);
+        if (!data || data.length === 0) throw new Error("Dokumen tidak ditemukan untuk diupdate.");
+
+        res.json({ status: 'success', data: data[0] });
+    } catch (err) {
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+});
+
+// DELETE: Hapus dokumen secara permanen
 app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
@@ -145,10 +170,12 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
 
         if (fetchError || !item) throw new Error("Dokumen tidak ditemukan.");
 
+        // Delete from storage first
         if (item.file_path) {
             await supabase.storage.from('arsip_files').remove([item.file_path]);
         }
 
+        // Then delete from DB
         const { error: dbError } = await supabase.from('arsip').delete().eq('id', docId);
         if (dbError) throw new Error(dbError.message);
 
@@ -178,9 +205,9 @@ app.get('/sitemap.xml', async (req, res) => {
             const { data: arsipDB } = await supabase.from('arsip').select('slug, date, access_type');
             if (arsipDB) {
                 arsipDB.forEach(doc => {
-                    // SEO URL Viewer
+                    // SEO URL Viewer (Biasa)
                     xml += `  <url>\n    <loc>${baseUrl}/arsip/${doc.slug}</loc>\n    <lastmod>${doc.date || new Date().toISOString().split('T')[0]}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
-                    // SEO URL Direct PDF (Khusus Open Access) untuk Google PDF indexing
+                    // SEO URL Direct PDF (Khusus Open Access untuk Indexing PDF Google)
                     if(doc.access_type === 'Open Access') {
                         xml += `  <url>\n    <loc>${baseUrl}/arsip/file/${doc.slug}.pdf</loc>\n    <lastmod>${doc.date || new Date().toISOString().split('T')[0]}</lastmod>\n    <changefreq>yearly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
                     }
@@ -208,7 +235,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 app.get('/admin/login', (req, res) => res.render('admin-login'));
 
 app.get('/admin/dashboard', (req, res) => {
-    // 🔐 INJEKSI VERCEL ENV KE FRONTEND DASHBOARD
+    // 🔐 INJEKSI VERCEL ENV KE FRONTEND DASHBOARD (Solusi Failsafe)
     res.render('admin-dashboard', {
         supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
         supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || ''
@@ -231,32 +258,39 @@ app.get('/arsip', async (req, res) => {
     }
 });
 
-// ROUTE BARU: NATIVE DIRECT PDF (URL berakhiran .pdf untuk Google Indexing & GBR 3, GBR 4)
+// =========================================================================
+// ENDPOINT SUPER BIG UPGRADE: NATIVE PDF STREAMING UNTUK SEO (GBR 3 & 4)
+// URL berakhiran .pdf (contoh: /arsip/file/nama-jurnal.pdf)
+// =========================================================================
 app.get('/arsip/file/:slug.pdf', async (req, res) => {
     try {
-        const { data: arsip, error: dbErr } = await supabase.from('arsip').select('file_name, file_path, access_type').eq('slug', req.params.slug).single();
+        // req.params.slug akan berisi nama-jurnal (karena Express otomatis memisahkan ekstensi jika didefinisikan dengan route pattern di atas)
+        const slugStr = req.params.slug; 
+
+        const { data: arsip, error: dbErr } = await supabase.from('arsip').select('file_name, file_path, access_type').eq('slug', slugStr).single();
         if (dbErr || !arsip) return res.status(404).send('Dokumen PDF tidak ditemukan.');
 
         const { data: fileBlob, error: dlErr } = await supabase.storage.from('arsip_files').download(arsip.file_path);
-        if (dlErr || !fileBlob) return res.status(500).send('Gagal menarik dokumen dari Storage.');
+        if (dlErr || !fileBlob) return res.status(500).send('Gagal menarik dokumen dari Storage Database.');
 
         const buffer = Buffer.from(await fileBlob.arrayBuffer());
+        
+        // Memaksa browser membaca ini sebagai dokumen PDF utuh (Native)
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `inline; filename="${arsip.file_name}"`);
         res.setHeader('Content-Length', buffer.length);
         res.send(buffer);
     } catch (e) {
-        res.status(500).send("Transmisi PDF gagal.");
+        res.status(500).send("Transmisi file PDF gagal.");
     }
 });
 
-// Halaman Viewer Arsip Satuan (Scribd-like Blur)
+// Halaman Viewer Arsip Satuan (Scribd-like Blur Mode)
 app.get('/arsip/:slug', async (req, res) => {
     try {
         const { data: arsip, error } = await supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
         if (error || !arsip) return res.status(404).send('Informasi Dokumen tidak ditemukan.');
 
-        // SEO 100% DINAMIS DARI DATABASE
         const meta = {
             title: `${arsip.title} | drg. M. Aksa Arsyad`,
             desc: arsip.desc,
