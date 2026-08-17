@@ -131,6 +131,7 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
     }
 });
 
+// PUT: Full CRUD Edit Data Arsip (Slug, Tanggal, dll)
 app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
@@ -188,6 +189,7 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
     }
 });
 
+// SITEMAP.XML DENGAN SMART DATE PARSER (GOLD STANDARD GSC)
 app.get('/sitemap.xml', async (req, res) => {
     try {
         res.set('Content-Type', 'text/xml; charset=utf-8');
