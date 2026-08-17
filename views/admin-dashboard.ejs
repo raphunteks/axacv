@@ -111,19 +111,20 @@
         const token = localStorage.getItem('axa_arsip_token');
         if (!token) { try { window.location.href = '/admin/login'; } catch (e) {} }
 
-        // GANTI INI DENGAN URL & ANON KEY ANDA SENDIRI DARI SUPABASE DASHBOARD
-        const SUPABASE_URL = "YOUR_SUPABASE_URL"; 
-        const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY"; 
+        // 🔐 DYNAMIC INJECTION DARI VERCEL ENVIRONMENT VARIABLES (.env)
+        // Express (server.js) menyuntikkan variabel ini saat halaman dirender.
+        const SUPABASE_URL = "<%= typeof supabaseUrl !== 'undefined' ? supabaseUrl : '' %>"; 
+        const SUPABASE_ANON_KEY = "<%= typeof supabaseAnonKey !== 'undefined' ? supabaseAnonKey : '' %>"; 
         
         let supabaseClient = null;
 
-        // PENCEGAHAN CRASH: Supabase Client hanya dibuat jika URL sudah valid (Bukan Placeholder)
+        // PENCEGAHAN CRASH: Supabase Client hanya dibuat jika URL sudah valid dari Vercel
         try {
             if (SUPABASE_URL && SUPABASE_URL.startsWith('http')) {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch (e) {
-            console.warn("Peringatan: Kredensial Supabase di admin-dashboard.ejs belum dikonfigurasi.");
+            console.warn("Peringatan: Kredensial Supabase gagal dimuat dari Environment Variables.");
         }
 
         let selectedFile = null;
@@ -196,7 +197,7 @@
             const ogText = btn.innerHTML;
 
             if (!supabaseClient) {
-                alert("SISTEM TERKUNCI: Anda belum mengubah SUPABASE_URL dan SUPABASE_ANON_KEY di dalam kode admin-dashboard.ejs!");
+                alert("SISTEM TERKUNCI: Environment Variables (SUPABASE_URL & ANON_KEY) tidak ditemukan oleh Vercel. Pastikan Anda sudah mengaturnya di Dashboard Vercel.");
                 return;
             }
 
