@@ -10,6 +10,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Supabase JS Client CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -111,19 +112,25 @@
         const token = localStorage.getItem('axa_arsip_token');
         if (!token) { try { window.location.href = '/admin/login'; } catch (e) {} }
 
-        // GANTI INI DENGAN URL & ANON KEY ANDA SENDIRI DARI SUPABASE DASHBOARD
-        const SUPABASE_URL = "YOUR_SUPABASE_URL"; 
-        const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY"; 
+        // ===========================================================================
+        // 🛑 STOP! WAJIB GANTI KODE DI BAWAH INI AGAR BISA UPLOAD FILE! 🛑
+        // ===========================================================================
+        // URL Supabase Anda sudah saya isikan otomatis berdasarkan data Anda:
+        const SUPABASE_URL = "https://nkahivfjsodlakxhkoao.supabase.co"; 
+        
+        // PASTE KUNCI "ANON" / "PUBLIC" ANDA DI ANTARA TANDA KUTIP DI BAWAH INI:
+        const SUPABASE_ANON_KEY = "MASUKKAN_ANON_KEY_ANDA_DISINI"; 
+        // ===========================================================================
         
         let supabaseClient = null;
 
-        // PENCEGAHAN CRASH: Supabase Client hanya dibuat jika URL sudah valid (Bukan Placeholder)
+        // Pencegahan Crash: Hanya inisialisasi jika Anda sudah mengganti Anon Key di atas
         try {
-            if (SUPABASE_URL && SUPABASE_URL.startsWith('http')) {
+            if (SUPABASE_ANON_KEY !== "MASUKKAN_ANON_KEY_ANDA_DISINI") {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch (e) {
-            console.warn("Peringatan: Kredensial Supabase di admin-dashboard.ejs belum dikonfigurasi.");
+            console.warn("Peringatan: Kredensial Supabase gagal diinisialisasi.");
         }
 
         let selectedFile = null;
@@ -195,8 +202,9 @@
             const btn = document.getElementById('btnSubmit');
             const ogText = btn.innerHTML;
 
+            // Pengecekan Failsafe Kunci
             if (!supabaseClient) {
-                alert("SISTEM TERKUNCI: Anda belum mengubah SUPABASE_URL dan SUPABASE_ANON_KEY di dalam kode admin-dashboard.ejs!");
+                alert("SISTEM TERKUNCI: Anda belum mengubah SUPABASE_ANON_KEY di dalam kode admin-dashboard.ejs! Silakan buka file tersebut dan masukkan kodenya.");
                 return;
             }
 
@@ -232,7 +240,10 @@
                     body: JSON.stringify(payload) 
                 });
                 
-                if (!res.ok) throw new Error("Gagal menyimpan metadata ke database.");
+                if (!res.ok) {
+                    const errRes = await res.json();
+                    throw new Error("Gagal database: " + errRes.message);
+                }
 
                 document.getElementById('formArsip').reset();
                 selectedFile = null;
@@ -249,7 +260,7 @@
         });
 
         async function hapus(id) {
-            if(!confirm('Hapus permanen dokumen ini?')) return;
+            if(!confirm('Hapus permanen dokumen ini dari sistem?')) return;
             try {
                 const res = await fetch('/api/arsip/'+id, { method: 'DELETE', headers: { 'Authorization': token } });
                 if(!res.ok) throw new Error("Gagal menghapus.");
