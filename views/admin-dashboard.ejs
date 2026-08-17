@@ -10,19 +10,16 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Space Grotesk', sans-serif; background-color: #030712; color: #fff; }
-        /* Holographic & Brutalism Glassmorphism */
         .glass-panel { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(24px); border: 1px solid rgba(0, 229, 255, 0.2); box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05); }
         .brutal-card { background: #0b0f19; border: 2px solid #00E5FF; box-shadow: 6px 6px 0px rgba(0, 229, 255, 0.8); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         .brutal-card:hover { transform: translate(-3px, -3px); box-shadow: 9px 9px 0px #FF10F0; border-color: #FF10F0; }
-        
-        /* Drag & Drop Zone Styles */
         .dropzone { border: 2px dashed #00E5FF; transition: all 0.3s ease; background: rgba(0, 229, 255, 0.05); }
         .dropzone.dragover { background: rgba(0, 229, 255, 0.2); border-color: #FF10F0; transform: scale(1.02); }
         .dropzone.has-file { border: 2px solid #00E5FF; background: rgba(16, 185, 129, 0.1); }
-        
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #030712; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #00E5FF; border-radius: 10px; }
@@ -34,8 +31,8 @@
         <div class="flex items-center gap-3">
             <i class="ph-fill ph-database text-4xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500"></i>
             <div>
-                <h1 class="text-xl md:text-2xl font-black tracking-tight uppercase">Supabase Database <span class="text-cyan-400">Core</span></h1>
-                <p class="text-[10px] text-gray-400 font-mono tracking-widest">PostgreSQL Knowledge Base Server</p>
+                <h1 class="text-xl md:text-2xl font-black tracking-tight uppercase">Knowledge Base <span class="text-cyan-400">Core</span></h1>
+                <p class="text-[10px] text-gray-400 font-mono tracking-widest">Master Storage Manager</p>
             </div>
         </div>
         <div class="flex gap-3 w-full md:w-auto">
@@ -52,11 +49,11 @@
                 
                 <!-- PDF DRAG & DROP ZONE -->
                 <div>
-                    <label class="text-[10px] text-gray-400 font-mono mb-2 block uppercase font-bold tracking-widest">Upload File Jurnal/Materi (PDF)</label>
+                    <label class="text-[10px] text-gray-400 font-mono mb-2 block uppercase font-bold tracking-widest">Upload File PDF (Maks 50MB)</label>
                     <div id="dropzoneContainer" class="dropzone rounded-xl p-6 text-center cursor-pointer flex flex-col items-center justify-center relative overflow-hidden h-32 group" onclick="document.getElementById('fileInput').click()">
                         <input type="file" id="fileInput" accept=".pdf" class="hidden">
                         <i id="dropIcon" class="ph-bold ph-file-pdf text-4xl text-cyan-400 mb-2 group-hover:scale-110 transition-transform"></i>
-                        <p id="dropText" class="text-xs font-bold text-gray-300">Drag & Drop PDF di sini<br><span class="text-[10px] text-gray-500 font-mono font-normal">atau klik untuk menelusuri (Max ~4MB)</span></p>
+                        <p id="dropText" class="text-xs font-bold text-gray-300">Drag & Drop PDF di sini<br><span class="text-[10px] text-green-400 font-mono font-normal">Mendukung file besar langsung via Storage</span></p>
                     </div>
                 </div>
 
@@ -64,22 +61,33 @@
                     <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Judul Dokumen</label>
                     <input type="text" id="title" required class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner transition-colors placeholder-gray-600" placeholder="Contoh: Jurnal Konservasi Gigi...">
                 </div>
-                <div>
-                    <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Kategori Ilmu</label>
-                    <select id="category" class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner cursor-pointer">
-                        <option value="Preklinik">Preklinik</option>
-                        <option value="Profesi Dokter Muda">Profesi Dokter Muda (Co-Ass)</option>
-                        <option value="Jurnal & Riset">Jurnal & Riset</option>
-                        <option value="Kedokteran Gigi Umum">Kedokteran Gigi Umum</option>
-                    </select>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Kategori Ilmu</label>
+                        <select id="category" class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner cursor-pointer">
+                            <option value="Preklinik">Preklinik</option>
+                            <option value="Profesi Dokter Muda">Profesi Dokter Muda (Co-Ass)</option>
+                            <option value="Jurnal & Riset">Jurnal & Riset</option>
+                            <option value="Kedokteran Gigi Umum">K.G Umum</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Hak Akses URL</label>
+                        <select id="accessType" class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner cursor-pointer text-cyan-400">
+                            <option value="Restricted" selected>Restricted (Blur)</option>
+                            <option value="Open Access">Open Access (Free)</option>
+                        </select>
+                    </div>
                 </div>
+
                 <div>
                     <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Deskripsi / Abstrak Singkat</label>
                     <textarea id="desc" rows="4" required class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm resize-none shadow-inner" placeholder="Tuliskan rangkuman atau abstrak materi..."></textarea>
                 </div>
                 
                 <button type="submit" id="btnSubmit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-black font-black py-4 rounded-xl hover:brightness-110 shadow-[0_10px_20px_rgba(0,229,255,0.3)] transition-all uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95">
-                    <i class="ph-bold ph-database"></i> Push to Database
+                    <i class="ph-bold ph-database"></i> Push to Storage
                 </button>
             </form>
         </div>
@@ -88,105 +96,85 @@
         <div class="lg:col-span-8 flex flex-col h-[80vh]">
             <div class="flex items-center gap-2 mb-4">
                 <div class="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
-                <h3 class="text-sm font-mono text-gray-400 uppercase tracking-widest">Supabase Live Records</h3>
+                <h3 class="text-sm font-mono text-gray-400 uppercase tracking-widest">System Live Records</h3>
             </div>
             <div class="flex-grow overflow-y-auto pr-2 custom-scrollbar space-y-4" id="arsipList">
                 <div class="glass-panel p-10 text-center rounded-2xl flex flex-col items-center justify-center h-full">
                     <i class="ph-bold ph-spinner-gap animate-spin text-5xl text-cyan-400 mb-4 drop-shadow-[0_0_15px_rgba(0,229,255,0.8)]"></i>
-                    <p class="text-gray-400 font-mono uppercase tracking-widest">Querying Supabase PostgreSQL...</p>
+                    <p class="text-gray-400 font-mono uppercase tracking-widest">Querying Database...</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // PROTEKSI IFRAME & AUTH
         const token = localStorage.getItem('axa_arsip_token');
-        if (!token) {
-            try { window.location.href = '/admin/login'; } catch (e) { /* Silent Catch Iframe Error */ }
+        if (!token) { try { window.location.href = '/admin/login'; } catch (e) {} }
+
+        // GANTI INI DENGAN URL & ANON KEY ANDA SENDIRI DARI SUPABASE DASHBOARD
+        const SUPABASE_URL = "YOUR_SUPABASE_URL"; 
+        const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY"; 
+        
+        let supabaseClient = null;
+
+        // PENCEGAHAN CRASH: Supabase Client hanya dibuat jika URL sudah valid (Bukan Placeholder)
+        try {
+            if (SUPABASE_URL && SUPABASE_URL.startsWith('http')) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch (e) {
+            console.warn("Peringatan: Kredensial Supabase di admin-dashboard.ejs belum dikonfigurasi.");
         }
 
-        let base64File = null;
-        let selectedFileName = "";
+        let selectedFile = null;
 
-        // DRAG & DROP LOGIC
         const dropzone = document.getElementById('dropzoneContainer');
         const fileInput = document.getElementById('fileInput');
         const dropText = document.getElementById('dropText');
         const dropIcon = document.getElementById('dropIcon');
 
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropzone.addEventListener(eventName, preventDefaults, false);
+            dropzone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
         });
-        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
-        });
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
-        });
-
-        dropzone.addEventListener('drop', handleDrop, false);
-        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-
-        function handleDrop(e) { handleFiles(e.dataTransfer.files); }
+        dropzone.addEventListener('dragover', () => dropzone.classList.add('dragover'));
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+        dropzone.addEventListener('drop', e => { dropzone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+        fileInput.addEventListener('change', e => { handleFiles(e.target.files); });
 
         function handleFiles(files) {
             if (files.length === 0) return;
             const file = files[0];
-            if (file.type !== "application/pdf") {
-                alert("Hanya file PDF yang diizinkan!");
-                return;
-            }
-            
-            // Limit ~4MB untuk Vercel Serverless
-            if (file.size > 4.5 * 1024 * 1024) {
-                alert("Ukuran file terlalu besar! Batas maksimal Vercel adalah ~4MB per file PDF.");
-                return;
-            }
+            if (file.type !== "application/pdf") return alert("Hanya file PDF yang diizinkan!");
 
-            selectedFileName = file.name;
+            selectedFile = file;
             dropText.innerHTML = `<span class="text-green-400 font-black">${file.name}</span><br><span class="text-gray-400">${(file.size/1024/1024).toFixed(2)} MB Ready</span>`;
             dropIcon.className = "ph-fill ph-check-circle text-4xl text-green-400 mb-2";
             dropzone.classList.add('has-file');
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                // Hapus awalan data:application/pdf;base64,
-                base64File = e.target.result.split(',')[1]; 
-            };
-            reader.readAsDataURL(file);
         }
 
-        // FETCH DATA DARI SUPABASE POSTGRESQL (UPGRADED DIAGNOSTICS)
         async function fetchArsip() {
             const listEl = document.getElementById('arsipList');
             try {
                 const res = await fetch('/api/arsip', { headers: { 'Authorization': token } });
-                
-                // Ekstrak Body/JSON agar tahu error aslinya (Supabase error)
-                if (!res.ok) {
-                    let errMsg = "API Offline";
-                    try {
-                        const errData = await res.json();
-                        errMsg = errData.message;
-                    } catch(jsonErr) {}
-                    throw new Error(errMsg);
-                }
+                if (!res.ok) throw new Error("Gagal mengambil data dari server.");
                 
                 const { data } = await res.json();
                 if(data.length === 0) { 
-                    listEl.innerHTML = '<div class="glass-panel p-8 text-center rounded-2xl text-gray-400 font-mono">No documents found in Supabase Vault.</div>'; 
+                    listEl.innerHTML = '<div class="glass-panel p-8 text-center rounded-2xl text-gray-400 font-mono">Database kosong.</div>'; 
                     return; 
                 }
                 
-                listEl.innerHTML = data.map(item => `
-                    <div class="brutal-card rounded-2xl p-5 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden group">
+                listEl.innerHTML = data.map(item => {
+                    const accessColor = item.access_type === 'Open Access' ? 'text-green-400 border-green-400/30 bg-green-500/10' : 'text-red-400 border-red-400/30 bg-red-500/10';
+                    return `
+                    <div class="brutal-card rounded-2xl p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden group">
                         <div class="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-cyan-500/10 to-transparent pointer-events-none"></div>
                         <div class="min-w-0 w-full z-10">
-                            <span class="text-[9px] bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 px-2.5 py-1 rounded font-mono uppercase tracking-widest font-bold">${item.category}</span>
-                            <h3 class="text-lg md:text-xl font-black mt-2.5 truncate w-full drop-shadow-sm text-white">${item.title}</h3>
+                            <div class="flex gap-2 mb-2">
+                                <span class="text-[9px] bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 px-2.5 py-1 rounded font-mono uppercase tracking-widest font-bold">${item.category}</span>
+                                <span class="text-[9px] ${accessColor} border px-2.5 py-1 rounded font-mono uppercase tracking-widest font-bold">${item.access_type || 'Restricted'}</span>
+                            </div>
+                            <h3 class="text-lg md:text-xl font-black truncate w-full drop-shadow-sm text-white">${item.title}</h3>
                             <p class="text-gray-400 text-xs truncate font-mono mt-1 w-full"><i class="ph-bold ph-file-pdf"></i> ${item.file_name} <span class="mx-2">|</span> <i class="ph-bold ph-calendar"></i> ${item.date}</p>
                         </div>
                         <div class="flex gap-2 z-10 shrink-0 w-full md:w-auto">
@@ -194,80 +182,83 @@
                             <button onclick="hapus('${item.id}')" class="flex-1 md:flex-none text-center bg-red-500 text-white p-3 rounded-xl hover:bg-red-400 transition-colors shadow-[0_0_10px_rgba(239,68,68,0.5)]"><i class="ph-bold ph-trash text-lg"></i></button>
                         </div>
                     </div>
-                `).join('');
-                
+                `}).join('');
             } catch (error) {
-                // Menampilkan error Supabase asli di layar (misal: table tidak ada)
-                listEl.innerHTML = `<div class="glass-panel p-8 text-center rounded-2xl text-red-400 font-mono border-red-500/50">
-                    <i class="ph-fill ph-warning-circle text-4xl mb-3"></i><br>Koneksi Supabase PostgreSQL Terputus.<br>
-                    <span class="text-xs text-red-300 mt-2 block font-bold border border-red-500/30 p-2 rounded bg-red-900/20 break-words">${error.message}</span>
-                </div>`;
+                listEl.innerHTML = `<div class="glass-panel p-8 text-center rounded-2xl text-red-400 font-mono border-red-500/50"><i class="ph-fill ph-warning-circle text-4xl mb-3"></i><br>${error.message}</div>`;
             }
         }
 
-        // SUBMIT UPLOAD KE SERVER
         document.getElementById('formArsip').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(!base64File) return alert("Harap masukkan file PDF terlebih dahulu!");
+            if(!selectedFile) return alert("Harap pilih file PDF terlebih dahulu!");
 
             const btn = document.getElementById('btnSubmit');
             const ogText = btn.innerHTML;
-            btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin text-xl"></i> INGESTING TO SUPABASE...';
+
+            if (!supabaseClient) {
+                alert("SISTEM TERKUNCI: Anda belum mengubah SUPABASE_URL dan SUPABASE_ANON_KEY di dalam kode admin-dashboard.ejs!");
+                return;
+            }
+
+            btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin text-xl"></i> UPLOADING...';
             btn.disabled = true;
 
-            const payload = { 
-                title: document.getElementById('title').value, 
-                category: document.getElementById('category').value, 
-                desc: document.getElementById('desc').value,
-                fileName: selectedFileName,
-                fileData: base64File
-            };
-            
             try {
+                const uniqueId = Date.now().toString();
+                const cleanFileName = selectedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+                const filePath = `${uniqueId}_${cleanFileName}`;
+
+                // 1. Upload langsung dari browser ke Supabase Storage
+                const { error: storageError } = await supabaseClient.storage
+                    .from('arsip_files')
+                    .upload(filePath, selectedFile, { cacheControl: '3600', upsert: false });
+
+                if (storageError) throw new Error("Upload Storage Gagal: " + storageError.message);
+
+                // 2. Kirim metadata ke Backend Express
+                const payload = {
+                    id: uniqueId,
+                    title: document.getElementById('title').value,
+                    category: document.getElementById('category').value,
+                    desc: document.getElementById('desc').value,
+                    accessType: document.getElementById('accessType').value,
+                    fileName: selectedFile.name,
+                    filePath: filePath
+                };
+
                 const res = await fetch('/api/arsip', { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json', 'Authorization': token }, 
                     body: JSON.stringify(payload) 
                 });
                 
-                if(res.ok) {
-                    document.getElementById('formArsip').reset();
-                    base64File = null;
-                    dropzone.classList.remove('has-file');
-                    dropIcon.className = "ph-bold ph-file-pdf text-4xl text-cyan-400 mb-2 group-hover:scale-110 transition-transform";
-                    dropText.innerHTML = `Drag & Drop PDF di sini<br><span class="text-[10px] text-gray-500 font-mono font-normal">atau klik untuk menelusuri</span>`;
-                    fetchArsip();
-                } else {
-                    const err = await res.json();
-                    alert("Gagal upload: " + err.message);
-                }
-            } catch (e) {
-                alert("Koneksi gagal. File mungkin terlalu besar untuk Vercel Payload Limit.");
-            } finally {
-                btn.innerHTML = ogText;
-                btn.disabled = false;
+                if (!res.ok) throw new Error("Gagal menyimpan metadata ke database.");
+
+                document.getElementById('formArsip').reset();
+                selectedFile = null;
+                dropzone.classList.remove('has-file');
+                dropIcon.className = "ph-fill ph-file-pdf text-4xl text-cyan-400 mb-2 group-hover:scale-110 transition-transform";
+                dropText.innerHTML = `Drag & Drop PDF di sini<br><span class="text-[10px] text-green-400 font-mono font-normal">Mendukung file besar langsung via Storage</span>`;
+                fetchArsip();
+            } catch (err) { 
+                alert(err.message); 
+            } finally { 
+                btn.innerHTML = ogText; 
+                btn.disabled = false; 
             }
         });
 
         async function hapus(id) {
-            if(!confirm('Hapus dokumen dan file ini secara permanen dari Supabase Storage & Database?')) return;
+            if(!confirm('Hapus permanen dokumen ini?')) return;
             try {
                 const res = await fetch('/api/arsip/'+id, { method: 'DELETE', headers: { 'Authorization': token } });
-                if(!res.ok) {
-                     const err = await res.json();
-                     throw new Error(err.message);
-                }
+                if(!res.ok) throw new Error("Gagal menghapus.");
                 fetchArsip();
-            } catch (e) {
-                alert("Gagal menghapus: " + e.message);
-            }
+            } catch (e) { alert(e.message); }
         }
 
-        function logout() {
-            localStorage.removeItem('axa_arsip_token');
-            try { window.location.href = '/admin/login'; } catch (e) { /* Silent Catch */ }
-        }
-
+        function logout() { localStorage.removeItem('axa_arsip_token'); try { window.location.href = '/admin/login'; } catch (e) {} }
+        
         fetchArsip();
     </script>
 </body>
