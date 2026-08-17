@@ -210,9 +210,21 @@ app.get('/sitemap.xml', async (req, res) => {
     try {
         // 🌟 CACHING SITEMAP (SUPER PENTING UNTUK MENCEGAH GSC TIMEOUT / 504 ERROR) 🌟
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
-        res.set('Content-Type', 'text/xml; charset=utf-8');
+        // PASTIKAN CONTENT-TYPE ADALAH APPLICATION/XML AGAR DITERIMA GOOGLEBOT SEBAGAI "PETA SITUS"
+        res.setHeader('Content-Type', 'application/xml; charset=utf-8');
         
+        // HELPER PENTING: Membersihkan string dari karakter ilegal XML (&, <, >, ", ') yang merusak validasi GSC
+        const escapeXML = (str) => {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&apos;');
+        };
+
         let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+        // Penambahan Namespace Image Khusus agar struktur sesuai dengan GBR 2
         xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">\n`;
         
         // Helper untuk Google Sitemap format YYYY-MM-DD
@@ -220,7 +232,7 @@ app.get('/sitemap.xml', async (req, res) => {
             if (!dateStr) return new Date().toISOString().split('T')[0];
             if (dateStr.match(/^\d{2}-\d{2}-\d{4}$/)) {
                 const parts = dateStr.split('-');
-                return `${parts[2]}-${parts[1]}-${parts[0]}`;
+                return `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert DD-MM-YYYY to YYYY-MM-DD
             }
             return dateStr; 
         };
@@ -283,8 +295,9 @@ app.get('/sitemap.xml', async (req, res) => {
             if (arsipDB && !error) {
                 arsipDB.forEach(doc => {
                     const validSitemapDate = parseSitemapDate(doc.date);
-                    const safeTitle = (doc.title || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                    const safeCat = (doc.category || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    // Gunakan fungsi escapeXML agar karakter ilegal seperti '&' tidak merusak XML GSC
+                    const safeTitle = escapeXML(doc.title);
+                    const safeCat = escapeXML(doc.category);
 
                     // Page Viewer Route dengan Image Tag
                     xml += `<url>\n`;
