@@ -356,12 +356,22 @@ app.post('/api/github', async (req, res) => {
 
         const sortedLangs = Object.keys(langMap).map(k => ({ name: k, size: langMap[k].size, color: langMap[k].color, percent: ((langMap[k].size / totalSize) * 100).toFixed(2) })).sort((a, b) => b.size - a.size).slice(0, 5);
         res.status(200).json({ status: 'success', data: { stars: totalStars, commits: data.contributionsCollection.totalCommitContributions + data.contributionsCollection.restrictedContributionsCount, prs: data.pullRequests.totalCount, issues: data.issues.totalCount, topLangs: sortedLangs } });
+
     } catch (error) {
-        res.status(500).json({ status: 'error', message: error.message });
+        console.error("Vercel Serverless Error:", error);
+        res.status(500).json({ status: 'error', message: error.message || 'Internal Server Error' });
     }
 });
 
+// ==========================================
+// 8. 404 ERROR HANDLER (HALAMAN TIDAK DITEMUKAN)
+// ==========================================
+app.use((req, res) => {
+    res.status(404).render('admin-404');
+});
+
 module.exports = app;
+
 if (require.main === module) {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
