@@ -4,6 +4,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 
+// Konfigurasi Klien Supabase menggunakan Environment Variables
 const supabaseUrl = process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.KVVSUPABASE_ANON_KEY;
 
@@ -15,6 +16,9 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: { persistSession: false }
 });
 
+// ==========================================
+// 1. SETUP MIDDLEWARE & CORS
+// ==========================================
 app.use(express.json({ limit: '10mb' })); 
 
 app.use((req, res, next) => {
@@ -32,6 +36,9 @@ app.use((req, res, next) => {
 app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 
+// ==========================================
+// 2. DATA METADATA DINAMIS SEO (GOLD STANDARD)
+// ==========================================
 const baseUrl = 'https://www.maksaarsyad.xyz';
 
 const routesMeta = {
@@ -46,6 +53,9 @@ const routesMeta = {
     '/arsip': { title: 'Arsip Materi & Jurnal | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan catatan preklinik, profesi dokter muda, dan materi kedokteran gigi (Knowledge Base).', keywords: 'Arsip Kedokteran Gigi, Catatan Preklinik, Co-Ass', ogImage: '/axalogo.png', type: 'website' }
 };
 
+// ==========================================
+// 3. ADMIN AUTHENTICATION API & MIDDLEWARE
+// ==========================================
 const ADMIN_USER = process.env.ADMIN_USER || 'axaaxyz_01';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'axaxyz999';
 const SECRET_TOKEN = process.env.ADMIN_SECRET_TOKEN || 'axa-super-secure-token-2026';
@@ -71,7 +81,11 @@ const protectAdmin = (req, res, next) => {
     else res.status(403).json({ status: 'error', message: 'Akses Ditolak' });
 };
 
-// GET: Tarik seluruh data Arsip
+// ==========================================
+// 4. SUPABASE ARSIP API (POSTGRES & STORAGE)
+// ==========================================
+
+// Ambil seluruh data Arsip
 app.get('/api/arsip', async (req, res) => {
     try {
         if(!supabaseUrl || !supabaseKey) throw new Error("ENV Supabase Kosong!");
@@ -79,7 +93,7 @@ app.get('/api/arsip', async (req, res) => {
         const { data, error } = await supabase
             .from('arsip')
             .select('*')
-            .order('id', { ascending: false });
+            .order('id', { ascending: false }); 
 
         if (error) throw new Error(`Supabase DB Error: ${error.message}`);
         res.json({ status: 'success', data });
@@ -89,7 +103,7 @@ app.get('/api/arsip', async (req, res) => {
     }
 });
 
-// POST: Simpan Metadata Baru
+// POST: Simpan Metadata Baru (Tanggal Format DD-MM-YYYY)
 app.post('/api/arsip', protectAdmin, async (req, res) => {
     try {
         const { id, title, category, desc, accessType, fileName, filePath } = req.body;
@@ -143,8 +157,8 @@ app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
                 category: category, 
                 desc: desc, 
                 access_type: accessType,
-                slug: slug, 
-                date: date 
+                slug: slug,
+                date: date
             })
             .eq('id', docId)
             .select();
@@ -187,7 +201,10 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
     }
 });
 
-// SITEMAP.XML DENGAN SMART DATE PARSER (GOLD STANDARD GSC)
+
+// ==========================================
+// 5. SITEMAP & ROBOTS.TXT (DINAMIS 100%)
+// ==========================================
 app.get('/sitemap.xml', async (req, res) => {
     try {
         res.set('Content-Type', 'text/xml; charset=utf-8');
@@ -221,7 +238,7 @@ app.get('/sitemap.xml', async (req, res) => {
                     const validSitemapDate = parseSitemapDate(doc.date);
                     // Page Viewer Route
                     xml += `  <url>\n    <loc>${baseUrl}/arsip/${doc.slug}</loc>\n    <lastmod>${validSitemapDate}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
-                    // Native PDF Route (Untuk SEO Open Access - Memicu PDF Badge)
+                    // Native PDF Route (Untuk SEO Open Access)
                     if(doc.access_type === 'Open Access') {
                         xml += `  <url>\n    <loc>${baseUrl}/arsip/file/${doc.slug}.pdf</loc>\n    <lastmod>${validSitemapDate}</lastmod>\n    <changefreq>yearly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
                     }
@@ -237,6 +254,12 @@ app.get('/sitemap.xml', async (req, res) => {
 });
 
 app.get('/robots.txt', (req, res) => {
+    res.set('Content-Type', 'text/plain; charset=utf-8');
+    let txt = `User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
+    res.send(txt);
+});
+
+
 // ==========================================
 // 6. FOLDER PUBLIC & ROUTING HALAMAN VIEWS
 // ==========================================
@@ -250,31 +273,35 @@ app.get('/admin/dashboard', (req, res) => {
     });
 });
 
-// Halaman Publik Arsip Utama (List) - Added currentPath for SEO
 app.get('/arsip', async (req, res) => {
     try {
         const meta = routesMeta['/arsip'];
         meta.canonical = `${baseUrl}/arsip`;
-        
         let arsipDB = [];
         try {
             const result = await supabase.from('arsip').select('*').order('id', { ascending: false });
             if(result.data) arsipDB = result.data;
-        } catch(dbErr) { console.error("Database fetch failed on /arsip", dbErr.message); }
+        } catch(dbErr) {}
         
+        // Caching HTML halaman List Arsip
+        res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
         res.render('arsip-list', { meta, baseUrl, arsipData: arsipDB, currentPath: '/arsip' });
     } catch (e) {
         res.status(500).send("Internal Server Error");
     }
 });
 
-// Endpoint Native Streaming File PDF (Proxy to Supabase Storage)
-// 🌟 GOOGLE SCHOLAR SEO: MENYEDIAKAN DIRECT PDF LINK YANG DIINDEKS 🌟
+// 🌟 SOLUSI GSC 5xx: Endpoint Native Streaming File PDF (Proxy) 🌟
 app.get('/arsip/file/:slug.pdf', async (req, res) => {
     try {
         const slugStr = req.params.slug; 
 
-        const { data: arsip, error: dbErr } = await supabase.from('arsip').select('file_name, file_path').eq('slug', slugStr).single();
+        // TIMEOUT PROTECTOR: Batasi waktu query agar tidak merusak batas Vercel
+        const fetchPromise = supabase.from('arsip').select('file_name, file_path').eq('slug', slugStr).single();
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('DB Timeout')), 8500));
+        
+        const { data: arsip, error: dbErr } = await Promise.race([fetchPromise, timeoutPromise]);
+        
         if (dbErr || !arsip) return res.status(404).send('Dokumen tidak ditemukan dalam database.');
 
         const { data: fileBlob, error: dlErr } = await supabase.storage.from('arsip_files').download(arsip.file_path);
@@ -282,25 +309,33 @@ app.get('/arsip/file/:slug.pdf', async (req, res) => {
 
         const buffer = Buffer.from(await fileBlob.arrayBuffer());
         
+        // CACHING SUPER KUAT (Vercel CDN Edge)
+        res.setHeader('Cache-Control', 'public, max-age=31536000, s-maxage=31536000, immutable');
+        res.setHeader('X-Robots-Tag', 'index, follow, noarchive');
+        
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `inline; filename="${arsip.file_name}"`);
         res.setHeader('Content-Length', buffer.length);
-        
-        // SEO GOLD STANDARD: Instruksikan Google bot untuk mengindeks PDF ini
-        res.setHeader('X-Robots-Tag', 'index, follow, noarchive');
-        
         res.send(buffer);
     } catch (e) {
-        console.error("Stream Error:", e);
-        res.status(500).send("Terjadi kegagalan transmisi file.");
+        console.error("Stream Error PDF:", e.message);
+        res.status(503).send("Database sedang dalam cold-start. Silakan muat ulang (refresh) halaman.");
     }
 });
 
-// Halaman Viewer Arsip Satuan (Scribd-like Blur / Open Access Page)
+// 🌟 SOLUSI GSC 5xx: Page Viewer (ARSIP FILE EJS) 🌟
 app.get('/arsip/:slug', async (req, res) => {
     try {
-        const { data: arsip, error } = await supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
-        if (error || !arsip) return res.status(404).render('admin-404'); // Redirect ke 404 Custom
+        // TIMEOUT PROTECTOR: Mencegah Vercel Serverless Error (504 Gateway Timeout)
+        const fetchPromise = supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('DB Timeout')), 8500));
+
+        const { data: arsip, error } = await Promise.race([fetchPromise, timeoutPromise]);
+        
+        if (error || !arsip) {
+            try { return res.status(404).render('admin-404'); } 
+            catch (err) { return res.status(404).send('Not Found 404'); }
+        }
 
         const meta = {
             title: `${arsip.title} | drg. M. Aksa Arsyad`,
@@ -310,10 +345,14 @@ app.get('/arsip/:slug', async (req, res) => {
             ogImage: '/axalogo.png',
             type: 'article'
         };
-        // Passing currentPath for precise SEO Breadcrumb
+        
+        // VERCEL EDGE CACHING: Halaman ini akan dicache di CDN. Googlebot mendapat respon instan 0.05s!
+        res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
+        
         res.render('arsipfile', { meta, baseUrl, arsip, currentPath: `/arsip/${arsip.slug}` });
     } catch(e) {
-        res.status(500).send("Internal Server Error");
+        console.error("GSC 5xx Protector Route /arsip/:slug:", e.message);
+        res.status(503).send("Layanan sedang memuat ulang database (Cold Start). Silakan muat ulang (refresh) halaman ini dalam beberapa detik.");
     }
 });
 
@@ -329,6 +368,9 @@ app.get(routeKeys, (req, res) => {
     }
 });
 
+// ==========================================
+// 7. ROUTE API GITHUB STATS
+// ==========================================
 app.post('/api/github', async (req, res) => {
     try {
         const { username, token } = req.body || {};
@@ -362,9 +404,15 @@ app.post('/api/github', async (req, res) => {
     }
 });
 
-// Penanganan 404 Global untuk URL yang tidak valid
+// ==========================================
+// 8. 404 ERROR HANDLER
+// ==========================================
 app.use((req, res) => {
-    res.status(404).render('admin-404');
+    try {
+        res.status(404).render('admin-404');
+    } catch (e) {
+        res.status(404).send('Halaman Tidak Ditemukan');
+    }
 });
 
 module.exports = app;
