@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= meta.title %></title>
+    
     <meta name="description" content="<%= meta.desc %>">
     <link rel="canonical" href="<%= meta.canonical %>">
     
@@ -49,12 +50,12 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             <% if(arsipData && arsipData.length > 0) { %>
                 <% arsipData.forEach(item => { %>
-                    <!-- URL dinamis: Langsung Native PDF (akhiran .pdf) jika Open Access untuk SEO, Viewer Biasa Jika Restricted -->
-                    <a href="<%= item.access_type === 'Open Access' ? '/arsip/file/' + item.slug + '.pdf' : '/arsip/' + item.slug %>" class="card-neo p-6 md:p-8 rounded-2xl block group w-full outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 relative overflow-hidden flex flex-col h-full">
+                    <!-- URL dinamis diarahkan ke /arsip/:slug terlepas status Restricted atau Open Access -->
+                    <a href="/arsip/<%= item.slug %>" class="card-neo p-6 md:p-8 rounded-2xl block group w-full outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 relative overflow-hidden flex flex-col h-full">
                         <div class="absolute -right-4 -top-4 opacity-5 group-hover:opacity-20 transition-opacity pointer-events-none">
                             <i class="ph-fill ph-file-pdf text-9xl text-cyan-400"></i>
                         </div>
-                        <div class="flex justify-between items-start mb-5 gap-3 relative z-10">
+                        <div class="flex justify-between items-start mb-5 gap-3 relative z-10 flex-wrap">
                             <span class="text-[9px] md:text-[10px] font-mono font-bold uppercase tracking-widest text-white bg-cyan-500 px-3 py-1.5 rounded-lg border border-cyan-400 shrink-0"><%= item.category %></span>
                             <span class="text-[10px] md:text-xs text-gray-500 font-mono flex items-center gap-1 shrink-0"><i class="ph-bold ph-calendar-blank text-sm"></i> <%= item.date %></span>
                         </div>
