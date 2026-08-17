@@ -23,26 +23,26 @@
         // Helper Parser Date Khusus Google (ISO 8601 & YYYY/MM/DD)
         let isoDate = arsip.date;
         let scholarDate = arsip.date;
-        let displayDate = arsip.date; // Tampilan untuk user
+        let displayDate = arsip.date; 
         
         if(isoDate && isoDate.match(/^\d{2}-\d{2}-\d{4}$/)) {
             const parts = isoDate.split('-');
-            isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert ke YYYY-MM-DD (JSON-LD)
-            scholarDate = `${parts[2]}/${parts[1]}/${parts[0]}`; // Convert ke YYYY/MM/DD (Google Scholar)
-            displayDate = arsip.date; // Biarkan DD-MM-YYYY untuk mata pengguna
+            isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`; 
+            scholarDate = `${parts[2]}/${parts[1]}/${parts[0]}`; 
+            displayDate = arsip.date; 
         } else if (isoDate && isoDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
             const parts = isoDate.split('-');
-            displayDate = `${parts[2]}-${parts[1]}-${parts[0]}`; // Ubah data lama YYYY-MM-DD jadi DD-MM-YYYY untuk user
+            displayDate = `${parts[2]}-${parts[1]}-${parts[0]}`; 
             scholarDate = isoDate.replace(/-/g, '/');
         }
         
-        // Escape quotes untuk menghindari JSON break
-        const safeTitle = (arsip.title || '').replace(/"/g, '\\"');
-        const safeDesc = (arsip.desc || '').replace(/"/g, '\\"');
+        // 🌟 GSC JSON PROTECTOR: Menghapus karakter enter (\n) yang bisa memicu Googlebot Invalid Data JSON-LD 🌟
+        const safeTitle = (arsip.title || '').replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
+        const safeDesc = (arsip.desc || '').replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
         const isFree = arsip.access_type === 'Open Access' ? 'true' : 'false';
     %>
 
-    <!-- 🌟 GOOGLE SCHOLAR & ACADEMIC SEO TAGS (MEMAKSA MUNCULNYA BADGE PDF) 🌟 -->
+    <!-- 🌟 GOOGLE SCHOLAR & ACADEMIC SEO TAGS 🌟 -->
     <meta name="citation_title" content="<%- safeTitle %>">
     <meta name="citation_author" content="drg. M. Aksa Arsyad, S.KG">
     <% if (scholarDate) { %><meta name="citation_publication_date" content="<%= scholarDate %>"><% } %>
@@ -50,7 +50,7 @@
     <meta name="citation_language" content="id">
     
     <% if(arsip.access_type === 'Open Access') { %>
-    <!-- TAG SAKTI: Jika Open Access, kasih tau bot Google dimana letak PDF fisiknya -->
+    <!-- TAG SAKTI BINDING: Googlebot akan menautkan halaman HTML ini dengan File PDF aslinya -->
     <meta name="citation_pdf_url" content="<%= baseUrl %>/arsip/file/<%= arsip.slug %>.pdf">
     <% } %>
 
