@@ -112,6 +112,7 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
         const rawSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         const slug = `${rawSlug}-${Math.random().toString(36).substr(2, 4)}`;
 
+        // Bikin tanggal format DD-MM-YYYY
         const today = new Date();
         const dd = String(today.getDate()).padStart(2, '0');
         const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -144,7 +145,7 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
     }
 });
 
-// PUT: Full CRUD Edit Data Arsip
+// PUT: Full CRUD Edit Data Arsip (Slug, Tanggal, dll)
 app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
@@ -203,18 +204,18 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
 
 
 // ==========================================
-// 5. SITEMAP & ROBOTS.TXT (DINAMIS 100% + EDGE CACHING)
+// 5. SITEMAP & ROBOTS.TXT (DINAMIS 100% + SCHEMA EXTENDED)
 // ==========================================
 app.get('/sitemap.xml', async (req, res) => {
     try {
         // 🌟 CACHING SITEMAP (SUPER PENTING UNTUK MENCEGAH GSC TIMEOUT / 504 ERROR) 🌟
-        // Vercel Edge Cache akan menyimpan XML ini selama 1 hari (86400 detik)
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
         res.set('Content-Type', 'text/xml; charset=utf-8');
         
         let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-        xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+        xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">\n`;
         
+        // Helper untuk Google Sitemap format YYYY-MM-DD
         const parseSitemapDate = (dateStr) => {
             if (!dateStr) return new Date().toISOString().split('T')[0];
             if (dateStr.match(/^\d{2}-\d{2}-\d{4}$/)) {
@@ -224,21 +225,57 @@ app.get('/sitemap.xml', async (req, res) => {
             return dateStr; 
         };
 
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        // 1. HALAMAN UTAMA & PRIORITAS TINGGI
+        xml += `<!--  =========================================  -->\n`;
+        xml += `<!--  HALAMAN UTAMA & PRIORITAS TINGGI           -->\n`;
+        xml += `<!--  =========================================  -->\n`;
+        xml += `<url>\n`;
+        xml += `<loc>${baseUrl}/</loc>\n`;
+        xml += `<lastmod>${currentDate}</lastmod>\n`;
+        xml += `<changefreq>daily</changefreq>\n`;
+        xml += `<priority>1.0</priority>\n`;
+        xml += `<image:image>\n`;
+        xml += `<image:loc>${baseUrl}/axalogo.png</image:loc>\n`;
+        xml += `<image:title>CV &amp; Portofolio drg. M. Aksa Arsyad, S.KG</image:title>\n`;
+        xml += `<image:caption>Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum.</image:caption>\n`;
+        xml += `</image:image>\n`;
+        xml += `</url>\n`;
+
+        // 2. HALAMAN PORTFOLIO STATIS (SPA ROUTING)
+        xml += `<!--  =========================================  -->\n`;
+        xml += `<!--  HALAMAN PORTFOLIO STATIS (SPA ROUTING)     -->\n`;
+        xml += `<!--  =========================================  -->\n`;
         for (const [path, meta] of Object.entries(routesMeta)) {
-            const priority = path === '/' ? '1.0' : '0.8';
-            const changefreq = path === '/' ? 'daily' : 'weekly';
-            xml += `  <url>\n`;
-            xml += `    <loc>${baseUrl}${path === '/' ? '' : path}</loc>\n`;
-            xml += `    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n`;
-            xml += `    <changefreq>${changefreq}</changefreq>\n`;
-            xml += `    <priority>${priority}</priority>\n`;
-            xml += `  </url>\n`;
+            if (path === '/' || path === '/arsip') continue;
+            xml += `<url>\n`;
+            xml += `<loc>${baseUrl}${path}</loc>\n`;
+            xml += `<lastmod>${currentDate}</lastmod>\n`;
+            xml += `<changefreq>weekly</changefreq>\n`;
+            xml += `<priority>0.8</priority>\n`;
+            xml += `</url>\n`;
         }
+
+        // 3. DIREKTORI ARSIP UTAMA
+        xml += `<!--  =========================================  -->\n`;
+        xml += `<!--  DIREKTORI ARSIP UTAMA                      -->\n`;
+        xml += `<!--  =========================================  -->\n`;
+        xml += `<url>\n`;
+        xml += `<loc>${baseUrl}/arsip</loc>\n`;
+        xml += `<lastmod>${currentDate}</lastmod>\n`;
+        xml += `<changefreq>daily</changefreq>\n`;
+        xml += `<priority>0.9</priority>\n`;
+        xml += `</url>\n`;
+
+        // 4. DIRECT DYNAMIC SEO URLs (ARSIP MATERI & PDF)
+        xml += `<!--  =========================================  -->\n`;
+        xml += `<!--  DIRECT DYNAMIC SEO URLs (ARSIP MATERI)     -->\n`;
+        xml += `<!--  =========================================  -->\n`;
 
         try {
             // 🌟 TIMEOUT PROTECTOR 🌟: Batasi maksimal 8.5 detik agar Vercel tidak 504 Gateway Timeout!
-            // Jika DB Supabase sedang cold start / tidur, kita abaikan saja sejenak agar GSC tetap dapat XML 200 OK.
-            const fetchPromise = supabase.from('arsip').select('slug, date, access_type');
+            const fetchPromise = supabase.from('arsip').select('slug, date, access_type, title, category');
             const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Sitemap DB Timeout Protector Triggered')), 8500));
             
             const { data: arsipDB, error } = await Promise.race([fetchPromise, timeoutPromise]);
@@ -246,11 +283,30 @@ app.get('/sitemap.xml', async (req, res) => {
             if (arsipDB && !error) {
                 arsipDB.forEach(doc => {
                     const validSitemapDate = parseSitemapDate(doc.date);
-                    // Page Viewer Route
-                    xml += `  <url>\n    <loc>${baseUrl}/arsip/${doc.slug}</loc>\n    <lastmod>${validSitemapDate}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+                    const safeTitle = (doc.title || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    const safeCat = (doc.category || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+                    // Page Viewer Route dengan Image Tag
+                    xml += `<url>\n`;
+                    xml += `<loc>${baseUrl}/arsip/${doc.slug}</loc>\n`;
+                    xml += `<lastmod>${validSitemapDate}</lastmod>\n`;
+                    xml += `<changefreq>monthly</changefreq>\n`;
+                    xml += `<priority>0.7</priority>\n`;
+                    xml += `<image:image>\n`;
+                    xml += `<image:loc>${baseUrl}/axalogo.png</image:loc>\n`;
+                    xml += `<image:title>${safeTitle}</image:title>\n`;
+                    xml += `<image:caption>Kategori: ${safeCat}</image:caption>\n`;
+                    xml += `</image:image>\n`;
+                    xml += `</url>\n`;
+
                     // Native PDF Route (Untuk SEO Open Access)
                     if(doc.access_type === 'Open Access') {
-                        xml += `  <url>\n    <loc>${baseUrl}/arsip/file/${doc.slug}.pdf</loc>\n    <lastmod>${validSitemapDate}</lastmod>\n    <changefreq>yearly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
+                        xml += `<url>\n`;
+                        xml += `<loc>${baseUrl}/arsip/file/${doc.slug}.pdf</loc>\n`;
+                        xml += `<lastmod>${validSitemapDate}</lastmod>\n`;
+                        xml += `<changefreq>yearly</changefreq>\n`;
+                        xml += `<priority>0.9</priority>\n`;
+                        xml += `</url>\n`;
                     }
                 });
             }
@@ -279,23 +335,26 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
 app.get('/admin/login', (req, res) => res.render('admin-login'));
 app.get('/admin/dashboard', (req, res) => {
+    // Melemparkan variable ENV ke dashboard admin (Aman dari publik)
     res.render('admin-dashboard', {
         supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
         supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || ''
     });
 });
 
+// Halaman Publik Arsip Utama (List)
 app.get('/arsip', async (req, res) => {
     try {
         const meta = routesMeta['/arsip'];
         meta.canonical = `${baseUrl}/arsip`;
+        
         let arsipDB = [];
         try {
             const result = await supabase.from('arsip').select('*').order('id', { ascending: false });
             if(result.data) arsipDB = result.data;
-        } catch(dbErr) {}
+        } catch(dbErr) { console.error("Database fetch failed on /arsip", dbErr.message); }
         
-        // Caching HTML halaman List Arsip
+        // VERCEL EDGE CACHE: Cegah 504 Timeout saat Googlebot Crawling
         res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
         res.render('arsip-list', { meta, baseUrl, arsipData: arsipDB, currentPath: '/arsip' });
     } catch (e) {
@@ -303,12 +362,12 @@ app.get('/arsip', async (req, res) => {
     }
 });
 
-// 🌟 SOLUSI GSC 5xx: Endpoint Native Streaming File PDF (Proxy) 🌟
+// Endpoint Native Streaming File PDF (Proxy to Supabase Storage) - DILENGKAPI SEO ROBOTS TAG
 app.get('/arsip/file/:slug.pdf', async (req, res) => {
     try {
         const slugStr = req.params.slug; 
 
-        // TIMEOUT PROTECTOR: Batasi waktu query agar tidak merusak batas Vercel
+        // TIMEOUT PROTECTOR
         const fetchPromise = supabase.from('arsip').select('file_name, file_path').eq('slug', slugStr).single();
         const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('DB Timeout')), 8500));
         
@@ -321,7 +380,7 @@ app.get('/arsip/file/:slug.pdf', async (req, res) => {
 
         const buffer = Buffer.from(await fileBlob.arrayBuffer());
         
-        // CACHING SUPER KUAT (Vercel CDN Edge)
+        // CACHING SUPER KUAT & HEADER SEO ROBOTS AGAR DIINDEKS GOOGLE SCHOLAR
         res.setHeader('Cache-Control', 'public, max-age=31536000, s-maxage=31536000, immutable');
         res.setHeader('X-Robots-Tag', 'index, follow, noarchive');
         
@@ -330,24 +389,21 @@ app.get('/arsip/file/:slug.pdf', async (req, res) => {
         res.setHeader('Content-Length', buffer.length);
         res.send(buffer);
     } catch (e) {
-        console.error("Stream Error PDF:", e.message);
-        res.status(503).send("Database sedang dalam cold-start. Silakan muat ulang (refresh) halaman.");
+        console.error("Stream Error:", e);
+        res.status(500).send("Terjadi kegagalan transmisi file atau Database Timeout.");
     }
 });
 
-// 🌟 SOLUSI GSC 5xx: Page Viewer (ARSIP FILE EJS) 🌟
+// Page Viewer (ARSIP FILE EJS)
 app.get('/arsip/:slug', async (req, res) => {
     try {
-        // TIMEOUT PROTECTOR: Mencegah Vercel Serverless Error (504 Gateway Timeout)
+        // TIMEOUT PROTECTOR
         const fetchPromise = supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
         const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('DB Timeout')), 8500));
 
         const { data: arsip, error } = await Promise.race([fetchPromise, timeoutPromise]);
         
-        if (error || !arsip) {
-            try { return res.status(404).render('admin-404'); } 
-            catch (err) { return res.status(404).send('Not Found 404'); }
-        }
+        if (error || !arsip) return res.status(404).render('admin-404');
 
         const meta = {
             title: `${arsip.title} | drg. M. Aksa Arsyad`,
@@ -358,13 +414,12 @@ app.get('/arsip/:slug', async (req, res) => {
             type: 'article'
         };
         
-        // VERCEL EDGE CACHING: Halaman ini akan dicache di CDN. Googlebot mendapat respon instan 0.05s!
+        // VERCEL EDGE CACHE
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
         
         res.render('arsipfile', { meta, baseUrl, arsip, currentPath: `/arsip/${arsip.slug}` });
     } catch(e) {
-        console.error("GSC 5xx Protector Route /arsip/:slug:", e.message);
-        res.status(503).send("Layanan sedang memuat ulang database (Cold Start). Silakan muat ulang (refresh) halaman ini dalam beberapa detik.");
+        res.status(500).send("Internal Server Error");
     }
 });
 
@@ -388,31 +443,88 @@ app.post('/api/github', async (req, res) => {
         const { username, token } = req.body || {};
         const authToken = token || process.env.GITHUB_TOKEN;
         const ghUser = username || process.env.GITHUB_USERNAME || "raphunteks"; 
-        if (!authToken) return res.status(401).json({ status: 'error', message: 'Token GitHub tidak ditemukan.' });
 
-        const query = `query { user(login: "${ghUser}") { repositories(first: 100, ownerAffiliations: OWNER, isFork: false) { nodes { stargazerCount languages(first: 10, orderBy: {field: SIZE, direction: DESC}) { edges { size node { name color } } } } } contributionsCollection { totalCommitContributions restrictedContributionsCount } pullRequests(first: 1) { totalCount } issues(first: 1) { totalCount } } }`;
+        if (!authToken) {
+             return res.status(401).json({ status: 'error', message: 'Token GitHub tidak ditemukan.' });
+        }
 
-        const response = await fetch('https://api.github.com/graphql', { method: 'POST', headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json', 'User-Agent': 'Axa-Portfolio-App' }, body: JSON.stringify({ query }) });
-        const result = JSON.parse(await response.text());
-        if (result.errors) return res.status(400).json({ status: 'error', message: result.errors[0].message });
+        const query = `
+        query {
+          user(login: "${ghUser}") {
+            repositories(first: 100, ownerAffiliations: OWNER, isFork: false) {
+              nodes {
+                stargazerCount
+                languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
+                  edges { size node { name color } }
+                }
+              }
+            }
+            contributionsCollection {
+              totalCommitContributions
+              restrictedContributionsCount
+            }
+            pullRequests(first: 1) { totalCount }
+            issues(first: 1) { totalCount }
+          }
+        }`;
+
+        const response = await fetch('https://api.github.com/graphql', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json',
+                'User-Agent': 'Axa-Portfolio-App'
+            },
+            body: JSON.stringify({ query })
+        });
+
+        const responseText = await response.text();
+
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch(e) {
+            return res.status(500).json({ status: 'error', message: 'GitHub API tidak mengembalikan format JSON yang valid.' });
+        }
+
+        if (result.errors) {
+            return res.status(400).json({ status: 'error', message: result.errors[0].message });
+        }
 
         const data = result.data.user;
-        let totalStars = 0, langMap = {}, totalSize = 0;
+        let totalStars = 0;
+        let langMap = {};
+        let totalSize = 0;
 
         data.repositories.nodes.forEach(repo => {
             totalStars += repo.stargazerCount;
             repo.languages.edges.forEach(edge => {
                 const langName = edge.node.name;
-                if (!langMap[langName]) langMap[langName] = { size: 0, color: edge.node.color || '#ccc' };
+                const langColor = edge.node.color || '#cccccc';
+                if (!langMap[langName]) langMap[langName] = { size: 0, color: langColor };
                 langMap[langName].size += edge.size;
                 totalSize += edge.size;
             });
         });
 
-        const sortedLangs = Object.keys(langMap).map(k => ({ name: k, size: langMap[k].size, color: langMap[k].color, percent: ((langMap[k].size / totalSize) * 100).toFixed(2) })).sort((a, b) => b.size - a.size).slice(0, 5);
-        res.status(200).json({ status: 'success', data: { stars: totalStars, commits: data.contributionsCollection.totalCommitContributions + data.contributionsCollection.restrictedContributionsCount, prs: data.pullRequests.totalCount, issues: data.issues.totalCount, topLangs: sortedLangs } });
+        const sortedLangs = Object.keys(langMap)
+            .map(k => ({ name: k, size: langMap[k].size, color: langMap[k].color, percent: ((langMap[k].size / totalSize) * 100).toFixed(2) }))
+            .sort((a, b) => b.size - a.size)
+            .slice(0, 5);
+
+        const stats = {
+            stars: totalStars,
+            commits: data.contributionsCollection.totalCommitContributions + data.contributionsCollection.restrictedContributionsCount,
+            prs: data.pullRequests.totalCount,
+            issues: data.issues.totalCount,
+            topLangs: sortedLangs
+        };
+
+        res.status(200).json({ status: 'success', data: stats });
+
     } catch (error) {
-        res.status(500).json({ status: 'error', message: error.message });
+        console.error("Vercel Serverless Error:", error);
+        res.status(500).json({ status: 'error', message: error.message || 'Internal Server Error' });
     }
 });
 
@@ -420,15 +532,14 @@ app.post('/api/github', async (req, res) => {
 // 8. 404 ERROR HANDLER
 // ==========================================
 app.use((req, res) => {
-    try {
-        res.status(404).render('admin-404');
-    } catch (e) {
-        res.status(404).send('Halaman Tidak Ditemukan');
-    }
+    res.status(404).render('admin-404');
 });
 
 module.exports = app;
+
 if (require.main === module) {
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
 }
