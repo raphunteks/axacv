@@ -50,24 +50,31 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             <% if(arsipData && arsipData.length > 0) { %>
                 <% arsipData.forEach(item => { %>
-                    <!-- URL dinamis diarahkan ke /arsip/:slug terlepas status Restricted atau Open Access -->
+                    <% 
+                       // Konversi Cerdas YYYY-MM-DD ke DD-MM-YYYY jika format lama masih ada di database
+                       let displayDate = item.date;
+                       if(displayDate && displayDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                           const parts = displayDate.split('-');
+                           displayDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                       }
+                    %>
                     <a href="/arsip/<%= item.slug %>" class="card-neo p-6 md:p-8 rounded-2xl block group w-full outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 relative overflow-hidden flex flex-col h-full">
                         <div class="absolute -right-4 -top-4 opacity-5 group-hover:opacity-20 transition-opacity pointer-events-none">
                             <i class="ph-fill ph-file-pdf text-9xl text-cyan-400"></i>
                         </div>
                         <div class="flex justify-between items-start mb-5 gap-3 relative z-10 flex-wrap">
                             <span class="text-[9px] md:text-[10px] font-mono font-bold uppercase tracking-widest text-white bg-cyan-500 px-3 py-1.5 rounded-lg border border-cyan-400 shrink-0"><%= item.category %></span>
-                            <span class="text-[10px] md:text-xs text-gray-500 font-mono flex items-center gap-1 shrink-0"><i class="ph-bold ph-calendar-blank text-sm"></i> <%= item.date %></span>
+                            <span class="text-[10px] md:text-xs text-gray-500 font-mono flex items-center gap-1 shrink-0"><i class="ph-bold ph-calendar-blank text-sm"></i> <%= displayDate %></span>
                         </div>
                         
-                        <h2 class="text-lg md:text-2xl font-black mb-3 group-hover:text-cyan-400 transition-colors line-clamp-2 leading-tight break-words relative z-10"><%= item.title %></h2>
+                        <h2 class="text-lg md:text-2xl font-black mb-3 group-hover:text-cyan-400 transition-colors break-words leading-tight relative z-10"><%= item.title %></h2>
                         <p class="text-xs md:text-sm text-gray-400 line-clamp-3 mb-8 leading-relaxed break-words relative z-10"><%= item.desc %></p>
                         
                         <div class="mt-auto relative z-10 border-t border-gray-800 pt-4 flex justify-between items-center">
                             <% if(item.access_type === 'Open Access') { %>
                                 <span class="text-xs md:text-sm font-bold text-green-400 flex items-center gap-2">
                                     <i class="ph-fill ph-check-circle text-lg"></i> Open Access 
-                                    <span class="pdf-badge ml-1">PDF</span>
+                                    <span class="pdf-badge ml-1 drop-shadow-md">PDF</span>
                                 </span>
                                 <i class="ph-bold ph-arrow-right text-green-400 group-hover:translate-x-1.5 transition-transform text-base"></i>
                             <% } else { %>
