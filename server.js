@@ -206,7 +206,14 @@ app.get('/robots.txt', (req, res) => {
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 app.get('/admin/login', (req, res) => res.render('admin-login'));
-app.get('/admin/dashboard', (req, res) => res.render('admin-dashboard'));
+
+app.get('/admin/dashboard', (req, res) => {
+    // 🔐 INJEKSI VERCEL ENV KE FRONTEND DASHBOARD
+    res.render('admin-dashboard', {
+        supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
+        supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || ''
+    });
+});
 
 app.get('/arsip', async (req, res) => {
     try {
