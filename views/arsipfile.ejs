@@ -104,7 +104,7 @@
         <div class="doc-wrapper">
             <!-- PENGKONDISIAN BLUR BERDASARKAN DATABASE (Restricted vs Open Access) -->
             <% if(arsip.access_type === 'Restricted') { %>
-                <!-- FULL BLUR OBJECT -->
+                <!-- FULL BLUR OBJECT MENGGUNAKAN NATIVE PDF ENDPOINT -->
                 <object data="/arsip/file/<%= arsip.slug %>.pdf#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" class="doc-object blur-full">
                     <div class="flex flex-col items-center justify-center h-full bg-gray-900 text-gray-400 p-8 text-center"><i class="ph-fill ph-file-pdf text-6xl text-gray-600 mb-4"></i></div>
                 </object>
@@ -118,6 +118,7 @@
                         <h3 class="text-2xl md:text-3xl font-black font-['Space_Grotesk'] mb-3 text-white">Pratinjau Terkunci</h3>
                         <p class="text-xs md:text-sm text-gray-400 mb-8 font-medium leading-relaxed">Halaman ini mengunci tampilan penuh dokumen PDF untuk mencegah penyalinan otomatis (Scraping). Silakan akses dokumen utuh langsung ke penyimpanan lokal Anda.</p>
                         
+                        <!-- MENGARAH KE LINK .PDF AGAR GOOGLE BISA BACA JIKA INGIN DOWNLOAD -->
                         <a href="/arsip/file/<%= arsip.slug %>.pdf" download="<%= arsip.file_name %>" class="brutal-btn inline-flex items-center justify-center gap-3 px-8 py-4 w-full rounded-xl text-sm md:text-base">
                             <i class="ph-bold ph-download-simple text-xl"></i> Download PDF Full
                         </a>
