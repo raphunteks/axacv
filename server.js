@@ -4,6 +4,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 
+// Konfigurasi Klien Supabase menggunakan Environment Variables
 const supabaseUrl = process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.KVVSUPABASE_ANON_KEY;
 
@@ -15,7 +16,10 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: { persistSession: false }
 });
 
-app.use(express.json({ limit: '10mb' })); 
+// ==========================================
+// 1. SETUP MIDDLEWARE & CORS
+// ==========================================
+app.use(express.json({ limit: '10mb' })); // Limit ditingkatkan untuk upload base64 file PDF
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -32,6 +36,9 @@ app.use((req, res, next) => {
 app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 
+// ==========================================
+// 2. DATA METADATA DINAMIS SEO (GOLD STANDARD)
+// ==========================================
 const baseUrl = 'https://www.maksaarsyad.xyz';
 
 const routesMeta = {
@@ -46,6 +53,9 @@ const routesMeta = {
     '/arsip': { title: 'Arsip Materi & Jurnal | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan catatan preklinik, profesi dokter muda, dan materi kedokteran gigi (Knowledge Base).', keywords: 'Arsip Kedokteran Gigi, Catatan Preklinik, Co-Ass', ogImage: '/axalogo.png', type: 'website' }
 };
 
+// ==========================================
+// 3. ADMIN AUTHENTICATION API & MIDDLEWARE
+// ==========================================
 const ADMIN_USER = process.env.ADMIN_USER || 'axaaxyz_01';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'axaxyz999';
 const SECRET_TOKEN = process.env.ADMIN_SECRET_TOKEN || 'axa-super-secure-token-2026';
@@ -71,7 +81,11 @@ const protectAdmin = (req, res, next) => {
     else res.status(403).json({ status: 'error', message: 'Akses Ditolak' });
 };
 
-// GET: Tarik seluruh data Arsip
+// ==========================================
+// 4. SUPABASE ARSIP API (POSTGRES & STORAGE)
+// ==========================================
+
+// Ambil seluruh data Arsip
 app.get('/api/arsip', async (req, res) => {
     try {
         if(!supabaseUrl || !supabaseKey) throw new Error("ENV Supabase Kosong!");
@@ -79,7 +93,7 @@ app.get('/api/arsip', async (req, res) => {
         const { data, error } = await supabase
             .from('arsip')
             .select('*')
-            .order('id', { ascending: false }); // Menggunakan ID timestamp agar arsip terbaru di atas
+            .order('id', { ascending: false }); 
 
         if (error) throw new Error(`Supabase DB Error: ${error.message}`);
         res.json({ status: 'success', data });
@@ -135,7 +149,6 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
 app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
-        // Tangkap Slug & Date dari Body Request Frontend
         const { title, category, desc, accessType, slug, date } = req.body;
 
         const { data, error } = await supabase
@@ -145,8 +158,8 @@ app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
                 category: category, 
                 desc: desc, 
                 access_type: accessType,
-                slug: slug,      // Update slug kustom
-                date: date       // Update tanggal kustom
+                slug: slug,
+                date: date
             })
             .eq('id', docId)
             .select();
@@ -189,7 +202,10 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
     }
 });
 
-// SITEMAP.XML DENGAN SMART DATE PARSER (GOLD STANDARD GSC)
+
+// ==========================================
+// 5. SITEMAP & ROBOTS.TXT (DINAMIS 100%)
+// ==========================================
 app.get('/sitemap.xml', async (req, res) => {
     try {
         res.set('Content-Type', 'text/xml; charset=utf-8');
@@ -199,7 +215,7 @@ app.get('/sitemap.xml', async (req, res) => {
         // Helper untuk Google Sitemap format YYYY-MM-DD
         const parseSitemapDate = (dateStr) => {
             if (!dateStr) return new Date().toISOString().split('T')[0];
-            // Jika formatnya DD-MM-YYYY, ubah ke YYYY-MM-DD untuk Sitemap XML
+            // Jika formatnya DD-MM-YYYY, ubah ke YYYY-MM-DD
             if (dateStr.match(/^\d{2}-\d{2}-\d{4}$/)) {
                 const parts = dateStr.split('-');
                 return `${parts[2]}-${parts[1]}-${parts[0]}`;
@@ -246,34 +262,39 @@ app.get('/robots.txt', (req, res) => {
     res.send(txt);
 });
 
+
+// ==========================================
+// 6. FOLDER PUBLIC & ROUTING HALAMAN VIEWS
+// ==========================================
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 app.get('/admin/login', (req, res) => res.render('admin-login'));
 app.get('/admin/dashboard', (req, res) => {
-    // Melemparkan variable ENV ke dashboard admin (Aman dari publik)
     res.render('admin-dashboard', {
         supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
         supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || ''
     });
 });
 
+// Halaman Publik Arsip Utama (List) - Added currentPath for SEO
 app.get('/arsip', async (req, res) => {
     try {
         const meta = routesMeta['/arsip'];
         meta.canonical = `${baseUrl}/arsip`;
+        
         let arsipDB = [];
         try {
             const result = await supabase.from('arsip').select('*').order('id', { ascending: false });
             if(result.data) arsipDB = result.data;
-        } catch(dbErr) {}
+        } catch(dbErr) { console.error("Database fetch failed on /arsip", dbErr.message); }
         
-        res.render('arsip-list', { meta, baseUrl, arsipData: arsipDB });
+        res.render('arsip-list', { meta, baseUrl, arsipData: arsipDB, currentPath: '/arsip' });
     } catch (e) {
         res.status(500).send("Internal Server Error");
     }
 });
 
-// Endpoint streaming NATIVE PDF
+// Endpoint Native Streaming File PDF (Proxy to Supabase Storage)
 app.get('/arsip/file/:slug.pdf', async (req, res) => {
     try {
         const slugStr = req.params.slug; 
@@ -296,11 +317,11 @@ app.get('/arsip/file/:slug.pdf', async (req, res) => {
     }
 });
 
-// Page Viewer (ARSIP FILE EJS)
+// Halaman Viewer Arsip Satuan (Scribd-like Blur / Open Access Page)
 app.get('/arsip/:slug', async (req, res) => {
     try {
         const { data: arsip, error } = await supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
-        if (error || !arsip) return res.status(404).send('Informasi Dokumen tidak ditemukan.');
+        if (error || !arsip) return res.status(404).render('admin-404');
 
         const meta = {
             title: `${arsip.title} | drg. M. Aksa Arsyad`,
@@ -310,7 +331,8 @@ app.get('/arsip/:slug', async (req, res) => {
             ogImage: '/axalogo.png',
             type: 'article'
         };
-        res.render('arsipfile', { meta, baseUrl, arsip });
+        // Passing currentPath for precise SEO Breadcrumb
+        res.render('arsipfile', { meta, baseUrl, arsip, currentPath: `/arsip/${arsip.slug}` });
     } catch(e) {
         res.status(500).send("Internal Server Error");
     }
@@ -328,6 +350,9 @@ app.get(routeKeys, (req, res) => {
     }
 });
 
+// ==========================================
+// 7. ROUTE API GITHUB STATS
+// ==========================================
 app.post('/api/github', async (req, res) => {
     try {
         const { username, token } = req.body || {};
@@ -356,22 +381,19 @@ app.post('/api/github', async (req, res) => {
 
         const sortedLangs = Object.keys(langMap).map(k => ({ name: k, size: langMap[k].size, color: langMap[k].color, percent: ((langMap[k].size / totalSize) * 100).toFixed(2) })).sort((a, b) => b.size - a.size).slice(0, 5);
         res.status(200).json({ status: 'success', data: { stars: totalStars, commits: data.contributionsCollection.totalCommitContributions + data.contributionsCollection.restrictedContributionsCount, prs: data.pullRequests.totalCount, issues: data.issues.totalCount, topLangs: sortedLangs } });
-
     } catch (error) {
-        console.error("Vercel Serverless Error:", error);
-        res.status(500).json({ status: 'error', message: error.message || 'Internal Server Error' });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 });
 
 // ==========================================
-// 8. 404 ERROR HANDLER (HALAMAN TIDAK DITEMUKAN)
+// 8. 404 ERROR HANDLER
 // ==========================================
 app.use((req, res) => {
     res.status(404).render('admin-404');
 });
 
 module.exports = app;
-
 if (require.main === module) {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
