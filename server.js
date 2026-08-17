@@ -4,7 +4,6 @@ const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 
-// Konfigurasi Klien Supabase menggunakan Environment Variables
 const supabaseUrl = process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.KVVSUPABASE_ANON_KEY;
 
@@ -16,9 +15,6 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: { persistSession: false }
 });
 
-// ==========================================
-// 1. SETUP MIDDLEWARE & CORS
-// ==========================================
 app.use(express.json({ limit: '10mb' })); 
 
 app.use((req, res, next) => {
@@ -36,9 +32,6 @@ app.use((req, res, next) => {
 app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 
-// ==========================================
-// 2. DATA METADATA DINAMIS SEO (GOLD STANDARD)
-// ==========================================
 const baseUrl = 'https://www.maksaarsyad.xyz';
 
 const routesMeta = {
@@ -50,12 +43,9 @@ const routesMeta = {
     '/keahlian-tech': { title: 'Keahlian Klinis & Teknologi | drg. M. Aksa Arsyad, S.KG', desc: 'Daftar keahlian klinis medis, bahasa pemrograman, dan kemampuan teknologi (Web Development) drg. M. Aksa Arsyad.', keywords: 'Keahlian Dokter Gigi, Web Developer Makassar, Node.js, React, Keterampilan Klinis Gigi', ogImage: '/axalogo.png', type: 'website' },
     '/proyek': { title: 'Portofolio Proyek Web | drg. M. Aksa Arsyad, S.KG', desc: 'Portofolio pengembangan website, sistem, dan aplikasi yang dibangun oleh drg. M. Aksa Arsyad.', keywords: 'Proyek Web drg. Aksa Arsyad, Web Portofolio, Sistem Informasi Klinik, Web Developer Gigi', ogImage: '/axalogo.png', type: 'website' },
     '/sertifikasi': { title: 'Sertifikasi Medis & Tech | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan sertifikasi kompetensi medis (PDGI) dan penghargaan pemrograman teknologi drg. M. Aksa Arsyad.', keywords: 'Sertifikasi PDGI, Sertifikat Web Developer, Penghargaan drg. Aksa Arsyad, Pelatihan Kedokteran Gigi', ogImage: '/axalogo.png', type: 'website' },
-    '/arsip': { title: 'Knowledge Base & Jurnal | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan catatan preklinik, profesi dokter muda, dan materi kedokteran gigi (Knowledge Base). Berformat PDF Interaktif.', keywords: 'Arsip Kedokteran Gigi, Catatan Preklinik, Co-Ass, Jurnal Kedokteran Gigi PDF', ogImage: '/axalogo.png', type: 'website' }
+    '/arsip': { title: 'Arsip Materi & Jurnal | drg. M. Aksa Arsyad, S.KG', desc: 'Kumpulan catatan preklinik, profesi dokter muda, dan materi kedokteran gigi (Knowledge Base).', keywords: 'Arsip Kedokteran Gigi, Catatan Preklinik, Co-Ass', ogImage: '/axalogo.png', type: 'website' }
 };
 
-// ==========================================
-// 3. ADMIN AUTHENTICATION API & MIDDLEWARE
-// ==========================================
 const ADMIN_USER = process.env.ADMIN_USER || 'axaaxyz_01';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'axaxyz999';
 const SECRET_TOKEN = process.env.ADMIN_SECRET_TOKEN || 'axa-super-secure-token-2026';
@@ -81,35 +71,39 @@ const protectAdmin = (req, res, next) => {
     else res.status(403).json({ status: 'error', message: 'Akses Ditolak' });
 };
 
-// ==========================================
-// 4. SUPABASE ARSIP API CORE (FULL CRUD)
-// ==========================================
-
-// READ: Ambil seluruh direktori arsip
+// GET: Tarik seluruh data Arsip
 app.get('/api/arsip', async (req, res) => {
     try {
-        if(!supabaseUrl || !supabaseKey) throw new Error("Database Configuration Missing!");
+        if(!supabaseUrl || !supabaseKey) throw new Error("ENV Supabase Kosong!");
         
         const { data, error } = await supabase
             .from('arsip')
             .select('*')
-            .order('date', { ascending: false });
+            .order('id', { ascending: false }); // Menggunakan ID timestamp agar arsip terbaru di atas
 
-        if (error) throw new Error(error.message);
+        if (error) throw new Error(`Supabase DB Error: ${error.message}`);
         res.json({ status: 'success', data });
     } catch (err) {
+        console.error("Fetch Arsip Error:", err);
         res.status(500).json({ status: 'error', message: err.message });
     }
 });
 
-// CREATE: Unggah METADATA dokumen baru
+// POST: Simpan Metadata Baru (Tanggal Format DD-MM-YYYY)
 app.post('/api/arsip', protectAdmin, async (req, res) => {
     try {
-        const { id, title, category, desc, fileName, filePath, accessType } = req.body;
+        const { id, title, category, desc, accessType, fileName, filePath } = req.body;
         
         const uniqueId = id || Date.now().toString();
         const rawSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
         const slug = `${rawSlug}-${Math.random().toString(36).substr(2, 4)}`;
+
+        // Bikin tanggal format DD-MM-YYYY
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        const customDate = `${dd}-${mm}-${yyyy}`;
 
         const newItem = {
             id: uniqueId,
@@ -117,10 +111,10 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
             title: title,
             category: category,
             desc: desc,
+            access_type: accessType || 'Restricted',
             file_name: fileName,
             file_path: filePath, 
-            access_type: accessType || 'Restricted',
-            date: new Date().toISOString().split('T')[0]
+            date: customDate
         };
 
         const { data: dbData, error: dbError } = await supabase
@@ -128,19 +122,20 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
             .insert([newItem])
             .select();
 
-        if (dbError) throw new Error(`DB Insert Error: ${dbError.message}`);
+        if (dbError) throw new Error(`Supabase DB Insert Error: ${dbError.message}`);
 
         res.json({ status: 'success', data: dbData[0] });
     } catch (err) {
+        console.error("Upload Metadata Error:", err);
         res.status(500).json({ status: 'error', message: err.message });
     }
 });
 
-// UPDATE: Modifikasi METADATA dokumen yang ada (Edit Feature)
 app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
-        const { title, category, desc, accessType } = req.body;
+        // Tangkap Slug & Date dari Body Request Frontend
+        const { title, category, desc, accessType, slug, date } = req.body;
 
         const { data, error } = await supabase
             .from('arsip')
@@ -148,7 +143,9 @@ app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
                 title: title, 
                 category: category, 
                 desc: desc, 
-                access_type: accessType 
+                access_type: accessType,
+                slug: slug,      // Update slug kustom
+                date: date       // Update tanggal kustom
             })
             .eq('id', docId)
             .select();
@@ -158,58 +155,77 @@ app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
 
         res.json({ status: 'success', data: data[0] });
     } catch (err) {
+        console.error("Update Arsip Error:", err);
         res.status(500).json({ status: 'error', message: err.message });
     }
 });
 
-// DELETE: Hapus dokumen secara permanen
+// DELETE: Hapus file dari storage & database
 app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
-        const { data: item, error: fetchError } = await supabase.from('arsip').select('file_path').eq('id', docId).single();
 
-        if (fetchError || !item) throw new Error("Dokumen tidak ditemukan.");
+        const { data: item, error: fetchError } = await supabase
+            .from('arsip')
+            .select('file_path')
+            .eq('id', docId)
+            .single();
 
-        // Delete from storage first
+        if (fetchError || !item) throw new Error(`Fetch Error: ${fetchError?.message || "Dokumen tidak ditemukan."}`);
+
         if (item.file_path) {
-            await supabase.storage.from('arsip_files').remove([item.file_path]);
+            const { error: storageError } = await supabase.storage.from('arsip_files').remove([item.file_path]);
+            if (storageError) console.warn("Peringatan: Gagal menghapus file dari Storage:", storageError.message);
         }
 
-        // Then delete from DB
         const { error: dbError } = await supabase.from('arsip').delete().eq('id', docId);
-        if (dbError) throw new Error(dbError.message);
+        if (dbError) throw new Error(`Delete DB Error: ${dbError.message}`);
 
         res.json({ status: 'success' });
     } catch (err) {
+        console.error("Delete Error:", err);
         res.status(500).json({ status: 'error', message: err.message });
     }
 });
 
-
-// ==========================================
-// 5. SITEMAP & ROBOTS.TXT (DINAMIS 100%)
-// ==========================================
 app.get('/sitemap.xml', async (req, res) => {
     try {
         res.set('Content-Type', 'text/xml; charset=utf-8');
         let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
         xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
         
+        // Helper untuk Google Sitemap format YYYY-MM-DD
+        const parseSitemapDate = (dateStr) => {
+            if (!dateStr) return new Date().toISOString().split('T')[0];
+            // Jika formatnya DD-MM-YYYY, ubah ke YYYY-MM-DD untuk Sitemap XML
+            if (dateStr.match(/^\d{2}-\d{2}-\d{4}$/)) {
+                const parts = dateStr.split('-');
+                return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+            return dateStr; 
+        };
+
         for (const [path, meta] of Object.entries(routesMeta)) {
             const priority = path === '/' ? '1.0' : '0.8';
             const changefreq = path === '/' ? 'daily' : 'weekly';
-            xml += `  <url>\n    <loc>${baseUrl}${path === '/' ? '' : path}</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>\n`;
+            xml += `  <url>\n`;
+            xml += `    <loc>${baseUrl}${path === '/' ? '' : path}</loc>\n`;
+            xml += `    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n`;
+            xml += `    <changefreq>${changefreq}</changefreq>\n`;
+            xml += `    <priority>${priority}</priority>\n`;
+            xml += `  </url>\n`;
         }
 
         try {
             const { data: arsipDB } = await supabase.from('arsip').select('slug, date, access_type');
             if (arsipDB) {
                 arsipDB.forEach(doc => {
-                    // SEO URL Viewer (Biasa)
-                    xml += `  <url>\n    <loc>${baseUrl}/arsip/${doc.slug}</loc>\n    <lastmod>${doc.date || new Date().toISOString().split('T')[0]}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
-                    // SEO URL Direct PDF (Khusus Open Access untuk Indexing PDF Google)
+                    const validSitemapDate = parseSitemapDate(doc.date);
+                    // Page Viewer Route
+                    xml += `  <url>\n    <loc>${baseUrl}/arsip/${doc.slug}</loc>\n    <lastmod>${validSitemapDate}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+                    // Native PDF Route (Untuk SEO Open Access)
                     if(doc.access_type === 'Open Access') {
-                        xml += `  <url>\n    <loc>${baseUrl}/arsip/file/${doc.slug}.pdf</loc>\n    <lastmod>${doc.date || new Date().toISOString().split('T')[0]}</lastmod>\n    <changefreq>yearly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
+                        xml += `  <url>\n    <loc>${baseUrl}/arsip/file/${doc.slug}.pdf</loc>\n    <lastmod>${validSitemapDate}</lastmod>\n    <changefreq>yearly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
                     }
                 });
             }
@@ -224,18 +240,15 @@ app.get('/sitemap.xml', async (req, res) => {
 
 app.get('/robots.txt', (req, res) => {
     res.set('Content-Type', 'text/plain; charset=utf-8');
-    res.send(`User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: ${baseUrl}/sitemap.xml\n`);
+    let txt = `User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: ${baseUrl}/sitemap.xml\n`;
+    res.send(txt);
 });
 
-// ==========================================
-// 6. FOLDER PUBLIC & ROUTING HALAMAN VIEWS
-// ==========================================
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 app.get('/admin/login', (req, res) => res.render('admin-login'));
-
 app.get('/admin/dashboard', (req, res) => {
-    // 🔐 INJEKSI VERCEL ENV KE FRONTEND DASHBOARD (Solusi Failsafe)
+    // Melemparkan variable ENV ke dashboard admin (Aman dari publik)
     res.render('admin-dashboard', {
         supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
         supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || ''
@@ -248,7 +261,7 @@ app.get('/arsip', async (req, res) => {
         meta.canonical = `${baseUrl}/arsip`;
         let arsipDB = [];
         try {
-            const result = await supabase.from('arsip').select('*').order('date', { ascending: false });
+            const result = await supabase.from('arsip').select('*').order('id', { ascending: false });
             if(result.data) arsipDB = result.data;
         } catch(dbErr) {}
         
@@ -258,34 +271,30 @@ app.get('/arsip', async (req, res) => {
     }
 });
 
-// =========================================================================
-// ENDPOINT SUPER BIG UPGRADE: NATIVE PDF STREAMING UNTUK SEO (GBR 3 & 4)
-// URL berakhiran .pdf (contoh: /arsip/file/nama-jurnal.pdf)
-// =========================================================================
+// Endpoint streaming NATIVE PDF
 app.get('/arsip/file/:slug.pdf', async (req, res) => {
     try {
-        // req.params.slug akan berisi nama-jurnal (karena Express otomatis memisahkan ekstensi jika didefinisikan dengan route pattern di atas)
         const slugStr = req.params.slug; 
 
-        const { data: arsip, error: dbErr } = await supabase.from('arsip').select('file_name, file_path, access_type').eq('slug', slugStr).single();
-        if (dbErr || !arsip) return res.status(404).send('Dokumen PDF tidak ditemukan.');
+        const { data: arsip, error: dbErr } = await supabase.from('arsip').select('file_name, file_path').eq('slug', slugStr).single();
+        if (dbErr || !arsip) return res.status(404).send('Dokumen tidak ditemukan dalam database.');
 
         const { data: fileBlob, error: dlErr } = await supabase.storage.from('arsip_files').download(arsip.file_path);
-        if (dlErr || !fileBlob) return res.status(500).send('Gagal menarik dokumen dari Storage Database.');
+        if (dlErr || !fileBlob) return res.status(500).send('Gagal menarik dokumen dari Supabase Storage.');
 
         const buffer = Buffer.from(await fileBlob.arrayBuffer());
         
-        // Memaksa browser membaca ini sebagai dokumen PDF utuh (Native)
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `inline; filename="${arsip.file_name}"`);
         res.setHeader('Content-Length', buffer.length);
         res.send(buffer);
     } catch (e) {
-        res.status(500).send("Transmisi file PDF gagal.");
+        console.error("Stream Error:", e);
+        res.status(500).send("Terjadi kegagalan transmisi file.");
     }
 });
 
-// Halaman Viewer Arsip Satuan (Scribd-like Blur Mode)
+// Page Viewer (ARSIP FILE EJS)
 app.get('/arsip/:slug', async (req, res) => {
     try {
         const { data: arsip, error } = await supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
@@ -294,7 +303,7 @@ app.get('/arsip/:slug', async (req, res) => {
         const meta = {
             title: `${arsip.title} | drg. M. Aksa Arsyad`,
             desc: arsip.desc,
-            keywords: `${arsip.category}, Kedokteran Gigi, Jurnal Kedokteran Gigi PDF, Catatan Klinis, ${arsip.title}`,
+            keywords: `Arsip, ${arsip.category}, Kedokteran Gigi, Jurnal, ${arsip.title}`,
             canonical: `${baseUrl}/arsip/${arsip.slug}`,
             ogImage: '/axalogo.png',
             type: 'article'
@@ -317,9 +326,6 @@ app.get(routeKeys, (req, res) => {
     }
 });
 
-// ==========================================
-// 7. ROUTE API GITHUB STATS
-// ==========================================
 app.post('/api/github', async (req, res) => {
     try {
         const { username, token } = req.body || {};
