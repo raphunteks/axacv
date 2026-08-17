@@ -4,12 +4,12 @@ const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 
-// Konfigurasi Klien Supabase
+// Konfigurasi Klien Supabase menggunakan Environment Variables
 const supabaseUrl = process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.KVVSUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-    console.error("CRITICAL ERROR: Kredensial Database tidak ditemukan.");
+    console.error("CRITICAL ERROR: Kredensial Supabase tidak ditemukan di Environment Variables.");
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -19,6 +19,7 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
 // ==========================================
 // 1. SETUP MIDDLEWARE & CORS
 // ==========================================
+// Limit dikembalikan ke ukuran normal (100mb) karena file PDF raksasa kini di-bypass langsung ke Storage dari Browser
 app.use(express.json({ limit: '100mb' })); 
 
 app.use((req, res, next) => {
@@ -85,6 +86,7 @@ const protectAdmin = (req, res, next) => {
 // 4. DATABASE API CORE (METADATA ONLY)
 // ==========================================
 
+// Ambil seluruh direktori arsip
 app.get('/api/arsip', async (req, res) => {
     try {
         if(!supabaseUrl || !supabaseKey) throw new Error("Database Configuration Missing!");
@@ -101,6 +103,7 @@ app.get('/api/arsip', async (req, res) => {
     }
 });
 
+// Unggah METADATA dokumen baru (File fisiknya sudah dikirim browser ke Storage secara langsung)
 app.post('/api/arsip', protectAdmin, async (req, res) => {
     try {
         const { id, title, category, desc, fileName, filePath, accessType } = req.body;
@@ -134,6 +137,7 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
     }
 });
 
+// Hapus dokumen secara permanen
 app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
