@@ -19,6 +19,62 @@
     <meta property="og:description" content="<%= meta.desc %>">
     <meta property="og:image" content="<%= baseUrl %><%= meta.ogImage %>">
 
+    <% 
+        // Helper JSON-LD Parser format ISO (YYYY-MM-DD) mutlak dibutuhkan oleh Google
+        let isoDate = arsip.date;
+        if(isoDate && isoDate.match(/^\d{2}-\d{2}-\d{4}$/)) {
+            const parts = isoDate.split('-');
+            isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert DD-MM-YYYY -> YYYY-MM-DD
+        }
+        
+        // Escape quotes untuk menghindari JSON break
+        const safeTitle = (arsip.title || '').replace(/"/g, '\\"');
+        const safeDesc = (arsip.desc || '').replace(/"/g, '\\"');
+        const isFree = arsip.access_type === 'Open Access' ? 'true' : 'false';
+    %>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "ScholarlyArticle",
+          "@id": "<%= meta.canonical %>#article",
+          "headline": "<%- safeTitle %>",
+          "description": "<%- safeDesc %>",
+          "url": "<%= meta.canonical %>",
+          "datePublished": "<%= isoDate %>",
+          "author": {
+            "@type": "Person",
+            "name": "drg. M. Aksa Arsyad, S.KG"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "Axa System Knowledge Base",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "<%= baseUrl %>/axalogo.png"
+            }
+          },
+          "isAccessibleForFree": <%= isFree %>,
+          "hasPart": {
+             "@type": "WebPageElement",
+             "isAccessibleForFree": <%= isFree %>,
+             "cssSelector": ".doc-wrapper"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "<%= meta.canonical %>#breadcrumb",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "<%= baseUrl %>/" },
+            { "@type": "ListItem", "position": 2, "name": "Arsip Materi", "item": "<%= baseUrl %>/arsip" },
+            { "@type": "ListItem", "position": 3, "name": "<%- safeTitle %>", "item": "<%= meta.canonical %>" }
+          ]
+        }
+      ]
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
@@ -37,7 +93,7 @@
         .overlay-center {
             position: absolute; inset: 0;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: rgba(3, 7, 18, 0.5); /* Gelap transparan menutupi blur */
+            background: rgba(3, 7, 18, 0.5); 
             z-index: 20; padding: 2rem;
         }
 
@@ -69,7 +125,7 @@
 
     <main class="container mx-auto px-4 py-10 max-w-4xl min-h-screen">
         <% 
-            // Konversi Format Tanggal di EJS untuk tampilan
+            // Konversi UI Date (Visual Browser): YYYY-MM-DD -> DD-MM-YYYY
             let finalDisplayDate = arsip.date;
             if(finalDisplayDate && finalDisplayDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
                 const parts = finalDisplayDate.split('-');
