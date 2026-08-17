@@ -8,7 +8,6 @@
     <link rel="icon" type="image/png" href="/axalogo.png">
     <link rel="apple-touch-icon" href="/axalogo.png">
 
-    <!-- DYNAMIC SEO GOLD STANDARD -->
     <meta name="description" content="<%= meta.desc %>">
     <meta name="keywords" content="<%= meta.keywords %>">
     <link rel="canonical" href="<%= meta.canonical %>">
@@ -20,17 +19,6 @@
     <meta property="og:description" content="<%= meta.desc %>">
     <meta property="og:image" content="<%= baseUrl %><%= meta.ogImage %>">
 
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": "<%= arsip.title %>",
-      "author": { "@type": "Person", "name": "drg. M. Aksa Arsyad, S.KG" },
-      "datePublished": "<%= arsip.date %>",
-      "description": "<%= arsip.desc %>"
-    }
-    </script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
@@ -40,14 +28,16 @@
         
         .doc-wrapper { position: relative; width: 100%; height: 80vh; min-height: 600px; max-height: 950px; overflow: hidden; border-radius: 1.5rem; background: #1a1a1a; border: 1px solid rgba(0,229,255,0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0,229,255,0.1);}
         
-        /* 100% Full Blur untuk status Restricted */
+        /* Object Native Viewer (Tidak diblur untuk Open Access) */
         .doc-object { width: 100%; height: 100%; border: none; background: transparent; transition: filter 0.3s; }
+        
+        /* Efek blur 100% (Khusus Restricted) */
         .blur-full { filter: blur(12px) grayscale(50%); pointer-events: none; user-select: none; }
         
         .overlay-center {
             position: absolute; inset: 0;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: rgba(3, 7, 18, 0.5); /* Gelap transparan */
+            background: rgba(3, 7, 18, 0.5); /* Gelap transparan menutupi blur */
             z-index: 20; padding: 2rem;
         }
 
@@ -64,7 +54,7 @@
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-cyan-500 selection:text-black">
 
     <nav class="glass-header sticky top-0 z-50 w-full shadow-lg">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center max-w-5xl">
@@ -79,7 +69,6 @@
 
     <main class="container mx-auto px-4 py-10 max-w-4xl min-h-screen">
         
-        <!-- METADATA DOKUMEN -->
         <header class="mb-12 text-center">
             <span class="inline-block text-[10px] font-mono font-black uppercase tracking-widest text-cyan-400 bg-cyan-400/10 px-4 py-2 rounded-full border border-cyan-400/30 mb-5 shadow-[0_0_15px_rgba(0,229,255,0.2)]">
                 <i class="ph-fill ph-folder mr-1"></i> <%= arsip.category %>
@@ -102,14 +91,13 @@
         </header>
 
         <div class="doc-wrapper">
-            <!-- PENGKONDISIAN BLUR BERDASARKAN DATABASE (Restricted vs Open Access) -->
             <% if(arsip.access_type === 'Restricted') { %>
-                <!-- FULL BLUR OBJECT MENGGUNAKAN NATIVE PDF ENDPOINT -->
+                <!-- MODE 1: RESTRICTED (DIBLUR PENUH 100%) -->
                 <object data="/arsip/file/<%= arsip.slug %>.pdf#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" class="doc-object blur-full">
                     <div class="flex flex-col items-center justify-center h-full bg-gray-900 text-gray-400 p-8 text-center"><i class="ph-fill ph-file-pdf text-6xl text-gray-600 mb-4"></i></div>
                 </object>
                 
-                <!-- OVERLAY GEMBOK DI TENGAH -->
+                <!-- Overlay Gembok Tengah (Hanya Muncul Jika Restricted) -->
                 <div class="overlay-center">
                     <div class="bg-[#0b0f19]/95 backdrop-blur-3xl border-2 border-cyan-500/50 p-8 rounded-3xl text-center max-w-lg shadow-[0_30px_60px_rgba(0,0,0,0.9),inset_0_0_20px_rgba(0,229,255,0.15)]">
                         <div class="w-20 h-20 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-5 border border-cyan-400/30">
@@ -118,25 +106,25 @@
                         <h3 class="text-2xl md:text-3xl font-black font-['Space_Grotesk'] mb-3 text-white">Pratinjau Terkunci</h3>
                         <p class="text-xs md:text-sm text-gray-400 mb-8 font-medium leading-relaxed">Halaman ini mengunci tampilan penuh dokumen PDF untuk mencegah penyalinan otomatis (Scraping). Silakan akses dokumen utuh langsung ke penyimpanan lokal Anda.</p>
                         
-                        <!-- MENGARAH KE LINK .PDF AGAR GOOGLE BISA BACA JIKA INGIN DOWNLOAD -->
                         <a href="/arsip/file/<%= arsip.slug %>.pdf" download="<%= arsip.file_name %>" class="brutal-btn inline-flex items-center justify-center gap-3 px-8 py-4 w-full rounded-xl text-sm md:text-base">
                             <i class="ph-bold ph-download-simple text-xl"></i> Download PDF Full
                         </a>
                     </div>
                 </div>
+
             <% } else { %>
-                <!-- OPEN ACCESS: NO BLUR, NO LOCK -->
+                <!-- MODE 2: OPEN ACCESS (NORMAL / TERANG BENDERANG / TANPA OVERLAY BLUR) -->
                 <object data="/arsip/file/<%= arsip.slug %>.pdf" type="application/pdf" class="doc-object">
                     <div class="flex flex-col items-center justify-center h-full bg-gray-900 text-gray-400 p-8 text-center">
                         <i class="ph-fill ph-file-pdf text-6xl text-gray-600 mb-4"></i>
-                        <p>Browser Anda tidak mendukung pratinjau PDF Native.</p>
-                        <a href="/arsip/file/<%= arsip.slug %>.pdf" class="mt-4 text-cyan-400 underline">Klik untuk mendownload PDF langsung</a>
+                        <p>Pratinjau PDF Native tidak didukung oleh browser Anda.</p>
+                        <a href="/arsip/file/<%= arsip.slug %>.pdf" class="mt-4 text-cyan-400 underline font-bold">Unduh File PDF Langsung</a>
                     </div>
                 </object>
 
-                <!-- Floating Download Button for Mobile/Open Access Convenience -->
-                <a href="/arsip/file/<%= arsip.slug %>.pdf" download="<%= arsip.file_name %>" class="absolute bottom-6 right-6 brutal-btn brutal-btn-green px-6 py-3 rounded-full text-xs flex items-center gap-2 z-30 opacity-80 hover:opacity-100">
-                    <i class="ph-bold ph-download-simple text-lg"></i> Unduh File
+                <!-- Floating Download / Full View Button for Open Access -->
+                <a href="/arsip/file/<%= arsip.slug %>.pdf" target="_blank" rel="noopener noreferrer" class="absolute bottom-6 right-6 brutal-btn brutal-btn-green px-6 py-3.5 rounded-2xl text-xs md:text-sm flex items-center gap-2 z-30 opacity-90 hover:opacity-100 hover:-translate-y-1 transition-all shadow-[6px_6px_0px_rgba(255,255,255,0.9)]">
+                    <i class="ph-bold ph-arrow-square-out text-lg"></i> Buka Full PDF Native
                 </a>
             <% } %>
         </div>
