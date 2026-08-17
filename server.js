@@ -203,11 +203,15 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
 
 
 // ==========================================
-// 5. SITEMAP & ROBOTS.TXT (DINAMIS 100%)
+// 5. SITEMAP & ROBOTS.TXT (DINAMIS 100% + EDGE CACHING)
 // ==========================================
 app.get('/sitemap.xml', async (req, res) => {
     try {
+        // 🌟 CACHING SITEMAP (SUPER PENTING UNTUK MENCEGAH GSC TIMEOUT / 504 ERROR) 🌟
+        // Vercel Edge Cache akan menyimpan XML ini selama 1 hari (86400 detik)
+        res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
         res.set('Content-Type', 'text/xml; charset=utf-8');
+        
         let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
         xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
         
@@ -232,8 +236,14 @@ app.get('/sitemap.xml', async (req, res) => {
         }
 
         try {
-            const { data: arsipDB } = await supabase.from('arsip').select('slug, date, access_type');
-            if (arsipDB) {
+            // 🌟 TIMEOUT PROTECTOR 🌟: Batasi maksimal 8.5 detik agar Vercel tidak 504 Gateway Timeout!
+            // Jika DB Supabase sedang cold start / tidur, kita abaikan saja sejenak agar GSC tetap dapat XML 200 OK.
+            const fetchPromise = supabase.from('arsip').select('slug, date, access_type');
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Sitemap DB Timeout Protector Triggered')), 8500));
+            
+            const { data: arsipDB, error } = await Promise.race([fetchPromise, timeoutPromise]);
+
+            if (arsipDB && !error) {
                 arsipDB.forEach(doc => {
                     const validSitemapDate = parseSitemapDate(doc.date);
                     // Page Viewer Route
@@ -244,7 +254,9 @@ app.get('/sitemap.xml', async (req, res) => {
                     }
                 });
             }
-        } catch(e) {}
+        } catch(e) {
+            console.warn("Peringatan: Supabase Timeout saat Sitemap Generation. XML Statis tetap dikirim.");
+        }
         
         xml += `</urlset>`;
         res.send(xml);
