@@ -12,7 +12,7 @@
     <meta name="keywords" content="<%= meta.keywords %>">
     <link rel="canonical" href="<%= meta.canonical %>">
     
-    <!-- OPEN GRAPH -->
+    <!-- OPEN GRAPH STANDARD -->
     <meta property="og:type" content="<%= meta.type %>">
     <meta property="og:url" content="<%= meta.canonical %>">
     <meta property="og:title" content="<%= meta.title %>">
@@ -20,11 +20,20 @@
     <meta property="og:image" content="<%= baseUrl %><%= meta.ogImage %>">
 
     <% 
-        // Helper JSON-LD Parser format ISO (YYYY-MM-DD) mutlak dibutuhkan oleh Google
+        // Helper Parser Date Khusus Google (ISO 8601 & YYYY/MM/DD)
         let isoDate = arsip.date;
+        let scholarDate = arsip.date;
+        let displayDate = arsip.date; // Tampilan untuk user
+        
         if(isoDate && isoDate.match(/^\d{2}-\d{2}-\d{4}$/)) {
             const parts = isoDate.split('-');
-            isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert DD-MM-YYYY -> YYYY-MM-DD
+            isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert ke YYYY-MM-DD (JSON-LD)
+            scholarDate = `${parts[2]}/${parts[1]}/${parts[0]}`; // Convert ke YYYY/MM/DD (Google Scholar)
+            displayDate = arsip.date; // Biarkan DD-MM-YYYY untuk mata pengguna
+        } else if (isoDate && isoDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            const parts = isoDate.split('-');
+            displayDate = `${parts[2]}-${parts[1]}-${parts[0]}`; // Ubah data lama YYYY-MM-DD jadi DD-MM-YYYY untuk user
+            scholarDate = isoDate.replace(/-/g, '/');
         }
         
         // Escape quotes untuk menghindari JSON break
@@ -32,6 +41,20 @@
         const safeDesc = (arsip.desc || '').replace(/"/g, '\\"');
         const isFree = arsip.access_type === 'Open Access' ? 'true' : 'false';
     %>
+
+    <!-- 🌟 GOOGLE SCHOLAR & ACADEMIC SEO TAGS (MEMAKSA MUNCULNYA BADGE PDF) 🌟 -->
+    <meta name="citation_title" content="<%- safeTitle %>">
+    <meta name="citation_author" content="drg. M. Aksa Arsyad, S.KG">
+    <% if (scholarDate) { %><meta name="citation_publication_date" content="<%= scholarDate %>"><% } %>
+    <meta name="citation_journal_title" content="Axa System Knowledge Base">
+    <meta name="citation_language" content="id">
+    
+    <% if(arsip.access_type === 'Open Access') { %>
+    <!-- TAG SAKTI: Jika Open Access, kasih tau bot Google dimana letak PDF fisiknya -->
+    <meta name="citation_pdf_url" content="<%= baseUrl %>/arsip/file/<%= arsip.slug %>.pdf">
+    <% } %>
+
+    <!-- JSON-LD STRUCTURED DATA -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -55,12 +78,7 @@
               "url": "<%= baseUrl %>/axalogo.png"
             }
           },
-          "isAccessibleForFree": <%= isFree %>,
-          "hasPart": {
-             "@type": "WebPageElement",
-             "isAccessibleForFree": <%= isFree %>,
-             "cssSelector": ".doc-wrapper"
-          }
+          "isAccessibleForFree": <%= isFree %>
         },
         {
           "@type": "BreadcrumbList",
@@ -84,7 +102,6 @@
         
         .doc-wrapper { position: relative; width: 100%; height: 80vh; min-height: 600px; max-height: 950px; overflow: hidden; border-radius: 1.5rem; background: #1a1a1a; border: 1px solid rgba(0,229,255,0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0,229,255,0.1);}
         
-        /* Object Native Viewer */
         .doc-object { width: 100%; height: 100%; border: none; background: transparent; transition: filter 0.3s; }
         
         /* Efek blur 100% (Khusus Restricted) */
@@ -124,74 +141,72 @@
     </nav>
 
     <main class="container mx-auto px-4 py-10 max-w-4xl min-h-screen">
-        <% 
-            // Konversi UI Date (Visual Browser): YYYY-MM-DD -> DD-MM-YYYY
-            let finalDisplayDate = arsip.date;
-            if(finalDisplayDate && finalDisplayDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                const parts = finalDisplayDate.split('-');
-                finalDisplayDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
-            }
-        %>
-        <header class="mb-12 text-center">
-            <span class="inline-block text-[10px] font-mono font-black uppercase tracking-widest text-cyan-400 bg-cyan-400/10 px-4 py-2 rounded-full border border-cyan-400/30 mb-5 shadow-[0_0_15px_rgba(0,229,255,0.2)]">
-                <i class="ph-fill ph-folder mr-1"></i> <%= arsip.category %>
-            </span>
-            <h1 class="text-3xl md:text-5xl font-black font-['Space_Grotesk'] mb-5 leading-tight"><%= arsip.title %></h1>
-            <p class="text-gray-400 text-sm max-w-2xl mx-auto leading-relaxed"><%= arsip.desc %></p>
-            
-            <div class="mt-8 flex justify-center items-center gap-4 text-xs font-mono text-gray-500 bg-gray-900/50 w-max mx-auto px-5 py-2.5 rounded-xl border border-gray-800 flex-wrap">
-                <span class="text-white break-all"><i class="ph-bold ph-file-pdf text-red-400"></i> <%= arsip.file_name %></span>
-                <span class="hidden sm:inline">•</span>
-                <span><i class="ph-bold ph-calendar-blank"></i> <%= finalDisplayDate %></span>
-                <span class="hidden sm:inline">•</span>
+        
+        <!-- SEMANTIC ARTICLE UNTUK GOOGLEBOT CRAWLER -->
+        <article itemscope itemtype="http://schema.org/ScholarlyArticle">
+            <header class="mb-12 text-center">
+                <span class="inline-block text-[10px] font-mono font-black uppercase tracking-widest text-cyan-400 bg-cyan-400/10 px-4 py-2 rounded-full border border-cyan-400/30 mb-5 shadow-[0_0_15px_rgba(0,229,255,0.2)]">
+                    <i class="ph-fill ph-folder mr-1"></i> <span itemprop="articleSection"><%= arsip.category %></span>
+                </span>
                 
-                <% if(arsip.access_type === 'Open Access') { %>
-                    <span class="text-green-400"><i class="ph-fill ph-check-circle"></i> Open Access</span>
+                <h1 itemprop="headline" class="text-3xl md:text-5xl font-black font-['Space_Grotesk'] mb-5 leading-tight"><%= arsip.title %></h1>
+                
+                <!-- Paragraf Deskripsi yang Terbaca Googlebot -->
+                <p itemprop="description" class="text-gray-400 text-sm max-w-2xl mx-auto leading-relaxed break-words whitespace-normal"><%= arsip.desc %></p>
+                
+                <div class="mt-8 flex justify-center items-center gap-4 text-xs font-mono text-gray-500 bg-gray-900/50 w-max mx-auto px-5 py-2.5 rounded-xl border border-gray-800 flex-wrap">
+                    <span class="text-white break-all"><i class="ph-bold ph-file-pdf text-red-400"></i> <%= arsip.file_name %></span>
+                    <span class="hidden sm:inline">•</span>
+                    <span><i class="ph-bold ph-calendar-blank"></i> <time itemprop="datePublished" datetime="<%= isoDate %>"><%= displayDate %></time></span>
+                    <span class="hidden sm:inline">•</span>
+                    
+                    <% if(arsip.access_type === 'Open Access') { %>
+                        <span class="text-green-400"><i class="ph-fill ph-check-circle"></i> Open Access</span>
+                    <% } else { %>
+                        <span class="text-yellow-400"><i class="ph-fill ph-lock-key"></i> Restricted</span>
+                    <% } %>
+                </div>
+            </header>
+
+            <div class="doc-wrapper">
+                <% if(arsip.access_type === 'Restricted') { %>
+                    <!-- MODE 1: RESTRICTED (DIBLUR PENUH 100%) -->
+                    <object data="/arsip/file/<%= arsip.slug %>.pdf#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" class="doc-object blur-full">
+                        <div class="flex flex-col items-center justify-center h-full bg-gray-900 text-gray-400 p-8 text-center"><i class="ph-fill ph-file-pdf text-6xl text-gray-600 mb-4"></i></div>
+                    </object>
+                    
+                    <!-- Overlay Gembok Tengah -->
+                    <div class="overlay-center">
+                        <div class="bg-[#0b0f19]/95 backdrop-blur-3xl border-2 border-cyan-500/50 p-8 rounded-3xl text-center max-w-lg shadow-[0_30px_60px_rgba(0,0,0,0.9),inset_0_0_20px_rgba(0,229,255,0.15)]">
+                            <div class="w-20 h-20 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-5 border border-cyan-400/30">
+                                <i class="ph-fill ph-lock-key text-4xl text-cyan-400 drop-shadow-[0_0_10px_rgba(0,229,255,0.8)] animate-pulse"></i>
+                            </div>
+                            <h3 class="text-2xl md:text-3xl font-black font-['Space_Grotesk'] mb-3 text-white">Pratinjau Terkunci</h3>
+                            <p class="text-xs md:text-sm text-gray-400 mb-8 font-medium leading-relaxed">Halaman ini mengunci tampilan penuh dokumen PDF untuk mencegah penyalinan otomatis (Scraping). Silakan akses dokumen utuh langsung ke penyimpanan lokal Anda.</p>
+                            
+                            <a href="/arsip/file/<%= arsip.slug %>.pdf" download="<%= arsip.file_name %>" class="brutal-btn inline-flex items-center justify-center gap-3 px-8 py-4 w-full rounded-xl text-sm md:text-base">
+                                <i class="ph-bold ph-download-simple text-xl"></i> Download PDF Full
+                            </a>
+                        </div>
+                    </div>
+
                 <% } else { %>
-                    <span class="text-yellow-400"><i class="ph-fill ph-lock-key"></i> Restricted</span>
+                    <!-- MODE 2: OPEN ACCESS (NORMAL / TERANG BENDERANG) -->
+                    <object data="/arsip/file/<%= arsip.slug %>.pdf" type="application/pdf" class="doc-object">
+                        <div class="flex flex-col items-center justify-center h-full bg-gray-900 text-gray-400 p-8 text-center">
+                            <i class="ph-fill ph-file-pdf text-6xl text-gray-600 mb-4"></i>
+                            <p>Pratinjau PDF Native tidak didukung oleh browser Anda.</p>
+                            <a href="/arsip/file/<%= arsip.slug %>.pdf" class="mt-4 text-cyan-400 underline font-bold">Unduh File PDF Langsung</a>
+                        </div>
+                    </object>
+
+                    <!-- Floating Buka Native Endpoint (.pdf) -->
+                    <a href="/arsip/file/<%= arsip.slug %>.pdf" target="_blank" rel="noopener noreferrer" itemprop="url" class="absolute bottom-6 right-6 brutal-btn brutal-btn-green px-6 py-3.5 rounded-2xl text-xs md:text-sm flex items-center gap-2 z-30 opacity-90 hover:opacity-100 hover:-translate-y-1 transition-all shadow-[6px_6px_0px_rgba(255,255,255,0.9)]">
+                        <i class="ph-bold ph-arrow-square-out text-lg"></i> Buka Full PDF Native
+                    </a>
                 <% } %>
             </div>
-        </header>
-
-        <div class="doc-wrapper">
-            <% if(arsip.access_type === 'Restricted') { %>
-                <!-- MODE 1: RESTRICTED (DIBLUR PENUH 100%) -->
-                <object data="/arsip/file/<%= arsip.slug %>.pdf#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" class="doc-object blur-full">
-                    <div class="flex flex-col items-center justify-center h-full bg-gray-900 text-gray-400 p-8 text-center"><i class="ph-fill ph-file-pdf text-6xl text-gray-600 mb-4"></i></div>
-                </object>
-                
-                <!-- Overlay Gembok Tengah (Hanya Muncul Jika Restricted) -->
-                <div class="overlay-center">
-                    <div class="bg-[#0b0f19]/95 backdrop-blur-3xl border-2 border-cyan-500/50 p-8 rounded-3xl text-center max-w-lg shadow-[0_30px_60px_rgba(0,0,0,0.9),inset_0_0_20px_rgba(0,229,255,0.15)]">
-                        <div class="w-20 h-20 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-5 border border-cyan-400/30">
-                            <i class="ph-fill ph-lock-key text-4xl text-cyan-400 drop-shadow-[0_0_10px_rgba(0,229,255,0.8)] animate-pulse"></i>
-                        </div>
-                        <h3 class="text-2xl md:text-3xl font-black font-['Space_Grotesk'] mb-3 text-white">Pratinjau Terkunci</h3>
-                        <p class="text-xs md:text-sm text-gray-400 mb-8 font-medium leading-relaxed">Halaman ini mengunci tampilan penuh dokumen PDF untuk mencegah penyalinan otomatis (Scraping). Silakan akses dokumen utuh langsung ke penyimpanan lokal Anda.</p>
-                        
-                        <!-- Paksa Download jika Restricted (Tambahkan atribut download) -->
-                        <a href="/arsip/file/<%= arsip.slug %>.pdf" download="<%= arsip.file_name %>" class="brutal-btn inline-flex items-center justify-center gap-3 px-8 py-4 w-full rounded-xl text-sm md:text-base">
-                            <i class="ph-bold ph-download-simple text-xl"></i> Download PDF Full
-                        </a>
-                    </div>
-                </div>
-
-            <% } else { %>
-                <!-- MODE 2: OPEN ACCESS (NORMAL / TERANG BENDERANG / TANPA OVERLAY BLUR) -->
-                <object data="/arsip/file/<%= arsip.slug %>.pdf" type="application/pdf" class="doc-object">
-                    <div class="flex flex-col items-center justify-center h-full bg-gray-900 text-gray-400 p-8 text-center">
-                        <i class="ph-fill ph-file-pdf text-6xl text-gray-600 mb-4"></i>
-                        <p>Pratinjau PDF Native tidak didukung oleh browser Anda.</p>
-                        <a href="/arsip/file/<%= arsip.slug %>.pdf" class="mt-4 text-cyan-400 underline font-bold">Unduh File PDF Langsung</a>
-                    </div>
-                </object>
-
-                <!-- Floating Buka Native Endpoint (.pdf) -->
-                <a href="/arsip/file/<%= arsip.slug %>.pdf" target="_blank" rel="noopener noreferrer" class="absolute bottom-6 right-6 brutal-btn brutal-btn-green px-6 py-3.5 rounded-2xl text-xs md:text-sm flex items-center gap-2 z-30 opacity-90 hover:opacity-100 hover:-translate-y-1 transition-all shadow-[6px_6px_0px_rgba(255,255,255,0.9)]">
-                    <i class="ph-bold ph-arrow-square-out text-lg"></i> Buka Full PDF Native
-                </a>
-            <% } %>
-        </div>
+        </article>
     </main>
 
 </body>
