@@ -24,7 +24,6 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #030712; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #00E5FF; border-radius: 10px; }
         
-        /* Modal Animation */
         .modal-enter { animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
@@ -46,12 +45,10 @@
     </nav>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
-        <!-- Form Add (Kiri) -->
         <div class="lg:col-span-4 glass-panel p-6 md:p-8 rounded-2xl h-fit border-t-4 border-t-cyan-400">
             <h2 class="text-xl font-black mb-6 flex items-center gap-2 text-cyan-400 uppercase tracking-wide"><i class="ph-bold ph-cloud-arrow-up text-2xl"></i> Ingest Materi Baru</h2>
             <form id="formArsip" class="space-y-5">
                 
-                <!-- PDF DRAG & DROP ZONE -->
                 <div>
                     <label class="text-[10px] text-gray-400 font-mono mb-2 block uppercase font-bold tracking-widest">Upload File PDF (Maks Bebas)</label>
                     <div id="dropzoneContainer" class="dropzone rounded-xl p-6 text-center cursor-pointer flex flex-col items-center justify-center relative overflow-hidden h-32 group" onclick="document.getElementById('fileInput').click()">
@@ -80,7 +77,7 @@
                         <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Hak Akses URL</label>
                         <select id="accessType" class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner cursor-pointer text-cyan-400">
                             <option value="Restricted" selected>Restricted (Blur)</option>
-                            <option value="Open Access">Open Access (Free PDF)</option>
+                            <option value="Open Access">Open Access (Free)</option>
                         </select>
                     </div>
                 </div>
@@ -96,7 +93,6 @@
             </form>
         </div>
 
-        <!-- List Data (Kanan) -->
         <div class="lg:col-span-8 flex flex-col h-[80vh]">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
@@ -114,22 +110,23 @@
         </div>
     </div>
 
-    <!-- MODAL EDIT METADATA (UPDATE CRUD) -->
-    <div id="editModal" class="fixed inset-0 z-50 hidden bg-[#030712]/90 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="glass-panel w-full max-w-lg p-6 md:p-8 rounded-3xl border-t-4 border-t-pink-500 modal-enter shadow-[0_0_50px_rgba(255,16,240,0.15)] relative">
+    <div id="editModal" class="fixed inset-0 z-50 hidden bg-[#030712]/90 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-panel w-full max-w-2xl p-6 md:p-8 rounded-3xl border-t-4 border-t-pink-500 modal-enter shadow-[0_0_50px_rgba(255,16,240,0.15)] relative my-8">
             <button onclick="tutupEdit()" class="absolute top-5 right-5 text-gray-400 hover:text-white"><i class="ph-bold ph-x text-2xl"></i></button>
             
-            <h2 class="text-2xl font-black mb-6 flex items-center gap-2 text-pink-500 uppercase tracking-wide"><i class="ph-bold ph-pencil-simple"></i> Edit Metadata</h2>
+            <h2 class="text-2xl font-black mb-6 flex items-center gap-2 text-pink-500 uppercase tracking-wide"><i class="ph-bold ph-pencil-simple"></i> Edit Metadata Arsip</h2>
             
             <form id="formEdit" class="space-y-4">
                 <input type="hidden" id="editId">
+                
                 <div>
                     <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Judul Dokumen</label>
                     <input type="text" id="editTitle" required class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-pink-500 text-sm font-bold shadow-inner transition-colors">
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Kategori</label>
+                        <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Kategori Ilmu</label>
                         <select id="editCategory" class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-pink-500 text-sm font-bold">
                             <option value="Preklinik">Preklinik</option>
                             <option value="Profesi Dokter Muda">Profesi Dokter Muda (Co-Ass)</option>
@@ -138,19 +135,32 @@
                         </select>
                     </div>
                     <div>
-                        <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Hak Akses</label>
+                        <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Hak Akses URL</label>
                         <select id="editAccessType" class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-pink-500 text-sm font-bold text-pink-400">
                             <option value="Restricted">Restricted (Blur)</option>
-                            <option value="Open Access">Open Access (Free PDF)</option>
+                            <option value="Open Access">Open Access (Free)</option>
                         </select>
                     </div>
                 </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">URL Slug (Custom Link SEO)</label>
+                        <input type="text" id="editSlug" required class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-pink-500 text-sm font-bold font-mono text-cyan-200">
+                        <p class="text-[9px] text-gray-500 mt-1 font-mono">Format: huruf-kecil-dan-tanda-hubung-saja</p>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Tanggal Upload (Format DD-MM-YYYY)</label>
+                        <input type="text" id="editDate" required placeholder="Contoh: 17-08-2026" class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-pink-500 text-sm font-bold font-mono text-green-300">
+                    </div>
+                </div>
+
                 <div>
                     <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Deskripsi / Abstrak Singkat</label>
-                    <textarea id="editDesc" rows="4" required class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-pink-500 text-sm resize-none"></textarea>
+                    <textarea id="editDesc" rows="4" required class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-pink-500 text-sm resize-none shadow-inner"></textarea>
                 </div>
                 
-                <button type="submit" id="btnEditSubmit" class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white font-black py-3.5 rounded-xl hover:brightness-110 shadow-[0_10px_20px_rgba(255,16,240,0.3)] transition-all uppercase tracking-widest mt-2">
+                <button type="submit" id="btnEditSubmit" class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white font-black py-4 rounded-xl hover:brightness-110 shadow-[0_10px_20px_rgba(255,16,240,0.3)] transition-all uppercase tracking-widest mt-2 active:scale-95">
                     Simpan Perubahan
                 </button>
             </form>
@@ -161,19 +171,19 @@
         const token = localStorage.getItem('axa_arsip_token');
         if (!token) { try { window.location.href = '/admin/login'; } catch (e) {} }
 
-        // DYNAMIC INJECTION DARI VERCEL ENVIRONMENT VARIABLES
+        // Menerima nilai yang disuntikkan oleh server.js Vercel Backend
         const SUPABASE_URL = "<%= typeof supabaseUrl !== 'undefined' ? supabaseUrl : '' %>"; 
         const SUPABASE_ANON_KEY = "<%= typeof supabaseAnonKey !== 'undefined' ? supabaseAnonKey : '' %>"; 
         
         let supabaseClient = null;
-        let globalArsipData = []; // Menyimpan data di memori untuk keperluan Modal Edit (Update CRUD)
+        let globalArsipData = []; 
 
-        try {
-            if (SUPABASE_URL && SUPABASE_URL.startsWith('http')) {
+        if (SUPABASE_URL && SUPABASE_URL.startsWith('http') && SUPABASE_ANON_KEY) {
+            try {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } catch (e) {
+                console.warn("Peringatan: Gagal Inisiasi Supabase SDK.");
             }
-        } catch (e) {
-            console.warn("Peringatan: Kredensial Supabase gagal dimuat.");
         }
 
         let selectedFile = null;
@@ -198,22 +208,25 @@
             if (file.type !== "application/pdf") return alert("Hanya file PDF yang diizinkan!");
 
             selectedFile = file;
-            dropText.innerHTML = `<span class="text-green-400 font-black">${file.name}</span><br><span class="text-gray-400">${(file.size/1024/1024).toFixed(2)} MB Ready</span>`;
+            dropText.innerHTML = `<span class="text-green-400 font-black">${file.name}</span><br><span class="text-gray-400">${(file.size/1024/1024).toFixed(2)} MB Ready (Unlimited Storage)</span>`;
             dropIcon.className = "ph-fill ph-check-circle text-4xl text-green-400 mb-2";
             dropzone.classList.add('has-file');
         }
 
         // ==========================================
-        // FITUR READ: Ambil Data Realtime
+        // 1. READ: Ambil Data Supabase Realtime
         // ==========================================
         async function fetchArsip() {
             const listEl = document.getElementById('arsipList');
             try {
                 const res = await fetch('/api/arsip', { headers: { 'Authorization': token } });
-                if (!res.ok) throw new Error("Gagal mengambil data dari server.");
+                if (!res.ok) {
+                    const errRes = await res.json();
+                    throw new Error(errRes.message || "Gagal mengambil data dari server.");
+                }
                 
                 const { data } = await res.json();
-                globalArsipData = data; // Simpan di global state untuk Edit
+                globalArsipData = data; 
                 
                 if(data.length === 0) { 
                     listEl.innerHTML = '<div class="glass-panel p-8 text-center rounded-2xl text-gray-400 font-mono">Database kosong.</div>'; 
@@ -226,16 +239,19 @@
                     <div class="brutal-card rounded-2xl p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden group">
                         <div class="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-cyan-500/10 to-transparent pointer-events-none"></div>
                         <div class="min-w-0 w-full z-10">
-                            <div class="flex gap-2 mb-2">
+                            <div class="flex gap-2 mb-2 flex-wrap">
                                 <span class="text-[9px] bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 px-2.5 py-1 rounded font-mono uppercase tracking-widest font-bold">${item.category}</span>
                                 <span class="text-[9px] ${accessColor} border px-2.5 py-1 rounded font-mono uppercase tracking-widest font-bold">${item.access_type || 'Restricted'}</span>
                             </div>
-                            <h3 class="text-lg md:text-xl font-black truncate w-full drop-shadow-sm text-white">${item.title}</h3>
-                            <p class="text-gray-400 text-xs truncate font-mono mt-1 w-full"><i class="ph-bold ph-file-pdf"></i> ${item.file_name} <span class="mx-2">|</span> <i class="ph-bold ph-calendar"></i> ${item.date}</p>
+                            <h3 class="text-lg md:text-xl font-black truncate w-full drop-shadow-sm text-white" title="${item.title}">${item.title}</h3>
+                            <p class="text-gray-400 text-[10px] md:text-xs truncate font-mono mt-1.5 w-full">
+                                <i class="ph-bold ph-link text-cyan-400"></i> /${item.slug} <span class="mx-2">|</span> 
+                                <i class="ph-bold ph-calendar text-pink-400"></i> ${item.date}
+                            </p>
                         </div>
-                        <div class="flex gap-2 z-10 shrink-0 w-full md:w-auto">
-                            <button onclick="bukaEdit('${item.id}')" class="flex-1 md:flex-none text-center bg-gray-800 text-white p-3 rounded-xl hover:bg-pink-500 hover:text-white transition-colors border border-gray-700 hover:border-pink-500" title="Edit Metadata"><i class="ph-bold ph-pencil-simple text-lg"></i></button>
-                            <a href="${item.access_type === 'Open Access' ? '/arsip/file/'+item.slug+'.pdf' : '/arsip/'+item.slug}" target="_blank" class="flex-1 md:flex-none text-center bg-gray-800 text-white p-3 rounded-xl hover:bg-cyan-500 hover:text-black transition-colors border border-gray-700 hover:border-cyan-400"><i class="ph-bold ph-arrow-square-out text-lg"></i></a>
+                        <div class="flex gap-2 z-10 shrink-0 w-full md:w-auto mt-2 md:mt-0">
+                            <button onclick="bukaEdit('${item.id}')" class="flex-1 md:flex-none text-center bg-gray-800 text-white p-3 rounded-xl hover:bg-pink-500 hover:text-white transition-colors border border-gray-700 hover:border-pink-500" title="Edit Metadata Terlengkap"><i class="ph-bold ph-pencil-simple text-lg"></i></button>
+                            <a href="/arsip/${item.slug}" target="_blank" class="flex-1 md:flex-none text-center bg-gray-800 text-white p-3 rounded-xl hover:bg-cyan-500 hover:text-black transition-colors border border-gray-700 hover:border-cyan-400" title="View Article Page"><i class="ph-bold ph-arrow-square-out text-lg"></i></a>
                             <button onclick="hapus('${item.id}')" class="flex-1 md:flex-none text-center bg-red-500/10 text-red-500 p-3 rounded-xl hover:bg-red-500 hover:text-white transition-colors shadow-[0_0_10px_rgba(239,68,68,0.2)] border border-red-500/30 hover:border-red-500" title="Hapus Permanen"><i class="ph-bold ph-trash text-lg"></i></button>
                         </div>
                     </div>
@@ -246,7 +262,7 @@
         }
 
         // ==========================================
-        // FITUR CREATE: Upload File & Metadata Baru
+        // 2. CREATE: Direct Upload Storage + Insert Postgres
         // ==========================================
         document.getElementById('formArsip').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -256,11 +272,11 @@
             const ogText = btn.innerHTML;
 
             if (!supabaseClient) {
-                alert("SISTEM TERKUNCI: Environment Variables (SUPABASE_URL & ANON_KEY) tidak ditemukan oleh Vercel. Pastikan Anda sudah mengaturnya di Dashboard Vercel.");
+                alert("SISTEM TERKUNCI: Environment Variables (SUPABASE_URL & ANON_KEY) tidak ditemukan dari backend Vercel. Pastikan Vercel Anda sudah dikonfigurasi.");
                 return;
             }
 
-            btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin text-xl"></i> UPLOADING...';
+            btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin text-xl"></i> UPLOADING DIRECT TO STORAGE...';
             btn.disabled = true;
 
             try {
@@ -268,14 +284,14 @@
                 const cleanFileName = selectedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
                 const filePath = `${uniqueId}_${cleanFileName}`;
 
-                // Upload langsung dari browser ke Supabase Storage
+                // Upload langsung dari browser ke Supabase Storage (Unlimited Limit Vercel)
                 const { error: storageError } = await supabaseClient.storage
                     .from('arsip_files')
                     .upload(filePath, selectedFile, { cacheControl: '3600', upsert: false });
 
-                if (storageError) throw new Error("Upload Storage Gagal: " + storageError.message);
+                if (storageError) throw new Error("Upload Storage Gagal (Cek Kebijakan RLS Storage Anda): " + storageError.message);
 
-                // Kirim metadata ke Backend Express
+                // Kirim metadata ke Backend API Vercel
                 const payload = {
                     id: uniqueId,
                     title: document.getElementById('title').value,
@@ -292,14 +308,17 @@
                     body: JSON.stringify(payload) 
                 });
                 
-                if (!res.ok) throw new Error("Gagal menyimpan metadata ke database.");
+                if (!res.ok) {
+                    const errRes = await res.json();
+                    throw new Error("Database Gagal: " + errRes.message);
+                }
 
                 document.getElementById('formArsip').reset();
                 selectedFile = null;
                 dropzone.classList.remove('has-file');
                 dropIcon.className = "ph-fill ph-file-pdf text-4xl text-cyan-400 mb-2 group-hover:scale-110 transition-transform";
                 dropText.innerHTML = `Drag & Drop PDF di sini<br><span class="text-[10px] text-green-400 font-mono font-normal">Mendukung file besar langsung via Storage</span>`;
-                fetchArsip(); // Panggil data terbaru secara realtime
+                fetchArsip(); 
             } catch (err) { 
                 alert(err.message); 
             } finally { 
@@ -309,7 +328,7 @@
         });
 
         // ==========================================
-        // FITUR UPDATE: Edit Metadata via Modal
+        // 3. UPDATE: Edit Metadata Lengkap (CRUD)
         // ==========================================
         function bukaEdit(id) {
             const item = globalArsipData.find(x => x.id === id);
@@ -320,6 +339,10 @@
             document.getElementById('editCategory').value = item.category;
             document.getElementById('editDesc').value = item.desc;
             document.getElementById('editAccessType').value = item.access_type || 'Restricted';
+            
+            // Tambahan Fitur Lengkap Sesuai Permintaan
+            document.getElementById('editSlug').value = item.slug;
+            document.getElementById('editDate').value = item.date;
             
             document.getElementById('editModal').classList.remove('hidden');
         }
@@ -333,15 +356,21 @@
             e.preventDefault();
             const btn = document.getElementById('btnEditSubmit');
             const ogText = btn.innerHTML;
-            btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin"></i> MENYIMPAN...';
+            btn.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin text-xl"></i> MENYIMPAN...';
             btn.disabled = true;
 
             const docId = document.getElementById('editId').value;
+            
+            // Memaksa format Slug hanya lowercase dan tanda hubung
+            let safeSlug = document.getElementById('editSlug').value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
             const payload = {
                 title: document.getElementById('editTitle').value,
                 category: document.getElementById('editCategory').value,
                 desc: document.getElementById('editDesc').value,
-                accessType: document.getElementById('editAccessType').value
+                accessType: document.getElementById('editAccessType').value,
+                slug: safeSlug,
+                date: document.getElementById('editDate').value.trim()
             };
 
             try {
@@ -351,10 +380,13 @@
                     body: JSON.stringify(payload)
                 });
 
-                if(!res.ok) throw new Error("Gagal mengupdate data.");
+                if(!res.ok) {
+                    const errData = await res.json();
+                    throw new Error(errData.message || "Gagal mengupdate data.");
+                }
                 
                 tutupEdit();
-                fetchArsip(); // Refresh UI secara realtime
+                fetchArsip(); 
             } catch (err) {
                 alert(err.message);
             } finally {
@@ -364,20 +396,20 @@
         });
 
         // ==========================================
-        // FITUR DELETE: Hapus Data
+        // 4. DELETE: Hapus Data Permanen
         // ==========================================
         async function hapus(id) {
-            if(!confirm('Hapus permanen dokumen ini dari Storage & Database?')) return;
+            if(!confirm('Hapus permanen dokumen & file PDF ini dari Storage dan Database?')) return;
             try {
                 const res = await fetch('/api/arsip/'+id, { method: 'DELETE', headers: { 'Authorization': token } });
-                if(!res.ok) throw new Error("Gagal menghapus.");
-                fetchArsip(); // Refresh list realtime
+                if(!res.ok) {
+                    const errRes = await res.json();
+                    throw new Error(errRes.message);
+                }
+                fetchArsip(); 
             } catch (e) { alert(e.message); }
         }
 
-        function logout() { localStorage.removeItem('axa_arsip_token'); try { window.location.href = '/admin/login'; } catch (e) {} }
-        
-        // Initial Fetch
         fetchArsip();
     </script>
 </body>
