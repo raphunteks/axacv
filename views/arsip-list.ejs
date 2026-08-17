@@ -49,8 +49,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             <% if(arsipData && arsipData.length > 0) { %>
                 <% arsipData.forEach(item => { %>
-                    <!-- URL diarahkan ke Viewer EJS -->
-                    <a href="/arsip/<%= item.slug %>" class="card-neo p-6 md:p-8 rounded-2xl block group w-full outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 relative overflow-hidden flex flex-col h-full">
+                    <!-- URL dinamis: Langsung Native PDF (akhiran .pdf) jika Open Access untuk SEO, Viewer Biasa Jika Restricted -->
+                    <a href="<%= item.access_type === 'Open Access' ? '/arsip/file/' + item.slug + '.pdf' : '/arsip/' + item.slug %>" class="card-neo p-6 md:p-8 rounded-2xl block group w-full outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 relative overflow-hidden flex flex-col h-full">
                         <div class="absolute -right-4 -top-4 opacity-5 group-hover:opacity-20 transition-opacity pointer-events-none">
                             <i class="ph-fill ph-file-pdf text-9xl text-cyan-400"></i>
                         </div>
@@ -64,15 +64,12 @@
                         
                         <div class="mt-auto relative z-10 border-t border-gray-800 pt-4 flex justify-between items-center">
                             <% if(item.access_type === 'Open Access') { %>
-                                <!-- Open Access: Badge PDF Khusus Direct (GBR 3 style) -->
-                                <object data="/arsip/file/<%= item.slug %>.pdf" type="application/pdf" class="hidden"></object>
                                 <span class="text-xs md:text-sm font-bold text-green-400 flex items-center gap-2">
                                     <i class="ph-fill ph-check-circle text-lg"></i> Open Access 
                                     <span class="pdf-badge ml-1">PDF</span>
                                 </span>
                                 <i class="ph-bold ph-arrow-right text-green-400 group-hover:translate-x-1.5 transition-transform text-base"></i>
                             <% } else { %>
-                                <!-- Restricted: Gembok -->
                                 <span class="text-xs md:text-sm font-bold text-cyan-400 flex items-center gap-2">
                                     <i class="ph-fill ph-lock-key text-lg"></i> Restricted Viewer
                                 </span>
