@@ -88,7 +88,7 @@ const protectAdmin = (req, res, next) => {
 };
 
 // ==========================================
-// HELPER URL SLUG GENERATOR
+// HELPER URL SLUG GENERATOR & WITA FORMATTER
 // ==========================================
 const createSlug = (text) => {
     if (!text) return '';
@@ -98,6 +98,24 @@ const createSlug = (text) => {
 };
 
 const getDefaultCategories = () => ["Preklinik", "Jurnal & Riset", "Kedokteran Gigi Umum"];
+
+// Helper Waktu Indonesia Tengah (WITA = UTC+8)
+const getWitaTime = () => {
+    const now = new Date();
+    // Mengonversi waktu server global menjadi UTC murni, lalu menambahkan +8 Jam untuk WITA
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const wita = new Date(utc + (3600000 * 8));
+    
+    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const dayName = days[wita.getDay()];
+    const dd = String(wita.getDate()).padStart(2, '0');
+    const mm = String(wita.getMonth() + 1).padStart(2, '0');
+    const yyyy = wita.getFullYear();
+    const HH = String(wita.getHours()).padStart(2, '0');
+    const Min = String(wita.getMinutes()).padStart(2, '0');
+    
+    return `${dayName}, ${dd}-${mm}-${yyyy}, Jam ${HH}.${Min} WITA`;
+};
 
 // CACHING SETTINGS: Simpan Object Setting Dinamis
 const defaultFormSettings = {
@@ -134,8 +152,7 @@ async function getRequireFormSetting() {
 // 4. SUPABASE ARSIP API (POSTGRES & STORAGE)
 // ==========================================
 
-// --- FITUR BARU: API TRACKING DOWNLOAD USER ---
-// Dipanggil oleh ARSIPFILE saat user mengunduh dokumen
+// --- FITUR BARU: API TRACKING DOWNLOAD USER (DENGAN TIMESTAMP WITA) ---
 app.post('/api/track-download', async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
@@ -154,17 +171,25 @@ app.post('/api/track-download', async (req, res) => {
         const meta = user.user_metadata || {};
         let downloads = meta.downloaded_files || [];
 
-        // 3. Tambahkan ke Array (Cegah Duplikat File yang Sama)
-        if (!downloads.includes(fileTitle)) {
-            downloads.push(fileTitle);
-            
-            // 4. Update Metadata User secara Aman via Admin API (Membutuhkan Service Role Key)
-            const { error: updateError } = await supabase.auth.admin.updateUserById(user.id, {
-                user_metadata: { ...meta, downloaded_files: downloads }
-            });
+        // 3. Bersihkan riwayat file ini jika sudah pernah diunduh sebelumnya (agar jamnya di-update dan tidak numpuk)
+        downloads = downloads.filter(d => {
+            if (typeof d === 'string') return !d.startsWith(fileTitle + " ("); // Filter jika format string lama
+            if (typeof d === 'object' && d !== null) return d.title !== fileTitle; // Filter format object baru
+            return true;
+        });
 
-            if (updateError) throw updateError;
-        }
+        // 4. Masukkan data terbaru ke array (Format Object)
+        downloads.push({
+            title: fileTitle,
+            time: getWitaTime()
+        });
+            
+        // 5. Update Metadata User secara Aman via Admin API (Membutuhkan Service Role Key)
+        const { error: updateError } = await supabase.auth.admin.updateUserById(user.id, {
+            user_metadata: { ...meta, downloaded_files: downloads }
+        });
+
+        if (updateError) throw updateError;
 
         res.json({ status: 'success', downloaded_files: downloads });
     } catch (err) {
@@ -179,14 +204,23 @@ app.get('/api/users', protectAdmin, async (req, res) => {
         const { data, error } = await supabase.auth.admin.listUsers();
         if (error) throw error;
         
-        const usersList = data.users.map(u => ({
-            email: u.email,
-            name: u.user_metadata?.nama_lengkap || u.user_metadata?.full_name || 'Belum Melengkapi',
-            institution: u.user_metadata?.institusi_asal || 'Belum Melengkapi',
-            downloaded_files: u.user_metadata?.downloaded_files || [], // MENGIRIM ARRAY LIST FILE
-            raw_metadata: u.user_metadata || {}, 
-            created_at: new Date(u.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'})
-        }));
+        const usersList = data.users.map(u => {
+            // Parsing Aman: Menyiapkan string riwayat download untuk dirender dengan baik di EJS lama & baru
+            const rawDownloads = u.user_metadata?.downloaded_files || [];
+            const formattedDownloads = rawDownloads.map(d => {
+                if (typeof d === 'object' && d !== null) return `${d.title} (${d.time})`;
+                return d; // Fallback jika datanya masih berbentuk string murni versi lama
+            });
+
+            return {
+                email: u.email,
+                name: u.user_metadata?.nama_lengkap || u.user_metadata?.full_name || 'Belum Melengkapi',
+                institution: u.user_metadata?.institusi_asal || 'Belum Melengkapi',
+                downloaded_files: formattedDownloads, // Array of formatted strings
+                raw_metadata: u.user_metadata || {}, 
+                created_at: new Date(u.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'})
+            };
+        });
         
         res.json({ status: 'success', data: usersList });
     } catch (err) {
