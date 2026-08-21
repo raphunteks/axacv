@@ -82,7 +82,7 @@ const protectAdmin = (req, res, next) => {
 };
 
 // ==========================================
-// HELPER URL SLUG GENERATOR
+// HELPER URL SLUG GENERATOR & CACHING
 // ==========================================
 const createSlug = (text) => {
     if (!text) return '';
@@ -91,16 +91,76 @@ const createSlug = (text) => {
         .replace(/^-+|-+$/g, '');          // Trim dash dari awal dan akhir
 };
 
-// Kategori Default agar tidak pernah kosong di UI Menu Frontend
 const getDefaultCategories = () => [
     "Preklinik", 
     "Jurnal & Riset", 
     "Kedokteran Gigi Umum"
 ];
 
+// CACHING SETTINGS: Menyimpan status Wajib Form di memory agar loading web cepat
+let cachedRequireForm = true;
+let lastCacheTime = 0;
+
+async function getRequireFormSetting() {
+    // Cache valid selama 1 menit untuk menghemat request ke Supabase
+    if (Date.now() - lastCacheTime < 60000) return cachedRequireForm;
+    try {
+        const { data } = await supabase.storage.from('arsip_files').download('settings.json');
+        if (data) {
+            const text = await data.text();
+            cachedRequireForm = JSON.parse(text).requireForm;
+            lastCacheTime = Date.now();
+        }
+    } catch (e) { } // Abaikan jika file belum ada (gunakan default true)
+    return cachedRequireForm;
+}
+
 // ==========================================
 // 4. SUPABASE ARSIP API (POSTGRES & STORAGE)
 // ==========================================
+
+// --- FITUR BARU: API MENARIK DATA USERS (NAMA DOWNLOADER) ---
+app.get('/api/users', protectAdmin, async (req, res) => {
+    try {
+        // Menggunakan auth.admin memerlukan Service Role Key. Jika gagal, API melempar error.
+        const { data, error } = await supabase.auth.admin.listUsers();
+        if (error) throw error;
+        
+        const usersList = data.users.map(u => ({
+            email: u.email,
+            name: u.user_metadata?.nama_lengkap || u.user_metadata?.full_name || 'Belum Melengkapi',
+            institution: u.user_metadata?.institusi_asal || 'Belum Melengkapi',
+            created_at: new Date(u.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'})
+        }));
+        
+        res.json({ status: 'success', data: usersList });
+    } catch (err) {
+        console.error("Fetch Users Error:", err.message);
+        res.status(500).json({ status: 'error', message: "Gagal menarik data user. Pastikan Anda menggunakan SUPABASE_SERVICE_ROLE_KEY di Vercel. Error: " + err.message });
+    }
+});
+
+// --- FITUR BARU: API SETTINGS FORM ---
+app.get('/api/settings/form', protectAdmin, async (req, res) => {
+    res.json({ status: 'success', requireForm: await getRequireFormSetting() });
+});
+
+app.post('/api/settings/form', protectAdmin, async (req, res) => {
+    try {
+        const { requireForm } = req.body;
+        const buffer = Buffer.from(JSON.stringify({ requireForm }));
+        
+        // Simpan konfigurasi ke dalam bucket arsip_files
+        const { error } = await supabase.storage.from('arsip_files').upload('settings.json', buffer, { upsert: true, contentType: 'application/json' });
+        if (error) throw error;
+        
+        cachedRequireForm = requireForm;
+        lastCacheTime = Date.now();
+        res.json({ status: 'success', requireForm });
+    } catch (err) {
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+});
 
 app.get('/api/arsip', async (req, res) => {
     try {
@@ -422,14 +482,17 @@ app.get('/arsip/:slug', async (req, res) => {
         
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
         
-        // PENTING: Injeksi Kredensial Supabase agar file ARSIPFILE.EJS bisa menggunakannya
+        // AMBIL PENGATURAN FORM
+        const reqForm = await getRequireFormSetting();
+        
         res.render('arsipfile', { 
             meta, 
             baseUrl, 
             arsip, 
             currentPath: `/arsip/${arsip.slug}`,
             supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
-            supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || ''
+            supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || '',
+            requireForm: reqForm // MENYUNTIKKAN PENGATURAN FORM KE EJS
         });
     } catch(e) {
         res.status(500).send("Internal Server Error");
