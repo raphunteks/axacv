@@ -401,7 +401,7 @@ app.get('/arsip/file/:slug.pdf', async (req, res) => {
     }
 });
 
-// Page Viewer (ARSIP FILE EJS)
+// Page Viewer (ARSIP FILE EJS) -> PENAMBAHAN KUNCI SUPABASE ADA DISINI
 app.get('/arsip/:slug', async (req, res) => {
     try {
         const fetchPromise = supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
@@ -421,7 +421,16 @@ app.get('/arsip/:slug', async (req, res) => {
         };
         
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
-        res.render('arsipfile', { meta, baseUrl, arsip, currentPath: `/arsip/${arsip.slug}` });
+        
+        // PENTING: Injeksi Kredensial Supabase agar file ARSIPFILE.EJS bisa menggunakannya
+        res.render('arsipfile', { 
+            meta, 
+            baseUrl, 
+            arsip, 
+            currentPath: `/arsip/${arsip.slug}`,
+            supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
+            supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || ''
+        });
     } catch(e) {
         res.status(500).send("Internal Server Error");
     }
