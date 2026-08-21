@@ -76,7 +76,6 @@ app.post('/api/auth/verify', (req, res) => {
     else res.status(401).json({ status: 'error' });
 });
 
-// Endpoint Dummy untuk Logout (Pembersihan Sesi Klien Nanti Diatur di Frontend)
 app.post('/api/auth/logout', (req, res) => {
     res.json({ status: 'success', message: 'Sesi berhasil dihentikan.' });
 });
@@ -102,8 +101,25 @@ const getDefaultCategories = () => ["Preklinik", "Jurnal & Riset", "Kedokteran G
 // Helper Waktu Indonesia Tengah (WITA = UTC+8)
 const getWitaTime = () => {
     const now = new Date();
-    // Mengonversi waktu server global menjadi UTC murni, lalu menambahkan +8 Jam untuk WITA
     const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const wita = new Date(utc + (3600000 * 8));
+    
+    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const dayName = days[wita.getDay()];
+    const dd = String(wita.getDate()).padStart(2, '0');
+    const mm = String(wita.getMonth() + 1).padStart(2, '0');
+    const yyyy = wita.getFullYear();
+    const HH = String(wita.getHours()).padStart(2, '0');
+    const Min = String(wita.getMinutes()).padStart(2, '0');
+    
+    return `${dayName}, ${dd}-${mm}-${yyyy}, Jam ${HH}.${Min} WITA`;
+};
+
+// Helper Format Date String apa pun menjadi WITA
+const formatWitaTime = (isoString) => {
+    if (!isoString) return '-';
+    const date = new Date(isoString);
+    const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
     const wita = new Date(utc + (3600000 * 8));
     
     const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -152,7 +168,6 @@ async function getRequireFormSetting() {
 // 4. SUPABASE ARSIP API (POSTGRES & STORAGE)
 // ==========================================
 
-// --- FITUR BARU: API TRACKING DOWNLOAD USER (DENGAN TIMESTAMP WITA) ---
 app.post('/api/track-download', async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
@@ -160,33 +175,26 @@ app.post('/api/track-download', async (req, res) => {
 
         const token = authHeader.replace('Bearer ', '');
         
-        // 1. Verifikasi Identitas User via Token JWT Supabase
         const { data: { user }, error: userError } = await supabase.auth.getUser(token);
         if (userError || !user) throw new Error("Sesi Google tidak valid atau telah kadaluarsa.");
 
         const { fileTitle } = req.body;
         if (!fileTitle) return res.status(400).json({ status: 'error', message: 'Judul file wajib dikirim.' });
 
-        // 2. Ambil Riwayat Download Sebelumnya
         const meta = user.user_metadata || {};
         let downloads = meta.downloaded_files || [];
 
-        // 3. Bersihkan riwayat file ini jika sudah pernah diunduh sebelumnya (agar jamnya di-update dan tidak numpuk)
         downloads = downloads.filter(d => {
-            if (typeof d === 'string') return !d.startsWith(fileTitle + " ("); // Filter jika format string lama
-            if (typeof d === 'object' && d !== null) return d.title !== fileTitle; // Filter format object baru
+            if (typeof d === 'string') return !d.startsWith(fileTitle + " ("); 
+            if (typeof d === 'object' && d !== null) return d.title !== fileTitle; 
             return true;
         });
 
-        // 4. Masukkan data terbaru ke array (Format Object)
-        downloads.push({
-            title: fileTitle,
-            time: getWitaTime()
-        });
+        downloads.push({ title: fileTitle, time: getWitaTime() });
             
-        // 5. Update Metadata User secara Aman via Admin API (Membutuhkan Service Role Key)
+        // Jika user mendownload, otomatis status "is_logged_out" dibatalkan/di-reset ke false agar status menjadi Aktif lagi.
         const { error: updateError } = await supabase.auth.admin.updateUserById(user.id, {
-            user_metadata: { ...meta, downloaded_files: downloads }
+            user_metadata: { ...meta, downloaded_files: downloads, is_logged_out: false }
         });
 
         if (updateError) throw updateError;
@@ -198,27 +206,54 @@ app.post('/api/track-download', async (req, res) => {
     }
 });
 
-// --- API TARIK DATA USERS (NAMA DOWNLOADER & RIWAYAT FILE) ---
+// --- FITUR BARU: API FORCE LOGOUT USER ---
+app.post('/api/users/:id/force-logout', protectAdmin, async (req, res) => {
+    try {
+        const userId = req.params.id;
+        // Ambil data metadata spesifik user
+        const { data, error: fetchErr } = await supabase.auth.admin.getUserById(userId);
+        if (fetchErr || !data.user) throw new Error("User tidak ditemukan di sistem.");
+
+        const meta = data.user.user_metadata || {};
+        
+        // Suntikkan flag "is_logged_out" ke dalam database profile user ini
+        const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
+            user_metadata: { ...meta, is_logged_out: true }
+        });
+
+        if (updateError) throw updateError;
+        res.json({ status: 'success', message: 'User berhasil ditandai logout.' });
+    } catch (err) {
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+});
+
+// --- API TARIK DATA USERS & STATUS SESI ---
 app.get('/api/users', protectAdmin, async (req, res) => {
     try {
         const { data, error } = await supabase.auth.admin.listUsers();
         if (error) throw error;
         
         const usersList = data.users.map(u => {
-            // Parsing Aman: Menyiapkan string riwayat download untuk dirender dengan baik di EJS lama & baru
             const rawDownloads = u.user_metadata?.downloaded_files || [];
             const formattedDownloads = rawDownloads.map(d => {
                 if (typeof d === 'object' && d !== null) return `${d.title} (${d.time})`;
-                return d; // Fallback jika datanya masih berbentuk string murni versi lama
+                return d; 
             });
 
+            // Menentukan Status User
+            const userStatus = u.user_metadata?.is_logged_out === true ? 'Logout' : 'Aktif';
+
             return {
+                id: u.id,
                 email: u.email,
                 name: u.user_metadata?.nama_lengkap || u.user_metadata?.full_name || 'Belum Melengkapi',
                 institution: u.user_metadata?.institusi_asal || 'Belum Melengkapi',
-                downloaded_files: formattedDownloads, // Array of formatted strings
+                downloaded_files: formattedDownloads, 
                 raw_metadata: u.user_metadata || {}, 
-                created_at: new Date(u.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'})
+                created_at: new Date(u.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}),
+                last_online: formatWitaTime(u.last_sign_in_at), // Last Online Time (WITA)
+                status: userStatus // Status Aktif/Logout
             };
         });
         
@@ -229,7 +264,6 @@ app.get('/api/users', protectAdmin, async (req, res) => {
     }
 });
 
-// --- API PENGATURAN FORM DOWNLOAD ---
 app.get('/api/settings/form', protectAdmin, async (req, res) => {
     res.json({ status: 'success', requireForm: await getRequireFormSetting() });
 });
