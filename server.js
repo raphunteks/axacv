@@ -86,19 +86,25 @@ const protectAdmin = (req, res, next) => {
 // ==========================================
 const createSlug = (text) => {
     if (!text) return '';
-    return text.toString().toLowerCase()
-        .replace(/\s+/g, '-')           // Ganti spasi dengan -
-        .replace(/[^\w\-]+/g, '')       // Hapus karakter non-word
-        .replace(/\-\-+/g, '-')         // Ganti multiple - dengan single -
-        .replace(/^-+/, '')             // Trim - dari awal
-        .replace(/-+$/, '');            // Trim - dari akhir
+    return text.toString().toLowerCase().trim()
+        .replace(/[^a-z0-9]+/g, '-')       // Ubah semua non-alphanumeric jadi dash (-)
+        .replace(/^-+|-+$/g, '');          // Trim dash dari awal dan akhir
 };
+
+// Kategori Default agar tidak pernah kosong di UI Menu Frontend
+const getDefaultCategories = () => [
+    "Preklinik", 
+    "Profesi Dokter Muda", 
+    "Jurnal & Riset", 
+    "Kedokteran Gigi Umum",
+    "Kegiatan Sosial",
+    "Event"
+];
 
 // ==========================================
 // 4. SUPABASE ARSIP API (POSTGRES & STORAGE)
 // ==========================================
 
-// Ambil seluruh data Arsip
 app.get('/api/arsip', async (req, res) => {
     try {
         if(!supabaseUrl || !supabaseKey) throw new Error("ENV Supabase Kosong!");
@@ -116,16 +122,13 @@ app.get('/api/arsip', async (req, res) => {
     }
 });
 
-// POST: Simpan Metadata Baru (Tanggal Format DD-MM-YYYY)
 app.post('/api/arsip', protectAdmin, async (req, res) => {
     try {
         const { id, title, category, desc, accessType, fileName, filePath } = req.body;
         
         const uniqueId = id || Date.now().toString();
-        const rawSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-        const slug = `${rawSlug}-${Math.random().toString(36).substr(2, 4)}`;
+        const slug = `${createSlug(title)}-${Math.random().toString(36).substr(2, 4)}`;
 
-        // Bikin tanggal format DD-MM-YYYY
         const today = new Date();
         const dd = String(today.getDate()).padStart(2, '0');
         const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -144,21 +147,15 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
             date: customDate
         };
 
-        const { data: dbData, error: dbError } = await supabase
-            .from('arsip')
-            .insert([newItem])
-            .select();
-
+        const { data: dbData, error: dbError } = await supabase.from('arsip').insert([newItem]).select();
         if (dbError) throw new Error(`Supabase DB Insert Error: ${dbError.message}`);
 
         res.json({ status: 'success', data: dbData[0] });
     } catch (err) {
-        console.error("Upload Metadata Error:", err);
         res.status(500).json({ status: 'error', message: err.message });
     }
 });
 
-// PUT: Full CRUD Edit Data Arsip (Slug, Tanggal, dll)
 app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
@@ -166,14 +163,7 @@ app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
 
         const { data, error } = await supabase
             .from('arsip')
-            .update({ 
-                title: title, 
-                category: category, 
-                desc: desc, 
-                access_type: accessType,
-                slug: slug,
-                date: date
-            })
+            .update({ title, category, desc, access_type: accessType, slug, date })
             .eq('id', docId)
             .select();
 
@@ -182,24 +172,16 @@ app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
 
         res.json({ status: 'success', data: data[0] });
     } catch (err) {
-        console.error("Update Arsip Error:", err);
         res.status(500).json({ status: 'error', message: err.message });
     }
 });
 
-// DELETE: Hapus file dari storage & database
 app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
-
-        const { data: item, error: fetchError } = await supabase
-            .from('arsip')
-            .select('file_path')
-            .eq('id', docId)
-            .single();
+        const { data: item, error: fetchError } = await supabase.from('arsip').select('file_path').eq('id', docId).single();
 
         if (fetchError || !item) throw new Error(`Fetch Error: ${fetchError?.message || "Dokumen tidak ditemukan."}`);
-
         if (item.file_path) {
             const { error: storageError } = await supabase.storage.from('arsip_files').remove([item.file_path]);
             if (storageError) console.warn("Peringatan: Gagal menghapus file dari Storage:", storageError.message);
@@ -210,7 +192,6 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
 
         res.json({ status: 'success' });
     } catch (err) {
-        console.error("Delete Error:", err);
         res.status(500).json({ status: 'error', message: err.message });
     }
 });
@@ -221,26 +202,17 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
 // ==========================================
 app.get('/sitemap.xml', async (req, res) => {
     try {
-        // 🌟 CACHING SITEMAP (SUPER PENTING UNTUK MENCEGAH GSC TIMEOUT / 504 ERROR) 🌟
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
-        // PASTIKAN CONTENT-TYPE ADALAH APPLICATION/XML AGAR DITERIMA GOOGLEBOT SEBAGAI "PETA SITUS"
         res.setHeader('Content-Type', 'application/xml; charset=utf-8');
         
-        // HELPER PENTING: Membersihkan string dari karakter ilegal XML
         const escapeXML = (str) => {
             if (!str) return '';
-            return str.replace(/&/g, '&amp;')
-                      .replace(/</g, '&lt;')
-                      .replace(/>/g, '&gt;')
-                      .replace(/"/g, '&quot;')
-                      .replace(/'/g, '&apos;');
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
         };
 
         let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-        // Penambahan Namespace Image Khusus agar struktur sesuai dengan GBR 2
         xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">\n`;
         
-        // Helper untuk Google Sitemap format YYYY-MM-DD
         const parseSitemapDate = (dateStr) => {
             if (!dateStr) return new Date().toISOString().split('T')[0];
             if (dateStr.match(/^\d{2}-\d{2}-\d{4}$/)) {
@@ -252,70 +224,30 @@ app.get('/sitemap.xml', async (req, res) => {
 
         const currentDate = new Date().toISOString().split('T')[0];
 
-        // 1. HALAMAN UTAMA & PRIORITAS TINGGI
-        xml += `<!--  =========================================  -->\n`;
-        xml += `<!--  HALAMAN UTAMA & PRIORITAS TINGGI           -->\n`;
-        xml += `<!--  =========================================  -->\n`;
-        xml += `<url>\n`;
-        xml += `<loc>${baseUrl}/</loc>\n`;
-        xml += `<lastmod>${currentDate}</lastmod>\n`;
-        xml += `<changefreq>daily</changefreq>\n`;
-        xml += `<priority>1.0</priority>\n`;
-        xml += `<image:image>\n`;
-        xml += `<image:loc>${baseUrl}/axalogo.png</image:loc>\n`;
-        xml += `<image:title>CV &amp; Portofolio drg. M. Aksa Arsyad, S.KG</image:title>\n`;
-        xml += `<image:caption>Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum.</image:caption>\n`;
-        xml += `</image:image>\n`;
-        xml += `</url>\n`;
+        // Core Routes
+        xml += `<url><loc>${baseUrl}/</loc><lastmod>${currentDate}</lastmod><changefreq>daily</changefreq><priority>1.0</priority><image:image><image:loc>${baseUrl}/axalogo.png</image:loc><image:title>CV &amp; Portofolio drg. M. Aksa Arsyad, S.KG</image:title><image:caption>Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum.</image:caption></image:image></url>\n`;
 
-        // 2. HALAMAN PORTFOLIO STATIS (SPA ROUTING)
-        xml += `<!--  =========================================  -->\n`;
-        xml += `<!--  HALAMAN PORTFOLIO STATIS (SPA ROUTING)     -->\n`;
-        xml += `<!--  =========================================  -->\n`;
         for (const [path, meta] of Object.entries(routesMeta)) {
             if (path === '/' || path === '/arsip') continue;
-            xml += `<url>\n`;
-            xml += `<loc>${baseUrl}${path}</loc>\n`;
-            xml += `<lastmod>${currentDate}</lastmod>\n`;
-            xml += `<changefreq>weekly</changefreq>\n`;
-            xml += `<priority>0.8</priority>\n`;
-            xml += `</url>\n`;
+            xml += `<url><loc>${baseUrl}${path}</loc><lastmod>${currentDate}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>\n`;
         }
 
-        // 3. DIREKTORI ARSIP UTAMA
-        xml += `<!--  =========================================  -->\n`;
-        xml += `<!--  DIREKTORI ARSIP UTAMA                      -->\n`;
-        xml += `<!--  =========================================  -->\n`;
-        xml += `<url>\n`;
-        xml += `<loc>${baseUrl}/arsip</loc>\n`;
-        xml += `<lastmod>${currentDate}</lastmod>\n`;
-        xml += `<changefreq>daily</changefreq>\n`;
-        xml += `<priority>0.9</priority>\n`;
-        xml += `</url>\n`;
-
-        // 4. DIRECT DYNAMIC SEO URLs (ARSIP MATERI, KATEGORI & PDF)
-        xml += `<!--  =========================================  -->\n`;
-        xml += `<!--  DIRECT DYNAMIC SEO URLs (ARSIP MATERI)     -->\n`;
-        xml += `<!--  =========================================  -->\n`;
+        xml += `<url><loc>${baseUrl}/arsip</loc><lastmod>${currentDate}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>\n`;
 
         try {
-            // 🌟 TIMEOUT PROTECTOR 🌟: Batasi maksimal 8.5 detik agar Vercel tidak 504 Gateway Timeout!
             const fetchPromise = supabase.from('arsip').select('slug, date, access_type, title, category');
             const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Sitemap DB Timeout Protector Triggered')), 8500));
             
             const { data: arsipDB, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
             if (arsipDB && !error) {
-                // Generate URL Sitemap untuk Setiap Kategori Dinamis
-                const uniqueCategories = [...new Set(arsipDB.map(item => item.category).filter(Boolean))];
+                // Kombinasi Kategori Dinamis & Default untuk Sitemap
+                const dbCats = arsipDB.map(item => item.category).filter(Boolean);
+                const uniqueCategories = [...new Set([...getDefaultCategories(), ...dbCats])];
+                
                 uniqueCategories.forEach(cat => {
                     const catSlug = createSlug(cat);
-                    xml += `<url>\n`;
-                    xml += `<loc>${baseUrl}/arsip/kategori/${catSlug}</loc>\n`;
-                    xml += `<lastmod>${currentDate}</lastmod>\n`;
-                    xml += `<changefreq>weekly</changefreq>\n`;
-                    xml += `<priority>0.8</priority>\n`;
-                    xml += `</url>\n`;
+                    xml += `<url><loc>${baseUrl}/arsip/kategori/${catSlug}</loc><lastmod>${currentDate}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>\n`;
                 });
 
                 arsipDB.forEach(doc => {
@@ -323,27 +255,10 @@ app.get('/sitemap.xml', async (req, res) => {
                     const safeTitle = escapeXML(doc.title);
                     const safeCat = escapeXML(doc.category);
 
-                    // Page Viewer Route dengan Image Tag
-                    xml += `<url>\n`;
-                    xml += `<loc>${baseUrl}/arsip/${doc.slug}</loc>\n`;
-                    xml += `<lastmod>${validSitemapDate}</lastmod>\n`;
-                    xml += `<changefreq>monthly</changefreq>\n`;
-                    xml += `<priority>0.7</priority>\n`;
-                    xml += `<image:image>\n`;
-                    xml += `<image:loc>${baseUrl}/axalogo.png</image:loc>\n`;
-                    xml += `<image:title>${safeTitle}</image:title>\n`;
-                    xml += `<image:caption>Kategori: ${safeCat}</image:caption>\n`;
-                    xml += `</image:image>\n`;
-                    xml += `</url>\n`;
+                    xml += `<url><loc>${baseUrl}/arsip/${doc.slug}</loc><lastmod>${validSitemapDate}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority><image:image><image:loc>${baseUrl}/axalogo.png</image:loc><image:title>${safeTitle}</image:title><image:caption>Kategori: ${safeCat}</image:caption></image:image></url>\n`;
 
-                    // Native PDF Route (Untuk SEO Open Access)
                     if(doc.access_type === 'Open Access') {
-                        xml += `<url>\n`;
-                        xml += `<loc>${baseUrl}/arsip/file/${doc.slug}.pdf</loc>\n`;
-                        xml += `<lastmod>${validSitemapDate}</lastmod>\n`;
-                        xml += `<changefreq>yearly</changefreq>\n`;
-                        xml += `<priority>0.9</priority>\n`;
-                        xml += `</url>\n`;
+                        xml += `<url><loc>${baseUrl}/arsip/file/${doc.slug}.pdf</loc><lastmod>${validSitemapDate}</lastmod><changefreq>yearly</changefreq><priority>0.9</priority></url>\n`;
                     }
                 });
             }
@@ -372,7 +287,6 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
 app.get('/admin/login', (req, res) => res.render('admin-login'));
 app.get('/admin/dashboard', (req, res) => {
-    // Melemparkan variable ENV ke dashboard admin (Aman dari publik)
     res.render('admin-dashboard', {
         supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
         supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || ''
@@ -393,18 +307,18 @@ app.get('/arsip', async (req, res) => {
             if(result.data) arsipDB = result.data;
         } catch(dbErr) { console.error("Database fetch failed on /arsip", dbErr.message); }
         
-        // Ekstrak Kategori Unik dari Database untuk menu navigasi dinamis
-        const categories = [...new Set(arsipDB.map(item => item.category).filter(Boolean))];
+        // GABUNGKAN DEFAULT KATEGORI + DB KATEGORI AGAR TOMBOL MENU LENGKAP
+        const dbCategories = arsipDB.map(item => item.category).filter(Boolean);
+        const categories = [...new Set([...getDefaultCategories(), ...dbCategories])];
 
-        // VERCEL EDGE CACHE: Cegah 504 Timeout saat Googlebot Crawling
         res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
         res.render('arsip-list', { 
             meta, 
             baseUrl, 
             arsipData: arsipDB, 
             currentPath: '/arsip',
-            categories: categories, // Melempar array kategori
-            activeCategory: 'semua', // Mengatur status active ke menu 'semua'
+            categories: categories, 
+            activeCategory: 'semua', 
             createSlug: createSlug
         });
     } catch (e) {
@@ -425,8 +339,9 @@ app.get('/arsip/kategori/:kategoriSlug', async (req, res) => {
             if(result.data) arsipDB = result.data;
         } catch(dbErr) { console.error("Database fetch failed on /arsip/kategori", dbErr.message); }
         
-        // Ekstrak Kategori Unik dari Database
-        const categories = [...new Set(arsipDB.map(item => item.category).filter(Boolean))];
+        // GABUNGKAN DEFAULT KATEGORI + DB KATEGORI AGAR TOMBOL MENU LENGKAP
+        const dbCategories = arsipDB.map(item => item.category).filter(Boolean);
+        const categories = [...new Set([...getDefaultCategories(), ...dbCategories])];
         
         // Filter Data Arsip berdasarkan param slug
         const filteredArsip = arsipDB.filter(item => {
@@ -452,7 +367,7 @@ app.get('/arsip/kategori/:kategoriSlug', async (req, res) => {
             arsipData: filteredArsip, 
             currentPath: `/arsip/kategori/${slug}`,
             categories: categories,
-            activeCategory: slug, // Status active menyala pada spesifik slug
+            activeCategory: slug,
             createSlug: createSlug
         });
     } catch (e) {
@@ -460,12 +375,10 @@ app.get('/arsip/kategori/:kategoriSlug', async (req, res) => {
     }
 });
 
-// Endpoint Native Streaming File PDF (Proxy to Supabase Storage) - DILENGKAPI SEO ROBOTS TAG
+// Endpoint Native Streaming File PDF
 app.get('/arsip/file/:slug.pdf', async (req, res) => {
     try {
         const slugStr = req.params.slug; 
-
-        // TIMEOUT PROTECTOR
         const fetchPromise = supabase.from('arsip').select('file_name, file_path').eq('slug', slugStr).single();
         const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('DB Timeout')), 8500));
         
@@ -478,7 +391,6 @@ app.get('/arsip/file/:slug.pdf', async (req, res) => {
 
         const buffer = Buffer.from(await fileBlob.arrayBuffer());
         
-        // CACHING SUPER KUAT & HEADER SEO ROBOTS AGAR DIINDEKS GOOGLE SCHOLAR
         res.setHeader('Cache-Control', 'public, max-age=31536000, s-maxage=31536000, immutable');
         res.setHeader('X-Robots-Tag', 'index, follow, noarchive');
         
@@ -495,7 +407,6 @@ app.get('/arsip/file/:slug.pdf', async (req, res) => {
 // Page Viewer (ARSIP FILE EJS)
 app.get('/arsip/:slug', async (req, res) => {
     try {
-        // TIMEOUT PROTECTOR
         const fetchPromise = supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
         const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('DB Timeout')), 8500));
 
@@ -512,9 +423,7 @@ app.get('/arsip/:slug', async (req, res) => {
             type: 'article'
         };
         
-        // VERCEL EDGE CACHE
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
-        
         res.render('arsipfile', { meta, baseUrl, arsip, currentPath: `/arsip/${arsip.slug}` });
     } catch(e) {
         res.status(500).send("Internal Server Error");
@@ -542,25 +451,15 @@ app.post('/api/github', async (req, res) => {
         const authToken = token || process.env.GITHUB_TOKEN;
         const ghUser = username || process.env.GITHUB_USERNAME || "raphunteks"; 
 
-        if (!authToken) {
-             return res.status(401).json({ status: 'error', message: 'Token GitHub tidak ditemukan.' });
-        }
+        if (!authToken) return res.status(401).json({ status: 'error', message: 'Token GitHub tidak ditemukan.' });
 
         const query = `
         query {
           user(login: "${ghUser}") {
             repositories(first: 100, ownerAffiliations: OWNER, isFork: false) {
-              nodes {
-                stargazerCount
-                languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
-                  edges { size node { name color } }
-                }
-              }
+              nodes { stargazerCount languages(first: 10, orderBy: {field: SIZE, direction: DESC}) { edges { size node { name color } } } }
             }
-            contributionsCollection {
-              totalCommitContributions
-              restrictedContributionsCount
-            }
+            contributionsCollection { totalCommitContributions restrictedContributionsCount }
             pullRequests(first: 1) { totalCount }
             issues(first: 1) { totalCount }
           }
@@ -568,37 +467,20 @@ app.post('/api/github', async (req, res) => {
 
         const response = await fetch('https://api.github.com/graphql', {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${authToken}`,
-                'Content-Type': 'application/json',
-                'User-Agent': 'Axa-Portfolio-App'
-            },
+            headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json', 'User-Agent': 'Axa-Portfolio-App' },
             body: JSON.stringify({ query })
         });
 
-        const responseText = await response.text();
-
-        let result;
-        try {
-            result = JSON.parse(responseText);
-        } catch(e) {
-            return res.status(500).json({ status: 'error', message: 'GitHub API tidak mengembalikan format JSON yang valid.' });
-        }
-
-        if (result.errors) {
-            return res.status(400).json({ status: 'error', message: result.errors[0].message });
-        }
+        const result = JSON.parse(await response.text());
+        if (result.errors) return res.status(400).json({ status: 'error', message: result.errors[0].message });
 
         const data = result.data.user;
-        let totalStars = 0;
-        let langMap = {};
-        let totalSize = 0;
+        let totalStars = 0, totalSize = 0, langMap = {};
 
         data.repositories.nodes.forEach(repo => {
             totalStars += repo.stargazerCount;
             repo.languages.edges.forEach(edge => {
-                const langName = edge.node.name;
-                const langColor = edge.node.color || '#cccccc';
+                const langName = edge.node.name, langColor = edge.node.color || '#cccccc';
                 if (!langMap[langName]) langMap[langName] = { size: 0, color: langColor };
                 langMap[langName].size += edge.size;
                 totalSize += edge.size;
@@ -607,21 +489,12 @@ app.post('/api/github', async (req, res) => {
 
         const sortedLangs = Object.keys(langMap)
             .map(k => ({ name: k, size: langMap[k].size, color: langMap[k].color, percent: ((langMap[k].size / totalSize) * 100).toFixed(2) }))
-            .sort((a, b) => b.size - a.size)
-            .slice(0, 5);
+            .sort((a, b) => b.size - a.size).slice(0, 5);
 
-        const stats = {
-            stars: totalStars,
-            commits: data.contributionsCollection.totalCommitContributions + data.contributionsCollection.restrictedContributionsCount,
-            prs: data.pullRequests.totalCount,
-            issues: data.issues.totalCount,
-            topLangs: sortedLangs
-        };
+        const stats = { stars: totalStars, commits: data.contributionsCollection.totalCommitContributions + data.contributionsCollection.restrictedContributionsCount, prs: data.pullRequests.totalCount, issues: data.issues.totalCount, topLangs: sortedLangs };
 
         res.status(200).json({ status: 'success', data: stats });
-
     } catch (error) {
-        console.error("Vercel Serverless Error:", error);
         res.status(500).json({ status: 'error', message: error.message || 'Internal Server Error' });
     }
 });
@@ -629,15 +502,10 @@ app.post('/api/github', async (req, res) => {
 // ==========================================
 // 8. 404 ERROR HANDLER
 // ==========================================
-app.use((req, res) => {
-    res.status(404).render('admin-404');
-});
+app.use((req, res) => { res.status(404).render('admin-404'); });
 
 module.exports = app;
-
 if (require.main === module) {
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-        console.log(`Server is running on http://localhost:${PORT}`);
-    });
+    app.listen(PORT, () => { console.log(`Server is running on http://localhost:${PORT}`); });
 }
