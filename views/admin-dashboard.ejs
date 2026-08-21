@@ -45,7 +45,7 @@
         </div>
         <div class="flex gap-3 w-full md:w-auto">
             <a href="/arsip" target="_blank" class="flex-1 md:flex-none text-center px-5 py-2.5 border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black rounded-xl text-sm font-bold transition-all shadow-[0_0_15px_rgba(0,229,255,0.3)]"><i class="ph-bold ph-eye"></i> View Live</a>
-            <button onclick="logout()" class="flex-1 md:flex-none text-center px-5 py-2.5 bg-red-500/10 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-xl text-sm font-bold transition-all"><i class="ph-bold ph-power"></i> Logout</button>
+            <button onclick="logout()" class="flex-1 md:flex-none text-center px-5 py-2.5 bg-red-500/10 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-xl text-sm font-bold transition-all active:scale-95"><i class="ph-bold ph-power"></i> Logout</button>
         </div>
     </nav>
 
@@ -78,6 +78,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- KATEGORI DEPT/BAGIAN: INPUT + DROPDOWN (DATALIST) -->
                     <div>
                         <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Kategori Dept/Bagian</label>
                         <input list="categoryList" id="category" required class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner transition-colors placeholder-gray-600" placeholder="Ketik atau pilih...">
@@ -167,15 +168,15 @@
         </div>
     </div>
 
-    <!-- VIEW 3: LIST NAMA DOWNLOAD (USERS) -->
+    <!-- VIEW 3: LIST NAMA DOWNLOAD (USERS & RIWAYAT) -->
     <div id="view-users" class="hidden relative z-10 w-full">
         <div class="glass-panel p-6 md:p-8 rounded-3xl border-t-4 border-t-green-400">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <div>
                     <h2 class="text-2xl font-black text-green-400 flex items-center gap-2"><i class="ph-bold ph-users"></i> Daftar Pengunduh Terverifikasi</h2>
-                    <p class="text-gray-400 text-xs mt-1 font-mono">Daftar pengguna yang telah melakukan login Google pada sistem Anda.</p>
+                    <p class="text-gray-400 text-xs mt-1 font-mono">Daftar pengguna yang telah melakukan login Google dan riwayat dokumen yang diunduh.</p>
                 </div>
-                <button onclick="fetchUsers()" class="text-green-400 border border-green-400 hover:bg-green-400 hover:text-black px-4 py-2 rounded-lg text-sm flex items-center gap-2 font-bold transition-all shrink-0"><i class="ph-bold ph-arrows-clockwise"></i> Refresh Tabel</button>
+                <button onclick="fetchUsers()" class="text-green-400 border border-green-400 hover:bg-green-400 hover:text-black px-4 py-2 rounded-lg text-sm flex items-center gap-2 font-bold transition-all shrink-0 active:scale-95"><i class="ph-bold ph-arrows-clockwise"></i> Refresh Tabel</button>
             </div>
             
             <div class="overflow-x-auto rounded-xl border border-gray-800 custom-scrollbar shadow-inner bg-[#0b0f19]">
@@ -370,9 +371,15 @@
         // MENGGAMBAR HEADER TABEL SECARA DINAMIS
         function renderUserTableHeader() {
             let th = `<th class="px-6 py-4">Tgl Registrasi</th><th class="px-6 py-4 border-r border-gray-800">Email Akun Google</th>`;
+            
+            // Kolom Dinamis berdasarkan Setting Form
             globalFormSettings.fields.forEach(f => {
                 th += `<th class="px-6 py-4 text-white">${f.label}</th>`;
             });
+
+            // Tambahan Kolom Baru: Riwayat Download
+            th += `<th class="px-6 py-4 text-cyan-400 border-l border-gray-800">Riwayat Download PDF</th>`;
+            
             document.getElementById('userTableHead').innerHTML = `<tr>${th}</tr>`;
         }
 
@@ -381,7 +388,7 @@
             if(!globalFormSettings.fields || globalFormSettings.fields.length === 0) await fetchFormSetting();
 
             const listEl = document.getElementById('usersList');
-            const colSpan = 2 + globalFormSettings.fields.length;
+            const colSpan = 3 + globalFormSettings.fields.length;
             listEl.innerHTML = `<tr><td colspan="${colSpan}" class="px-6 py-12 text-center"><i class="ph-bold ph-spinner-gap animate-spin text-3xl text-green-400"></i></td></tr>`;
             
             try {
@@ -391,7 +398,7 @@
                 
                 const users = dataRaw.data;
                 if(users.length === 0) {
-                    listEl.innerHTML = `<tr><td colspan="${colSpan}" class="px-6 py-12 text-center text-gray-500 font-mono border-2 border-dashed border-gray-800 m-4 rounded-xl">Belum ada user yang mengunduh.</td></tr>`;
+                    listEl.innerHTML = `<tr><td colspan="${colSpan}" class="px-6 py-12 text-center text-gray-500 font-mono border-2 border-dashed border-gray-800 m-4 rounded-xl">Belum ada user yang terdaftar.</td></tr>`;
                     return;
                 }
 
@@ -401,10 +408,17 @@
                     
                     // Loop isian user menyesuaikan field dinamis
                     globalFormSettings.fields.forEach(f => {
-                        // Support raw_metadata jika Server sudah di-upgrade, dengan graceful fallback ke u.name/u.institution
                         const val = (u.raw_metadata && u.raw_metadata[f.id]) || (f.id === 'nama_lengkap' ? u.name : null) || (f.id === 'institusi_asal' ? u.institution : null) || '-';
                         row += `<td class="px-6 py-4 text-gray-300 font-medium">${val}</td>`;
                     });
+
+                    // Render Riwayat Download sebagai Badge
+                    const downloads = u.downloaded_files && u.downloaded_files.length > 0 
+                        ? u.downloaded_files.map(file => `<span class="bg-cyan-500/10 text-cyan-400 text-[9px] px-2 py-1 rounded border border-cyan-500/30 whitespace-nowrap mb-1 mr-1 inline-block"><i class="ph-fill ph-file-pdf"></i> ${file}</span>`).join('') 
+                        : '<span class="text-gray-600 italic text-xs font-mono">Belum pernah download</span>';
+
+                    row += `<td class="px-6 py-4 border-l border-gray-800/50"><div class="flex flex-wrap gap-1 max-w-sm">${downloads}</div></td>`;
+
                     return `<tr class="hover:bg-green-500/5 transition-colors group">${row}</tr>`;
                 }).join('');
             } catch (err) {
@@ -604,14 +618,22 @@
             } catch (e) { alert(e.message); }
         }
 
-        function logout() {
+        // ==========================================
+        // LOGOUT LOGIC (CLEAR TOKEN & SUPABASE SESSION)
+        // ==========================================
+        async function logout() {
+            try {
+                // Logout dari Session Google/Supabase jika ada
+                if (supabaseClient) await supabaseClient.auth.signOut();
+            } catch(e) { console.warn("Supabase signout issue:", e); }
+            
+            // Hapus Token Admin lokal
             localStorage.removeItem('axa_arsip_token');
             window.location.href = '/admin/login';
         }
 
         fetchArsip();
-        // Saat dashboard pertama kali load, siapkan pengaturan form di belakang layar untuk tabel users
-        fetchFormSetting();
+        fetchFormSetting(); // Saat dashboard pertama kali load, siapkan pengaturan form di belakang layar untuk tabel users
     </script>
 </body>
 </html>
