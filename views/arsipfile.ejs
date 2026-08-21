@@ -12,7 +12,6 @@
     <meta name="keywords" content="<%= meta.keywords %>">
     <link rel="canonical" href="<%= meta.canonical %>">
     
-    <!-- OPEN GRAPH STANDARD -->
     <meta property="og:type" content="<%= meta.type %>">
     <meta property="og:url" content="<%= meta.canonical %>">
     <meta property="og:title" content="<%= meta.title %>">
@@ -36,13 +35,12 @@
             scholarDate = isoDate.replace(/-/g, '/');
         }
         
-        // 🌟 GSC JSON PROTECTOR: Menghapus karakter enter (\n) yang bisa memicu Googlebot Invalid Data JSON-LD 🌟
+        // GSC JSON PROTECTOR
         const safeTitle = (arsip.title || '').replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
         const safeDesc = (arsip.desc || '').replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
         const isFree = arsip.access_type === 'Open Access' ? 'true' : 'false';
     %>
 
-    <!-- 🌟 GOOGLE SCHOLAR & ACADEMIC SEO TAGS 🌟 -->
     <meta name="citation_title" content="<%- safeTitle %>">
     <meta name="citation_author" content="drg. M. Aksa Arsyad, S.KG">
     <% if (scholarDate) { %><meta name="citation_publication_date" content="<%= scholarDate %>"><% } %>
@@ -50,11 +48,9 @@
     <meta name="citation_language" content="id">
     
     <% if(arsip.access_type === 'Open Access') { %>
-    <!-- TAG SAKTI BINDING: Googlebot akan menautkan halaman HTML ini dengan File PDF aslinya -->
     <meta name="citation_pdf_url" content="<%= baseUrl %>/arsip/file/<%= arsip.slug %>.pdf">
     <% } %>
 
-    <!-- JSON-LD STRUCTURED DATA -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -149,7 +145,6 @@
 
     <main class="container mx-auto px-4 py-10 max-w-4xl min-h-screen">
         
-        <!-- SEMANTIC ARTICLE UNTUK GOOGLEBOT CRAWLER -->
         <article itemscope itemtype="http://schema.org/ScholarlyArticle">
             <header class="mb-12 text-center">
                 <span class="inline-block text-[10px] font-mono font-black uppercase tracking-widest text-cyan-400 bg-cyan-400/10 px-4 py-2 rounded-full border border-cyan-400/30 mb-5 shadow-[0_0_15px_rgba(0,229,255,0.2)]">
@@ -158,7 +153,6 @@
                 
                 <h1 itemprop="headline" class="text-3xl md:text-5xl font-black font-['Space_Grotesk'] mb-5 leading-tight"><%= arsip.title %></h1>
                 
-                <!-- Paragraf Deskripsi yang Terbaca Googlebot -->
                 <p itemprop="description" class="text-gray-400 text-sm max-w-2xl mx-auto leading-relaxed break-words whitespace-normal"><%= arsip.desc %></p>
                 
                 <div class="mt-8 flex justify-center items-center gap-4 text-xs font-mono text-gray-500 bg-gray-900/50 w-max mx-auto px-5 py-2.5 rounded-xl border border-gray-800 flex-wrap">
@@ -177,12 +171,10 @@
 
             <div class="doc-wrapper">
                 <% if(arsip.access_type === 'Restricted') { %>
-                    <!-- MODE 1: RESTRICTED (DIBLUR PENUH 100%) -->
                     <object data="/arsip/file/<%= arsip.slug %>.pdf#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" class="doc-object blur-full">
                         <div class="flex flex-col items-center justify-center h-full bg-gray-900 text-gray-400 p-8 text-center"><i class="ph-fill ph-file-pdf text-6xl text-gray-600 mb-4"></i></div>
                     </object>
                     
-                    <!-- Overlay Gembok Tengah -->
                     <div class="overlay-center">
                         <div class="bg-[#0b0f19]/95 backdrop-blur-3xl border-2 border-cyan-500/50 p-8 rounded-3xl text-center max-w-lg shadow-[0_30px_60px_rgba(0,0,0,0.9),inset_0_0_20px_rgba(0,229,255,0.15)]">
                             <div class="w-20 h-20 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-5 border border-cyan-400/30">
@@ -191,7 +183,6 @@
                             <h3 class="text-2xl md:text-3xl font-black font-['Space_Grotesk'] mb-3 text-white">Pratinjau Terkunci</h3>
                             <p class="text-xs md:text-sm text-gray-400 mb-8 font-medium leading-relaxed">Halaman ini mengunci tampilan penuh dokumen PDF untuk mencegah penyalinan otomatis (Scraping). Silakan verifikasi identitas Anda untuk mengunduh dokumen secara utuh.</p>
                             
-                            <!-- TOMBOL LOGIN GOOGLE & DOWNLOAD DINAMIS -->
                             <button id="btnDownloadGated" onclick="handleSecureDownload()" class="brutal-btn inline-flex items-center justify-center gap-3 px-8 py-4 w-full rounded-xl text-sm md:text-base cursor-pointer">
                                 <i id="downloadIcon" class="ph-bold ph-google-logo text-xl"></i> 
                                 <span id="downloadText">Sign in Google & Download</span>
@@ -200,7 +191,6 @@
                     </div>
 
                 <% } else { %>
-                    <!-- MODE 2: OPEN ACCESS (NORMAL / TERANG BENDERANG) -->
                     <object data="/arsip/file/<%= arsip.slug %>.pdf" type="application/pdf" class="doc-object">
                         <div class="flex flex-col items-center justify-center h-full bg-gray-900 text-gray-400 p-8 text-center">
                             <i class="ph-fill ph-file-pdf text-6xl text-gray-600 mb-4"></i>
@@ -209,7 +199,6 @@
                         </div>
                     </object>
 
-                    <!-- Floating Buka Native Endpoint (.pdf) -->
                     <a href="/arsip/file/<%= arsip.slug %>.pdf" target="_blank" rel="noopener noreferrer" itemprop="url" class="absolute bottom-6 right-6 brutal-btn brutal-btn-green px-6 py-3.5 rounded-2xl text-xs md:text-sm flex items-center gap-2 z-30 opacity-90 hover:opacity-100 hover:-translate-y-1 transition-all shadow-[6px_6px_0px_rgba(255,255,255,0.9)]">
                         <i class="ph-bold ph-arrow-square-out text-lg"></i> Buka Full PDF Native
                     </a>
@@ -218,7 +207,6 @@
         </article>
     </main>
 
-    <!-- MODAL FORM IDENTITAS (MUNCUL SETELAH LOGIN GOOGLE) -->
     <div id="userDataModal" class="fixed inset-0 z-[9999] hidden bg-[#030712]/90 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-[#0b0f19] border-2 border-[#00E5FF] p-6 md:p-8 rounded-2xl max-w-md w-full shadow-[8px_8px_0px_rgba(0,229,255,0.6)] modal-enter relative">
             <div class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mb-5 border border-cyan-400/30">
@@ -243,25 +231,25 @@
         </div>
     </div>
 
-    <!-- SCRIPT SUPABASE UNTUK GOOGLE AUTH & USER METADATA -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // Placeholder Settings untuk Integrasi Admin Dashboard di Masa Depan
         window.FORM_REQUIREMENTS = {
-            requireForm: true // Nanti nilainya bisa diganti oleh EJS: <%= typeof requireForm !== 'undefined' ? requireForm : true %>
+            requireForm: true
         };
 
         const SUPABASE_URL = "<%= typeof supabaseUrl !== 'undefined' ? supabaseUrl : '' %>"; 
         const SUPABASE_ANON_KEY = "<%= typeof supabaseAnonKey !== 'undefined' ? supabaseAnonKey : '' %>"; 
         
-        let supabase = null;
+        // PERBAIKAN BUG: Nama variabel diganti menjadi supabaseClient agar tidak bentrok dengan fungsi internal CDN Supabase.
+        let supabaseClient = null;
         if (SUPABASE_URL && SUPABASE_ANON_KEY) {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
 
         // FUNGSI UTAMA TOMBOL KLIK
         async function handleSecureDownload() {
-            if (!supabase) return alert("Sistem Autentikasi tidak terhubung ke server.");
+            if (!supabaseClient) return alert("Sistem Autentikasi tidak terhubung ke server.");
 
             const btn = document.getElementById('btnDownloadGated');
             const dIcon = document.getElementById('downloadIcon');
@@ -270,11 +258,11 @@
             dIcon.className = "ph-bold ph-spinner-gap animate-spin text-xl";
             dText.innerText = "Checking Authorization...";
 
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
 
             if (!session) {
                 // BELUM LOGIN -> Buka Google Sign In
-                const { error } = await supabase.auth.signInWithOAuth({
+                const { error } = await supabaseClient.auth.signInWithOAuth({
                     provider: 'google',
                     options: { redirectTo: window.location.href }
                 });
@@ -330,7 +318,7 @@
 
             try {
                 // Menyimpan data tambahan (Nama Lengkap, Institusi) ke dalam Metadata Profil user di Supabase
-                const { data, error } = await supabase.auth.updateUser({
+                const { data, error } = await supabaseClient.auth.updateUser({
                     data: { 
                         nama_lengkap: fullName,
                         institusi_asal: institution
@@ -379,12 +367,12 @@
 
         // AUTO-CHECK SAAT HALAMAN SELESAI DIMUAT (Kembali dari halaman login Google)
         window.addEventListener('DOMContentLoaded', async () => {
-            if (!supabase) return;
-            const { data: { session } } = await supabase.auth.getSession();
+            if (!supabaseClient) return;
+            const { data: { session } } = await supabaseClient.auth.getSession();
             const btn = document.getElementById('btnDownloadGated');
             
             if (session && btn) {
-                // Ubah tampilan awal tombol menjadi Verified
+                // Ubah tampilan awal tombol menjadi Verified jika profil lengkap
                 const meta = session.user.user_metadata || {};
                 const isFormComplete = meta.institusi_asal && meta.nama_lengkap;
 
