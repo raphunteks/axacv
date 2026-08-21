@@ -148,14 +148,13 @@
 
         <!-- KATEGORI FILTER DINAMIS (HORIZONTAL SCROLL PILLS) -->
         <div class="mb-10 w-full animate__animated animate__fadeInUp animate__delay-1s border-b border-gray-800 pb-6">
-            <!-- Container untuk scroll di mobile, rata tengah di Desktop -->
             <div class="flex overflow-x-auto gap-3 pb-2 no-scrollbar justify-start md:justify-center px-1">
                 <!-- Tombol Default Semua -->
                 <a href="/arsip" class="filter-btn <%= activeCategory === 'semua' ? 'active' : '' %>">
                     Semua
                 </a>
                 
-                <!-- Looping Dynamic Kategori dari Database Supabase -->
+                <!-- Looping Dynamic Kategori yang sudah digabung dengan Default Categories di Backend -->
                 <% if(typeof categories !== 'undefined' && categories.length > 0) { %>
                     <% categories.forEach(function(kat) { %>
                         <% const slug = createSlug(kat); %>
