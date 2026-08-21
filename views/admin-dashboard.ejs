@@ -78,7 +78,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- KATEGORI DEPT/BAGIAN: INPUT + DROPDOWN (DATALIST) -->
                     <div>
                         <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Kategori Dept/Bagian</label>
                         <input list="categoryList" id="category" required class="w-full bg-[#0b0f19] border-2 border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner transition-colors placeholder-gray-600" placeholder="Ketik atau pilih...">
@@ -135,7 +134,6 @@
                     <h2 class="text-2xl font-black text-purple-400 flex items-center gap-2"><i class="ph-bold ph-toggle-right"></i> Pengaturan Wajib Form</h2>
                     <p class="text-gray-400 text-sm mt-1 max-w-xl">Konfigurasi field yang harus dilengkapi user saat mengakses PDF berstatus Restricted.</p>
                 </div>
-                <!-- Toggle Master -->
                 <div class="flex items-center gap-3 bg-[#0b0f19] px-4 py-3 rounded-2xl border border-gray-800">
                     <span id="formStatusText" class="text-xs font-bold font-mono text-gray-400">NONAKTIF</span>
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -145,13 +143,9 @@
                 </div>
             </div>
             
-            <!-- Dynamic Field Builder -->
             <div class="bg-[#0b0f19] border-2 border-gray-800 rounded-2xl p-6 mb-8">
                 <h4 class="font-black text-white text-lg mb-4 flex items-center gap-2"><i class="ph-bold ph-list-dashes text-purple-400"></i> Struktur Form Aktif</h4>
-                
-                <div id="dynamicFieldsList" class="space-y-3 mb-6">
-                    <!-- Fields injected by JS -->
-                </div>
+                <div id="dynamicFieldsList" class="space-y-3 mb-6"></div>
                 
                 <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-800/50">
                     <input type="text" id="newFieldLabel" placeholder="Contoh: Nomor Induk Mahasiswa (NIM)" class="flex-grow bg-[#030712] border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-purple-400 text-sm font-bold shadow-inner text-white placeholder-gray-600 transition-colors">
@@ -192,7 +186,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDIT DATA ARSIP (FULL CRUD) -->
+    <!-- MODAL EDIT DATA ARSIP -->
     <div id="editModal" class="fixed inset-0 z-50 hidden bg-[#030712]/90 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
         <div class="glass-panel w-full max-w-2xl p-6 md:p-8 rounded-3xl border-t-4 border-t-pink-500 modal-enter shadow-[0_0_50px_rgba(255,16,240,0.15)] relative my-8">
             <button onclick="tutupEdit()" class="absolute top-5 right-5 text-gray-400 hover:text-white"><i class="ph-bold ph-x text-2xl"></i></button>
@@ -246,15 +240,12 @@
 
         let supabaseClient = null;
         let globalArsipData = []; 
-        
-        // VARIABEL GLOBAL PENGATURAN FORM DINAMIS
         let globalFormSettings = { requireForm: true, fields: [] };
 
         if (SUPABASE_URL && SUPABASE_ANON_KEY) {
             try { supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (e) { }
         }
 
-        // --- SISTEM TABS NAVIGATION ---
         function switchTab(tabId) {
             ['arsip', 'form', 'users'].forEach(id => {
                 document.getElementById(`view-${id}`).classList.add('hidden');
@@ -265,27 +256,20 @@
 
             document.getElementById(`tab-${tabId}`).classList.remove('border-transparent', 'text-gray-500');
             document.getElementById(`tab-${tabId}`).classList.add('border-cyan-400', 'text-cyan-400');
-            
             document.getElementById(`view-${tabId}`).classList.remove('hidden');
 
             if(tabId === 'users') fetchUsers();
             if(tabId === 'form') fetchFormSetting();
         }
 
-        // ==========================================
-        // FITUR BARU: MANAJEMEN FORM & TABLE USER
-        // ==========================================
-
         async function fetchFormSetting() {
             try {
                 const res = await fetch('/api/settings/form', { headers: { 'Authorization': token } });
                 const data = await res.json();
                 
-                // Menangani Object JSON bertingkat dari server
                 if (data.requireForm && typeof data.requireForm === 'object') {
                     globalFormSettings = data.requireForm;
                 } else {
-                    // Fallback Default jika belum ada setting di database
                     globalFormSettings = {
                         requireForm: data.requireForm !== undefined ? data.requireForm : true,
                         fields: [
@@ -330,9 +314,7 @@
             const label = input.value.trim();
             if(!label) return;
             
-            // Auto generate ID (lowercase, alphanumeric underscore only)
             const id = label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
-            
             globalFormSettings.fields.push({ id, label });
             input.value = '';
             renderFormSettingsUI();
@@ -368,27 +350,31 @@
             }
         }
 
-        // MENGGAMBAR HEADER TABEL SECARA DINAMIS
+        // ==========================================
+        // FITUR BARU: MENGGAMBAR HEADER TABEL & DATA
+        // ==========================================
         function renderUserTableHeader() {
-            let th = `<th class="px-6 py-4">Tgl Registrasi</th><th class="px-6 py-4 border-r border-gray-800">Email Akun Google</th>`;
+            let th = `<th class="px-6 py-4">Status Sesi</th>`;
+            th += `<th class="px-6 py-4 border-r border-gray-800">Email Akun Google</th>`;
             
             // Kolom Dinamis berdasarkan Setting Form
             globalFormSettings.fields.forEach(f => {
                 th += `<th class="px-6 py-4 text-white">${f.label}</th>`;
             });
 
-            // Tambahan Kolom Baru: Riwayat Download
+            // Kolom History, Tanggal Online, Aksi Logout
             th += `<th class="px-6 py-4 text-cyan-400 border-l border-gray-800">Riwayat Download PDF</th>`;
+            th += `<th class="px-6 py-4 text-pink-400 border-l border-gray-800">Waktu Last Online</th>`;
+            th += `<th class="px-6 py-4 text-center">Aksi (Manajemen)</th>`;
             
             document.getElementById('userTableHead').innerHTML = `<tr>${th}</tr>`;
         }
 
         async function fetchUsers() {
-            // Pastikan struktur form udah dimuat
             if(!globalFormSettings.fields || globalFormSettings.fields.length === 0) await fetchFormSetting();
 
             const listEl = document.getElementById('usersList');
-            const colSpan = 3 + globalFormSettings.fields.length;
+            const colSpan = 5 + globalFormSettings.fields.length;
             listEl.innerHTML = `<tr><td colspan="${colSpan}" class="px-6 py-12 text-center"><i class="ph-bold ph-spinner-gap animate-spin text-3xl text-green-400"></i></td></tr>`;
             
             try {
@@ -403,7 +389,12 @@
                 }
 
                 listEl.innerHTML = users.map(u => {
-                    let row = `<td class="px-6 py-4 font-mono text-xs text-gray-500">${u.created_at}</td>`;
+                    // Badge Status Sesi
+                    const statusBadge = u.status === 'Aktif' 
+                        ? `<span class="bg-green-500/10 text-green-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-green-500/30 flex items-center gap-2 w-max shadow-[0_0_10px_rgba(74,222,128,0.1)]"><div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div> Aktif Online</span>` 
+                        : `<span class="bg-red-500/10 text-red-400 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-red-500/30 flex items-center gap-2 w-max"><div class="w-2 h-2 bg-red-400 rounded-full"></div> Ter-Logout</span>`;
+
+                    let row = `<td class="px-6 py-4">${statusBadge}</td>`;
                     row += `<td class="px-6 py-4 text-cyan-400 font-bold border-r border-gray-800/50">${u.email}</td>`;
                     
                     // Loop isian user menyesuaikan field dinamis
@@ -412,17 +403,43 @@
                         row += `<td class="px-6 py-4 text-gray-300 font-medium">${val}</td>`;
                     });
 
-                    // Render Riwayat Download (String yang sudah di-format dari server)
+                    // Render Riwayat Download (String yang sudah di-format dari server: Judul + WITA)
                     const downloads = u.downloaded_files && u.downloaded_files.length > 0 
                         ? u.downloaded_files.map(fileStr => `<span class="bg-cyan-500/10 text-cyan-400 text-[10px] px-2.5 py-1.5 rounded-lg border border-cyan-500/30 whitespace-nowrap mb-1 mr-1 block w-max font-medium shadow-sm"><i class="ph-fill ph-file-pdf"></i> ${fileStr}</span>`).join('') 
                         : '<span class="text-gray-600 italic text-xs font-mono">Belum pernah mengunduh arsip</span>';
 
                     row += `<td class="px-6 py-4 border-l border-gray-800/50"><div class="flex flex-col gap-1 w-max">${downloads}</div></td>`;
+                    
+                    // Render Last Online (WITA)
+                    row += `<td class="px-6 py-4 border-l border-gray-800/50 text-[10px] font-mono text-pink-400 w-max whitespace-nowrap">${u.last_online}</td>`;
+
+                    // Render Tombol Aksi (Force Logout)
+                    const actionBtn = u.status === 'Aktif' 
+                        ? `<button onclick="forceLogoutUser('${u.id}')" class="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/30 px-4 py-2.5 rounded-xl text-xs font-bold transition-all w-full flex justify-center items-center gap-2 active:scale-95"><i class="ph-bold ph-power"></i> Paksa Logout</button>`
+                        : `<button disabled class="bg-gray-800/30 text-gray-600 border border-gray-700/50 px-4 py-2.5 rounded-xl text-xs font-bold w-full flex justify-center items-center gap-2 cursor-not-allowed"><i class="ph-bold ph-check"></i> Clean</button>`;
+                        
+                    row += `<td class="px-6 py-4">${actionBtn}</td>`;
 
                     return `<tr class="hover:bg-green-500/5 transition-colors group">${row}</tr>`;
                 }).join('');
             } catch (err) {
                 listEl.innerHTML = `<tr><td colspan="${colSpan}" class="px-6 py-10 text-center text-red-400 font-mono"><i class="ph-fill ph-warning-circle text-2xl mb-2"></i><br>${err.message}</td></tr>`;
+            }
+        }
+
+        // FUNGSI PAKSA LOGOUT USER VIA ADMIN API
+        async function forceLogoutUser(userId) {
+            if(!confirm("Anda yakin ingin memutuskan sesi Google pengguna ini secara paksa?")) return;
+            try {
+                const res = await fetch(`/api/users/${userId}/force-logout`, {
+                    method: 'POST', headers: { 'Authorization': token }
+                });
+                if(!res.ok) throw new Error("Gagal melakukan aksi paksa logout ke Database Supabase.");
+                
+                // Refresh Table untuk update UI
+                fetchUsers(); 
+            } catch (e) {
+                alert(e.message);
             }
         }
 
@@ -619,21 +636,15 @@
         }
 
         // ==========================================
-        // LOGOUT LOGIC (CLEAR TOKEN & SUPABASE SESSION)
+        // LOGOUT ADMIN (CLEAR TOKEN)
         // ==========================================
-        async function logout() {
-            try {
-                // Logout dari Session Google/Supabase jika ada (Supaya tidak tumpang tindih)
-                if (supabaseClient) await supabaseClient.auth.signOut();
-            } catch(e) { console.warn("Supabase signout issue:", e); }
-            
-            // Hapus Token Admin lokal
+        function logout() {
             localStorage.removeItem('axa_arsip_token');
             window.location.href = '/admin/login';
         }
 
         fetchArsip();
-        fetchFormSetting(); 
+        fetchFormSetting(); // Saat dashboard pertama kali load, siapkan pengaturan form di belakang layar untuk tabel users
     </script>
 </body>
 </html>
