@@ -97,7 +97,7 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #030712; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: #030712; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
         .glass-header { background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
         
         .doc-wrapper { position: relative; width: 100%; height: 80vh; min-height: 600px; max-height: 950px; overflow: hidden; border-radius: 1.5rem; background: #1a1a1a; border: 1px solid rgba(0,229,255,0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0,229,255,0.1);}
@@ -124,6 +124,13 @@
 
         .brutal-btn-green {
             background: #4ade80; color: #000; border-color: #fff; box-shadow: 6px 6px 0px rgba(255,255,255,0.9);
+        }
+
+        /* Animasi Modal Neo-Brutalism */
+        .modal-enter { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn { 
+            0% { opacity: 0; transform: scale(0.8) translateY(20px); } 
+            100% { opacity: 1; transform: scale(1) translateY(0); } 
         }
     </style>
 </head>
@@ -182,11 +189,13 @@
                                 <i class="ph-fill ph-lock-key text-4xl text-cyan-400 drop-shadow-[0_0_10px_rgba(0,229,255,0.8)] animate-pulse"></i>
                             </div>
                             <h3 class="text-2xl md:text-3xl font-black font-['Space_Grotesk'] mb-3 text-white">Pratinjau Terkunci</h3>
-                            <p class="text-xs md:text-sm text-gray-400 mb-8 font-medium leading-relaxed">Halaman ini mengunci tampilan penuh dokumen PDF untuk mencegah penyalinan otomatis (Scraping). Silakan akses dokumen utuh langsung ke penyimpanan lokal Anda.</p>
+                            <p class="text-xs md:text-sm text-gray-400 mb-8 font-medium leading-relaxed">Halaman ini mengunci tampilan penuh dokumen PDF untuk mencegah penyalinan otomatis (Scraping). Silakan verifikasi identitas Anda untuk mengunduh dokumen secara utuh.</p>
                             
-                            <a href="/arsip/file/<%= arsip.slug %>.pdf" download="<%= arsip.file_name %>" class="brutal-btn inline-flex items-center justify-center gap-3 px-8 py-4 w-full rounded-xl text-sm md:text-base">
-                                <i class="ph-bold ph-download-simple text-xl"></i> Download PDF Full
-                            </a>
+                            <!-- TOMBOL LOGIN GOOGLE & DOWNLOAD DINAMIS -->
+                            <button id="btnDownloadGated" onclick="handleSecureDownload()" class="brutal-btn inline-flex items-center justify-center gap-3 px-8 py-4 w-full rounded-xl text-sm md:text-base cursor-pointer">
+                                <i id="downloadIcon" class="ph-bold ph-google-logo text-xl"></i> 
+                                <span id="downloadText">Sign in Google & Download</span>
+                            </button>
                         </div>
                     </div>
 
@@ -209,5 +218,187 @@
         </article>
     </main>
 
+    <!-- MODAL FORM IDENTITAS (MUNCUL SETELAH LOGIN GOOGLE) -->
+    <div id="userDataModal" class="fixed inset-0 z-[9999] hidden bg-[#030712]/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-[#0b0f19] border-2 border-[#00E5FF] p-6 md:p-8 rounded-2xl max-w-md w-full shadow-[8px_8px_0px_rgba(0,229,255,0.6)] modal-enter relative">
+            <div class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mb-5 border border-cyan-400/30">
+                <i class="ph-fill ph-identification-card text-3xl text-cyan-400"></i>
+            </div>
+            <h3 class="text-2xl font-black font-['Space_Grotesk'] mb-2 text-white">Lengkapi Profil Akses</h3>
+            <p class="text-gray-400 text-xs md:text-sm font-medium mb-6">Sebelum melanjutkan unduhan, harap isi data akademis/institusi Anda (hanya perlu diisi 1x).</p>
+
+            <form id="formUserData" onsubmit="submitUserData(event)" class="space-y-5">
+                <div>
+                    <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Nama Lengkap (Sesuai KTP/Gelar)</label>
+                    <input type="text" id="inputFullName" required class="w-full bg-[#030712] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner transition-colors" placeholder="Masukkan nama...">
+                </div>
+                <div>
+                    <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Asal Universitas / Instansi</label>
+                    <input type="text" id="inputInstitution" required class="w-full bg-[#030712] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner transition-colors" placeholder="Contoh: Univ. Hasanuddin - FKG">
+                </div>
+                <button type="submit" id="btnSaveData" class="brutal-btn w-full py-3.5 rounded-xl text-sm flex justify-center items-center gap-2 mt-4 cursor-pointer">
+                    <i class="ph-bold ph-floppy-disk text-lg"></i> Simpan & Lanjutkan Download
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT SUPABASE UNTUK GOOGLE AUTH & USER METADATA -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Placeholder Settings untuk Integrasi Admin Dashboard di Masa Depan
+        window.FORM_REQUIREMENTS = {
+            requireForm: true // Nanti nilainya bisa diganti oleh EJS: <%= typeof requireForm !== 'undefined' ? requireForm : true %>
+        };
+
+        const SUPABASE_URL = "<%= typeof supabaseUrl !== 'undefined' ? supabaseUrl : '' %>"; 
+        const SUPABASE_ANON_KEY = "<%= typeof supabaseAnonKey !== 'undefined' ? supabaseAnonKey : '' %>"; 
+        
+        let supabase = null;
+        if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // FUNGSI UTAMA TOMBOL KLIK
+        async function handleSecureDownload() {
+            if (!supabase) return alert("Sistem Autentikasi tidak terhubung ke server.");
+
+            const btn = document.getElementById('btnDownloadGated');
+            const dIcon = document.getElementById('downloadIcon');
+            const dText = document.getElementById('downloadText');
+
+            dIcon.className = "ph-bold ph-spinner-gap animate-spin text-xl";
+            dText.innerText = "Checking Authorization...";
+
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (!session) {
+                // BELUM LOGIN -> Buka Google Sign In
+                const { error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: { redirectTo: window.location.href }
+                });
+                
+                if (error) {
+                    alert("Gagal memanggil Google Login: " + error.message);
+                    dIcon.className = "ph-bold ph-google-logo text-xl";
+                    dText.innerText = "Sign in Google & Download";
+                }
+            } else {
+                // SUDAH LOGIN -> Cek Metadata Form User
+                checkUserMetadataAndProceed(session.user);
+            }
+        }
+
+        // FUNGSI CEK DATA LENGKAP
+        async function checkUserMetadataAndProceed(user) {
+            const btn = document.getElementById('btnDownloadGated');
+            const dIcon = document.getElementById('downloadIcon');
+            const dText = document.getElementById('downloadText');
+
+            const meta = user.user_metadata || {};
+            
+            // Cek apakah institusi sudah diisi (Syarat Admin Setting)
+            if (window.FORM_REQUIREMENTS.requireForm && (!meta.institusi_asal || !meta.nama_lengkap)) {
+                // Buka Form Input Profil
+                document.getElementById('userDataModal').classList.remove('hidden');
+                
+                // Prefill nama dari Google jika ada
+                if(meta.full_name && !meta.nama_lengkap) {
+                    document.getElementById('inputFullName').value = meta.full_name;
+                }
+                
+                // Kembalikan status tombol seperti semula
+                dIcon.className = "ph-bold ph-google-logo text-xl";
+                dText.innerText = "Lengkapi Data Profil";
+            } else {
+                // Data sudah lengkap -> Eksekusi Download
+                executeDownloadFile(btn, dIcon, dText);
+            }
+        }
+
+        // FUNGSI SUBMIT FORM IDENTITAS (Update Profile ke Supabase Database internal)
+        async function submitUserData(event) {
+            event.preventDefault();
+            const btnSave = document.getElementById('btnSaveData');
+            const oriText = btnSave.innerHTML;
+            btnSave.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin text-lg"></i> Menyimpan...';
+            btnSave.disabled = true;
+
+            const fullName = document.getElementById('inputFullName').value.trim();
+            const institution = document.getElementById('inputInstitution').value.trim();
+
+            try {
+                // Menyimpan data tambahan (Nama Lengkap, Institusi) ke dalam Metadata Profil user di Supabase
+                const { data, error } = await supabase.auth.updateUser({
+                    data: { 
+                        nama_lengkap: fullName,
+                        institusi_asal: institution
+                    }
+                });
+
+                if (error) throw error;
+
+                // Sembunyikan Modal
+                document.getElementById('userDataModal').classList.add('hidden');
+                
+                // Langsung Trigger Download
+                const btn = document.getElementById('btnDownloadGated');
+                const dIcon = document.getElementById('downloadIcon');
+                const dText = document.getElementById('downloadText');
+                executeDownloadFile(btn, dIcon, dText);
+
+            } catch (err) {
+                alert("Gagal menyimpan data: " + err.message);
+            } finally {
+                btnSave.innerHTML = oriText;
+                btnSave.disabled = false;
+            }
+        }
+
+        // FUNGSI INTI DOWNLOAD PDF NATIVE
+        function executeDownloadFile(btn, dIcon, dText) {
+            dIcon.className = "ph-bold ph-download-simple text-xl";
+            dText.innerText = "Downloading...";
+            
+            const link = document.createElement('a');
+            link.href = "/arsip/file/<%= arsip.slug %>.pdf";
+            link.download = "<%= arsip.file_name %>";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            setTimeout(() => {
+                dText.innerText = "Download PDF Full (Verified)";
+                btn.style.backgroundColor = "#4ade80"; // Hijau Success
+                btn.style.color = "#000";
+                btn.style.borderColor = "#fff";
+                btn.style.boxShadow = "6px 6px 0px rgba(255,255,255,0.9)";
+            }, 1000);
+        }
+
+        // AUTO-CHECK SAAT HALAMAN SELESAI DIMUAT (Kembali dari halaman login Google)
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (!supabase) return;
+            const { data: { session } } = await supabase.auth.getSession();
+            const btn = document.getElementById('btnDownloadGated');
+            
+            if (session && btn) {
+                // Ubah tampilan awal tombol menjadi Verified
+                const meta = session.user.user_metadata || {};
+                const isFormComplete = meta.institusi_asal && meta.nama_lengkap;
+
+                document.getElementById('downloadIcon').className = isFormComplete ? "ph-bold ph-download-simple text-xl" : "ph-bold ph-warning-circle text-xl";
+                document.getElementById('downloadText').innerText = isFormComplete ? "Download PDF Full (Verified)" : "Lengkapi Profil & Download";
+                
+                if(isFormComplete) {
+                    btn.style.backgroundColor = "#4ade80"; 
+                    btn.style.color = "#000";
+                    btn.style.borderColor = "#fff";
+                    btn.style.boxShadow = "6px 6px 0px rgba(255,255,255,0.9)";
+                }
+            }
+        });
+    </script>
 </body>
 </html>
