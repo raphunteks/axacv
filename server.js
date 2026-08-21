@@ -12,6 +12,7 @@ if (!supabaseUrl || !supabaseKey) {
     console.error("CRITICAL ERROR: Kredensial Supabase tidak ditemukan di Environment Variables.");
 }
 
+// Gunakan Service Role Key agar Backend punya hak akses penuh (Admin API)
 const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: { persistSession: false }
 });
@@ -75,6 +76,11 @@ app.post('/api/auth/verify', (req, res) => {
     else res.status(401).json({ status: 'error' });
 });
 
+// Endpoint Dummy untuk Logout (Pembersihan Sesi Klien Nanti Diatur di Frontend)
+app.post('/api/auth/logout', (req, res) => {
+    res.json({ status: 'success', message: 'Sesi berhasil dihentikan.' });
+});
+
 const protectAdmin = (req, res, next) => {
     const token = req.headers.authorization;
     if (token === SECRET_TOKEN) next();
@@ -87,39 +93,87 @@ const protectAdmin = (req, res, next) => {
 const createSlug = (text) => {
     if (!text) return '';
     return text.toString().toLowerCase().trim()
-        .replace(/[^a-z0-9]+/g, '-')       // Ubah semua non-alphanumeric jadi dash (-)
-        .replace(/^-+|-+$/g, '');          // Trim dash dari awal dan akhir
+        .replace(/[^a-z0-9]+/g, '-')       
+        .replace(/^-+|-+$/g, '');          
 };
 
-// Kategori Default agar tidak pernah kosong di UI Menu Frontend
-const getDefaultCategories = () => [
-    "Preklinik", 
-    "Jurnal & Riset", 
-    "Kedokteran Gigi Umum"
-];
+const getDefaultCategories = () => ["Preklinik", "Jurnal & Riset", "Kedokteran Gigi Umum"];
 
-// CACHING SETTINGS: Menyimpan status Wajib Form di memory agar loading web cepat
-let cachedRequireForm = true;
+// CACHING SETTINGS: Simpan Object Setting Dinamis
+const defaultFormSettings = {
+    requireForm: true,
+    fields: [
+        { id: 'nama_lengkap', label: 'Nama Lengkap (Sesuai KTP/Gelar)' },
+        { id: 'institusi_asal', label: 'Asal Universitas / Instansi' }
+    ]
+};
+
+let cachedFormSettings = defaultFormSettings;
 let lastCacheTime = 0;
 
 async function getRequireFormSetting() {
-    if (Date.now() - lastCacheTime < 60000) return cachedRequireForm;
+    if (Date.now() - lastCacheTime < 60000) return cachedFormSettings;
     try {
         const { data } = await supabase.storage.from('arsip_files').download('settings.json');
         if (data) {
             const text = await data.text();
-            cachedRequireForm = JSON.parse(text).requireForm;
+            const parsed = JSON.parse(text);
+            
+            if (typeof parsed.requireForm === 'boolean' && !parsed.fields) {
+                cachedFormSettings = { requireForm: parsed.requireForm, fields: defaultFormSettings.fields };
+            } else {
+                cachedFormSettings = parsed.requireForm; 
+            }
             lastCacheTime = Date.now();
         }
     } catch (e) { } 
-    return cachedRequireForm;
+    return cachedFormSettings;
 }
 
 // ==========================================
 // 4. SUPABASE ARSIP API (POSTGRES & STORAGE)
 // ==========================================
 
-// --- API TARIK DATA USERS (NAMA DOWNLOADER) ---
+// --- FITUR BARU: API TRACKING DOWNLOAD USER ---
+// Dipanggil oleh ARSIPFILE saat user mengunduh dokumen
+app.post('/api/track-download', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) return res.status(401).json({ status: 'error', message: 'Token otentikasi tidak ditemukan.' });
+
+        const token = authHeader.replace('Bearer ', '');
+        
+        // 1. Verifikasi Identitas User via Token JWT Supabase
+        const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+        if (userError || !user) throw new Error("Sesi Google tidak valid atau telah kadaluarsa.");
+
+        const { fileTitle } = req.body;
+        if (!fileTitle) return res.status(400).json({ status: 'error', message: 'Judul file wajib dikirim.' });
+
+        // 2. Ambil Riwayat Download Sebelumnya
+        const meta = user.user_metadata || {};
+        let downloads = meta.downloaded_files || [];
+
+        // 3. Tambahkan ke Array (Cegah Duplikat File yang Sama)
+        if (!downloads.includes(fileTitle)) {
+            downloads.push(fileTitle);
+            
+            // 4. Update Metadata User secara Aman via Admin API (Membutuhkan Service Role Key)
+            const { error: updateError } = await supabase.auth.admin.updateUserById(user.id, {
+                user_metadata: { ...meta, downloaded_files: downloads }
+            });
+
+            if (updateError) throw updateError;
+        }
+
+        res.json({ status: 'success', downloaded_files: downloads });
+    } catch (err) {
+        console.error("Track Download Error:", err.message);
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+});
+
+// --- API TARIK DATA USERS (NAMA DOWNLOADER & RIWAYAT FILE) ---
 app.get('/api/users', protectAdmin, async (req, res) => {
     try {
         const { data, error } = await supabase.auth.admin.listUsers();
@@ -129,13 +183,15 @@ app.get('/api/users', protectAdmin, async (req, res) => {
             email: u.email,
             name: u.user_metadata?.nama_lengkap || u.user_metadata?.full_name || 'Belum Melengkapi',
             institution: u.user_metadata?.institusi_asal || 'Belum Melengkapi',
+            downloaded_files: u.user_metadata?.downloaded_files || [], // MENGIRIM ARRAY LIST FILE
+            raw_metadata: u.user_metadata || {}, 
             created_at: new Date(u.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'})
         }));
         
         res.json({ status: 'success', data: usersList });
     } catch (err) {
         console.error("Fetch Users Error:", err.message);
-        res.status(500).json({ status: 'error', message: "Gagal menarik data user. Pastikan menggunakan SUPABASE_SERVICE_ROLE_KEY di Vercel. Error: " + err.message });
+        res.status(500).json({ status: 'error', message: "Gagal menarik data user. Pastikan menggunakan SUPABASE_SERVICE_ROLE_KEY. Error: " + err.message });
     }
 });
 
@@ -146,13 +202,13 @@ app.get('/api/settings/form', protectAdmin, async (req, res) => {
 
 app.post('/api/settings/form', protectAdmin, async (req, res) => {
     try {
-        const { requireForm } = req.body;
+        const { requireForm } = req.body; 
         const buffer = Buffer.from(JSON.stringify({ requireForm }));
         
         const { error } = await supabase.storage.from('arsip_files').upload('settings.json', buffer, { upsert: true, contentType: 'application/json' });
         if (error) throw error;
         
-        cachedRequireForm = requireForm;
+        cachedFormSettings = requireForm;
         lastCacheTime = Date.now();
         res.json({ status: 'success', requireForm });
     } catch (err) {
@@ -253,7 +309,7 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
 
 
 // ==========================================
-// 5. SITEMAP & ROBOTS.TXT (DINAMIS 100% + SCHEMA EXTENDED)
+// 5. SITEMAP & ROBOTS.TXT
 // ==========================================
 app.get('/sitemap.xml', async (req, res) => {
     try {
@@ -279,7 +335,6 @@ app.get('/sitemap.xml', async (req, res) => {
 
         const currentDate = new Date().toISOString().split('T')[0];
 
-        // Core Routes
         xml += `<url><loc>${baseUrl}/</loc><lastmod>${currentDate}</lastmod><changefreq>daily</changefreq><priority>1.0</priority><image:image><image:loc>${baseUrl}/axalogo.png</image:loc><image:title>CV &amp; Portofolio drg. M. Aksa Arsyad, S.KG</image:title><image:caption>Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum.</image:caption></image:image></url>\n`;
 
         for (const [path, meta] of Object.entries(routesMeta)) {
@@ -347,9 +402,6 @@ app.get('/admin/dashboard', (req, res) => {
     });
 });
 
-// ---------------------------------------------------------
-// ROUTE: HALAMAN UTAMA ARSIP (Daftar Seluruh Arsip & Kategori)
-// ---------------------------------------------------------
 app.get('/arsip', async (req, res) => {
     try {
         const meta = { ...routesMeta['/arsip'] };
@@ -379,9 +431,6 @@ app.get('/arsip', async (req, res) => {
     }
 });
 
-// ---------------------------------------------------------
-// ROUTE BARU: HALAMAN FILTER KATEGORI (Dynamic Routing)
-// ---------------------------------------------------------
 app.get('/arsip/kategori/:kategoriSlug', async (req, res) => {
     try {
         const slug = req.params.kategoriSlug;
@@ -425,7 +474,6 @@ app.get('/arsip/kategori/:kategoriSlug', async (req, res) => {
     }
 });
 
-// Endpoint Native Streaming File PDF
 app.get('/arsip/file/:slug.pdf', async (req, res) => {
     try {
         const slugStr = req.params.slug; 
@@ -454,7 +502,6 @@ app.get('/arsip/file/:slug.pdf', async (req, res) => {
     }
 });
 
-// Page Viewer (ARSIP FILE EJS) -> PENAMBAHAN KUNCI SUPABASE & REQUIRE FORM
 app.get('/arsip/:slug', async (req, res) => {
     try {
         const fetchPromise = supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
@@ -475,7 +522,6 @@ app.get('/arsip/:slug', async (req, res) => {
         
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
         
-        // Ambil status requireForm terbaru dari database/storage cache
         const reqForm = await getRequireFormSetting();
 
         res.render('arsipfile', { 
@@ -485,7 +531,7 @@ app.get('/arsip/:slug', async (req, res) => {
             currentPath: `/arsip/${arsip.slug}`,
             supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
             supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || '',
-            requireForm: reqForm // Injeksi status form ke frontend
+            requireForm: reqForm 
         });
     } catch(e) {
         res.status(500).send("Internal Server Error");
