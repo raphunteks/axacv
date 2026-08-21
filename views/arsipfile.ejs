@@ -36,13 +36,13 @@
             scholarDate = isoDate.replace(/-/g, '/');
         }
         
-        // 🌟 GSC JSON PROTECTOR: Menghapus karakter enter (\n) yang bisa memicu Googlebot Invalid Data JSON-LD 🌟
+        // GSC JSON PROTECTOR: Menghapus karakter enter (\n) yang bisa memicu Googlebot Invalid Data JSON-LD
         const safeTitle = (arsip.title || '').replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
         const safeDesc = (arsip.desc || '').replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
         const isFree = arsip.access_type === 'Open Access' ? 'true' : 'false';
     %>
 
-    <!-- 🌟 GOOGLE SCHOLAR & ACADEMIC SEO TAGS 🌟 -->
+    <!-- GOOGLE SCHOLAR & ACADEMIC SEO TAGS -->
     <meta name="citation_title" content="<%- safeTitle %>">
     <meta name="citation_author" content="drg. M. Aksa Arsyad, S.KG">
     <% if (scholarDate) { %><meta name="citation_publication_date" content="<%= scholarDate %>"><% } %>
@@ -141,8 +141,20 @@
             <a href="/arsip" class="text-sm font-bold text-gray-300 hover:text-cyan-400 flex items-center gap-2 transition-colors uppercase tracking-widest font-mono">
                 <i class="ph-bold ph-arrow-left text-lg"></i> Direktori Utama
             </a>
-            <div class="text-[10px] text-gray-500 font-mono hidden sm:flex items-center gap-2">
-                <i class="ph-fill ph-shield-check text-green-400"></i> Secure Stream Server
+            
+            <div class="flex items-center gap-4">
+                <!-- Tampilan Default (Belum Login) -->
+                <div id="defaultNavRight" class="text-[10px] text-gray-500 font-mono hidden sm:flex items-center gap-2">
+                    <i class="ph-fill ph-shield-check text-green-400"></i> Secure Stream Server
+                </div>
+                
+                <!-- Tampilan User Profile (Sudah Login) -->
+                <div id="userProfileNav" class="hidden items-center gap-3">
+                    <span id="navUserName" class="text-[10px] md:text-xs font-bold text-cyan-400 font-mono tracking-widest hidden sm:inline-block border-r border-gray-700 pr-3"></span>
+                    <button onclick="userLogout()" class="bg-red-500/10 text-red-500 border border-red-500/30 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-lg text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 active:scale-95 shadow-[0_0_10px_rgba(239,68,68,0.2)]">
+                        <i class="ph-bold ph-power text-sm"></i> Logout
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
@@ -216,24 +228,19 @@
         </article>
     </main>
 
-    <!-- MODAL FORM IDENTITAS (MUNCUL SETELAH LOGIN GOOGLE) -->
+    <!-- MODAL FORM IDENTITAS DINAMIS (MUNCUL SETELAH LOGIN GOOGLE JIKA REQUIREFORM AKTIF) -->
     <div id="userDataModal" class="fixed inset-0 z-[9999] hidden bg-[#030712]/90 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="bg-[#0b0f19] border-2 border-[#00E5FF] p-6 md:p-8 rounded-2xl max-w-md w-full shadow-[8px_8px_0px_rgba(0,229,255,0.6)] modal-enter relative">
-            <div class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mb-5 border border-cyan-400/30">
+        <div class="bg-[#0b0f19] border-2 border-[#00E5FF] p-6 md:p-8 rounded-2xl max-w-md w-full shadow-[8px_8px_0px_rgba(0,229,255,0.6)] modal-enter relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mb-5 border border-cyan-400/30 shrink-0">
                 <i class="ph-fill ph-identification-card text-3xl text-cyan-400"></i>
             </div>
             <h3 class="text-2xl font-black font-['Space_Grotesk'] mb-2 text-white">Lengkapi Profil Akses</h3>
-            <p class="text-gray-400 text-xs md:text-sm font-medium mb-6">Sebelum melanjutkan unduhan, harap isi data akademis/institusi Anda (hanya perlu diisi 1x).</p>
+            <p class="text-gray-400 text-xs md:text-sm font-medium mb-6">Sebelum melanjutkan unduhan, harap lengkapi form di bawah ini (hanya perlu diisi satu kali pada device ini).</p>
 
             <form id="formUserData" onsubmit="submitUserData(event)" class="space-y-5">
-                <div>
-                    <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Nama Lengkap (Sesuai KTP/Gelar)</label>
-                    <input type="text" id="inputFullName" required class="w-full bg-[#030712] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner transition-colors" placeholder="Masukkan nama...">
-                </div>
-                <div>
-                    <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">Asal Universitas / Instansi</label>
-                    <input type="text" id="inputInstitution" required class="w-full bg-[#030712] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner transition-colors" placeholder="Contoh: Univ. Hasanuddin - FKG">
-                </div>
+                <!-- Form Inputs yang Diinject secara Dinamis oleh JS berdasarkan Setting Admin -->
+                <div id="dynamicFormContainer" class="space-y-5"></div>
+
                 <button type="submit" id="btnSaveData" class="brutal-btn w-full py-3.5 rounded-xl text-sm flex justify-center items-center gap-2 mt-4 cursor-pointer">
                     <i class="ph-bold ph-floppy-disk text-lg"></i> Simpan & Lanjutkan Download
                 </button>
@@ -241,12 +248,11 @@
         </div>
     </div>
 
-    <!-- SCRIPT SUPABASE UNTUK GOOGLE AUTH & USER METADATA -->
+    <!-- SCRIPT SUPABASE UNTUK GOOGLE AUTH, TRACKING DOWNLOAD & DYNAMIC FORM -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        window.FORM_REQUIREMENTS = {
-            requireForm: true 
-        };
+        // Menerima Object Setting Form Dinamis dari Backend SERVER.JS
+        window.FORM_SETTINGS = <%- JSON.stringify(typeof requireForm !== 'undefined' ? requireForm : { requireForm: true, fields: [{id:'nama_lengkap', label:'Nama Lengkap'}, {id:'institusi_asal', label:'Asal Institusi'}] }) %>;
 
         const SUPABASE_URL = "<%= typeof supabaseUrl !== 'undefined' ? supabaseUrl : '' %>"; 
         const SUPABASE_ANON_KEY = "<%= typeof supabaseAnonKey !== 'undefined' ? supabaseAnonKey : '' %>"; 
@@ -254,6 +260,31 @@
         let supabaseClient = null;
         if (SUPABASE_URL && SUPABASE_ANON_KEY) {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // FUNGSI LOGOUT USER
+        async function userLogout() {
+            if(supabaseClient) await supabaseClient.auth.signOut();
+            window.location.reload();
+        }
+
+        // FUNGSI TRACKING UNDUHAN KE BACKEND 
+        async function trackDownloadToBackend() {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if(!session) return;
+                
+                await fetch('/api/track-download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`
+                    },
+                    body: JSON.stringify({ fileTitle: "<%= arsip.title %>" })
+                });
+            } catch (error) {
+                console.error("Gagal melacak unduhan ke backend:", error);
+            }
         }
 
         // FUNGSI UTAMA TOMBOL KLIK
@@ -270,9 +301,8 @@
             const { data: { session } } = await supabaseClient.auth.getSession();
 
             if (!session) {
-                // BUG FIX: Menggunakan Exact Absolute URL dari backend, bukan relative window.location
+                // BELUM LOGIN -> Buka Google Sign In
                 const redirectUrl = "<%= baseUrl %>/arsip/<%= arsip.slug %>";
-                
                 const { error } = await supabaseClient.auth.signInWithOAuth({
                     provider: 'google',
                     options: { redirectTo: redirectUrl }
@@ -284,12 +314,46 @@
                     dText.innerText = "Sign in Google & Download";
                 }
             } else {
-                // SUDAH LOGIN -> Cek Metadata Form User
+                // SUDAH LOGIN -> Cek Form kelengkapan data (Dinamis)
                 checkUserMetadataAndProceed(session.user);
             }
         }
 
-        // FUNGSI CEK DATA LENGKAP
+        // FUNGSI RENDER FORM DINAMIS (Berdasarkan Dashboard Admin)
+        function renderDynamicForm(userMeta) {
+            const container = document.getElementById('dynamicFormContainer');
+            const fields = window.FORM_SETTINGS.fields || [];
+            
+            if (fields.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-500 font-mono italic">Tidak ada data tambahan yang diminta oleh admin saat ini.</p>`;
+                return;
+            }
+
+            container.innerHTML = fields.map(f => {
+                // Ekstrak value jika user sudah pernah mengisi sebelumnya
+                let val = userMeta[f.id] || '';
+                // Helper pintar: Jika field "nama_lengkap", otomatis sedot dari Google Akun jika val masih kosong
+                if (f.id === 'nama_lengkap' && !val && userMeta.full_name) val = userMeta.full_name;
+                
+                return `
+                <div>
+                    <label class="text-[10px] text-gray-400 font-mono mb-1 block uppercase font-bold tracking-widest">${f.label}</label>
+                    <input type="text" id="field_${f.id}" value="${val}" required class="w-full bg-[#030712] border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400 text-sm font-bold shadow-inner transition-colors">
+                </div>
+                `;
+            }).join('');
+        }
+
+        // FUNGSI CEK DATA LENGKAP SECARA DINAMIS
+        function isProfileComplete(meta) {
+            if (!window.FORM_SETTINGS.requireForm) return true; // Form dinonaktifkan Admin
+            const fields = window.FORM_SETTINGS.fields || [];
+            for (let f of fields) {
+                if (!meta[f.id]) return false; // Ada satu saja field yang kosong, return false
+            }
+            return true;
+        }
+
         async function checkUserMetadataAndProceed(user) {
             const btn = document.getElementById('btnDownloadGated');
             const dIcon = document.getElementById('downloadIcon');
@@ -297,15 +361,10 @@
 
             const meta = user.user_metadata || {};
             
-            // Cek apakah institusi sudah diisi (Syarat Admin Setting)
-            if (window.FORM_REQUIREMENTS.requireForm && (!meta.institusi_asal || !meta.nama_lengkap)) {
-                // Buka Form Input Profil
+            if (!isProfileComplete(meta)) {
+                // Data belum lengkap: Render Form & Munculkan Modal
+                renderDynamicForm(meta);
                 document.getElementById('userDataModal').classList.remove('hidden');
-                
-                // Prefill nama dari Google jika ada
-                if(meta.full_name && !meta.nama_lengkap) {
-                    document.getElementById('inputFullName').value = meta.full_name;
-                }
                 
                 // Kembalikan status tombol seperti semula
                 dIcon.className = "ph-bold ph-google-logo text-xl";
@@ -316,7 +375,7 @@
             }
         }
 
-        // FUNGSI SUBMIT FORM IDENTITAS (Update Profile ke Supabase Database internal)
+        // FUNGSI SUBMIT FORM IDENTITAS DINAMIS
         async function submitUserData(event) {
             event.preventDefault();
             const btnSave = document.getElementById('btnSaveData');
@@ -324,16 +383,19 @@
             btnSave.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin text-lg"></i> Menyimpan...';
             btnSave.disabled = true;
 
-            const fullName = document.getElementById('inputFullName').value.trim();
-            const institution = document.getElementById('inputInstitution').value.trim();
+            const updateData = {};
+            const fields = window.FORM_SETTINGS.fields || [];
+            
+            // Collect semua value dari input dinamis
+            fields.forEach(f => {
+                const inputEl = document.getElementById(`field_${f.id}`);
+                if (inputEl) updateData[f.id] = inputEl.value.trim();
+            });
 
             try {
-                // Menyimpan data tambahan (Nama Lengkap, Institusi) ke dalam Metadata Profil user di Supabase
+                // Menyimpan data tambahan ke dalam Metadata Profil user di Supabase
                 const { data, error } = await supabaseClient.auth.updateUser({
-                    data: { 
-                        nama_lengkap: fullName,
-                        institusi_asal: institution
-                    }
+                    data: updateData
                 });
 
                 if (error) throw error;
@@ -355,11 +417,15 @@
             }
         }
 
-        // FUNGSI INTI DOWNLOAD PDF NATIVE
-        function executeDownloadFile(btn, dIcon, dText) {
+        // FUNGSI INTI DOWNLOAD PDF NATIVE & TRACKING
+        async function executeDownloadFile(btn, dIcon, dText) {
             dIcon.className = "ph-bold ph-download-simple text-xl";
             dText.innerText = "Downloading...";
             
+            // Catat Ke Server (Background Process)
+            await trackDownloadToBackend();
+            
+            // Eksekusi Download Programmatic
             const link = document.createElement('a');
             link.href = "/arsip/file/<%= arsip.slug %>.pdf";
             link.download = "<%= arsip.file_name %>";
@@ -376,32 +442,43 @@
             }, 1000);
         }
 
-        // AUTO-CHECK SAAT HALAMAN SELESAI DIMUAT (Kembali dari halaman login Google)
+        // AUTO-CHECK SAAT HALAMAN SELESAI DIMUAT
         window.addEventListener('DOMContentLoaded', async () => {
             if (!supabaseClient) return;
             
-            // Cek apakah ada hash token di URL (menandakan baru saja redirect dari Supabase)
+            // Cek hash token di URL (menandakan baru saja redirect dari Google/Supabase)
             if (window.location.hash.includes('access_token')) {
-                // Hapus hash dari URL demi kerapian dan keamanan
                 history.replaceState(null, null, window.location.pathname);
             }
 
             const { data: { session } } = await supabaseClient.auth.getSession();
             const btn = document.getElementById('btnDownloadGated');
             
-            if (session && btn) {
-                // Ubah tampilan awal tombol menjadi Verified jika profil lengkap
+            if (session) {
                 const meta = session.user.user_metadata || {};
-                const isFormComplete = meta.institusi_asal && meta.nama_lengkap;
-
-                document.getElementById('downloadIcon').className = isFormComplete ? "ph-bold ph-download-simple text-xl" : "ph-bold ph-warning-circle text-xl";
-                document.getElementById('downloadText').innerText = isFormComplete ? "Download PDF Full (Verified)" : "Lengkapi Profil & Download";
                 
-                if(isFormComplete) {
-                    btn.style.backgroundColor = "#4ade80"; 
-                    btn.style.color = "#000";
-                    btn.style.borderColor = "#fff";
-                    btn.style.boxShadow = "6px 6px 0px rgba(255,255,255,0.9)";
+                // 1. SETUP NAVBAR (Tampilkan Nama User & Logout Button)
+                const displayName = meta.nama_lengkap || meta.full_name || session.user.email;
+                document.getElementById('defaultNavRight').classList.add('hidden');
+                document.getElementById('defaultNavRight').classList.remove('sm:flex');
+                
+                document.getElementById('navUserName').innerText = `👋 Hai, ${displayName.split(' ')[0]}`;
+                document.getElementById('userProfileNav').classList.remove('hidden');
+                document.getElementById('userProfileNav').classList.add('flex');
+
+                // 2. SETUP TOMBOL DOWNLOAD JIKA ADA
+                if (btn) {
+                    const formComplete = isProfileComplete(meta);
+
+                    document.getElementById('downloadIcon').className = formComplete ? "ph-bold ph-download-simple text-xl" : "ph-bold ph-warning-circle text-xl";
+                    document.getElementById('downloadText').innerText = formComplete ? "Download PDF Full (Verified)" : "Lengkapi Profil & Download";
+                    
+                    if(formComplete) {
+                        btn.style.backgroundColor = "#4ade80"; 
+                        btn.style.color = "#000";
+                        btn.style.borderColor = "#fff";
+                        btn.style.boxShadow = "6px 6px 0px rgba(255,255,255,0.9)";
+                    }
                 }
             }
         });
