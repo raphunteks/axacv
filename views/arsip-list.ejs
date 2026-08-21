@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title><%= meta.title %></title>
     
     <meta name="description" content="<%= meta.desc %>">
@@ -19,7 +19,7 @@
 
     <% 
         // Helper untuk parse Array of Items ke JSON-LD ItemList
-        const jsonLdItems = arsipData ? arsipData.slice(0, 20).map((item, index) => ({
+        const jsonLdItems = typeof arsipData !== 'undefined' ? arsipData.slice(0, 20).map((item, index) => ({
             "@type": "ListItem",
             "position": index + 1,
             "url": `${baseUrl}/arsip/${item.slug}`,
@@ -62,85 +62,179 @@
     }
     </script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    
     <style>
-        body { background-color: #030712; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        body { background-color: #030712; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; min-height: 100vh;}
+        
         .glass-header { background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .card-neo { background: #0b0f19; border: 1px solid rgba(0, 229, 255, 0.15); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 4px 4px 0px rgba(0, 229, 255, 0.2); }
-        .card-neo:hover { transform: translateY(-6px) scale(1.02); border-color: #00E5FF; box-shadow: 8px 8px 0px rgba(0,229,255,0.6); }
-        .pdf-badge { background: #334155; color: #f8fafc; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; border: 1px solid #475569; letter-spacing: 0.5px;}
+        
+        /* CARD UI MENYESUAIKAN TANGKAPAN LAYAR REFERENSI */
+        .card-neo { 
+            background: linear-gradient(145deg, #0f172a 0%, #020617 100%); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
+            border-radius: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-neo:hover { 
+            transform: translateY(-6px); 
+            border-color: rgba(0, 229, 255, 0.5); 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 229, 255, 0.1); 
+        }
+
+        .pdf-badge { 
+            background: #334155; color: #f8fafc; font-size: 10px; font-weight: 800; 
+            padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; 
+            border: 1px solid #475569; letter-spacing: 0.5px;
+        }
+
+        /* WATERMARK BESAR 'PDF' DI KANAN ATAS */
+        .watermark-pdf {
+            position: absolute; top: 10px; right: -10px;
+            font-size: 6rem; font-weight: 900; color: rgba(255, 255, 255, 0.03);
+            font-family: 'Space Grotesk', sans-serif; pointer-events: none;
+            z-index: 0; transform: rotate(-10deg);
+            transition: color 0.4s ease;
+        }
+        .card-neo:hover .watermark-pdf { color: rgba(0, 229, 255, 0.05); }
+
+        /* FILTER BUTTONS DINAMIS */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #94a3b8;
+            padding: 0.6rem 1.5rem; border-radius: 9999px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase;
+            letter-spacing: 0.05em; transition: all 0.3s ease; white-space: nowrap; flex-shrink: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .filter-btn:hover { background: rgba(0, 229, 255, 0.1); color: #00E5FF; border-color: #00E5FF; }
+        .filter-btn.active { background: #00E5FF; color: #000; border-color: #00E5FF; box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
+
+        .text-gradient { background: linear-gradient(135deg, #fff 0%, #6366F1 50%, #00E5FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
-<body class="antialiased selection:bg-cyan-500 selection:text-black">
+<body class="antialiased selection:bg-cyan-500 selection:text-black relative">
     
-    <nav class="glass-header sticky top-0 z-50 w-full">
+    <!-- BACKGROUND AMBIENCE -->
+    <div class="fixed inset-0 z-[-20] pointer-events-none" style="background-image: radial-gradient(circle at 50% 0%, rgba(0, 229, 255, 0.05) 0%, transparent 50%);"></div>
+
+    <!-- NAVBAR -->
+    <nav class="glass-header sticky top-0 z-50 w-full animate__animated animate__fadeInDown">
         <div class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center max-w-6xl">
-            <a href="/" class="text-lg md:text-xl font-bold font-['Space_Grotesk'] text-cyan-400 flex items-center gap-2 hover:scale-105 transition-transform active:scale-95">
-                <i class="ph-bold ph-arrow-left"></i> Axa System
+            <a href="/" class="text-sm md:text-base font-bold font-['Space_Grotesk'] text-gray-300 hover:text-cyan-400 flex items-center gap-2 hover:scale-105 transition-all active:scale-95 uppercase tracking-widest">
+                <i class="ph-bold ph-arrow-left text-lg"></i> Axa System
             </a>
-            <span class="text-[10px] md:text-xs font-mono text-cyan-400 bg-cyan-400/10 px-3 py-1.5 rounded-full border border-cyan-400/30 hidden sm:inline-block shadow-[0_0_10px_rgba(0,229,255,0.2)]">KNOWLEDGE BASE CORE</span>
+            <span class="text-[10px] md:text-xs font-mono text-cyan-400 bg-cyan-400/10 px-4 py-1.5 rounded-full border border-cyan-400/30 hidden sm:inline-block shadow-[0_0_10px_rgba(0,229,255,0.2)] tracking-widest">KNOWLEDGE BASE CORE</span>
         </div>
     </nav>
 
-    <main class="container mx-auto px-4 sm:px-6 py-10 md:py-16 max-w-5xl min-h-[80vh]">
-        <header class="text-center mb-12 md:mb-20 px-2">
-            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-['Space_Grotesk'] mb-4 md:mb-6 leading-tight">
-                Arsip Materi <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">& Jurnal</span>
+    <main class="container mx-auto px-4 sm:px-6 py-10 md:py-16 max-w-6xl min-h-[80vh] relative z-10">
+        
+        <!-- HEADER TEXT -->
+        <header class="text-center mb-10 md:mb-14 px-2 animate__animated animate__fadeInUp">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-black font-['Space_Grotesk'] mb-4 md:mb-6 leading-tight tracking-tight">
+                Arsip Materi <span class="text-gradient">& Jurnal</span>
             </h1>
-            <p class="text-gray-400 max-w-2xl mx-auto text-sm md:text-base leading-relaxed px-4">Akses direktori catatan pembelajaran, materi preklinik, jurnal profesi dokter muda, dan publikasi penelitian berformat PDF interaktif.</p>
+            <p class="text-gray-400 max-w-2xl mx-auto text-sm md:text-base leading-relaxed px-4 font-medium">
+                Akses direktori catatan pembelajaran, materi preklinik, jurnal profesi dokter muda, dan publikasi penelitian berformat PDF interaktif.
+            </p>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            <% if(arsipData && arsipData.length > 0) { %>
-                <% arsipData.forEach(item => { %>
+        <!-- KATEGORI FILTER DINAMIS (HORIZONTAL SCROLL PILLS) -->
+        <div class="mb-10 w-full animate__animated animate__fadeInUp animate__delay-1s border-b border-gray-800 pb-6">
+            <!-- Container untuk scroll di mobile, rata tengah di Desktop -->
+            <div class="flex overflow-x-auto gap-3 pb-2 no-scrollbar justify-start md:justify-center px-1">
+                <!-- Tombol Default Semua -->
+                <a href="/arsip" class="filter-btn <%= activeCategory === 'semua' ? 'active' : '' %>">
+                    Semua
+                </a>
+                
+                <!-- Looping Dynamic Kategori dari Database Supabase -->
+                <% if(typeof categories !== 'undefined' && categories.length > 0) { %>
+                    <% categories.forEach(function(kat) { %>
+                        <% const slug = createSlug(kat); %>
+                        <a href="/arsip/kategori/<%= slug %>" class="filter-btn <%= activeCategory === slug ? 'active' : '' %>">
+                            <%= kat %>
+                        </a>
+                    <% }); %>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- GRID KARTU ARSIP -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 w-full">
+            <% if(typeof arsipData !== 'undefined' && arsipData.length > 0) { %>
+                <% arsipData.forEach((item, index) => { %>
                     <% 
-                       // Format UI DD-MM-YYYY untuk List Page, amankan data lama
+                       // Format UI DD-MM-YYYY
                        let displayDate = item.date;
                        if(displayDate && displayDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
                            const parts = displayDate.split('-');
                            displayDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
                        }
                     %>
-                    <a href="/arsip/<%= item.slug %>" class="card-neo p-6 md:p-8 rounded-2xl block group w-full outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 relative overflow-hidden flex flex-col h-full">
-                        <div class="absolute -right-4 -top-4 opacity-5 group-hover:opacity-20 transition-opacity pointer-events-none">
-                            <i class="ph-fill ph-file-pdf text-9xl text-cyan-400"></i>
-                        </div>
-                        <div class="flex justify-between items-start mb-5 gap-3 relative z-10 flex-wrap w-full">
-                            <span class="text-[9px] md:text-[10px] font-mono font-bold uppercase tracking-widest text-white bg-cyan-500 px-3 py-1.5 rounded-lg border border-cyan-400 shrink-0"><%= item.category %></span>
-                            <span class="text-[10px] md:text-xs text-gray-500 font-mono flex items-center gap-1 shrink-0"><i class="ph-bold ph-calendar-blank text-sm"></i> <%= displayDate %></span>
+                    <a href="/arsip/<%= item.slug %>" class="card-neo p-6 md:p-8 block group w-full outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 flex flex-col h-full animate__animated animate__fadeInUp" style="animation-delay: <%= (index % 10) * 0.1 %>s">
+                        
+                        <!-- Watermark Tulisan PDF di Latar Belakang Kanan Atas -->
+                        <div class="watermark-pdf">PDF</div>
+
+                        <!-- Top Header Card -->
+                        <div class="flex justify-between items-start mb-5 gap-3 relative z-10 flex-wrap w-full border-b border-gray-800/50 pb-4">
+                            <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-black bg-cyan-400 px-3 py-1.5 rounded-md shadow-[0_0_10px_rgba(0,229,255,0.3)] shrink-0">
+                                <%= item.category || 'TIDAK BERKATEGORI' %>
+                            </span>
+                            <span class="text-[10px] md:text-xs text-gray-400 font-mono flex items-center gap-1.5 shrink-0">
+                                <i class="ph-bold ph-calendar-blank text-sm"></i> <%= displayDate %>
+                            </span>
                         </div>
                         
-                        <h2 class="text-lg md:text-2xl font-black mb-3 group-hover:text-cyan-400 transition-colors break-words whitespace-normal leading-tight relative z-10 w-full"><%= item.title %></h2>
-                        <p class="text-xs md:text-sm text-gray-400 line-clamp-3 mb-8 leading-relaxed break-words relative z-10 w-full"><%= item.desc %></p>
+                        <!-- Judul dan Deskripsi -->
+                        <div class="relative z-10 flex-grow">
+                            <h2 class="text-xl md:text-2xl font-bold mb-3 group-hover:text-cyan-400 transition-colors break-words whitespace-normal leading-snug w-full line-clamp-3">
+                                <%= item.title %>
+                            </h2>
+                            <p class="text-sm text-gray-400 line-clamp-2 mb-6 leading-relaxed break-words w-full font-medium">
+                                <%= item.desc %>
+                            </p>
+                        </div>
                         
-                        <div class="mt-auto relative z-10 border-t border-gray-800 pt-4 flex justify-between items-center w-full">
+                        <!-- Footer Card (Access Type) -->
+                        <div class="mt-auto relative z-10 border-t border-gray-800/80 pt-5 flex justify-between items-center w-full">
                             <% if(item.access_type === 'Open Access') { %>
-                                <span class="text-xs md:text-sm font-bold text-green-400 flex items-center gap-2">
-                                    <i class="ph-fill ph-check-circle text-lg"></i> Open Access 
+                                <div class="flex items-center gap-2">
+                                    <i class="ph-fill ph-check-circle text-green-400 text-lg"></i>
+                                    <span class="text-xs md:text-sm font-bold text-green-400">Open Access</span> 
                                     <span class="pdf-badge ml-1 drop-shadow-md">PDF</span>
-                                </span>
-                                <i class="ph-bold ph-arrow-right text-green-400 group-hover:translate-x-1.5 transition-transform text-base"></i>
+                                </div>
+                                <i class="ph-bold ph-arrow-right text-green-400 group-hover:translate-x-2 transition-transform text-lg"></i>
                             <% } else { %>
-                                <span class="text-xs md:text-sm font-bold text-cyan-400 flex items-center gap-2">
-                                    <i class="ph-fill ph-lock-key text-lg"></i> Restricted Viewer
-                                </span>
-                                <i class="ph-bold ph-arrow-right text-cyan-400 group-hover:translate-x-1.5 transition-transform text-base"></i>
+                                <div class="flex items-center gap-2">
+                                    <i class="ph-fill ph-lock-key text-cyan-400 text-lg"></i>
+                                    <span class="text-xs md:text-sm font-bold text-cyan-400">Restricted Viewer</span>
+                                </div>
+                                <i class="ph-bold ph-arrow-right text-cyan-400 group-hover:translate-x-2 transition-transform text-lg"></i>
                             <% } %>
                         </div>
                     </a>
                 <% }) %>
             <% } else { %>
-                <div class="col-span-full text-center py-16 md:py-24 border-2 border-dashed border-gray-800 bg-gray-900/30 rounded-3xl w-full px-4">
-                    <i class="ph-fill ph-database text-4xl md:text-6xl text-gray-600 mb-4 block"></i>
-                    <p class="text-gray-400 font-mono text-sm md:text-base">Belum ada materi diarsipkan di sistem publik (Database Kosong).</p>
+                <!-- Empty State -->
+                <div class="col-span-full text-center py-20 border-2 border-dashed border-gray-800 bg-gray-900/30 rounded-3xl w-full px-4 animate__animated animate__fadeIn">
+                    <i class="ph-fill ph-folder-open text-6xl md:text-7xl text-gray-700 mb-5 block"></i>
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-2">Direktori Kosong</h3>
+                    <p class="text-gray-400 font-mono text-xs md:text-sm">Belum ada materi atau jurnal yang diarsipkan dalam kategori ini.</p>
                 </div>
             <% } %>
         </div>
     </main>
 
-    <footer class="border-t border-white/10 text-center py-8 text-gray-500 font-mono text-[10px] md:text-xs w-full px-4">
+    <footer class="border-t border-white/10 text-center py-8 mt-10 text-gray-500 font-mono text-[10px] md:text-xs w-full px-4 relative z-10">
         &copy; 2026 drg. M. Aksa Arsyad, S.KG. | Secure Knowledge Base Core
     </footer>
 </body>
