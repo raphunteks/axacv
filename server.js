@@ -82,7 +82,7 @@ const protectAdmin = (req, res, next) => {
 };
 
 // ==========================================
-// HELPER URL SLUG GENERATOR & CACHING
+// HELPER URL SLUG GENERATOR
 // ==========================================
 const createSlug = (text) => {
     if (!text) return '';
@@ -91,6 +91,7 @@ const createSlug = (text) => {
         .replace(/^-+|-+$/g, '');          // Trim dash dari awal dan akhir
 };
 
+// Kategori Default agar tidak pernah kosong di UI Menu Frontend
 const getDefaultCategories = () => [
     "Preklinik", 
     "Jurnal & Riset", 
@@ -102,7 +103,6 @@ let cachedRequireForm = true;
 let lastCacheTime = 0;
 
 async function getRequireFormSetting() {
-    // Cache valid selama 1 menit untuk menghemat request ke Supabase
     if (Date.now() - lastCacheTime < 60000) return cachedRequireForm;
     try {
         const { data } = await supabase.storage.from('arsip_files').download('settings.json');
@@ -111,7 +111,7 @@ async function getRequireFormSetting() {
             cachedRequireForm = JSON.parse(text).requireForm;
             lastCacheTime = Date.now();
         }
-    } catch (e) { } // Abaikan jika file belum ada (gunakan default true)
+    } catch (e) { } 
     return cachedRequireForm;
 }
 
@@ -119,10 +119,9 @@ async function getRequireFormSetting() {
 // 4. SUPABASE ARSIP API (POSTGRES & STORAGE)
 // ==========================================
 
-// --- FITUR BARU: API MENARIK DATA USERS (NAMA DOWNLOADER) ---
+// --- API TARIK DATA USERS (NAMA DOWNLOADER) ---
 app.get('/api/users', protectAdmin, async (req, res) => {
     try {
-        // Menggunakan auth.admin memerlukan Service Role Key. Jika gagal, API melempar error.
         const { data, error } = await supabase.auth.admin.listUsers();
         if (error) throw error;
         
@@ -136,11 +135,11 @@ app.get('/api/users', protectAdmin, async (req, res) => {
         res.json({ status: 'success', data: usersList });
     } catch (err) {
         console.error("Fetch Users Error:", err.message);
-        res.status(500).json({ status: 'error', message: "Gagal menarik data user. Pastikan Anda menggunakan SUPABASE_SERVICE_ROLE_KEY di Vercel. Error: " + err.message });
+        res.status(500).json({ status: 'error', message: "Gagal menarik data user. Pastikan menggunakan SUPABASE_SERVICE_ROLE_KEY di Vercel. Error: " + err.message });
     }
 });
 
-// --- FITUR BARU: API SETTINGS FORM ---
+// --- API PENGATURAN FORM DOWNLOAD ---
 app.get('/api/settings/form', protectAdmin, async (req, res) => {
     res.json({ status: 'success', requireForm: await getRequireFormSetting() });
 });
@@ -150,7 +149,6 @@ app.post('/api/settings/form', protectAdmin, async (req, res) => {
         const { requireForm } = req.body;
         const buffer = Buffer.from(JSON.stringify({ requireForm }));
         
-        // Simpan konfigurasi ke dalam bucket arsip_files
         const { error } = await supabase.storage.from('arsip_files').upload('settings.json', buffer, { upsert: true, contentType: 'application/json' });
         if (error) throw error;
         
@@ -298,7 +296,6 @@ app.get('/sitemap.xml', async (req, res) => {
             const { data: arsipDB, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
             if (arsipDB && !error) {
-                // Kombinasi Kategori Dinamis & Default untuk Sitemap
                 const dbCats = arsipDB.map(item => item.category).filter(Boolean);
                 const uniqueCategories = [...new Set([...getDefaultCategories(), ...dbCats])];
                 
@@ -364,7 +361,6 @@ app.get('/arsip', async (req, res) => {
             if(result.data) arsipDB = result.data;
         } catch(dbErr) { console.error("Database fetch failed on /arsip", dbErr.message); }
         
-        // GABUNGKAN DEFAULT KATEGORI + DB KATEGORI AGAR TOMBOL MENU LENGKAP
         const dbCategories = arsipDB.map(item => item.category).filter(Boolean);
         const categories = [...new Set([...getDefaultCategories(), ...dbCategories])];
 
@@ -396,16 +392,13 @@ app.get('/arsip/kategori/:kategoriSlug', async (req, res) => {
             if(result.data) arsipDB = result.data;
         } catch(dbErr) { console.error("Database fetch failed on /arsip/kategori", dbErr.message); }
         
-        // GABUNGKAN DEFAULT KATEGORI + DB KATEGORI AGAR TOMBOL MENU LENGKAP
         const dbCategories = arsipDB.map(item => item.category).filter(Boolean);
         const categories = [...new Set([...getDefaultCategories(), ...dbCategories])];
         
-        // Filter Data Arsip berdasarkan param slug
         const filteredArsip = arsipDB.filter(item => {
             return item.category && createSlug(item.category) === slug;
         });
 
-        // Dapatkan string nama kategori asli untuk keperluan title SEO
         const categoryName = categories.find(c => createSlug(c) === slug) || "Kategori";
 
         const meta = {
@@ -461,7 +454,7 @@ app.get('/arsip/file/:slug.pdf', async (req, res) => {
     }
 });
 
-// Page Viewer (ARSIP FILE EJS) -> PENAMBAHAN KUNCI SUPABASE ADA DISINI
+// Page Viewer (ARSIP FILE EJS) -> PENAMBAHAN KUNCI SUPABASE & REQUIRE FORM
 app.get('/arsip/:slug', async (req, res) => {
     try {
         const fetchPromise = supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
@@ -482,9 +475,9 @@ app.get('/arsip/:slug', async (req, res) => {
         
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
         
-        // AMBIL PENGATURAN FORM
+        // Ambil status requireForm terbaru dari database/storage cache
         const reqForm = await getRequireFormSetting();
-        
+
         res.render('arsipfile', { 
             meta, 
             baseUrl, 
@@ -492,7 +485,7 @@ app.get('/arsip/:slug', async (req, res) => {
             currentPath: `/arsip/${arsip.slug}`,
             supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
             supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || '',
-            requireForm: reqForm // MENYUNTIKKAN PENGATURAN FORM KE EJS
+            requireForm: reqForm // Injeksi status form ke frontend
         });
     } catch(e) {
         res.status(500).send("Internal Server Error");
