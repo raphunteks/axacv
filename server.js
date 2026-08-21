@@ -82,6 +82,19 @@ const protectAdmin = (req, res, next) => {
 };
 
 // ==========================================
+// HELPER URL SLUG GENERATOR
+// ==========================================
+const createSlug = (text) => {
+    if (!text) return '';
+    return text.toString().toLowerCase()
+        .replace(/\s+/g, '-')           // Ganti spasi dengan -
+        .replace(/[^\w\-]+/g, '')       // Hapus karakter non-word
+        .replace(/\-\-+/g, '-')         // Ganti multiple - dengan single -
+        .replace(/^-+/, '')             // Trim - dari awal
+        .replace(/-+$/, '');            // Trim - dari akhir
+};
+
+// ==========================================
 // 4. SUPABASE ARSIP API (POSTGRES & STORAGE)
 // ==========================================
 
@@ -213,7 +226,7 @@ app.get('/sitemap.xml', async (req, res) => {
         // PASTIKAN CONTENT-TYPE ADALAH APPLICATION/XML AGAR DITERIMA GOOGLEBOT SEBAGAI "PETA SITUS"
         res.setHeader('Content-Type', 'application/xml; charset=utf-8');
         
-        // HELPER PENTING: Membersihkan string dari karakter ilegal XML (&, <, >, ", ') yang merusak validasi GSC
+        // HELPER PENTING: Membersihkan string dari karakter ilegal XML
         const escapeXML = (str) => {
             if (!str) return '';
             return str.replace(/&/g, '&amp;')
@@ -232,7 +245,7 @@ app.get('/sitemap.xml', async (req, res) => {
             if (!dateStr) return new Date().toISOString().split('T')[0];
             if (dateStr.match(/^\d{2}-\d{2}-\d{4}$/)) {
                 const parts = dateStr.split('-');
-                return `${parts[2]}-${parts[1]}-${parts[0]}`; // Convert DD-MM-YYYY to YYYY-MM-DD
+                return `${parts[2]}-${parts[1]}-${parts[0]}`; 
             }
             return dateStr; 
         };
@@ -280,7 +293,7 @@ app.get('/sitemap.xml', async (req, res) => {
         xml += `<priority>0.9</priority>\n`;
         xml += `</url>\n`;
 
-        // 4. DIRECT DYNAMIC SEO URLs (ARSIP MATERI & PDF)
+        // 4. DIRECT DYNAMIC SEO URLs (ARSIP MATERI, KATEGORI & PDF)
         xml += `<!--  =========================================  -->\n`;
         xml += `<!--  DIRECT DYNAMIC SEO URLs (ARSIP MATERI)     -->\n`;
         xml += `<!--  =========================================  -->\n`;
@@ -293,9 +306,20 @@ app.get('/sitemap.xml', async (req, res) => {
             const { data: arsipDB, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
             if (arsipDB && !error) {
+                // Generate URL Sitemap untuk Setiap Kategori Dinamis
+                const uniqueCategories = [...new Set(arsipDB.map(item => item.category).filter(Boolean))];
+                uniqueCategories.forEach(cat => {
+                    const catSlug = createSlug(cat);
+                    xml += `<url>\n`;
+                    xml += `<loc>${baseUrl}/arsip/kategori/${catSlug}</loc>\n`;
+                    xml += `<lastmod>${currentDate}</lastmod>\n`;
+                    xml += `<changefreq>weekly</changefreq>\n`;
+                    xml += `<priority>0.8</priority>\n`;
+                    xml += `</url>\n`;
+                });
+
                 arsipDB.forEach(doc => {
                     const validSitemapDate = parseSitemapDate(doc.date);
-                    // Gunakan fungsi escapeXML agar karakter ilegal seperti '&' tidak merusak XML GSC
                     const safeTitle = escapeXML(doc.title);
                     const safeCat = escapeXML(doc.category);
 
@@ -355,10 +379,12 @@ app.get('/admin/dashboard', (req, res) => {
     });
 });
 
-// Halaman Publik Arsip Utama (List)
+// ---------------------------------------------------------
+// ROUTE: HALAMAN UTAMA ARSIP (Daftar Seluruh Arsip & Kategori)
+// ---------------------------------------------------------
 app.get('/arsip', async (req, res) => {
     try {
-        const meta = routesMeta['/arsip'];
+        const meta = { ...routesMeta['/arsip'] };
         meta.canonical = `${baseUrl}/arsip`;
         
         let arsipDB = [];
@@ -367,9 +393,68 @@ app.get('/arsip', async (req, res) => {
             if(result.data) arsipDB = result.data;
         } catch(dbErr) { console.error("Database fetch failed on /arsip", dbErr.message); }
         
+        // Ekstrak Kategori Unik dari Database untuk menu navigasi dinamis
+        const categories = [...new Set(arsipDB.map(item => item.category).filter(Boolean))];
+
         // VERCEL EDGE CACHE: Cegah 504 Timeout saat Googlebot Crawling
         res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
-        res.render('arsip-list', { meta, baseUrl, arsipData: arsipDB, currentPath: '/arsip' });
+        res.render('arsip-list', { 
+            meta, 
+            baseUrl, 
+            arsipData: arsipDB, 
+            currentPath: '/arsip',
+            categories: categories, // Melempar array kategori
+            activeCategory: 'semua', // Mengatur status active ke menu 'semua'
+            createSlug: createSlug
+        });
+    } catch (e) {
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+// ---------------------------------------------------------
+// ROUTE BARU: HALAMAN FILTER KATEGORI (Dynamic Routing)
+// ---------------------------------------------------------
+app.get('/arsip/kategori/:kategoriSlug', async (req, res) => {
+    try {
+        const slug = req.params.kategoriSlug;
+        
+        let arsipDB = [];
+        try {
+            const result = await supabase.from('arsip').select('*').order('id', { ascending: false });
+            if(result.data) arsipDB = result.data;
+        } catch(dbErr) { console.error("Database fetch failed on /arsip/kategori", dbErr.message); }
+        
+        // Ekstrak Kategori Unik dari Database
+        const categories = [...new Set(arsipDB.map(item => item.category).filter(Boolean))];
+        
+        // Filter Data Arsip berdasarkan param slug
+        const filteredArsip = arsipDB.filter(item => {
+            return item.category && createSlug(item.category) === slug;
+        });
+
+        // Dapatkan string nama kategori asli untuk keperluan title SEO
+        const categoryName = categories.find(c => createSlug(c) === slug) || "Kategori";
+
+        const meta = {
+            title: `Arsip ${categoryName} | drg. M. Aksa Arsyad, S.KG`,
+            desc: `Kumpulan arsip, catatan klinis, dan jurnal kedokteran gigi untuk kategori ${categoryName}.`,
+            keywords: `${categoryName}, Arsip Kedokteran Gigi, Knowledge Base FKG`,
+            canonical: `${baseUrl}/arsip/kategori/${slug}`,
+            ogImage: '/axalogo.png',
+            type: 'website'
+        };
+
+        res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+        res.render('arsip-list', { 
+            meta, 
+            baseUrl, 
+            arsipData: filteredArsip, 
+            currentPath: `/arsip/kategori/${slug}`,
+            categories: categories,
+            activeCategory: slug, // Status active menyala pada spesifik slug
+            createSlug: createSlug
+        });
     } catch (e) {
         res.status(500).send("Internal Server Error");
     }
