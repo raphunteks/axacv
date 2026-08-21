@@ -94,11 +94,8 @@ const createSlug = (text) => {
 // Kategori Default agar tidak pernah kosong di UI Menu Frontend
 const getDefaultCategories = () => [
     "Preklinik", 
-    "Profesi Dokter Muda", 
     "Jurnal & Riset", 
-    "Kedokteran Gigi Umum",
-    "Kegiatan Sosial",
-    "Event"
+    "Kedokteran Gigi Umum"
 ];
 
 // ==========================================
