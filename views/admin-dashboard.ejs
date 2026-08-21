@@ -412,12 +412,12 @@
                         row += `<td class="px-6 py-4 text-gray-300 font-medium">${val}</td>`;
                     });
 
-                    // Render Riwayat Download sebagai Badge
+                    // Render Riwayat Download (String yang sudah di-format dari server)
                     const downloads = u.downloaded_files && u.downloaded_files.length > 0 
-                        ? u.downloaded_files.map(file => `<span class="bg-cyan-500/10 text-cyan-400 text-[9px] px-2 py-1 rounded border border-cyan-500/30 whitespace-nowrap mb-1 mr-1 inline-block"><i class="ph-fill ph-file-pdf"></i> ${file}</span>`).join('') 
-                        : '<span class="text-gray-600 italic text-xs font-mono">Belum pernah download</span>';
+                        ? u.downloaded_files.map(fileStr => `<span class="bg-cyan-500/10 text-cyan-400 text-[10px] px-2.5 py-1.5 rounded-lg border border-cyan-500/30 whitespace-nowrap mb-1 mr-1 block w-max font-medium shadow-sm"><i class="ph-fill ph-file-pdf"></i> ${fileStr}</span>`).join('') 
+                        : '<span class="text-gray-600 italic text-xs font-mono">Belum pernah mengunduh arsip</span>';
 
-                    row += `<td class="px-6 py-4 border-l border-gray-800/50"><div class="flex flex-wrap gap-1 max-w-sm">${downloads}</div></td>`;
+                    row += `<td class="px-6 py-4 border-l border-gray-800/50"><div class="flex flex-col gap-1 w-max">${downloads}</div></td>`;
 
                     return `<tr class="hover:bg-green-500/5 transition-colors group">${row}</tr>`;
                 }).join('');
@@ -623,7 +623,7 @@
         // ==========================================
         async function logout() {
             try {
-                // Logout dari Session Google/Supabase jika ada
+                // Logout dari Session Google/Supabase jika ada (Supaya tidak tumpang tindih)
                 if (supabaseClient) await supabaseClient.auth.signOut();
             } catch(e) { console.warn("Supabase signout issue:", e); }
             
@@ -633,7 +633,7 @@
         }
 
         fetchArsip();
-        fetchFormSetting(); // Saat dashboard pertama kali load, siapkan pengaturan form di belakang layar untuk tabel users
+        fetchFormSetting(); 
     </script>
 </body>
 </html>
