@@ -396,10 +396,23 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
 // ==========================================
 // 5. GSC SITEMAP.XML FIX (DINAMIS 100%) & APP-ADS.TXT
 // ==========================================
+
+// PENTING UNTUK GOOGLE ADSENSE: Explicit Routing agar Googlebot dapat menemukan Ads.txt
+app.get('/ads.txt', (req, res) => {
+    res.set('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.send('google.com, pub-3213968627395082, DIRECT, f08c47fec0942fa0');
+});
+
+app.get('/app-ads.txt', (req, res) => {
+    res.set('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.send('google.com, pub-3213968627395082, DIRECT, f08c47fec0942fa0');
+});
+
 app.get('/sitemap.xml', async (req, res) => {
     try {
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
-        // PENTING: GSC butuh header application/xml murni
         res.header('Content-Type', 'application/xml');
         
         const formatSitemapDate = (dateStr) => {
@@ -531,10 +544,6 @@ app.get('/robots.txt', (req, res) => {
     res.send(txt);
 });
 
-app.get(['/app-ads.txt', '/ads.txt'], (req, res) => {
-    res.set('Content-Type', 'text/plain; charset=utf-8');
-    res.send('google.com, pub-3213968627395082, DIRECT, f08c47fec0942fa0');
-});
 
 // ==========================================
 // 6. FOLDER PUBLIC & ROUTING HALAMAN VIEWS
