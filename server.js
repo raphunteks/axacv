@@ -19,17 +19,14 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
 });
 
 // ==========================================
-// 0. INISIALISASI ENTERPRISE SEO BOT (GOOGLE INDEXING API VIA VERCEL ENV)
+// 0. INISIALISASI ENTERPRISE SEO BOT & DISCORD WEBHOOK
 // ==========================================
 let jwtClient = null;
 try {
     const rawJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
     
     if (rawJson) {
-        // Parse JSON utuh dari Environment Variables Vercel
         const key = JSON.parse(rawJson);
-        
-        // PENTING: Fix issue Vercel merubah karakter baris baru (\n) di private_key menjadi literal text '\\n'
         const privateKey = key.private_key.replace(/\\n/g, '\n');
         
         jwtClient = new google.auth.JWT(
@@ -48,10 +45,44 @@ try {
 }
 
 /**
- * Fungsi Inti untuk Push URL ke Google Indexing API
+ * Fungsi Helper untuk Mengirim Notifikasi Real-time ke Discord
+ */
+async function sendDiscordNotification(title, description, color = 0x00FF00) {
+    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+    if (!webhookUrl) return; // Lewati jika Webhook URL tidak dikonfigurasi di Vercel ENV
+
+    const payload = {
+        username: "Enterprise SEO Bot",
+        avatar_url: "https://www.maksaarsyad.xyz/axalogo.png",
+        embeds: [{
+            title: title,
+            description: description,
+            color: color,
+            timestamp: new Date().toISOString(),
+            footer: { text: "Axa System Command Center" }
+        }]
+    };
+
+    try {
+        await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    } catch (error) {
+        console.error("[DISCORD PUSH GAGAL] Tidak dapat mengirim webhook:", error.message);
+    }
+}
+
+/**
+ * Fungsi Inti untuk Push URL ke Google Indexing API + Laporan Discord
  */
 async function requestGoogleIndexing(targetUrl, type = 'URL_UPDATED') {
-    if (!jwtClient) return; // Skip jika JSON tidak ada di ENV
+    if (!jwtClient) {
+        sendDiscordNotification('⚠️ Google Indexing API: Gagal Sistem', `Service Account JSON belum dikonfigurasi di Vercel ENV.\n**Gagal push:** ${targetUrl}`, 0xFFA500);
+        return; 
+    }
+    
     try {
         const tokens = await jwtClient.authorize();
         const options = {
@@ -63,10 +94,27 @@ async function requestGoogleIndexing(targetUrl, type = 'URL_UPDATED') {
             },
             data: { url: targetUrl, type: type },
         };
+        
         const response = await jwtClient.request(options);
         console.log(`[SEO PUSH SUKSES] GoogleBot merespon URL: ${targetUrl} | Status: ${response.status}`);
+        
+        // Push Keberhasilan ke Discord
+        sendDiscordNotification(
+            '✅ Google Indexing API: Push Sukses', 
+            `Sinyal terkirim dan diterima oleh satelit Google!\n\n**URL:** \`${targetUrl}\`\n**Tipe:** \`${type}\`\n**Status Code:** \`${response.status}\``, 
+            0x00FF00 // Warna Hijau
+        );
+        
     } catch (error) {
-        console.error(`[SEO PUSH GAGAL] Tidak dapat push URL ${targetUrl}:`, error.response?.data?.error?.message || error.message);
+        const errMsg = error.response?.data?.error?.message || error.message;
+        console.error(`[SEO PUSH GAGAL] Tidak dapat push URL ${targetUrl}:`, errMsg);
+        
+        // Push Kegagalan ke Discord
+        sendDiscordNotification(
+            '❌ Google Indexing API: Akses Ditolak', 
+            `Sinyal push gagal menembus server Google.\n\n**URL:** \`${targetUrl}\`\n**Penyebab:** \`${errMsg}\``, 
+            0xFF0000 // Warna Merah
+        );
     }
 }
 
@@ -158,7 +206,6 @@ const createSlug = (text) => {
         .replace(/^-+|-+$/g, '');          
 };
 
-// PENTING: Untuk GSC Sitemap XML Escape
 const escapeXml = (unsafe) => {
     if (!unsafe) return '';
     return unsafe.replace(/[<>&'"]/g, (c) => {
@@ -175,7 +222,6 @@ const escapeXml = (unsafe) => {
 
 const getDefaultCategories = () => ["Preklinik", "Jurnal & Riset", "Kedokteran Gigi Umum"];
 
-// Helper Waktu Indonesia Tengah (WITA = UTC+8)
 const getWitaTime = () => {
     const now = new Date();
     const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
@@ -233,7 +279,6 @@ async function getRequireFormSetting() {
             const text = await data.text();
             const parsed = JSON.parse(text);
             
-            // Konversi Cerdas jika format dari Database cuma boolean (versi lawas)
             if (typeof parsed.requireForm === 'boolean' && !parsed.fields) {
                 return { requireForm: parsed.requireForm, fields: defaultFormSettings.fields };
             } 
@@ -274,7 +319,6 @@ app.post('/api/track-download', async (req, res) => {
 
         downloads.push({ title: fileTitle, time: getWitaTime() });
             
-        // Reset Flag Logout jika mendownload & perbarui waktu last online otomatis oleh Supabase
         const { error: updateError } = await supabase.auth.admin.updateUserById(user.id, {
             user_metadata: { ...meta, downloaded_files: downloads, is_logged_out: false }
         });
@@ -341,12 +385,10 @@ app.get('/api/users', protectAdmin, async (req, res) => {
     }
 });
 
-// GET Settings yang Realtime (No Cache)
 app.get('/api/settings/form', protectAdmin, async (req, res) => {
     res.json({ status: 'success', requireForm: await getRequireFormSetting() });
 });
 
-// PUSH/UPDATE Settings (Menghapus variabel global yg memicu stale cache)
 app.post('/api/settings/form', protectAdmin, async (req, res) => {
     try {
         const { requireForm } = req.body; 
@@ -378,7 +420,6 @@ app.get('/api/arsip', async (req, res) => {
     }
 });
 
-// INJEKSI PUSH GOOGLE API SAAT ARTIKEL BARU DITAMBAHKAN
 app.post('/api/arsip', protectAdmin, async (req, res) => {
     try {
         const { id, title, category, desc, accessType, fileName, filePath } = req.body;
@@ -407,7 +448,6 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
         const { data: dbData, error: dbError } = await supabase.from('arsip').insert([newItem]).select();
         if (dbError) throw new Error(`Supabase DB Insert Error: ${dbError.message}`);
 
-        // TRIGGERS GOOGLE INDEXING API (Background Process)
         requestGoogleIndexing(`${baseUrl}/arsip/${slug}`, 'URL_UPDATED');
 
         res.json({ status: 'success', data: dbData[0] });
@@ -416,7 +456,6 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
     }
 });
 
-// INJEKSI PUSH GOOGLE API SAAT ARTIKEL DIEDIT (UPDATE)
 app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
@@ -431,7 +470,6 @@ app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
         if (error) throw new Error(error.message);
         if (!data || data.length === 0) throw new Error("Dokumen tidak ditemukan untuk diupdate.");
 
-        // TRIGGERS GOOGLE INDEXING API (Background Process)
         requestGoogleIndexing(`${baseUrl}/arsip/${slug}`, 'URL_UPDATED');
 
         res.json({ status: 'success', data: data[0] });
@@ -440,11 +478,9 @@ app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
     }
 });
 
-// INJEKSI PUSH GOOGLE API SAAT ARTIKEL DIHAPUS
 app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
-        // Modifikasi query agar menarik "slug" selain file_path
         const { data: item, error: fetchError } = await supabase.from('arsip').select('file_path, slug').eq('id', docId).single();
 
         if (fetchError || !item) throw new Error(`Fetch Error: ${fetchError?.message || "Dokumen tidak ditemukan."}`);
@@ -456,7 +492,6 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
         const { error: dbError } = await supabase.from('arsip').delete().eq('id', docId);
         if (dbError) throw new Error(`Delete DB Error: ${dbError.message}`);
 
-        // TRIGGERS GOOGLE INDEXING API UNTUK DELETION (Beri tahu Google link sudah mati)
         if (item.slug) {
             requestGoogleIndexing(`${baseUrl}/arsip/${item.slug}`, 'URL_DELETED');
         }
@@ -470,7 +505,6 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
 // ==========================================
 // 4.5 NEW SEO FEATURE: BULK AUTO-INDEX SELURUH WEB
 // ==========================================
-// Panggil API ini via Postman/Fetch di browser admin Anda jika ingin memaksa indeks semua.
 app.post('/api/seo/index-all', protectAdmin, async (req, res) => {
     if (!jwtClient) {
         return res.status(500).json({ status: 'error', message: 'Kredensial Service Account JSON tidak dikonfigurasi di server ENV.' });
@@ -479,7 +513,6 @@ app.post('/api/seo/index-all', protectAdmin, async (req, res) => {
     try {
         let urlsToPush = [`${baseUrl}/`];
         
-        // 1. Kumpulkan semua halaman Statis
         for (const pathKey of Object.keys(routesMeta)) {
             if (pathKey !== '/' && pathKey !== '/arsip') {
                 urlsToPush.push(`${baseUrl}${pathKey}`);
@@ -487,18 +520,15 @@ app.post('/api/seo/index-all', protectAdmin, async (req, res) => {
         }
         urlsToPush.push(`${baseUrl}/arsip`);
         
-        // 2. Kumpulkan semua halaman Dinamis (Arsip, Kategori, PDF)
         const { data: arsipDB, error } = await supabase.from('arsip').select('slug, category, access_type');
         
         if (!error && arsipDB) {
-            // Kategori
             const dbCats = arsipDB.map(item => item.category).filter(Boolean);
             const uniqueCategories = [...new Set([...getDefaultCategories(), ...dbCats])];
             uniqueCategories.forEach(cat => {
                 urlsToPush.push(`${baseUrl}/arsip/kategori/${createSlug(cat)}`);
             });
             
-            // Artikel & PDF (Jika Open Access)
             arsipDB.forEach(doc => {
                 urlsToPush.push(`${baseUrl}/arsip/${doc.slug}`);
                 if (doc.access_type === 'Open Access') {
@@ -507,21 +537,31 @@ app.post('/api/seo/index-all', protectAdmin, async (req, res) => {
             });
         }
         
-        // Berikan respons instan agar Vercel/Server tidak Timeout
         res.json({ 
             status: 'success', 
             message: `Memulai push massal untuk ${urlsToPush.length} URL ke Server Google di latar belakang. Proses ini butuh waktu beberapa menit.` 
         });
         
-        // EKSEKUSI DI BACKGROUND (Dengan jeda 500ms agar aman dari Rate Limit Google)
+        // EKSEKUSI DI BACKGROUND + NOTIFIKASI AWAL DISCORD
         (async () => {
             console.log(`[SEO BOT] Memulai Bulk Indexing untuk ${urlsToPush.length} URL...`);
+            await sendDiscordNotification(
+                '🚀 Memulai Operasi Push Massal (Bulk Indexing)', 
+                `Sistem mulai mengirim **${urlsToPush.length} URL** ke server Google. Sinyal keberhasilan per URL akan dilampirkan berurutan di bawah ini.`, 
+                0x00BFFF
+            );
+
             for (const url of urlsToPush) {
                 await requestGoogleIndexing(url, 'URL_UPDATED');
-                // Jeda 500 mili-detik per tembakan API
                 await new Promise(resolve => setTimeout(resolve, 500)); 
             }
+            
             console.log(`[SEO BOT] SELESAI! Bulk Indexing untuk ${urlsToPush.length} URL telah dituntaskan.`);
+            await sendDiscordNotification(
+                '🏁 Operasi Push Massal Selesai', 
+                `Seluruh armada **${urlsToPush.length} URL** telah berhasil diinfomasikan ke Googlebot.`, 
+                0x8A2BE2
+            );
         })();
         
     } catch (error) {
@@ -534,7 +574,6 @@ app.post('/api/seo/index-all', protectAdmin, async (req, res) => {
 // 5. GSC SITEMAP.XML FIX (DINAMIS 100%) & APP-ADS.TXT
 // ==========================================
 
-// PENTING UNTUK GOOGLE ADSENSE: Explicit Routing agar Googlebot dapat menemukan Ads.txt
 app.get('/ads.txt', (req, res) => {
     res.set('Content-Type', 'text/plain; charset=utf-8');
     res.setHeader('Cache-Control', 'public, max-age=86400');
@@ -550,7 +589,6 @@ app.get('/app-ads.txt', (req, res) => {
 app.get('/sitemap.xml', async (req, res) => {
     try {
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
-        // PENTING: GSC butuh header application/xml murni
         res.header('Content-Type', 'application/xml');
         
         const formatSitemapDate = (dateStr) => {
@@ -603,14 +641,12 @@ app.get('/sitemap.xml', async (req, res) => {
     </url>`;
 
         try {
-            // Tarik data Supabase dengan Timeout untuk mencegah Vercel Crash
             const fetchPromise = supabase.from('arsip').select('slug, date, access_type, title, category');
             const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Sitemap Timeout Triggered')), 8000));
             
             const { data: arsipDB, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
             if (arsipDB && !error) {
-                // 1. Injeksi Kategori
                 const dbCats = arsipDB.map(item => item.category).filter(Boolean);
                 const uniqueCategories = [...new Set([...getDefaultCategories(), ...dbCats])];
                 
@@ -625,7 +661,6 @@ app.get('/sitemap.xml', async (req, res) => {
     </url>`;
                 });
 
-                // 2. Injeksi Artikel & File PDF Open Access
                 arsipDB.forEach(doc => {
                     const validSitemapDate = formatSitemapDate(doc.date);
                     const safeTitle = escapeXml(doc.title);
@@ -660,7 +695,6 @@ app.get('/sitemap.xml', async (req, res) => {
             console.warn("⚠️ Peringatan: Supabase Timeout saat merender Artikel di Sitemap. Tetap mengirim sitemap halaman statis.");
         }
         
-        // PENTING: Format XML tanpa spasi di awal menggunakan .trim()
         const sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -796,9 +830,6 @@ app.get('/arsip/file/:slug.pdf', async (req, res) => {
     }
 });
 
-// ==========================================
-// MENGUPDATE ENDPOINT VIEWER ARSIP (REALTIME FORM FIX & SITELINKS)
-// ==========================================
 app.get('/arsip/:slug', async (req, res) => {
     try {
         const fetchSinglePromise = supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
@@ -816,7 +847,6 @@ app.get('/arsip/:slug', async (req, res) => {
 
         if (error || !arsip) return res.status(404).render('admin-404');
 
-        // Menyiapkan Data Kategoris dan Artikel Ekstra untuk SEO Sitelinks Dynamic
         const arsipData = allResult.data || [];
         const dbCategories = arsipData.map(item => item.category).filter(Boolean);
         const categories = [...new Set([...getDefaultCategories(), ...dbCategories])];
@@ -831,8 +861,6 @@ app.get('/arsip/:slug', async (req, res) => {
         };
         
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
-        
-        // Panggil fungsi getRequireFormSetting yang SUDAH TANPA CACHE (Realtime Supabase Storage)
         const reqForm = await getRequireFormSetting();
 
         res.render('arsipfile', { 
@@ -844,7 +872,7 @@ app.get('/arsip/:slug', async (req, res) => {
             currentPath: `/arsip/${arsip.slug}`,
             supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
             supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || '',
-            requireForm: reqForm // Injeksi Realtime
+            requireForm: reqForm
         });
     } catch(e) {
         res.status(500).send("Internal Server Error");
