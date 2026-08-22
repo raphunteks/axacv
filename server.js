@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
+const { google } = require('googleapis');
 
 const app = express();
 
@@ -16,6 +17,58 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: { persistSession: false }
 });
+
+// ==========================================
+// 0. INISIALISASI ENTERPRISE SEO BOT (GOOGLE INDEXING API VIA VERCEL ENV)
+// ==========================================
+let jwtClient = null;
+try {
+    const rawJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+    
+    if (rawJson) {
+        // Parse JSON utuh dari Environment Variables Vercel
+        const key = JSON.parse(rawJson);
+        
+        // PENTING: Fix issue Vercel merubah karakter baris baru (\n) di private_key menjadi literal text '\\n'
+        const privateKey = key.private_key.replace(/\\n/g, '\n');
+        
+        jwtClient = new google.auth.JWT(
+            key.client_email,
+            null,
+            privateKey,
+            ['https://www.googleapis.com/auth/indexing'],
+            null
+        );
+        console.log("[SEO BOT] Kredensial Service Account termuat SECURE dari ENV Vercel. Engine Auto-Index GSC Aktif!");
+    } else {
+        console.warn("[SEO BOT] Peringatan: Variabel 'GOOGLE_SERVICE_ACCOUNT_JSON' tidak ditemukan di Vercel Env. Auto-Index GSC Nonaktif.");
+    }
+} catch (error) {
+    console.error("[SEO BOT] Gagal memparsing Service Account JSON dari Vercel Env. Pastikan format JSON valid. Error:", error.message);
+}
+
+/**
+ * Fungsi Inti untuk Push URL ke Google Indexing API
+ */
+async function requestGoogleIndexing(targetUrl, type = 'URL_UPDATED') {
+    if (!jwtClient) return; // Skip jika JSON tidak ada di ENV
+    try {
+        const tokens = await jwtClient.authorize();
+        const options = {
+            url: 'https://indexing.googleapis.com/v3/urlNotifications:publish',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${tokens.access_token}`,
+            },
+            data: { url: targetUrl, type: type },
+        };
+        const response = await jwtClient.request(options);
+        console.log(`[SEO PUSH SUKSES] GoogleBot merespon URL: ${targetUrl} | Status: ${response.status}`);
+    } catch (error) {
+        console.error(`[SEO PUSH GAGAL] Tidak dapat push URL ${targetUrl}:`, error.response?.data?.error?.message || error.message);
+    }
+}
 
 // ==========================================
 // 1. SETUP MIDDLEWARE & CORS
@@ -325,6 +378,7 @@ app.get('/api/arsip', async (req, res) => {
     }
 });
 
+// INJEKSI PUSH GOOGLE API SAAT ARTIKEL BARU DITAMBAHKAN
 app.post('/api/arsip', protectAdmin, async (req, res) => {
     try {
         const { id, title, category, desc, accessType, fileName, filePath } = req.body;
@@ -353,12 +407,16 @@ app.post('/api/arsip', protectAdmin, async (req, res) => {
         const { data: dbData, error: dbError } = await supabase.from('arsip').insert([newItem]).select();
         if (dbError) throw new Error(`Supabase DB Insert Error: ${dbError.message}`);
 
+        // TRIGGERS GOOGLE INDEXING API (Background Process)
+        requestGoogleIndexing(`${baseUrl}/arsip/${slug}`, 'URL_UPDATED');
+
         res.json({ status: 'success', data: dbData[0] });
     } catch (err) {
         res.status(500).json({ status: 'error', message: err.message });
     }
 });
 
+// INJEKSI PUSH GOOGLE API SAAT ARTIKEL DIEDIT (UPDATE)
 app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
@@ -373,16 +431,21 @@ app.put('/api/arsip/:id', protectAdmin, async (req, res) => {
         if (error) throw new Error(error.message);
         if (!data || data.length === 0) throw new Error("Dokumen tidak ditemukan untuk diupdate.");
 
+        // TRIGGERS GOOGLE INDEXING API (Background Process)
+        requestGoogleIndexing(`${baseUrl}/arsip/${slug}`, 'URL_UPDATED');
+
         res.json({ status: 'success', data: data[0] });
     } catch (err) {
         res.status(500).json({ status: 'error', message: err.message });
     }
 });
 
+// INJEKSI PUSH GOOGLE API SAAT ARTIKEL DIHAPUS
 app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
     try {
         const docId = req.params.id;
-        const { data: item, error: fetchError } = await supabase.from('arsip').select('file_path').eq('id', docId).single();
+        // Modifikasi query agar menarik "slug" selain file_path
+        const { data: item, error: fetchError } = await supabase.from('arsip').select('file_path, slug').eq('id', docId).single();
 
         if (fetchError || !item) throw new Error(`Fetch Error: ${fetchError?.message || "Dokumen tidak ditemukan."}`);
         if (item.file_path) {
@@ -393,9 +456,76 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
         const { error: dbError } = await supabase.from('arsip').delete().eq('id', docId);
         if (dbError) throw new Error(`Delete DB Error: ${dbError.message}`);
 
+        // TRIGGERS GOOGLE INDEXING API UNTUK DELETION (Beri tahu Google link sudah mati)
+        if (item.slug) {
+            requestGoogleIndexing(`${baseUrl}/arsip/${item.slug}`, 'URL_DELETED');
+        }
+
         res.json({ status: 'success' });
     } catch (err) {
         res.status(500).json({ status: 'error', message: err.message });
+    }
+});
+
+// ==========================================
+// 4.5 NEW SEO FEATURE: BULK AUTO-INDEX SELURUH WEB
+// ==========================================
+// Panggil API ini via Postman/Fetch di browser admin Anda jika ingin memaksa indeks semua.
+app.post('/api/seo/index-all', protectAdmin, async (req, res) => {
+    if (!jwtClient) {
+        return res.status(500).json({ status: 'error', message: 'Kredensial Service Account JSON tidak dikonfigurasi di server ENV.' });
+    }
+    
+    try {
+        let urlsToPush = [`${baseUrl}/`];
+        
+        // 1. Kumpulkan semua halaman Statis
+        for (const pathKey of Object.keys(routesMeta)) {
+            if (pathKey !== '/' && pathKey !== '/arsip') {
+                urlsToPush.push(`${baseUrl}${pathKey}`);
+            }
+        }
+        urlsToPush.push(`${baseUrl}/arsip`);
+        
+        // 2. Kumpulkan semua halaman Dinamis (Arsip, Kategori, PDF)
+        const { data: arsipDB, error } = await supabase.from('arsip').select('slug, category, access_type');
+        
+        if (!error && arsipDB) {
+            // Kategori
+            const dbCats = arsipDB.map(item => item.category).filter(Boolean);
+            const uniqueCategories = [...new Set([...getDefaultCategories(), ...dbCats])];
+            uniqueCategories.forEach(cat => {
+                urlsToPush.push(`${baseUrl}/arsip/kategori/${createSlug(cat)}`);
+            });
+            
+            // Artikel & PDF (Jika Open Access)
+            arsipDB.forEach(doc => {
+                urlsToPush.push(`${baseUrl}/arsip/${doc.slug}`);
+                if (doc.access_type === 'Open Access') {
+                    urlsToPush.push(`${baseUrl}/arsip/file/${doc.slug}.pdf`);
+                }
+            });
+        }
+        
+        // Berikan respons instan agar Vercel/Server tidak Timeout
+        res.json({ 
+            status: 'success', 
+            message: `Memulai push massal untuk ${urlsToPush.length} URL ke Server Google di latar belakang. Proses ini butuh waktu beberapa menit.` 
+        });
+        
+        // EKSEKUSI DI BACKGROUND (Dengan jeda 500ms agar aman dari Rate Limit Google)
+        (async () => {
+            console.log(`[SEO BOT] Memulai Bulk Indexing untuk ${urlsToPush.length} URL...`);
+            for (const url of urlsToPush) {
+                await requestGoogleIndexing(url, 'URL_UPDATED');
+                // Jeda 500 mili-detik per tembakan API
+                await new Promise(resolve => setTimeout(resolve, 500)); 
+            }
+            console.log(`[SEO BOT] SELESAI! Bulk Indexing untuk ${urlsToPush.length} URL telah dituntaskan.`);
+        })();
+        
+    } catch (error) {
+        console.error("Bulk Index Error:", error);
     }
 });
 
