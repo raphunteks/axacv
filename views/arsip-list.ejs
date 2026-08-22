@@ -17,19 +17,64 @@
     <meta property="og:url" content="<%= meta.canonical %>">
     <meta property="og:type" content="<%= meta.type %>">
 
+    <!-- PROTECT DEVTOOLS SCRIPT -->
+    <script src="/protect-devtools.js" defer></script>
+
     <% 
-        // Helper untuk parse Array of Items ke JSON-LD ItemList
-        const jsonLdItems = typeof arsipData !== 'undefined' ? arsipData.slice(0, 20).map((item, index) => ({
+        // Helper Parser Date Khusus Google (ISO 8601 & YYYY/MM/DD)
+        let isoDate = (typeof arsip !== 'undefined' && arsip.date) ? arsip.date : new Date().toISOString();
+        let scholarDate = isoDate;
+        let displayDate = isoDate; 
+        
+        if(isoDate && isoDate.match(/^\d{2}-\d{2}-\d{4}$/)) {
+            const parts = isoDate.split('-');
+            isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`; 
+            scholarDate = `${parts[2]}/${parts[1]}/${parts[0]}`; 
+            displayDate = parts.join('-'); 
+        } else if (isoDate && isoDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            const parts = isoDate.split('-');
+            displayDate = `${parts[2]}-${parts[1]}-${parts[0]}`; 
+            scholarDate = isoDate.replace(/-/g, '/');
+        }
+        
+        // 🌟 GSC JSON PROTECTOR
+        const safeTitle = (typeof arsip !== 'undefined' && arsip.title ? arsip.title : meta.title).replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
+        const safeDesc = (typeof arsip !== 'undefined' && arsip.desc ? arsip.desc : meta.desc).replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
+        const isFree = (typeof arsip !== 'undefined' && arsip.access_type === 'Open Access') ? 'true' : 'false';
+
+        // 🌟 HELPER SITELINKS SEO: Mem-parsing Artikel untuk Google Sitelinks
+        const jsonLdItems = typeof arsipData !== 'undefined' ? arsipData.slice(0, 15).map((item, index) => ({
             "@type": "ListItem",
             "position": index + 1,
             "url": `${baseUrl}/arsip/${item.slug}`,
             "name": item.title
         })) : [];
+
+        // 🌟 HELPER SITELINKS SEO: Mem-parsing Kategori Dinamis untuk Navigasi Google Sitelinks
+        const sitelinkCategories = typeof categories !== 'undefined' ? categories.map((kat, index) => ({
+            "@type": "SiteNavigationElement",
+            "position": index + 1,
+            "name": kat,
+            "url": `${baseUrl}/arsip/kategori/${createSlug(kat)}`
+        })) : [];
     %>
+
+    <!-- JSON-LD STRUCTURED DATA (WITH SITELINKS GENERATOR) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "<%= baseUrl %>/#website",
+          "url": "<%= baseUrl %>/",
+          "name": "Knowledge Base drg. M. Aksa Arsyad",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "<%= baseUrl %>/arsip?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
         {
           "@type": "CollectionPage",
           "@id": "<%= meta.canonical %>#webpage",
@@ -51,11 +96,20 @@
           "@id": "<%= meta.canonical %>#breadcrumb",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "<%= baseUrl %>/" },
-            { "@type": "ListItem", "position": 2, "name": "Arsip Materi", "item": "<%= meta.canonical %>" }
+            { "@type": "ListItem", "position": 2, "name": "Arsip Materi", "item": "<%= baseUrl %>/arsip" }
+            <% if (activeCategory !== 'semua') { %>
+            ,{ "@type": "ListItem", "position": 3, "name": "<%= activeCategory.replace(/-/g, ' ').toUpperCase() %>", "item": "<%= meta.canonical %>" }
+            <% } %>
           ]
         },
         {
           "@type": "ItemList",
+          "name": "Daftar Kategori Navigasi (Sitelinks)",
+          "itemListElement": <%- JSON.stringify(sitelinkCategories) %>
+        },
+        {
+          "@type": "ItemList",
+          "name": "Daftar Artikel Arsip",
           "itemListElement": <%- JSON.stringify(jsonLdItems) %>
         }
       ]
@@ -65,176 +119,236 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800;900&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
-        body { background-color: #030712; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; min-height: 100vh;}
+        /* NEUBRUTALISM BASE */
+        body { 
+            background-color: #f4f4f0; /* Off-white playful */
+            color: #000; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            overflow-x: hidden; 
+            min-height: 100vh;
+            background-image: radial-gradient(#000 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
         
-        .glass-header { background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .font-display { font-family: 'Space Grotesk', sans-serif; }
+
+        .brutal-border { border: 4px solid #000; }
+        .brutal-shadow { box-shadow: 4px 4px 0px #000; transition: all 0.2s ease-in-out; }
         
-        /* CARD UI MENYESUAIKAN TANGKAPAN LAYAR REFERENSI */
+        /* HEADER NAV */
+        .glass-header { 
+            background: #A3E635; /* Lime green */
+            border-bottom: 4px solid #000; 
+        }
+        
+        /* CARD UI NEUBRUTALISM */
         .card-neo { 
-            background: linear-gradient(145deg, #0f172a 0%, #020617 100%); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
-            border-radius: 1.25rem;
+            background: #fff; 
+            border: 4px solid #000; 
+            box-shadow: 8px 8px 0px #000;
+            transition: all 0.2s ease-in-out; 
+            border-radius: 0.75rem;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         .card-neo:hover { 
-            transform: translateY(-6px); 
-            border-color: rgba(0, 229, 255, 0.5); 
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 229, 255, 0.1); 
+            transform: translate(-4px, -4px); 
+            box-shadow: 12px 12px 0px #000; 
+        }
+        /* Rotasi warna hover kartu secara acak (opsional) */
+        .card-neo:nth-child(3n+1):hover { background-color: #E0E7FF; }
+        .card-neo:nth-child(3n+2):hover { background-color: #FEF9C3; }
+        .card-neo:nth-child(3n+3):hover { background-color: #FFEDD5; }
+
+        .brutal-badge { 
+            background: #fff; 
+            color: #000; 
+            font-size: 10px; 
+            font-weight: 900; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            display: inline-flex; 
+            align-items: center; 
+            border: 2px solid #000; 
+            box-shadow: 2px 2px 0px #000;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .pdf-badge { 
-            background: #334155; color: #f8fafc; font-size: 10px; font-weight: 800; 
-            padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; 
-            border: 1px solid #475569; letter-spacing: 0.5px;
-        }
-
-        /* WATERMARK BESAR 'PDF' DI KANAN ATAS */
+        /* WATERMARK BESAR 'PDF' */
         .watermark-pdf {
-            position: absolute; top: 10px; right: -10px;
-            font-size: 6rem; font-weight: 900; color: rgba(255, 255, 255, 0.03);
+            position: absolute; top: -15px; right: -15px;
+            font-size: 7rem; font-weight: 900; color: rgba(0, 0, 0, 0.03);
             font-family: 'Space Grotesk', sans-serif; pointer-events: none;
             z-index: 0; transform: rotate(-10deg);
-            transition: color 0.4s ease;
+            transition: color 0.3s ease;
         }
-        .card-neo:hover .watermark-pdf { color: rgba(0, 229, 255, 0.05); }
+        .card-neo:hover .watermark-pdf { color: rgba(0, 0, 0, 0.08); }
 
         /* FILTER BUTTONS DINAMIS */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         .filter-btn {
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #94a3b8;
-            padding: 0.6rem 1.5rem; border-radius: 9999px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase;
-            letter-spacing: 0.05em; transition: all 0.3s ease; white-space: nowrap; flex-shrink: 0;
-            display: inline-flex; align-items: center; justify-content: center;
+            background: #fff; 
+            border: 3px solid #000; 
+            box-shadow: 4px 4px 0px #000;
+            color: #000;
+            padding: 0.6rem 1.5rem; 
+            border-radius: 0.5rem; 
+            font-weight: 900; 
+            font-size: 0.8rem; 
+            text-transform: uppercase;
+            transition: all 0.15s ease; 
+            white-space: nowrap; 
+            flex-shrink: 0;
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
         }
-        .filter-btn:hover { background: rgba(0, 229, 255, 0.1); color: #00E5FF; border-color: #00E5FF; }
-        .filter-btn.active { background: #00E5FF; color: #000; border-color: #00E5FF; box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
+        .filter-btn:hover { 
+            background: #FF90E8; /* Pink Hover */
+            transform: translate(-2px, -2px); 
+            box-shadow: 6px 6px 0px #000; 
+        }
+        .filter-btn.active { 
+            background: #00E5FF; /* Cyan Active */
+            transform: translate(2px, 2px); 
+            box-shadow: 1px 1px 0px #000; 
+        }
 
-        .text-gradient { background: linear-gradient(135deg, #fff 0%, #6366F1 50%, #00E5FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .highlight-text {
+            background: #FFC900; /* Yellow highlight */
+            padding: 0 0.25rem;
+            border: 3px solid #000;
+            display: inline-block;
+            transform: rotate(-1deg);
+            box-shadow: 4px 4px 0px #000;
+        }
     </style>
 </head>
-<body class="antialiased selection:bg-cyan-500 selection:text-black relative">
+<body class="antialiased selection:bg-[#FF90E8] selection:text-black relative">
     
-    <!-- BACKGROUND AMBIENCE -->
-    <div class="fixed inset-0 z-[-20] pointer-events-none" style="background-image: radial-gradient(circle at 50% 0%, rgba(0, 229, 255, 0.05) 0%, transparent 50%);"></div>
-
     <!-- NAVBAR -->
     <nav class="glass-header sticky top-0 z-50 w-full animate__animated animate__fadeInDown">
-        <div class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center max-w-6xl">
-            <a href="/" class="text-sm md:text-base font-bold font-['Space_Grotesk'] text-gray-300 hover:text-cyan-400 flex items-center gap-2 hover:scale-105 transition-all active:scale-95 uppercase tracking-widest">
-                <i class="ph-bold ph-arrow-left text-lg"></i> Axa System
+        <div class="container mx-auto px-4 sm:px-6 py-3 md:py-4 flex justify-between items-center max-w-6xl">
+            <a href="/" class="text-sm md:text-base font-black font-display text-black hover:bg-black hover:text-white px-3 py-1.5 rounded transition-colors uppercase tracking-widest flex items-center gap-2 border-2 border-black bg-white shadow-[3px_3px_0px_#000] active:translate-y-1 active:shadow-none">
+                <i class="ph-bold ph-arrow-left text-lg"></i> Website
             </a>
-            <span class="text-[10px] md:text-xs font-mono text-cyan-400 bg-cyan-400/10 px-4 py-1.5 rounded-full border border-cyan-400/30 hidden sm:inline-block shadow-[0_0_10px_rgba(0,229,255,0.2)] tracking-widest">KNOWLEDGE BASE CORE</span>
+            <span class="text-[10px] md:text-xs font-black font-mono text-black bg-white px-3 py-1.5 rounded border-2 border-black hidden sm:inline-block shadow-[3px_3px_0px_#000] tracking-widest uppercase">KNOWLEDGE BASE CORE</span>
         </div>
     </nav>
 
     <main class="container mx-auto px-4 sm:px-6 py-10 md:py-16 max-w-6xl min-h-[80vh] relative z-10">
         
         <!-- HEADER TEXT -->
-        <header class="text-center mb-10 md:mb-14 px-2 animate__animated animate__fadeInUp">
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-black font-['Space_Grotesk'] mb-4 md:mb-6 leading-tight tracking-tight">
-                Arsip Materi <span class="text-gradient">& Jurnal</span>
+        <header class="text-center mb-10 md:mb-16 px-2 animate__animated animate__fadeInUp">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black font-display mb-6 md:mb-8 leading-tight tracking-tight text-black uppercase drop-shadow-[2px_2px_0px_#fff]">
+                Arsip <span class="highlight-text mt-2 md:mt-0">Materi & Jurnal</span>
             </h1>
-            <p class="text-gray-400 max-w-2xl mx-auto text-sm md:text-base leading-relaxed px-4 font-medium">
+            <p class="text-black bg-white brutal-border shadow-[4px_4px_0px_#000] inline-block p-4 max-w-2xl mx-auto text-sm md:text-base leading-relaxed font-bold">
                 Akses direktori catatan pembelajaran, materi preklinik, jurnal profesi dokter muda, dan publikasi penelitian berformat PDF interaktif.
             </p>
         </header>
 
-        <!-- KATEGORI FILTER DINAMIS (HORIZONTAL SCROLL PILLS) -->
-        <div class="mb-10 w-full animate__animated animate__fadeInUp animate__delay-1s border-b border-gray-800 pb-6">
-            <div class="flex overflow-x-auto gap-3 pb-2 no-scrollbar justify-start md:justify-center px-1">
-                <!-- Tombol Default Semua -->
-                <a href="/arsip" class="filter-btn <%= activeCategory === 'semua' ? 'active' : '' %>">
-                    Semua
-                </a>
+        <!-- KATEGORI FILTER DINAMIS (SEMANTIC NAV UNTUK SITELINKS) -->
+        <nav aria-label="Kategori Arsip" class="mb-10 md:mb-14 w-full animate__animated animate__fadeInUp animate__delay-1s border-b-4 border-black pb-8">
+            <ul class="flex overflow-x-auto gap-3 md:gap-4 pb-4 no-scrollbar justify-start md:justify-center px-1 items-center">
+                <li>
+                    <a href="/arsip" class="filter-btn <%= activeCategory === 'semua' ? 'active' : '' %>">
+                        Semua Dokumen
+                    </a>
+                </li>
                 
-                <!-- Looping Dynamic Kategori yang sudah digabung dengan Default Categories di Backend -->
                 <% if(typeof categories !== 'undefined' && categories.length > 0) { %>
                     <% categories.forEach(function(kat) { %>
                         <% const slug = createSlug(kat); %>
-                        <a href="/arsip/kategori/<%= slug %>" class="filter-btn <%= activeCategory === slug ? 'active' : '' %>">
-                            <%= kat %>
-                        </a>
+                        <li>
+                            <a href="/arsip/kategori/<%= slug %>" class="filter-btn <%= activeCategory === slug ? 'active' : '' %>">
+                                <%= kat %>
+                            </a>
+                        </li>
                     <% }); %>
                 <% } %>
-            </div>
-        </div>
+            </ul>
+        </nav>
 
         <!-- GRID KARTU ARSIP -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 w-full">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full">
             <% if(typeof arsipData !== 'undefined' && arsipData.length > 0) { %>
                 <% arsipData.forEach((item, index) => { %>
                     <% 
-                       // Format UI DD-MM-YYYY
                        let displayDate = item.date;
                        if(displayDate && displayDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
                            const parts = displayDate.split('-');
                            displayDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
                        }
                     %>
-                    <a href="/arsip/<%= item.slug %>" class="card-neo p-6 md:p-8 block group w-full outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 flex flex-col h-full animate__animated animate__fadeInUp" style="animation-delay: <%= (index % 10) * 0.1 %>s">
+                    <a href="/arsip/<%= item.slug %>" class="card-neo outline-none focus-visible:ring-4 focus-visible:ring-black animate__animated animate__fadeInUp group" style="animation-delay: <%= (index % 10) * 0.1 %>s">
                         
-                        <!-- Watermark Tulisan PDF di Latar Belakang Kanan Atas -->
                         <div class="watermark-pdf">PDF</div>
 
                         <!-- Top Header Card -->
-                        <div class="flex justify-between items-start mb-5 gap-3 relative z-10 flex-wrap w-full border-b border-gray-800/50 pb-4">
-                            <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-black bg-cyan-400 px-3 py-1.5 rounded-md shadow-[0_0_10px_rgba(0,229,255,0.3)] shrink-0">
+                        <div class="flex justify-between items-start mb-4 gap-2 relative z-10 flex-wrap w-full border-b-2 border-black pb-4 p-6 bg-gray-50">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-black bg-[#22D3EE] px-2.5 py-1 rounded-sm border-2 border-black shadow-[2px_2px_0px_#000] shrink-0">
                                 <%= item.category || 'TIDAK BERKATEGORI' %>
                             </span>
-                            <span class="text-[10px] md:text-xs text-gray-400 font-mono flex items-center gap-1.5 shrink-0">
+                            <span class="text-[10px] text-black font-bold font-mono flex items-center gap-1.5 shrink-0 bg-white px-2 py-1 border-2 border-black">
                                 <i class="ph-bold ph-calendar-blank text-sm"></i> <%= displayDate %>
                             </span>
                         </div>
                         
                         <!-- Judul dan Deskripsi -->
-                        <div class="relative z-10 flex-grow">
-                            <h2 class="text-xl md:text-2xl font-bold mb-3 group-hover:text-cyan-400 transition-colors break-words whitespace-normal leading-snug w-full line-clamp-3">
+                        <div class="relative z-10 flex-grow p-6 pt-2">
+                            <h2 class="text-xl md:text-2xl font-black font-display mb-3 text-black break-words whitespace-normal leading-snug w-full line-clamp-3 uppercase">
                                 <%= item.title %>
                             </h2>
-                            <p class="text-sm text-gray-400 line-clamp-2 mb-6 leading-relaxed break-words w-full font-medium">
+                            <p class="text-sm text-gray-700 font-bold line-clamp-2 leading-relaxed break-words w-full">
                                 <%= item.desc %>
                             </p>
                         </div>
                         
                         <!-- Footer Card (Access Type) -->
-                        <div class="mt-auto relative z-10 border-t border-gray-800/80 pt-5 flex justify-between items-center w-full">
+                        <div class="mt-auto relative z-10 border-t-4 border-black p-4 flex justify-between items-center w-full <%= item.access_type === 'Open Access' ? 'bg-[#A3E635]' : 'bg-[#FDE047]' %>">
                             <% if(item.access_type === 'Open Access') { %>
                                 <div class="flex items-center gap-2">
-                                    <i class="ph-fill ph-check-circle text-green-400 text-lg"></i>
-                                    <span class="text-xs md:text-sm font-bold text-green-400">Open Access</span> 
-                                    <span class="pdf-badge ml-1 drop-shadow-md">PDF</span>
+                                    <i class="ph-bold ph-check-circle text-black text-xl"></i>
+                                    <span class="text-xs font-black text-black uppercase tracking-wide">Open Access</span> 
                                 </div>
-                                <i class="ph-bold ph-arrow-right text-green-400 group-hover:translate-x-2 transition-transform text-lg"></i>
+                                <div class="bg-white p-1.5 border-2 border-black shadow-[2px_2px_0px_#000] rounded transition-transform group-hover:translate-x-1">
+                                    <i class="ph-bold ph-arrow-right text-black text-lg"></i>
+                                </div>
                             <% } else { %>
                                 <div class="flex items-center gap-2">
-                                    <i class="ph-fill ph-lock-key text-cyan-400 text-lg"></i>
-                                    <span class="text-xs md:text-sm font-bold text-cyan-400">Restricted Viewer</span>
+                                    <i class="ph-bold ph-lock-key text-black text-xl"></i>
+                                    <span class="text-xs font-black text-black uppercase tracking-wide">Restricted</span>
                                 </div>
-                                <i class="ph-bold ph-arrow-right text-cyan-400 group-hover:translate-x-2 transition-transform text-lg"></i>
+                                <div class="bg-white p-1.5 border-2 border-black shadow-[2px_2px_0px_#000] rounded transition-transform group-hover:translate-x-1">
+                                    <i class="ph-bold ph-arrow-right text-black text-lg"></i>
+                                </div>
                             <% } %>
                         </div>
                     </a>
                 <% }) %>
             <% } else { %>
                 <!-- Empty State -->
-                <div class="col-span-full text-center py-20 border-2 border-dashed border-gray-800 bg-gray-900/30 rounded-3xl w-full px-4 animate__animated animate__fadeIn">
-                    <i class="ph-fill ph-folder-open text-6xl md:text-7xl text-gray-700 mb-5 block"></i>
-                    <h3 class="text-xl md:text-2xl font-bold text-white mb-2">Direktori Kosong</h3>
-                    <p class="text-gray-400 font-mono text-xs md:text-sm">Belum ada materi atau jurnal yang diarsipkan dalam kategori ini.</p>
+                <div class="col-span-full text-center py-20 brutal-border bg-white shadow-[8px_8px_0px_#000] rounded-xl w-full px-4 animate__animated animate__fadeIn">
+                    <i class="ph-bold ph-folder-open text-6xl md:text-7xl text-black mb-5 block"></i>
+                    <h3 class="text-2xl md:text-4xl font-black font-display text-black mb-3 uppercase">Direktori Kosong</h3>
+                    <p class="text-black font-bold text-sm md:text-base bg-[#FDE047] inline-block px-4 py-2 border-2 border-black shadow-[2px_2px_0px_#000]">Belum ada materi atau jurnal yang diarsipkan dalam kategori ini.</p>
                 </div>
             <% } %>
         </div>
     </main>
 
-    <footer class="border-t border-white/10 text-center py-8 mt-10 text-gray-500 font-mono text-[10px] md:text-xs w-full px-4 relative z-10">
-        &copy; 2026 drg. M. Aksa Arsyad, S.KG. | Secure Knowledge Base Core
+    <footer class="border-t-4 border-black bg-[#FF90E8] text-center py-8 mt-10 text-black font-black font-mono text-[10px] md:text-xs w-full px-4 relative z-10 uppercase tracking-widest">
+        &copy; 2026 drg. M. Aksa Arsyad, S.KG. | KNOWLEDGE BASE CORE
     </footer>
 </body>
 </html>
