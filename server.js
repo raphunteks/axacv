@@ -156,7 +156,9 @@ const formatWitaTime = (isoString) => {
     return `${dayName}, ${dd}-${mm}-${yyyy}, Jam ${HH}.${Min} WITA`;
 };
 
-// CACHING SETTINGS: Simpan Object Setting Dinamis
+// =======================================================
+// REALTIME FIX: Hapus In-Memory Cache. Selalu Fetch Storage!
+// =======================================================
 const defaultFormSettings = {
     requireForm: true,
     fields: [
@@ -165,26 +167,30 @@ const defaultFormSettings = {
     ]
 };
 
-let cachedFormSettings = defaultFormSettings;
-let lastCacheTime = 0;
-
 async function getRequireFormSetting() {
-    if (Date.now() - lastCacheTime < 60000) return cachedFormSettings;
     try {
-        const { data } = await supabase.storage.from('arsip_files').download('settings.json');
+        const { data, error } = await supabase.storage.from('arsip_files').download('settings.json');
+        
+        if (error) {
+            console.warn("Storage Error/Not Found (Using Default):", error.message);
+            return defaultFormSettings;
+        }
+        
         if (data) {
             const text = await data.text();
             const parsed = JSON.parse(text);
             
+            // Konversi Cerdas jika format dari Database cuma boolean (versi lawas)
             if (typeof parsed.requireForm === 'boolean' && !parsed.fields) {
-                cachedFormSettings = { requireForm: parsed.requireForm, fields: defaultFormSettings.fields };
-            } else {
-                cachedFormSettings = parsed.requireForm; 
-            }
-            lastCacheTime = Date.now();
+                return { requireForm: parsed.requireForm, fields: defaultFormSettings.fields };
+            } 
+            
+            return parsed.requireForm || defaultFormSettings;
         }
-    } catch (e) { } 
-    return cachedFormSettings;
+    } catch (e) {
+        console.error("Gagal parse Settings.json:", e);
+    } 
+    return defaultFormSettings;
 }
 
 // ==========================================
@@ -215,6 +221,7 @@ app.post('/api/track-download', async (req, res) => {
 
         downloads.push({ title: fileTitle, time: getWitaTime() });
             
+        // Reset Flag Logout jika mendownload & perbarui waktu last online otomatis oleh Supabase
         const { error: updateError } = await supabase.auth.admin.updateUserById(user.id, {
             user_metadata: { ...meta, downloaded_files: downloads, is_logged_out: false }
         });
@@ -281,10 +288,12 @@ app.get('/api/users', protectAdmin, async (req, res) => {
     }
 });
 
+// GET Settings yang Realtime (No Cache)
 app.get('/api/settings/form', protectAdmin, async (req, res) => {
     res.json({ status: 'success', requireForm: await getRequireFormSetting() });
 });
 
+// PUSH/UPDATE Settings (Menghapus variabel global yg memicu stale cache)
 app.post('/api/settings/form', protectAdmin, async (req, res) => {
     try {
         const { requireForm } = req.body; 
@@ -293,8 +302,6 @@ app.post('/api/settings/form', protectAdmin, async (req, res) => {
         const { error } = await supabase.storage.from('arsip_files').upload('settings.json', buffer, { upsert: true, contentType: 'application/json' });
         if (error) throw error;
         
-        cachedFormSettings = requireForm;
-        lastCacheTime = Date.now();
         res.json({ status: 'success', requireForm });
     } catch (err) {
         res.status(500).json({ status: 'error', message: err.message });
@@ -413,6 +420,7 @@ app.get('/app-ads.txt', (req, res) => {
 app.get('/sitemap.xml', async (req, res) => {
     try {
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
+        // PENTING: GSC butuh header application/xml murni
         res.header('Content-Type', 'application/xml');
         
         const formatSitemapDate = (dateStr) => {
@@ -659,7 +667,7 @@ app.get('/arsip/file/:slug.pdf', async (req, res) => {
 });
 
 // ==========================================
-// MENGUPDATE ENDPOINT VIEWER ARSIP (SITELINKS SEO INJECTION)
+// MENGUPDATE ENDPOINT VIEWER ARSIP (REALTIME FORM FIX & SITELINKS)
 // ==========================================
 app.get('/arsip/:slug', async (req, res) => {
     try {
@@ -694,6 +702,7 @@ app.get('/arsip/:slug', async (req, res) => {
         
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
         
+        // Panggil fungsi getRequireFormSetting yang SUDAH TANPA CACHE (Realtime Supabase Storage)
         const reqForm = await getRequireFormSetting();
 
         res.render('arsipfile', { 
@@ -705,7 +714,7 @@ app.get('/arsip/:slug', async (req, res) => {
             currentPath: `/arsip/${arsip.slug}`,
             supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
             supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || '',
-            requireForm: reqForm 
+            requireForm: reqForm // Injeksi Realtime
         });
     } catch(e) {
         res.status(500).send("Internal Server Error");
