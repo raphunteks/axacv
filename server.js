@@ -22,6 +22,15 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
 // ==========================================
 app.use(express.json({ limit: '10mb' })); 
 
+// ANTI-CACHE UNTUK API (REALTIME DASHBOARD FIX)
+app.use('/api', (req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    next();
+});
+
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -87,13 +96,28 @@ const protectAdmin = (req, res, next) => {
 };
 
 // ==========================================
-// HELPER URL SLUG GENERATOR & WITA FORMATTER
+// HELPER URL SLUG GENERATOR, XML ESCAPER & WITA FORMATTER
 // ==========================================
 const createSlug = (text) => {
     if (!text) return '';
     return text.toString().toLowerCase().trim()
         .replace(/[^a-z0-9]+/g, '-')       
         .replace(/^-+|-+$/g, '');          
+};
+
+// PENTING: Untuk GSC Sitemap XML Escape
+const escapeXml = (unsafe) => {
+    if (!unsafe) return '';
+    return unsafe.replace(/[<>&'"]/g, (c) => {
+        switch (c) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '\'': return '&apos;';
+            case '"': return '&quot;';
+            default: return c;
+        }
+    });
 };
 
 const getDefaultCategories = () => ["Preklinik", "Jurnal & Riset", "Kedokteran Gigi Umum"];
@@ -370,76 +394,134 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
 
 
 // ==========================================
-// 5. Sitemap & Robots.txt
+// 5. GSC SITEMAP.XML FIX (DINAMIS 100%)
 // ==========================================
 app.get('/sitemap.xml', async (req, res) => {
     try {
         res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
-        res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+        // PENTING: GSC butuh header application/xml murni
+        res.header('Content-Type', 'application/xml');
         
-        const escapeXML = (str) => {
-            if (!str) return '';
-            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+        const formatSitemapDate = (dateStr) => {
+            try {
+                const fallback = new Date().toISOString().split('T')[0];
+                if (!dateStr) return fallback;
+                
+                if (dateStr.match(/^\d{2}-\d{2}-\d{4}$/)) {
+                    const parts = dateStr.split('-');
+                    return `${parts[2]}-${parts[1]}-${parts[0]}`; 
+                }
+                
+                const parsed = new Date(dateStr);
+                return isNaN(parsed) ? fallback : parsed.toISOString().split('T')[0];
+            } catch (e) { return new Date().toISOString().split('T')[0]; }
         };
 
-        let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-        xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">\n`;
-        
-        const parseSitemapDate = (dateStr) => {
-            if (!dateStr) return new Date().toISOString().split('T')[0];
-            if (dateStr.match(/^\d{2}-\d{2}-\d{4}$/)) {
-                const parts = dateStr.split('-');
-                return `${parts[2]}-${parts[1]}-${parts[0]}`; 
-            }
-            return dateStr; 
-        };
+        const today = formatSitemapDate();
 
-        const currentDate = new Date().toISOString().split('T')[0];
-
-        xml += `<url><loc>${baseUrl}/</loc><lastmod>${currentDate}</lastmod><changefreq>daily</changefreq><priority>1.0</priority><image:image><image:loc>${baseUrl}/axalogo.png</image:loc><image:title>CV &amp; Portofolio drg. M. Aksa Arsyad, S.KG</image:title><image:caption>Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum.</image:caption></image:image></url>\n`;
+        let xmlUrls = `
+    <url>
+        <loc>${baseUrl}/</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>${baseUrl}/axalogo.png</image:loc>
+            <image:title>CV &amp; Portofolio drg. M. Aksa Arsyad, S.KG</image:title>
+            <image:caption>Curriculum Vitae dan Portofolio resmi drg. M. Aksa Arsyad, S.KG - Dokter Gigi Umum.</image:caption>
+        </image:image>
+    </url>`;
 
         for (const [path, meta] of Object.entries(routesMeta)) {
             if (path === '/' || path === '/arsip') continue;
-            xml += `<url><loc>${baseUrl}${path}</loc><lastmod>${currentDate}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>\n`;
+            xmlUrls += `
+    <url>
+        <loc>${baseUrl}${path}</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>`;
         }
 
-        xml += `<url><loc>${baseUrl}/arsip</loc><lastmod>${currentDate}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>\n`;
+        xmlUrls += `
+    <url>
+        <loc>${baseUrl}/arsip</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>`;
 
         try {
+            // Tarik data Supabase dengan Timeout untuk mencegah Vercel Crash
             const fetchPromise = supabase.from('arsip').select('slug, date, access_type, title, category');
-            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Sitemap DB Timeout Protector Triggered')), 8500));
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Sitemap Timeout Triggered')), 8000));
             
             const { data: arsipDB, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
             if (arsipDB && !error) {
+                // 1. Injeksi Kategori
                 const dbCats = arsipDB.map(item => item.category).filter(Boolean);
                 const uniqueCategories = [...new Set([...getDefaultCategories(), ...dbCats])];
                 
                 uniqueCategories.forEach(cat => {
                     const catSlug = createSlug(cat);
-                    xml += `<url><loc>${baseUrl}/arsip/kategori/${catSlug}</loc><lastmod>${currentDate}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>\n`;
+                    xmlUrls += `
+    <url>
+        <loc>${baseUrl}/arsip/kategori/${escapeXml(catSlug)}</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>`;
                 });
 
+                // 2. Injeksi Artikel & File PDF Open Access
                 arsipDB.forEach(doc => {
-                    const validSitemapDate = parseSitemapDate(doc.date);
-                    const safeTitle = escapeXML(doc.title);
-                    const safeCat = escapeXML(doc.category);
+                    const validSitemapDate = formatSitemapDate(doc.date);
+                    const safeTitle = escapeXml(doc.title);
+                    const safeCat = escapeXml(doc.category);
+                    const safeSlug = escapeXml(doc.slug);
 
-                    xml += `<url><loc>${baseUrl}/arsip/${doc.slug}</loc><lastmod>${validSitemapDate}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority><image:image><image:loc>${baseUrl}/axalogo.png</image:loc><image:title>${safeTitle}</image:title><image:caption>Kategori: ${safeCat}</image:caption></image:image></url>\n`;
+                    xmlUrls += `
+    <url>
+        <loc>${baseUrl}/arsip/${safeSlug}</loc>
+        <lastmod>${validSitemapDate}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <image:image>
+            <image:loc>${baseUrl}/axalogo.png</image:loc>
+            <image:title>${safeTitle}</image:title>
+            <image:caption>Kategori: ${safeCat}</image:caption>
+        </image:image>
+    </url>`;
 
                     if(doc.access_type === 'Open Access') {
-                        xml += `<url><loc>${baseUrl}/arsip/file/${doc.slug}.pdf</loc><lastmod>${validSitemapDate}</lastmod><changefreq>yearly</changefreq><priority>0.9</priority></url>\n`;
+                        xmlUrls += `
+    <url>
+        <loc>${baseUrl}/arsip/file/${safeSlug}.pdf</loc>
+        <lastmod>${validSitemapDate}</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.9</priority>
+    </url>`;
                     }
                 });
             }
         } catch(e) {
-            console.warn("Peringatan: Supabase Timeout saat Sitemap Generation. XML Statis tetap dikirim.");
+            console.warn("⚠️ Peringatan: Supabase Timeout saat merender Artikel di Sitemap. Tetap mengirim sitemap halaman statis.");
         }
         
-        xml += `</urlset>`;
-        res.send(xml);
-    } catch (e) {
-        res.status(500).send("Error generating sitemap");
+        // PENTING: Format XML tanpa spasi di awal menggunakan .trim()
+        const sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+${xmlUrls}
+</urlset>`;
+
+        res.send(sitemapXML.trim());
+    } catch (error) {
+        console.error("Sitemap Gen Error:", error);
+        res.status(500).send("Internal Server Error generating Sitemap");
     }
 });
 
@@ -605,8 +687,8 @@ app.get('/arsip/:slug', async (req, res) => {
             meta, 
             baseUrl, 
             arsip, 
-            arsipData,      // DISUNTIKKAN UNTUK KEBUTUHAN SEO SITELINKS ARSIPFILE.EJS
-            categories,     // DISUNTIKKAN UNTUK KEBUTUHAN SEO SITELINKS ARSIPFILE.EJS
+            arsipData,      
+            categories,     
             currentPath: `/arsip/${arsip.slug}`,
             supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
             supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || '',
