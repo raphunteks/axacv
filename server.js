@@ -115,7 +115,6 @@ const getWitaTime = () => {
     return `${dayName}, ${dd}-${mm}-${yyyy}, Jam ${HH}.${Min} WITA`;
 };
 
-// Helper Format Date String apa pun menjadi WITA
 const formatWitaTime = (isoString) => {
     if (!isoString) return '-';
     const date = new Date(isoString);
@@ -192,7 +191,6 @@ app.post('/api/track-download', async (req, res) => {
 
         downloads.push({ title: fileTitle, time: getWitaTime() });
             
-        // Jika user mendownload, otomatis status "is_logged_out" dibatalkan/di-reset ke false agar status menjadi Aktif lagi.
         const { error: updateError } = await supabase.auth.admin.updateUserById(user.id, {
             user_metadata: { ...meta, downloaded_files: downloads, is_logged_out: false }
         });
@@ -206,17 +204,14 @@ app.post('/api/track-download', async (req, res) => {
     }
 });
 
-// --- FITUR BARU: API FORCE LOGOUT USER ---
 app.post('/api/users/:id/force-logout', protectAdmin, async (req, res) => {
     try {
         const userId = req.params.id;
-        // Ambil data metadata spesifik user
         const { data, error: fetchErr } = await supabase.auth.admin.getUserById(userId);
         if (fetchErr || !data.user) throw new Error("User tidak ditemukan di sistem.");
 
         const meta = data.user.user_metadata || {};
         
-        // Suntikkan flag "is_logged_out" ke dalam database profile user ini
         const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
             user_metadata: { ...meta, is_logged_out: true }
         });
@@ -228,7 +223,6 @@ app.post('/api/users/:id/force-logout', protectAdmin, async (req, res) => {
     }
 });
 
-// --- API TARIK DATA USERS & STATUS SESI ---
 app.get('/api/users', protectAdmin, async (req, res) => {
     try {
         const { data, error } = await supabase.auth.admin.listUsers();
@@ -241,7 +235,6 @@ app.get('/api/users', protectAdmin, async (req, res) => {
                 return d; 
             });
 
-            // Menentukan Status User
             const userStatus = u.user_metadata?.is_logged_out === true ? 'Logout' : 'Aktif';
 
             return {
@@ -252,8 +245,8 @@ app.get('/api/users', protectAdmin, async (req, res) => {
                 downloaded_files: formattedDownloads, 
                 raw_metadata: u.user_metadata || {}, 
                 created_at: new Date(u.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}),
-                last_online: formatWitaTime(u.last_sign_in_at), // Last Online Time (WITA)
-                status: userStatus // Status Aktif/Logout
+                last_online: formatWitaTime(u.last_sign_in_at), 
+                status: userStatus 
             };
         });
         
@@ -377,7 +370,7 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
 
 
 // ==========================================
-// 5. SITEMAP & ROBOTS.TXT
+// 5. Sitemap & Robots.txt
 // ==========================================
 app.get('/sitemap.xml', async (req, res) => {
     try {
@@ -570,14 +563,30 @@ app.get('/arsip/file/:slug.pdf', async (req, res) => {
     }
 });
 
+// ==========================================
+// MENGUPDATE ENDPOINT VIEWER ARSIP (SITELINKS SEO INJECTION)
+// ==========================================
 app.get('/arsip/:slug', async (req, res) => {
     try {
-        const fetchPromise = supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
+        const fetchSinglePromise = supabase.from('arsip').select('*').eq('slug', req.params.slug).single();
+        const fetchAllPromise = supabase.from('arsip').select('title, slug, category').order('id', { ascending: false }).limit(20);
+        
         const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('DB Timeout')), 8500));
 
-        const { data: arsip, error } = await Promise.race([fetchPromise, timeoutPromise]);
+        const [singleResult, allResult] = await Promise.race([
+            Promise.all([fetchSinglePromise, fetchAllPromise]),
+            timeoutPromise
+        ]);
         
+        const arsip = singleResult.data;
+        const error = singleResult.error;
+
         if (error || !arsip) return res.status(404).render('admin-404');
+
+        // Menyiapkan Data Kategoris dan Artikel Ekstra untuk SEO Sitelinks Dynamic
+        const arsipData = allResult.data || [];
+        const dbCategories = arsipData.map(item => item.category).filter(Boolean);
+        const categories = [...new Set([...getDefaultCategories(), ...dbCategories])];
 
         const meta = {
             title: `${arsip.title} | drg. M. Aksa Arsyad`,
@@ -596,6 +605,8 @@ app.get('/arsip/:slug', async (req, res) => {
             meta, 
             baseUrl, 
             arsip, 
+            arsipData,      // DISUNTIKKAN UNTUK KEBUTUHAN SEO SITELINKS ARSIPFILE.EJS
+            categories,     // DISUNTIKKAN UNTUK KEBUTUHAN SEO SITELINKS ARSIPFILE.EJS
             currentPath: `/arsip/${arsip.slug}`,
             supabaseUrl: process.env.SUPABASE_URL || process.env.KVVSUPABASE_URL || '',
             supabaseAnonKey: process.env.KVVSUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || '',
