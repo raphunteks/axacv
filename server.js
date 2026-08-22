@@ -394,7 +394,7 @@ app.delete('/api/arsip/:id', protectAdmin, async (req, res) => {
 
 
 // ==========================================
-// 5. GSC SITEMAP.XML FIX (DINAMIS 100%)
+// 5. GSC SITEMAP.XML FIX (DINAMIS 100%) & APP-ADS.TXT
 // ==========================================
 app.get('/sitemap.xml', async (req, res) => {
     try {
@@ -531,6 +531,10 @@ app.get('/robots.txt', (req, res) => {
     res.send(txt);
 });
 
+app.get(['/app-ads.txt', '/ads.txt'], (req, res) => {
+    res.set('Content-Type', 'text/plain; charset=utf-8');
+    res.send('google.com, pub-3213968627395082, DIRECT, f08c47fec0942fa0');
+});
 
 // ==========================================
 // 6. FOLDER PUBLIC & ROUTING HALAMAN VIEWS
