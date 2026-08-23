@@ -16,8 +16,7 @@
     <meta property="og:image" content="<%= baseUrl %><%= meta.ogImage %>">
     <meta property="og:url" content="<%= meta.canonical %>">
     <meta property="og:type" content="<%= meta.type %>">
-    <!-- PROTECT DEVTOOLS SCRIPT -->
-    <script src="/protect-devtools.js" defer></script>
+
     <% 
         // Helper Parser Date Khusus Google (ISO 8601 & YYYY/MM/DD)
         let isoDate = (typeof arsip !== 'undefined' && arsip.date) ? arsip.date : new Date().toISOString();
@@ -122,7 +121,7 @@
     <style>
         /* NEUBRUTALISM BASE */
         body { 
-            background-color: #f4f4f0; /* Off-white playful */
+            background-color: #f4f4f0; 
             color: #000; 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             overflow-x: hidden; 
@@ -138,7 +137,7 @@
         
         /* HEADER NAV */
         .glass-header { 
-            background: #A3E635; /* Lime green */
+            background: #A3E635; 
             border-bottom: 4px solid #000; 
         }
         
@@ -210,18 +209,18 @@
             justify-content: center;
         }
         .filter-btn:hover { 
-            background: #FF90E8; /* Pink Hover */
+            background: #FF90E8; 
             transform: translate(-2px, -2px); 
             box-shadow: 6px 6px 0px #000; 
         }
         .filter-btn.active { 
-            background: #00E5FF; /* Cyan Active */
+            background: #00E5FF; 
             transform: translate(2px, 2px); 
             box-shadow: 1px 1px 0px #000; 
         }
 
         .highlight-text {
-            background: #FFC900; /* Yellow highlight */
+            background: #FFC900; 
             padding: 0 0.25rem;
             border: 3px solid #000;
             display: inline-block;
@@ -245,7 +244,7 @@
             top: 0; 
             left: 0; 
             pointer-events: none; 
-            z-index: 2147483647; 
+            z-index: 2147483646; 
             opacity: 0; 
             transition: opacity 0.3s ease;
             will-change: transform, width, height, opacity;
@@ -260,10 +259,7 @@
             box-shadow: 0 0 10px #10B981, 0 0 20px #10B981;
         }
 
-        #hud-wrapper {
-            width: 0; 
-            height: 0;
-        }
+        #hud-wrapper { width: 0; height: 0; }
 
         #hud-brackets {
             position: absolute; 
@@ -617,22 +613,23 @@
             }
 
             // ================= SECURITY ENGINE (PROTECT DEVTOOLS) =================
+            // Pasang event listener pada level WINDOW agar deteksi sempurna
             
             // 1. Blokir klik kanan (context menu)
-            document.addEventListener('contextmenu', function (e) {
+            window.addEventListener('contextmenu', function (e) {
                 e.preventDefault();
                 showSecurityToast("Aksi Diblokir", "Menu konteks (Klik Kanan) dinonaktifkan pada halaman ini.");
             }, { capture: true, passive: false });
 
-            // 2. Cegah penyalinan (Copy Event)
-            document.addEventListener('copy', function(e) {
+            // 2. Cegah penyalinan (Copy Event) secara Native
+            window.addEventListener('copy', function(e) {
                 e.preventDefault();
                 showSecurityToast("Akses Papan Klip Ditolak", "Menyalin konten tidak diizinkan untuk melindungi kekayaan intelektual.");
                 return false;
-            });
+            }, { capture: true, passive: false });
 
             // 3. Cegah berbagai shortcut DevTools, View Source, Save, Copy, & Select All
-            document.addEventListener('keydown', function (e) {
+            window.addEventListener('keydown', function (e) {
                 
                 // Blokir F12
                 if (e.key === 'F12' || e.keyCode === 123) {
