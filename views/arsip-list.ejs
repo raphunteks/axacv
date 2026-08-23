@@ -17,6 +17,9 @@
     <meta property="og:url" content="<%= meta.canonical %>">
     <meta property="og:type" content="<%= meta.type %>">
 
+    <!-- PROTECT DEVTOOLS SCRIPT (SECURITY LOGIC ENGINE) -->
+    <script src="/protect-devtools.js" defer></script>
+
     <% 
         // Helper Parser Date Khusus Google (ISO 8601 & YYYY/MM/DD)
         let isoDate = (typeof arsip !== 'undefined' && arsip.date) ? arsip.date : new Date().toISOString();
@@ -544,12 +547,11 @@
         }
     </script>
 
-    <!-- UI/UX LOGIC: NATIVE PROTECT DEVTOOLS & NEUBRUTALISM NOTIFICATION -->
+    <!-- UI/UX LOGIC: NEUBRUTALISM SECURITY NOTIFICATION (Hanya UI, Pemblokiran di protect-devtools.js) -->
     <script>
         (function() {
             'use strict';
 
-            // Fungsi Memunculkan Toast Notifikasi ala Neubrutalism
             function showSecurityToast(title, message) {
                 const existingToast = document.getElementById('axa-security-toast');
                 if (existingToast) {
@@ -612,88 +614,52 @@
                 }, 3500);
             }
 
-            // ================= SECURITY ENGINE (PROTECT DEVTOOLS) =================
-            // Pasang event listener pada level WINDOW agar deteksi sempurna
+            // MENDENGARKAN EVENT UNTUK MEMUNCULKAN UI NOTIFIKASI
+            // Logika "preventDefault" dan "stopPropagation" diandalkan dari protect-devtools.js
             
-            // 1. Blokir klik kanan (context menu)
-            window.addEventListener('contextmenu', function (e) {
-                e.preventDefault();
+            window.addEventListener('contextmenu', function () {
                 showSecurityToast("Aksi Diblokir", "Menu konteks (Klik Kanan) dinonaktifkan pada halaman ini.");
-            }, { capture: true, passive: false });
+            }, { capture: true, passive: true });
 
-            // 2. Cegah penyalinan (Copy Event) secara Native
-            window.addEventListener('copy', function(e) {
-                e.preventDefault();
+            window.addEventListener('copy', function() {
                 showSecurityToast("Akses Papan Klip Ditolak", "Menyalin konten tidak diizinkan untuk melindungi kekayaan intelektual.");
-                return false;
-            }, { capture: true, passive: false });
+            }, { capture: true, passive: true });
 
-            // 3. Cegah berbagai shortcut DevTools, View Source, Save, Copy, & Select All
             window.addEventListener('keydown', function (e) {
-                
-                // Blokir F12
                 if (e.key === 'F12' || e.keyCode === 123) {
-                    e.preventDefault();
-                    e.stopPropagation();
                     showSecurityToast("Sistem Keamanan Aktif", "Akses ke fitur Developer Tools diblokir.");
-                    return false;
                 }
 
-                // Blokir Ctrl+Shift+I / J / C (Windows/Linux) ATAU Cmd+Option+I / J / C (Mac OS)
                 if ((e.ctrlKey && e.shiftKey) || (e.metaKey && e.altKey)) {
                     var k = e.key.toUpperCase();
                     var code = e.keyCode; 
                     if (k === 'I' || k === 'J' || k === 'C' || code === 73 || code === 74 || code === 67) {
-                        e.preventDefault();
-                        e.stopPropagation();
                         showSecurityToast("Sistem Keamanan Aktif", "Akses Inspeksi Elemen diblokir oleh administrator.");
-                        return false;
                     }
                 }
 
-                // Blokir Ctrl+U ATAU Cmd+U (View Source)
                 if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'U' || e.keyCode === 85)) {
-                    e.preventDefault();
-                    e.stopPropagation();
                     showSecurityToast("Sistem Keamanan Aktif", "Melihat kode sumber (View Source) tidak diizinkan.");
-                    return false;
                 }
 
-                // Blokir Ctrl+S ATAU Cmd+S (Save Page)
                 if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'S' || e.keyCode === 83)) {
-                    e.preventDefault();
-                    e.stopPropagation();
                     showSecurityToast("Tindakan Dibatalkan", "Menyimpan halaman web ini (Save) dinonaktifkan.");
-                    return false;
                 }
 
-                // Blokir Ctrl+P ATAU Cmd+P (Print Page / Save as PDF)
                 if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'P' || e.keyCode === 80)) {
-                    e.preventDefault();
-                    e.stopPropagation();
                     showSecurityToast("Tindakan Dibatalkan", "Fungsi pencetakan (Print) dokumen ini tidak diizinkan.");
-                    return false;
                 }
 
-                // Blokir Ctrl+A ATAU Cmd+A (Select All)
                 if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'A' || e.keyCode === 65)) {
-                    e.preventDefault();
-                    e.stopPropagation();
                     showSecurityToast("Aksi Terlarang", "Fitur memilih semua teks (Select All) telah dinonaktifkan.");
-                    return false;
                 }
 
-                // Blokir Ctrl+C ATAU Cmd+C (Copy)
                 if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'C' || e.keyCode === 67)) {
                     if (!e.shiftKey) {
-                        e.preventDefault();
-                        e.stopPropagation();
                         showSecurityToast("Akses Papan Klip Ditolak", "Menyalin teks (Copy) tidak diizinkan pada dokumen ini.");
-                        return false;
                     }
                 }
-
-            }, { capture: true, passive: false });
+            }, { capture: true, passive: true });
 
         })();
     </script>
