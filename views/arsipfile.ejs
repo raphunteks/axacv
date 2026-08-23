@@ -2,47 +2,51 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= meta.title %></title>
-    
-    <meta name="description" content="<%= meta.desc %>">
-    <link rel="canonical" href="<%= meta.canonical %>">
     
     <link rel="icon" type="image/png" href="/axalogo.png">
     <link rel="apple-touch-icon" href="/axalogo.png">
 
+    <meta name="description" content="<%= meta.desc %>">
+    <meta name="keywords" content="<%= meta.keywords %>">
+    <link rel="canonical" href="<%= meta.canonical %>">
+    
+    <!-- OPEN GRAPH STANDARD -->
+    <meta property="og:type" content="<%= meta.type %>">
+    <meta property="og:url" content="<%= meta.canonical %>">
     <meta property="og:title" content="<%= meta.title %>">
     <meta property="og:description" content="<%= meta.desc %>">
     <meta property="og:image" content="<%= baseUrl %><%= meta.ogImage %>">
-    <meta property="og:url" content="<%= meta.canonical %>">
-    <meta property="og:type" content="<%= meta.type %>">
 
     <!-- PROTECT DEVTOOLS SCRIPT -->
     <script src="/protect-devtools.js" defer></script>
 
     <% 
         // Helper Parser Date Khusus Google (ISO 8601 & YYYY/MM/DD)
-        let isoDate = (typeof arsip !== 'undefined' && arsip.date) ? arsip.date : new Date().toISOString();
-        let scholarDate = isoDate;
-        let displayDate = isoDate; 
+        let isoDate = arsip.date;
+        let scholarDate = arsip.date;
+        let displayDate = arsip.date; 
         
         if(isoDate && isoDate.match(/^\d{2}-\d{2}-\d{4}$/)) {
             const parts = isoDate.split('-');
             isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`; 
             scholarDate = `${parts[2]}/${parts[1]}/${parts[0]}`; 
-            displayDate = parts.join('-'); 
+            displayDate = arsip.date; 
         } else if (isoDate && isoDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
             const parts = isoDate.split('-');
             displayDate = `${parts[2]}-${parts[1]}-${parts[0]}`; 
             scholarDate = isoDate.replace(/-/g, '/');
         }
         
-        // 🌟 GSC JSON PROTECTOR
-        const safeTitle = (typeof arsip !== 'undefined' && arsip.title ? arsip.title : meta.title).replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
-        const safeDesc = (typeof arsip !== 'undefined' && arsip.desc ? arsip.desc : meta.desc).replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
-        const isFree = (typeof arsip !== 'undefined' && arsip.access_type === 'Open Access') ? 'true' : 'false';
+        // GSC JSON PROTECTOR: Menghapus karakter enter (\n) yang bisa memicu Googlebot Invalid Data JSON-LD
+        const safeTitle = (arsip.title || '').replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
+        const safeDesc = (arsip.desc || '').replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
+        const isFree = arsip.access_type === 'Open Access' ? 'true' : 'false';
 
-        // 🌟 HELPER SITELINKS SEO: Mem-parsing Artikel untuk Google Sitelinks
+        // 🌟 HELPER SITELINKS SEO: Mem-parsing Kategori Dinamis & Artikel Lain (Persiapan Upgrade SERVER.JS Nanti)
+        const slugify = (text) => text.toString().toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
         const jsonLdItems = typeof arsipData !== 'undefined' ? arsipData.slice(0, 15).map((item, index) => ({
             "@type": "ListItem",
             "position": index + 1,
@@ -50,14 +54,23 @@
             "name": item.title
         })) : [];
 
-        // 🌟 HELPER SITELINKS SEO: Mem-parsing Kategori Dinamis untuk Navigasi Google Sitelinks
         const sitelinkCategories = typeof categories !== 'undefined' ? categories.map((kat, index) => ({
             "@type": "SiteNavigationElement",
             "position": index + 1,
             "name": kat,
-            "url": `${baseUrl}/arsip/kategori/${createSlug(kat)}`
+            "url": `${baseUrl}/arsip/kategori/${slugify(kat)}`
         })) : [];
     %>
+
+    <!-- GOOGLE SCHOLAR & ACADEMIC SEO TAGS -->
+    <meta name="citation_title" content="<%- safeTitle %>">
+    <meta name="citation_author" content="drg. M. Aksa Arsyad, S.KG">
+    <% if (scholarDate) { %><meta name="citation_publication_date" content="<%= scholarDate %>"><% } %>
+    <meta name="citation_journal_title" content="Axa System Knowledge Base">
+    <meta name="citation_language" content="id">
+    <% if(arsip.access_type === 'Open Access') { %>
+    <meta name="citation_pdf_url" content="<%= baseUrl %>/arsip/file/<%= arsip.slug %>.pdf">
+    <% } %>
 
     <!-- JSON-LD STRUCTURED DATA (WITH SITELINKS GENERATOR) -->
     <script type="application/ld+json">
@@ -76,55 +89,51 @@
           }
         },
         {
-          "@type": "CollectionPage",
-          "@id": "<%= meta.canonical %>#webpage",
+          "@type": "ScholarlyArticle",
+          "@id": "<%= meta.canonical %>#article",
+          "headline": "<%- safeTitle %>",
+          "description": "<%- safeDesc %>",
           "url": "<%= meta.canonical %>",
-          "name": "<%= meta.title %>",
-          "description": "<%= meta.desc %>",
-          "inLanguage": "id-ID",
-          "publisher": {
-            "@type": "Person",
-            "name": "drg. M. Aksa Arsyad, S.KG",
-            "logo": {
-              "@type": "ImageObject",
-              "url": "<%= baseUrl %>/axalogo.png"
-            }
-          }
+          "datePublished": "<%= isoDate %>",
+          "author": { "@type": "Person", "name": "drg. M. Aksa Arsyad, S.KG" },
+          "publisher": { "@type": "Organization", "name": "Axa System Knowledge Base", "logo": { "@type": "ImageObject", "url": "<%= baseUrl %>/axalogo.png" } },
+          "isAccessibleForFree": <%= isFree %>
         },
         {
           "@type": "BreadcrumbList",
           "@id": "<%= meta.canonical %>#breadcrumb",
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "<%= baseUrl %>/" },
-            { "@type": "ListItem", "position": 2, "name": "Arsip Materi", "item": "<%= baseUrl %>/arsip" }
-            <% if (activeCategory !== 'semua') { %>
-            ,{ "@type": "ListItem", "position": 3, "name": "<%= activeCategory.replace(/-/g, ' ').toUpperCase() %>", "item": "<%= meta.canonical %>" }
-            <% } %>
+            { "@type": "ListItem", "position": 2, "name": "Arsip Materi", "item": "<%= baseUrl %>/arsip" },
+            { "@type": "ListItem", "position": 3, "name": "<%- safeTitle %>", "item": "<%= meta.canonical %>" }
           ]
-        },
+        }
+        <% if(sitelinkCategories.length > 0) { %>,
         {
           "@type": "ItemList",
           "name": "Daftar Kategori Navigasi (Sitelinks)",
           "itemListElement": <%- JSON.stringify(sitelinkCategories) %>
-        },
+        }
+        <% } %>
+        <% if(jsonLdItems.length > 0) { %>,
         {
           "@type": "ItemList",
-          "name": "Daftar Artikel Arsip",
+          "name": "Daftar Artikel Arsip Lainnya",
           "itemListElement": <%- JSON.stringify(jsonLdItems) %>
         }
+        <% } %>
       ]
     }
     </script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800;900&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800;900&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
         /* NEUBRUTALISM BASE */
         body { 
-            background-color: #f4f4f0; 
+            background-color: #f4f4f0; /* Off-white playful */
             color: #000; 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             overflow-x: hidden; 
@@ -135,100 +144,58 @@
         
         .font-display { font-family: 'Space Grotesk', sans-serif; }
 
+        /* CORE COMPONENTS */
         .brutal-border { border: 4px solid #000; }
         .brutal-shadow { box-shadow: 4px 4px 0px #000; transition: all 0.2s ease-in-out; }
+        .brutal-shadow-lg { box-shadow: 8px 8px 0px #000; transition: all 0.2s ease-in-out; }
         
-        /* HEADER NAV */
-        .glass-header { 
-            background: #A3E635; 
-            border-bottom: 4px solid #000; 
-        }
-        
-        /* CARD UI NEUBRUTALISM */
-        .card-neo { 
-            background: #fff; 
-            border: 4px solid #000; 
-            box-shadow: 8px 8px 0px #000;
-            transition: all 0.2s ease-in-out; 
-            border-radius: 0.75rem;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .card-neo:hover { 
-            transform: translate(-4px, -4px); 
-            box-shadow: 12px 12px 0px #000; 
-        }
-        .card-neo:nth-child(3n+1):hover { background-color: #E0E7FF; }
-        .card-neo:nth-child(3n+2):hover { background-color: #FEF9C3; }
-        .card-neo:nth-child(3n+3):hover { background-color: #FFEDD5; }
-
-        .brutal-badge { 
-            background: #fff; 
-            color: #000; 
-            font-size: 10px; 
-            font-weight: 900; 
-            padding: 4px 8px; 
-            border-radius: 4px; 
-            display: inline-flex; 
-            align-items: center; 
-            border: 2px solid #000; 
-            box-shadow: 2px 2px 0px #000;
+        .brutal-btn {
+            border: 4px solid #000;
+            box-shadow: 6px 6px 0px #000;
+            transition: all 0.15s ease-in-out;
+            font-family: 'Space Grotesk', sans-serif;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+        }
+        .brutal-btn:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px #000; }
+        .brutal-btn:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0px #000; }
+
+        .brutal-input {
+            border: 4px solid #000;
+            box-shadow: 4px 4px 0px #000;
+            transition: all 0.2s;
+        }
+        .brutal-input:focus {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000;
+            outline: none;
+            background-color: #E0E7FF;
         }
 
-        /* WATERMARK BESAR 'PDF' */
-        .watermark-pdf {
-            position: absolute; top: -15px; right: -15px;
-            font-size: 7rem; font-weight: 900; color: rgba(0, 0, 0, 0.03);
-            font-family: 'Space Grotesk', sans-serif; pointer-events: none;
-            z-index: 0; transform: rotate(-10deg);
-            transition: color 0.3s ease;
+        /* DOC WRAPPER (PDF VIEWER) */
+        .doc-wrapper { 
+            position: relative; width: 100%; height: 80vh; min-height: 600px; max-height: 950px; 
+            overflow: hidden; border-radius: 1rem; background: #fff; 
         }
-        .card-neo:hover .watermark-pdf { color: rgba(0, 0, 0, 0.08); }
-
-        /* FILTER BUTTONS DINAMIS */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .doc-object { width: 100%; height: 100%; border: none; background: transparent; transition: filter 0.3s; }
+        .blur-full { filter: blur(12px) grayscale(20%); pointer-events: none; user-select: none; }
         
-        .filter-btn {
-            background: #fff; 
-            border: 3px solid #000; 
-            box-shadow: 4px 4px 0px #000;
-            color: #000;
-            padding: 0.6rem 1.5rem; 
-            border-radius: 0.5rem; 
-            font-weight: 900; 
-            font-size: 0.8rem; 
-            text-transform: uppercase;
-            transition: all 0.15s ease; 
-            white-space: nowrap; 
-            flex-shrink: 0;
-            display: inline-flex; 
-            align-items: center; 
-            justify-content: center;
-        }
-        .filter-btn:hover { 
-            background: #FF90E8; 
-            transform: translate(-2px, -2px); 
-            box-shadow: 6px 6px 0px #000; 
-        }
-        .filter-btn.active { 
-            background: #00E5FF; 
-            transform: translate(2px, 2px); 
-            box-shadow: 1px 1px 0px #000; 
+        .overlay-center {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: rgba(244, 244, 240, 0.6); backdrop-filter: blur(5px);
+            z-index: 20; padding: 1.5rem;
         }
 
-        .highlight-text {
-            background: #FFC900; 
-            padding: 0 0.25rem;
-            border: 3px solid #000;
-            display: inline-block;
-            transform: rotate(-1deg);
-            box-shadow: 4px 4px 0px #000;
+        /* CUSTOM SCROLLBAR UNTUK MODAL */
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #fff; border-left: 2px solid #000; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #000; border: 2px solid #fff; }
+
+        /* Animasi PopIn */
+        .modal-enter { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn { 
+            0% { opacity: 0; transform: scale(0.8) translateY(20px); } 
+            100% { opacity: 1; transform: scale(1) translateY(0); } 
         }
 
         /* ==========================================
@@ -236,7 +203,7 @@
            ========================================== */
         @media (hover: hover) and (pointer: fine) {
             body, a, button, input, textarea, select, label, svg, img, 
-            .card-neo, .filter-btn { 
+            .brutal-btn, .doc-wrapper, .brutal-input { 
                 cursor: none !important; 
             }
             body * { cursor: none !important; }
@@ -256,7 +223,7 @@
         #hud-dot {
             width: 8px; 
             height: 8px;
-            background-color: #10B981; 
+            background-color: #10B981; /* Emerald Green */
             border-radius: 50%;
             margin: -4px 0 0 -4px;
             box-shadow: 0 0 10px #10B981, 0 0 20px #10B981;
@@ -285,140 +252,143 @@
         }
         
         .magnetic-active .hud-bracket {
-            border-color: #059669; 
+            border-color: #059669; /* Darker Emerald for active snap */
             opacity: 1;
         }
 
-        .hud-tl { top: 0; left: 0; border-width: 2px 0 0 2px; border-top-left-radius: 2px; }
-        .hud-tr { top: 0; right: 0; border-width: 2px 2px 0 0; border-top-right-radius: 2px; }
-        .hud-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; border-bottom-left-radius: 2px; }
-        .hud-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; border-bottom-right-radius: 2px; }
+        /* 4 Siku (Corner Brackets) - Normal Idle */
+        .hud-tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
+        .hud-tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+        .hud-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+        .hud-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
         
+        /* 4 Siku (Corner Brackets) - Magnetic Locked (Penebalan Garis Siku) */
         .magnetic-active .hud-tl { border-width: 4px 0 0 4px; }
         .magnetic-active .hud-tr { border-width: 4px 4px 0 0; }
         .magnetic-active .hud-bl { border-width: 0 0 4px 4px; }
         .magnetic-active .hud-br { border-width: 0 4px 4px 0; }
     </style>
 </head>
-<body class="antialiased selection:bg-[#FF90E8] selection:text-black relative">
-    
-    <!-- NAVBAR -->
-    <nav class="glass-header sticky top-0 z-50 w-full animate__animated animate__fadeInDown">
-        <div class="container mx-auto px-4 sm:px-6 py-3 md:py-4 flex justify-between items-center max-w-6xl">
-            <a href="/" class="text-sm md:text-base font-black font-display text-black hover:bg-black hover:text-white px-3 py-1.5 rounded transition-colors uppercase tracking-widest flex items-center gap-2 border-2 border-black bg-white shadow-[3px_3px_0px_#000] active:translate-y-1 active:shadow-none">
-                <i class="ph-bold ph-arrow-left text-lg"></i> Website
+<body class="antialiased selection:bg-[#FF90E8] selection:text-black">
+
+    <!-- NAVBAR NEUBRUTALISM -->
+    <nav class="bg-[#A3E635] brutal-border border-l-0 border-r-0 border-t-0 sticky top-0 z-50 w-full shadow-lg">
+        <div class="container mx-auto px-4 py-3 md:py-4 flex justify-between items-center max-w-5xl">
+            <a href="/arsip" class="text-sm md:text-base font-black text-black hover:bg-black hover:text-white px-4 py-2 rounded transition-colors uppercase tracking-widest font-mono flex items-center gap-2 brutal-border bg-white shadow-[3px_3px_0px_#000] active:translate-y-1 active:shadow-none">
+                <i class="ph-bold ph-arrow-left text-lg"></i> Direktori
             </a>
-            <span class="text-[10px] md:text-xs font-black font-mono text-black bg-white px-3 py-1.5 rounded border-2 border-black hidden sm:inline-block shadow-[3px_3px_0px_#000] tracking-widest uppercase">KNOWLEDGE BASE CORE</span>
+            
+            <div class="flex items-center gap-4">
+                <!-- Tampilan Default (Belum Login) -->
+                <div id="defaultNavRight" class="text-[10px] md:text-xs text-black font-black font-mono hidden sm:flex items-center gap-2 bg-white px-3 py-2 rounded brutal-border shadow-[3px_3px_0px_#000] uppercase">
+                    <i class="ph-fill ph-shield-check text-green-500 text-lg"></i> Secure Stream
+                </div>
+                
+                <!-- Tampilan User Profile & Tombol Logout (MUNCUL JIKA SUDAH LOGIN) -->
+                <div id="userProfileNav" class="hidden items-center gap-3">
+                    <span id="navUserName" class="text-[10px] md:text-xs font-black text-black font-mono tracking-widest bg-white px-3 py-2 rounded brutal-border shadow-[3px_3px_0px_#000] hidden sm:inline-block uppercase"></span>
+                    
+                    <button onclick="userLogout()" class="bg-[#FF90E8] text-black brutal-border hover:bg-red-500 hover:text-white px-3 py-2 rounded text-[10px] md:text-xs font-black uppercase tracking-widest transition-all flex items-center gap-1.5 shadow-[3px_3px_0px_#000] active:translate-y-1 active:shadow-none">
+                        <i class="ph-bold ph-power text-sm md:text-base"></i> Logout
+                    </button>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <main class="container mx-auto px-4 sm:px-6 py-10 md:py-16 max-w-6xl min-h-[80vh] relative z-10">
+    <main class="container mx-auto px-4 py-10 md:py-16 max-w-4xl min-h-screen">
         
-        <!-- HEADER TEXT -->
-        <header class="text-center mb-10 md:mb-16 px-2 animate__animated animate__fadeInUp">
-            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black font-display mb-6 md:mb-8 leading-tight tracking-tight text-black uppercase drop-shadow-[2px_2px_0px_#fff]">
-                Arsip <span class="highlight-text mt-2 md:mt-0">Materi & Jurnal</span>
-            </h1>
-            <p class="text-black bg-white brutal-border shadow-[4px_4px_0px_#000] inline-block p-4 max-w-2xl mx-auto text-sm md:text-base leading-relaxed font-bold">
-                Akses direktori catatan pembelajaran, materi preklinik, jurnal profesi dokter muda, dan publikasi penelitian berformat PDF interaktif.
-            </p>
-        </header>
-
-        <!-- KATEGORI FILTER DINAMIS (SEMANTIC NAV UNTUK SITELINKS) -->
-        <nav aria-label="Kategori Arsip" class="mb-10 md:mb-14 w-full animate__animated animate__fadeInUp animate__delay-1s border-b-4 border-black pb-8">
-            <ul class="flex overflow-x-auto gap-3 md:gap-4 pb-4 no-scrollbar justify-start md:justify-center px-1 items-center">
-                <li>
-                    <a href="/arsip" class="filter-btn <%= activeCategory === 'semua' ? 'active' : '' %>">
-                        Semua Dokumen
-                    </a>
-                </li>
-                
-                <% if(typeof categories !== 'undefined' && categories.length > 0) { %>
-                    <% categories.forEach(function(kat) { %>
-                        <% const slug = createSlug(kat); %>
-                        <li>
-                            <a href="/arsip/kategori/<%= slug %>" class="filter-btn <%= activeCategory === slug ? 'active' : '' %>">
-                                <%= kat %>
-                            </a>
-                        </li>
-                    <% }); %>
-                <% } %>
-            </ul>
-        </nav>
-
-        <!-- GRID KARTU ARSIP -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full">
-            <% if(typeof arsipData !== 'undefined' && arsipData.length > 0) { %>
-                <% arsipData.forEach((item, index) => { %>
-                    <% 
-                       let displayDate = item.date;
-                       if(displayDate && displayDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                           const parts = displayDate.split('-');
-                           displayDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
-                       }
-                    %>
-                    <a href="/arsip/<%= item.slug %>" class="card-neo outline-none focus-visible:ring-4 focus-visible:ring-black animate__animated animate__fadeInUp group" style="animation-delay: <%= (index % 10) * 0.1 %>s">
-                        
-                        <div class="watermark-pdf">PDF</div>
-
-                        <!-- Top Header Card -->
-                        <div class="flex justify-between items-start mb-4 gap-2 relative z-10 flex-wrap w-full border-b-2 border-black pb-4 p-6 bg-gray-50">
-                            <span class="text-[9px] font-black uppercase tracking-widest text-black bg-[#22D3EE] px-2.5 py-1 rounded-sm border-2 border-black shadow-[2px_2px_0px_#000] shrink-0">
-                                <%= item.category || 'TIDAK BERKATEGORI' %>
-                            </span>
-                            <span class="text-[10px] text-black font-bold font-mono flex items-center gap-1.5 shrink-0 bg-white px-2 py-1 border-2 border-black">
-                                <i class="ph-bold ph-calendar-blank text-sm"></i> <%= displayDate %>
-                            </span>
-                        </div>
-                        
-                        <!-- Judul dan Deskripsi -->
-                        <div class="relative z-10 flex-grow p-6 pt-2">
-                            <h2 class="text-xl md:text-2xl font-black font-display mb-3 text-black break-words whitespace-normal leading-snug w-full line-clamp-3 uppercase">
-                                <%= item.title %>
-                            </h2>
-                            <p class="text-sm text-gray-700 font-bold line-clamp-2 leading-relaxed break-words w-full">
-                                <%= item.desc %>
-                            </p>
-                        </div>
-                        
-                        <!-- Footer Card (Access Type) -->
-                        <div class="mt-auto relative z-10 border-t-4 border-black p-4 flex justify-between items-center w-full <%= item.access_type === 'Open Access' ? 'bg-[#A3E635]' : 'bg-[#FDE047]' %>">
-                            <% if(item.access_type === 'Open Access') { %>
-                                <div class="flex items-center gap-2">
-                                    <i class="ph-bold ph-check-circle text-black text-xl"></i>
-                                    <span class="text-xs font-black text-black uppercase tracking-wide">Open Access</span> 
-                                </div>
-                                <div class="bg-white p-1.5 border-2 border-black shadow-[2px_2px_0px_#000] rounded transition-transform group-hover:translate-x-1">
-                                    <i class="ph-bold ph-arrow-right text-black text-lg"></i>
-                                </div>
-                            <% } else { %>
-                                <div class="flex items-center gap-2">
-                                    <i class="ph-bold ph-lock-key text-black text-xl"></i>
-                                    <span class="text-xs font-black text-black uppercase tracking-wide">Restricted</span>
-                                </div>
-                                <div class="bg-white p-1.5 border-2 border-black shadow-[2px_2px_0px_#000] rounded transition-transform group-hover:translate-x-1">
-                                    <i class="ph-bold ph-arrow-right text-black text-lg"></i>
-                                </div>
-                            <% } %>
-                        </div>
-                    </a>
-                <% }) %>
-            <% } else { %>
-                <!-- Empty State -->
-                <div class="col-span-full text-center py-20 brutal-border bg-white shadow-[8px_8px_0px_#000] rounded-xl w-full px-4 animate__animated animate__fadeIn">
-                    <i class="ph-bold ph-folder-open text-6xl md:text-7xl text-black mb-5 block"></i>
-                    <h3 class="text-2xl md:text-4xl font-black font-display text-black mb-3 uppercase">Direktori Kosong</h3>
-                    <p class="text-black font-bold text-sm md:text-base bg-[#FDE047] inline-block px-4 py-2 border-2 border-black shadow-[2px_2px_0px_#000]">Belum ada materi atau jurnal yang diarsipkan dalam kategori ini.</p>
+        <article itemscope itemtype="http://schema.org/ScholarlyArticle">
+            <header class="mb-12 text-center">
+                <!-- Kategori Tag Neubrutalism -->
+                <div class="inline-block transform -rotate-2 mb-6">
+                    <span class="inline-flex items-center bg-[#22D3EE] px-4 py-1.5 text-xs md:text-sm font-black uppercase tracking-widest text-black brutal-border shadow-[4px_4px_0px_#000]">
+                        <i class="ph-bold ph-folder mr-2"></i> <span itemprop="articleSection"><%= arsip.category %></span>
+                    </span>
                 </div>
-            <% } %>
-        </div>
+                
+                <h1 itemprop="headline" class="text-3xl md:text-5xl lg:text-6xl font-black font-display mb-6 leading-[1.1] text-black uppercase drop-shadow-[2px_2px_0px_#fff]"><%= arsip.title %></h1>
+                
+                <p itemprop="description" class="text-gray-800 text-sm md:text-base font-bold max-w-2xl mx-auto leading-relaxed border-b-4 border-black pb-8"><%= arsip.desc %></p>
+                
+                <!-- Metadata Pills Neubrutalism -->
+                <div class="mt-8 flex justify-center items-center gap-3 md:gap-4 text-xs font-bold font-mono text-black flex-wrap">
+                    <span class="bg-white px-3 py-2 brutal-border shadow-[3px_3px_0px_#000] flex items-center gap-2 uppercase"><i class="ph-bold ph-file-pdf text-red-500 text-lg"></i> <%= arsip.file_name %></span>
+                    <span class="bg-white px-3 py-2 brutal-border shadow-[3px_3px_0px_#000] flex items-center gap-2 uppercase"><i class="ph-bold ph-calendar-blank text-lg"></i> <time itemprop="datePublished" datetime="<%= isoDate %>"><%= displayDate %></time></span>
+                    
+                    <% if(arsip.access_type === 'Open Access') { %>
+                        <span class="bg-[#4ADE80] px-3 py-2 brutal-border shadow-[3px_3px_0px_#000] flex items-center gap-2 uppercase"><i class="ph-bold ph-check-circle text-lg"></i> Open Access</span>
+                    <% } else { %>
+                        <span class="bg-[#FDE047] px-3 py-2 brutal-border shadow-[3px_3px_0px_#000] flex items-center gap-2 uppercase"><i class="ph-bold ph-lock-key text-lg"></i> Restricted</span>
+                    <% } %>
+                </div>
+            </header>
+
+            <!-- KOTAK PDF VIEWER NEUBRUTALISM -->
+            <div class="doc-wrapper brutal-border brutal-shadow-lg">
+                <% if(arsip.access_type === 'Restricted') { %>
+                    <!-- MODE 1: RESTRICTED (DIBLUR PENUH) -->
+                    <object data="/arsip/file/<%= arsip.slug %>.pdf#toolbar=0&navpanes=0&scrollbar=0" type="application/pdf" class="doc-object blur-full">
+                        <div class="flex flex-col items-center justify-center h-full bg-gray-100 text-black p-8 text-center"><i class="ph-fill ph-file-pdf text-6xl text-gray-400 mb-4"></i></div>
+                    </object>
+                    
+                    <!-- Overlay Gembok Tengah -->
+                    <div class="overlay-center">
+                        <div class="bg-[#FFC900] brutal-border p-6 md:p-10 text-center max-w-lg brutal-shadow-lg">
+                            <i class="ph-bold ph-lock-key text-5xl md:text-6xl text-black mb-4 block"></i>
+                            <h3 class="text-2xl md:text-3xl font-black font-display mb-3 text-black uppercase">Dokumen Terkunci</h3>
+                            <p class="text-sm md:text-base text-black font-bold mb-8 leading-relaxed">Keamanan aktif. Silakan verifikasi identitas Google Anda untuk membuka kunci dan mengunduh PDF secara utuh.</p>
+                            
+                            <!-- TOMBOL LOGIN GOOGLE & DOWNLOAD DINAMIS -->
+                            <button id="btnDownloadGated" onclick="handleSecureDownload()" class="brutal-btn bg-white w-full py-4 text-sm md:text-base flex justify-center items-center gap-3 font-black">
+                                <i id="downloadIcon" class="ph-bold ph-google-logo text-xl"></i> 
+                                <span id="downloadText">SIGN IN GOOGLE & DOWNLOAD</span>
+                            </button>
+                        </div>
+                    </div>
+
+                <% } else { %>
+                    <!-- MODE 2: OPEN ACCESS -->
+                    <object data="/arsip/file/<%= arsip.slug %>.pdf" type="application/pdf" class="doc-object">
+                        <div class="flex flex-col items-center justify-center h-full bg-white text-black p-8 text-center">
+                            <i class="ph-bold ph-file-pdf text-6xl text-red-500 mb-4"></i>
+                            <p class="font-bold mb-4">Pratinjau PDF Native tidak didukung browser Anda.</p>
+                            <a href="/arsip/file/<%= arsip.slug %>.pdf" class="bg-[#22D3EE] text-black brutal-border shadow-[4px_4px_0px_#000] px-6 py-2 font-black uppercase">Unduh Langsung</a>
+                        </div>
+                    </object>
+
+                    <!-- Floating Buka Native Endpoint (.pdf) -->
+                    <a href="/arsip/file/<%= arsip.slug %>.pdf" target="_blank" rel="noopener noreferrer" itemprop="url" class="absolute bottom-6 right-6 brutal-btn bg-[#A3E635] px-6 py-3.5 text-xs md:text-sm flex items-center gap-2 z-30 font-black">
+                        <i class="ph-bold ph-arrow-square-out text-lg"></i> BUKA FULL PDF
+                    </a>
+                <% } %>
+            </div>
+        </article>
     </main>
 
-    <footer class="border-t-4 border-black bg-[#FF90E8] text-center py-8 mt-10 text-black font-black font-mono text-[10px] md:text-xs w-full px-4 relative z-10 uppercase tracking-widest">
-        &copy; 2026 drg. M. Aksa Arsyad, S.KG. | ARCHIVED DIGITAL
-    </footer>
+    <!-- MODAL FORM IDENTITAS DINAMIS NEUBRUTALISM -->
+    <div id="userDataModal" class="fixed inset-0 z-[9999] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-[#22D3EE] brutal-border p-6 md:p-8 max-w-md w-full brutal-shadow-lg modal-enter max-h-[90vh] overflow-y-auto custom-scrollbar">
+            
+            <div class="flex justify-between items-start mb-2 border-b-4 border-black pb-3">
+                <h3 class="text-3xl font-black font-display text-black uppercase">Profil Akses</h3>
+                <i class="ph-fill ph-identification-card text-4xl text-black"></i>
+            </div>
+            
+            <p class="text-black text-sm font-bold mb-6 mt-4 leading-relaxed bg-white p-2 brutal-border shadow-[2px_2px_0px_#000]">Sistem mewajibkan kelengkapan data. Isi form ini <b>satu kali saja</b> untuk bebas akses seluruh dokumen.</p>
 
-    <!-- HUD CURSOR CONTAINER (CHIEF MASTER UI/UX) -->
+            <form id="formUserData" onsubmit="submitUserData(event)" class="space-y-4">
+                <!-- Form Inputs yang Diinject secara Dinamis oleh JS -->
+                <div id="dynamicFormContainer" class="space-y-4"></div>
+
+                <button type="submit" id="btnSaveData" class="brutal-btn bg-[#FF90E8] w-full py-4 text-sm md:text-base flex justify-center items-center gap-2 mt-6 font-black">
+                    <i class="ph-bold ph-floppy-disk text-xl"></i> SIMPAN & UNDUH PDF
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- HUD CURSOR CONTAINER -->
     <div id="hud-wrapper">
         <div id="hud-brackets">
             <div class="hud-bracket hud-tl"></div>
@@ -429,6 +399,244 @@
     </div>
     <div id="hud-dot"></div>
 
+    <!-- SCRIPT SUPABASE UNTUK GOOGLE AUTH, TRACKING DOWNLOAD & DYNAMIC FORM -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Menerima Object Setting Form Dinamis dari Backend SERVER.JS
+        window.FORM_SETTINGS = <%- JSON.stringify(typeof requireForm !== 'undefined' ? requireForm : { requireForm: true, fields: [{id:'nama_lengkap', label:'Nama Lengkap'}, {id:'institusi_asal', label:'Asal Institusi'}] }) %>;
+
+        const SUPABASE_URL = "<%= typeof supabaseUrl !== 'undefined' ? supabaseUrl : '' %>"; 
+        const SUPABASE_ANON_KEY = "<%= typeof supabaseAnonKey !== 'undefined' ? supabaseAnonKey : '' %>"; 
+        
+        let supabaseClient = null;
+        if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // FUNGSI LOGOUT USER
+        async function userLogout() {
+            if(supabaseClient) await supabaseClient.auth.signOut();
+            window.location.reload();
+        }
+
+        // FUNGSI TRACKING UNDUHAN KE BACKEND 
+        async function trackDownloadToBackend() {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if(!session) return;
+                
+                await fetch('/api/track-download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`
+                    },
+                    body: JSON.stringify({ fileTitle: "<%= arsip.title %>" })
+                });
+            } catch (error) {
+                console.error("Gagal melacak unduhan ke backend:", error);
+            }
+        }
+
+        // FUNGSI UTAMA TOMBOL KLIK
+        async function handleSecureDownload() {
+            if (!supabaseClient) return alert("Sistem Autentikasi tidak terhubung ke server.");
+
+            const btn = document.getElementById('btnDownloadGated');
+            const dIcon = document.getElementById('downloadIcon');
+            const dText = document.getElementById('downloadText');
+
+            dIcon.className = "ph-bold ph-spinner-gap animate-spin text-xl";
+            dText.innerText = "MEMERIKSA AKSES...";
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                // BELUM LOGIN -> Buka Google Sign In
+                const redirectUrl = "<%= baseUrl %>/arsip/<%= arsip.slug %>";
+                const { error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: { redirectTo: redirectUrl }
+                });
+                
+                if (error) {
+                    alert("Gagal memanggil Google Login: " + error.message);
+                    dIcon.className = "ph-bold ph-google-logo text-xl";
+                    dText.innerText = "SIGN IN GOOGLE & DOWNLOAD";
+                }
+            } else {
+                // SUDAH LOGIN -> Cek Form kelengkapan data (Dinamis)
+                checkUserMetadataAndProceed(session.user);
+            }
+        }
+
+        // FUNGSI RENDER FORM DINAMIS (Berdasarkan Dashboard Admin)
+        function renderDynamicForm(userMeta) {
+            const container = document.getElementById('dynamicFormContainer');
+            const fields = window.FORM_SETTINGS.fields || [];
+            
+            if (fields.length === 0) {
+                container.innerHTML = `<p class="text-xs text-black font-mono font-bold bg-white p-2 brutal-border">Tidak ada data tambahan yang diminta oleh admin.</p>`;
+                return;
+            }
+
+            container.innerHTML = fields.map(f => {
+                let val = userMeta[f.id] || '';
+                // Helper pintar: Jika field "nama_lengkap", otomatis sedot dari Google Akun jika val masih kosong
+                if (f.id === 'nama_lengkap' && !val && userMeta.full_name) val = userMeta.full_name;
+                
+                return `
+                <div>
+                    <label class="text-xs text-black font-black uppercase tracking-widest mb-1 block">${f.label}</label>
+                    <input type="text" id="field_${f.id}" value="${val}" required class="w-full brutal-input bg-white px-4 py-3 text-sm font-bold text-black placeholder-gray-500">
+                </div>
+                `;
+            }).join('');
+        }
+
+        // FUNGSI CEK DATA LENGKAP SECARA DINAMIS
+        function isProfileComplete(meta) {
+            if (!window.FORM_SETTINGS.requireForm) return true; // Form dinonaktifkan Admin
+            const fields = window.FORM_SETTINGS.fields || [];
+            for (let f of fields) {
+                if (!meta[f.id]) return false; // Ada satu saja field yang kosong, return false
+            }
+            return true;
+        }
+
+        async function checkUserMetadataAndProceed(user) {
+            const btn = document.getElementById('btnDownloadGated');
+            const dIcon = document.getElementById('downloadIcon');
+            const dText = document.getElementById('downloadText');
+            const meta = user.user_metadata || {};
+            
+            if (!isProfileComplete(meta)) {
+                // Data belum lengkap: Render Form & Munculkan Modal
+                renderDynamicForm(meta);
+                document.getElementById('userDataModal').classList.remove('hidden');
+                
+                // Kembalikan status tombol
+                dIcon.className = "ph-bold ph-user-circle-plus text-xl";
+                dText.innerText = "LENGKAPI DATA PROFIL";
+            } else {
+                // Data sudah lengkap -> Eksekusi Download
+                executeDownloadFile(btn, dIcon, dText);
+            }
+        }
+
+        // FUNGSI SUBMIT FORM IDENTITAS DINAMIS
+        async function submitUserData(event) {
+            event.preventDefault();
+            const btnSave = document.getElementById('btnSaveData');
+            const oriText = btnSave.innerHTML;
+            btnSave.innerHTML = '<i class="ph-bold ph-spinner-gap animate-spin text-xl"></i> MENYIMPAN...';
+            btnSave.disabled = true;
+
+            const updateData = {};
+            const fields = window.FORM_SETTINGS.fields || [];
+            
+            // Collect semua value dari input dinamis
+            fields.forEach(f => {
+                const inputEl = document.getElementById(`field_${f.id}`);
+                if (inputEl) updateData[f.id] = inputEl.value.trim();
+            });
+
+            try {
+                // Menyimpan data tambahan ke dalam Metadata Profil user di Supabase
+                const { data, error } = await supabaseClient.auth.updateUser({
+                    data: updateData
+                });
+
+                if (error) throw error;
+
+                // Sembunyikan Modal
+                document.getElementById('userDataModal').classList.add('hidden');
+                
+                // Langsung Trigger Download
+                const btn = document.getElementById('btnDownloadGated');
+                const dIcon = document.getElementById('downloadIcon');
+                const dText = document.getElementById('downloadText');
+                executeDownloadFile(btn, dIcon, dText);
+
+            } catch (err) {
+                alert("Gagal menyimpan data: " + err.message);
+            } finally {
+                btnSave.innerHTML = oriText;
+                btnSave.disabled = false;
+            }
+        }
+
+        // FUNGSI INTI DOWNLOAD PDF NATIVE & TRACKING
+        async function executeDownloadFile(btn, dIcon, dText) {
+            dIcon.className = "ph-bold ph-download-simple text-xl";
+            dText.innerText = "DOWNLOADING...";
+            
+            // Catat Ke Server (Background Process)
+            await trackDownloadToBackend();
+            
+            // Eksekusi Download Programmatic
+            const link = document.createElement('a');
+            link.href = "/arsip/file/<%= arsip.slug %>.pdf";
+            link.download = "<%= arsip.file_name %>";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            setTimeout(() => {
+                dText.innerText = "UNDUHAN SELESAI (VERIFIED)";
+                btn.classList.remove('bg-white');
+                btn.classList.add('bg-[#A3E635]'); // Green Success Neubrutalism
+            }, 1000);
+        }
+
+        // AUTO-CHECK SAAT HALAMAN SELESAI DIMUAT
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (!supabaseClient) return;
+            
+            // Cek hash token di URL (menandakan baru saja redirect dari Google/Supabase)
+            if (window.location.hash.includes('access_token')) {
+                history.replaceState(null, null, window.location.pathname);
+            }
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            const btn = document.getElementById('btnDownloadGated');
+            
+            if (session) {
+                const meta = session.user.user_metadata || {};
+
+                // --- LOGIC FORCE LOGOUT DARI ADMIN ---
+                if (meta.is_logged_out === true) {
+                    await supabaseClient.auth.signOut();
+                    alert("Sesi akses Anda telah diputuskan oleh Sistem Administrator. Silakan login kembali jika diperlukan.");
+                    window.location.reload();
+                    return; // Hentikan eksekusi script selanjutnya
+                }
+                
+                // 1. SETUP NAVBAR (Tampilkan Nama User & Logout Button)
+                const displayName = meta.nama_lengkap || meta.full_name || session.user.email;
+                document.getElementById('defaultNavRight').classList.add('hidden');
+                document.getElementById('defaultNavRight').classList.remove('sm:flex');
+                
+                document.getElementById('navUserName').innerText = `👋 HAI, ${displayName.split(' ')[0].toUpperCase()}`;
+                document.getElementById('userProfileNav').classList.remove('hidden');
+                document.getElementById('userProfileNav').classList.add('flex');
+
+                // 2. SETUP TOMBOL DOWNLOAD JIKA ADA
+                if (btn) {
+                    const formComplete = isProfileComplete(meta);
+
+                    document.getElementById('downloadIcon').className = formComplete ? "ph-bold ph-check-circle text-xl" : "ph-bold ph-warning-circle text-xl";
+                    document.getElementById('downloadText').innerText = formComplete ? "DOWNLOAD PDF (AKSES VALID)" : "LENGKAPI PROFIL & DOWNLOAD";
+                    
+                    if(formComplete) {
+                        btn.classList.remove('bg-white');
+                        btn.classList.add('bg-[#A3E635]');
+                    }
+                }
+            }
+        });
+    </script>
+
     <!-- UI/UX LOGIC: SPLIT MAGNETIC HUD CURSOR -->
     <script>
         if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
@@ -436,7 +644,8 @@
             const hudBrackets = document.getElementById('hud-brackets');
             const hudDot = document.getElementById('hud-dot');
 
-            const magneticSelector = '.card-neo, .filter-btn, a, button, input, textarea, select, label';
+            // Elemen target untuk dikunci (sesuai gaya Neubrutalism)
+            const magneticSelector = '.doc-wrapper, .brutal-btn, .brutal-input, .overlay-center > div, .bg-white.p-2, a, button';
 
             let mouseX = window.innerWidth / 2;
             let mouseY = window.innerHeight / 2;
@@ -450,6 +659,7 @@
             let hoveredEl = null;
             let hasMoved = false;
 
+            // Tracking pergerakan mouse
             window.addEventListener('mousemove', (e) => {
                 mouseX = e.clientX;
                 mouseY = e.clientY;
@@ -462,9 +672,11 @@
                 }
             }, { passive: true });
 
+            // Efek mekanikal saat diklik
             window.addEventListener('mousedown', () => { if(hasMoved) scale = 0.85; }, { passive: true });
             window.addEventListener('mouseup', () => { if(hasMoved) scale = 1; }, { passive: true });
 
+            // Sembunyikan cursor bila keluar dari jendela browser
             document.addEventListener('mouseleave', () => {
                 hudWrapper.style.opacity = '0';
                 hudDot.style.opacity = '0';
@@ -476,6 +688,7 @@
                 }
             });
 
+            // Event Delegation untuk mendeteksi elemen
             document.addEventListener('mouseover', (e) => {
                 const target = e.target.closest(magneticSelector);
                 if (target) {
@@ -498,8 +711,10 @@
                 }
             }, { passive: true });
 
+            // Engine Animasi Berbasis GPU (requestAnimationFrame)
             const renderHUD = () => {
                 if (hasMoved) {
+                    // 1. FREE TRACKING INNER DOT
                     dotX += (mouseX - dotX) * 0.35;
                     dotY += (mouseY - dotY) * 0.35;
                     hudDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0)`;
@@ -511,12 +726,14 @@
                     let isMagnetic = false;
 
                     if (isHovering && hoveredEl && hoveredEl.isConnected) {
+                        // 2. MAGNETIC BOUNDING BOX LOCK
                         const rect = hoveredEl.getBoundingClientRect();
                         targetBx = rect.left + rect.width / 2;
                         targetBy = rect.top + rect.height / 2;
-                        targetBw = rect.width + 12; 
+                        targetBw = rect.width + 12; // Padding Bracket mengunci box
                         targetBh = rect.height + 12;
                         
+                        // 3. LOCK ROTASI KE 0 DERAJAT (Rotasi Smooth)
                         rot = rot % 360;
                         if (rot > 180) rot -= 360;
                         if (rot < -180) rot += 360;
@@ -525,6 +742,7 @@
                         hudWrapper.classList.add('magnetic-active');
                         isMagnetic = true;
                     } else {
+                        // 4. ROTATING IDLE STATE (Berputar ketika tidak memegang elemen)
                         rot += 1.5; 
                         hudWrapper.classList.remove('magnetic-active');
                     }
@@ -533,6 +751,7 @@
                         scale += (1 - scale) * 0.2; 
                     }
 
+                    // 5. ANIMASI INTERPOLASI (LERP) HALUS
                     const lerpFactor = isMagnetic ? 0.3 : 0.15;
                     bx += (targetBx - bx) * lerpFactor;
                     by += (targetBy - by) * lerpFactor;
