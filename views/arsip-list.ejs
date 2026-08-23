@@ -16,7 +16,8 @@
     <meta property="og:image" content="<%= baseUrl %><%= meta.ogImage %>">
     <meta property="og:url" content="<%= meta.canonical %>">
     <meta property="og:type" content="<%= meta.type %>">
-
+    <!-- PROTECT DEVTOOLS SCRIPT -->
+    <script src="/protect-devtools.js" defer></script>
     <% 
         // Helper Parser Date Khusus Google (ISO 8601 & YYYY/MM/DD)
         let isoDate = (typeof arsip !== 'undefined' && arsip.date) ? arsip.date : new Date().toISOString();
