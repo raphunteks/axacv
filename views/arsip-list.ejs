@@ -17,9 +17,6 @@
     <meta property="og:url" content="<%= meta.canonical %>">
     <meta property="og:type" content="<%= meta.type %>">
 
-    <!-- PROTECT DEVTOOLS SCRIPT -->
-    <script src="/protect-devtools.js" defer></script>
-
     <% 
         // Helper Parser Date Khusus Google (ISO 8601 & YYYY/MM/DD)
         let isoDate = (typeof arsip !== 'undefined' && arsip.date) ? arsip.date : new Date().toISOString();
@@ -161,7 +158,6 @@
             transform: translate(-4px, -4px); 
             box-shadow: 12px 12px 0px #000; 
         }
-        /* Rotasi warna hover kartu secara acak (opsional) */
         .card-neo:nth-child(3n+1):hover { background-color: #E0E7FF; }
         .card-neo:nth-child(3n+2):hover { background-color: #FEF9C3; }
         .card-neo:nth-child(3n+3):hover { background-color: #FFEDD5; }
@@ -248,7 +244,7 @@
             top: 0; 
             left: 0; 
             pointer-events: none; 
-            z-index: 2147483647; /* Berada di lapisan tertinggi melebihi apa pun */
+            z-index: 2147483647; 
             opacity: 0; 
             transition: opacity 0.3s ease;
             will-change: transform, width, height, opacity;
@@ -257,7 +253,7 @@
         #hud-dot {
             width: 8px; 
             height: 8px;
-            background-color: #10B981; /* Emerald Green */
+            background-color: #10B981; 
             border-radius: 50%;
             margin: -4px 0 0 -4px;
             box-shadow: 0 0 10px #10B981, 0 0 20px #10B981;
@@ -286,17 +282,15 @@
         }
         
         .magnetic-active .hud-bracket {
-            border-color: #059669; /* Darker Emerald for active snap */
+            border-color: #059669;
             opacity: 1;
         }
 
-        /* 4 Siku (Corner Brackets) - Normal Idle */
         .hud-tl { top: 0; left: 0; border-width: 2px 0 0 2px; border-top-left-radius: 2px; }
         .hud-tr { top: 0; right: 0; border-width: 2px 2px 0 0; border-top-right-radius: 2px; }
         .hud-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; border-bottom-left-radius: 2px; }
         .hud-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; border-bottom-right-radius: 2px; }
         
-        /* 4 Siku (Corner Brackets) - Magnetic Locked (Penebalan Garis Siku) */
         .magnetic-active .hud-tl { border-width: 4px 0 0 4px; }
         .magnetic-active .hud-tr { border-width: 4px 4px 0 0; }
         .magnetic-active .hud-bl { border-width: 0 0 4px 4px; }
@@ -439,7 +433,6 @@
             const hudBrackets = document.getElementById('hud-brackets');
             const hudDot = document.getElementById('hud-dot');
 
-            // Elemen target untuk dikunci (sesuai gaya Neubrutalism arsip-list)
             const magneticSelector = '.card-neo, .filter-btn, a, button, input, textarea, select, label';
 
             let mouseX = window.innerWidth / 2;
@@ -454,7 +447,6 @@
             let hoveredEl = null;
             let hasMoved = false;
 
-            // Tracking pergerakan mouse
             window.addEventListener('mousemove', (e) => {
                 mouseX = e.clientX;
                 mouseY = e.clientY;
@@ -467,11 +459,9 @@
                 }
             }, { passive: true });
 
-            // Efek mekanikal saat diklik
             window.addEventListener('mousedown', () => { if(hasMoved) scale = 0.85; }, { passive: true });
             window.addEventListener('mouseup', () => { if(hasMoved) scale = 1; }, { passive: true });
 
-            // Sembunyikan cursor bila keluar dari jendela browser
             document.addEventListener('mouseleave', () => {
                 hudWrapper.style.opacity = '0';
                 hudDot.style.opacity = '0';
@@ -483,7 +473,6 @@
                 }
             });
 
-            // Event Delegation untuk mendeteksi elemen
             document.addEventListener('mouseover', (e) => {
                 const target = e.target.closest(magneticSelector);
                 if (target) {
@@ -506,10 +495,8 @@
                 }
             }, { passive: true });
 
-            // Engine Animasi Berbasis GPU (requestAnimationFrame)
             const renderHUD = () => {
                 if (hasMoved) {
-                    // 1. FREE TRACKING INNER DOT
                     dotX += (mouseX - dotX) * 0.35;
                     dotY += (mouseY - dotY) * 0.35;
                     hudDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0)`;
@@ -521,14 +508,12 @@
                     let isMagnetic = false;
 
                     if (isHovering && hoveredEl && hoveredEl.isConnected) {
-                        // 2. MAGNETIC BOUNDING BOX LOCK
                         const rect = hoveredEl.getBoundingClientRect();
                         targetBx = rect.left + rect.width / 2;
                         targetBy = rect.top + rect.height / 2;
-                        targetBw = rect.width + 12; // Padding Bracket mengunci box
+                        targetBw = rect.width + 12; 
                         targetBh = rect.height + 12;
                         
-                        // 3. LOCK ROTASI KE 0 DERAJAT (Rotasi Smooth)
                         rot = rot % 360;
                         if (rot > 180) rot -= 360;
                         if (rot < -180) rot += 360;
@@ -537,7 +522,6 @@
                         hudWrapper.classList.add('magnetic-active');
                         isMagnetic = true;
                     } else {
-                        // 4. ROTATING IDLE STATE (Berputar ketika tidak memegang elemen)
                         rot += 1.5; 
                         hudWrapper.classList.remove('magnetic-active');
                     }
@@ -546,7 +530,6 @@
                         scale += (1 - scale) * 0.2; 
                     }
 
-                    // 5. ANIMASI INTERPOLASI (LERP) HALUS
                     const lerpFactor = isMagnetic ? 0.3 : 0.15;
                     bx += (targetBx - bx) * lerpFactor;
                     by += (targetBy - by) * lerpFactor;
@@ -562,6 +545,159 @@
             };
             requestAnimationFrame(renderHUD);
         }
+    </script>
+
+    <!-- UI/UX LOGIC: NATIVE PROTECT DEVTOOLS & NEUBRUTALISM NOTIFICATION -->
+    <script>
+        (function() {
+            'use strict';
+
+            // Fungsi Memunculkan Toast Notifikasi ala Neubrutalism
+            function showSecurityToast(title, message) {
+                const existingToast = document.getElementById('axa-security-toast');
+                if (existingToast) {
+                    existingToast.remove();
+                }
+
+                const toast = document.createElement('div');
+                toast.id = 'axa-security-toast';
+                
+                toast.style.cssText = `
+                    position: fixed;
+                    bottom: 24px;
+                    right: 24px;
+                    background-color: #FFC900; 
+                    color: #000;
+                    padding: 16px 20px;
+                    border: 4px solid #000;
+                    box-shadow: 6px 6px 0px #000;
+                    font-family: 'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif;
+                    z-index: 2147483647;
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                    opacity: 0;
+                    transform: translateY(50px);
+                    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    pointer-events: none;
+                    max-width: 380px;
+                `;
+
+                toast.innerHTML = `
+                    <div style="background: #fff; padding: 8px; border: 3px solid #000; box-shadow: 3px 3px 0px #000; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                        <svg style="width: 24px; height: 24px; color: #000;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <span style="display: block; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 4px;">
+                            ${title}
+                        </span>
+                        <span style="display: block; font-size: 12px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.4;">
+                            ${message}
+                        </span>
+                    </div>
+                `;
+
+                document.body.appendChild(toast);
+
+                requestAnimationFrame(() => {
+                    toast.style.opacity = '1';
+                    toast.style.transform = 'translateY(0)';
+                });
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(50px)';
+                    setTimeout(() => {
+                        if (toast.parentNode) toast.remove();
+                    }, 300);
+                }, 3500);
+            }
+
+            // ================= SECURITY ENGINE (PROTECT DEVTOOLS) =================
+            
+            // 1. Blokir klik kanan (context menu)
+            document.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+                showSecurityToast("Aksi Diblokir", "Menu konteks (Klik Kanan) dinonaktifkan pada halaman ini.");
+            }, { capture: true, passive: false });
+
+            // 2. Cegah penyalinan (Copy Event)
+            document.addEventListener('copy', function(e) {
+                e.preventDefault();
+                showSecurityToast("Akses Papan Klip Ditolak", "Menyalin konten tidak diizinkan untuk melindungi kekayaan intelektual.");
+                return false;
+            });
+
+            // 3. Cegah berbagai shortcut DevTools, View Source, Save, Copy, & Select All
+            document.addEventListener('keydown', function (e) {
+                
+                // Blokir F12
+                if (e.key === 'F12' || e.keyCode === 123) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showSecurityToast("Sistem Keamanan Aktif", "Akses ke fitur Developer Tools diblokir.");
+                    return false;
+                }
+
+                // Blokir Ctrl+Shift+I / J / C (Windows/Linux) ATAU Cmd+Option+I / J / C (Mac OS)
+                if ((e.ctrlKey && e.shiftKey) || (e.metaKey && e.altKey)) {
+                    var k = e.key.toUpperCase();
+                    var code = e.keyCode; 
+                    if (k === 'I' || k === 'J' || k === 'C' || code === 73 || code === 74 || code === 67) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showSecurityToast("Sistem Keamanan Aktif", "Akses Inspeksi Elemen diblokir oleh administrator.");
+                        return false;
+                    }
+                }
+
+                // Blokir Ctrl+U ATAU Cmd+U (View Source)
+                if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'U' || e.keyCode === 85)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showSecurityToast("Sistem Keamanan Aktif", "Melihat kode sumber (View Source) tidak diizinkan.");
+                    return false;
+                }
+
+                // Blokir Ctrl+S ATAU Cmd+S (Save Page)
+                if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'S' || e.keyCode === 83)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showSecurityToast("Tindakan Dibatalkan", "Menyimpan halaman web ini (Save) dinonaktifkan.");
+                    return false;
+                }
+
+                // Blokir Ctrl+P ATAU Cmd+P (Print Page / Save as PDF)
+                if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'P' || e.keyCode === 80)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showSecurityToast("Tindakan Dibatalkan", "Fungsi pencetakan (Print) dokumen ini tidak diizinkan.");
+                    return false;
+                }
+
+                // Blokir Ctrl+A ATAU Cmd+A (Select All)
+                if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'A' || e.keyCode === 65)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showSecurityToast("Aksi Terlarang", "Fitur memilih semua teks (Select All) telah dinonaktifkan.");
+                    return false;
+                }
+
+                // Blokir Ctrl+C ATAU Cmd+C (Copy)
+                if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'C' || e.keyCode === 67)) {
+                    if (!e.shiftKey) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showSecurityToast("Akses Papan Klip Ditolak", "Menyalin teks (Copy) tidak diizinkan pada dokumen ini.");
+                        return false;
+                    }
+                }
+
+            }, { capture: true, passive: false });
+
+        })();
     </script>
 </body>
 </html>
