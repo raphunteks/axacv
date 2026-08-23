@@ -17,6 +17,9 @@
     <meta property="og:url" content="<%= meta.canonical %>">
     <meta property="og:type" content="<%= meta.type %>">
 
+    <!-- PROTECT DEVTOOLS SCRIPT -->
+    <script src="/protect-devtools.js" defer></script>
+
     <% 
         // Helper Parser Date Khusus Google (ISO 8601 & YYYY/MM/DD)
         let isoDate = (typeof arsip !== 'undefined' && arsip.date) ? arsip.date : new Date().toISOString();
@@ -244,7 +247,7 @@
             top: 0; 
             left: 0; 
             pointer-events: none; 
-            z-index: 2147483646; 
+            z-index: 2147483647; 
             opacity: 0; 
             transition: opacity 0.3s ease;
             will-change: transform, width, height, opacity;
@@ -259,7 +262,10 @@
             box-shadow: 0 0 10px #10B981, 0 0 20px #10B981;
         }
 
-        #hud-wrapper { width: 0; height: 0; }
+        #hud-wrapper {
+            width: 0; 
+            height: 0;
+        }
 
         #hud-brackets {
             position: absolute; 
@@ -279,7 +285,7 @@
         }
         
         .magnetic-active .hud-bracket {
-            border-color: #059669;
+            border-color: #059669; 
             opacity: 1;
         }
 
@@ -542,160 +548,6 @@
             };
             requestAnimationFrame(renderHUD);
         }
-    </script>
-
-    <!-- UI/UX LOGIC: NATIVE PROTECT DEVTOOLS & NEUBRUTALISM NOTIFICATION -->
-    <script>
-        (function() {
-            'use strict';
-
-            // Fungsi Memunculkan Toast Notifikasi ala Neubrutalism
-            function showSecurityToast(title, message) {
-                const existingToast = document.getElementById('axa-security-toast');
-                if (existingToast) {
-                    existingToast.remove();
-                }
-
-                const toast = document.createElement('div');
-                toast.id = 'axa-security-toast';
-                
-                toast.style.cssText = `
-                    position: fixed;
-                    bottom: 24px;
-                    right: 24px;
-                    background-color: #FFC900; 
-                    color: #000;
-                    padding: 16px 20px;
-                    border: 4px solid #000;
-                    box-shadow: 6px 6px 0px #000;
-                    font-family: 'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif;
-                    z-index: 2147483647;
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-                    opacity: 0;
-                    transform: translateY(50px);
-                    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                    pointer-events: none;
-                    max-width: 380px;
-                `;
-
-                toast.innerHTML = `
-                    <div style="background: #fff; padding: 8px; border: 3px solid #000; box-shadow: 3px 3px 0px #000; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
-                        <svg style="width: 24px; height: 24px; color: #000;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <span style="display: block; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 4px;">
-                            ${title}
-                        </span>
-                        <span style="display: block; font-size: 12px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.4;">
-                            ${message}
-                        </span>
-                    </div>
-                `;
-
-                document.body.appendChild(toast);
-
-                requestAnimationFrame(() => {
-                    toast.style.opacity = '1';
-                    toast.style.transform = 'translateY(0)';
-                });
-
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateY(50px)';
-                    setTimeout(() => {
-                        if (toast.parentNode) toast.remove();
-                    }, 300);
-                }, 3500);
-            }
-
-            // ================= SECURITY ENGINE (PROTECT DEVTOOLS) =================
-            // Pasang event listener pada level WINDOW agar deteksi sempurna
-            
-            // 1. Blokir klik kanan (context menu)
-            window.addEventListener('contextmenu', function (e) {
-                e.preventDefault();
-                showSecurityToast("Aksi Diblokir", "Menu konteks (Klik Kanan) dinonaktifkan pada halaman ini.");
-            }, { capture: true, passive: false });
-
-            // 2. Cegah penyalinan (Copy Event) secara Native
-            window.addEventListener('copy', function(e) {
-                e.preventDefault();
-                showSecurityToast("Akses Papan Klip Ditolak", "Menyalin konten tidak diizinkan untuk melindungi kekayaan intelektual.");
-                return false;
-            }, { capture: true, passive: false });
-
-            // 3. Cegah berbagai shortcut DevTools, View Source, Save, Copy, & Select All
-            window.addEventListener('keydown', function (e) {
-                
-                // Blokir F12
-                if (e.key === 'F12' || e.keyCode === 123) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showSecurityToast("Sistem Keamanan Aktif", "Akses ke fitur Developer Tools diblokir.");
-                    return false;
-                }
-
-                // Blokir Ctrl+Shift+I / J / C (Windows/Linux) ATAU Cmd+Option+I / J / C (Mac OS)
-                if ((e.ctrlKey && e.shiftKey) || (e.metaKey && e.altKey)) {
-                    var k = e.key.toUpperCase();
-                    var code = e.keyCode; 
-                    if (k === 'I' || k === 'J' || k === 'C' || code === 73 || code === 74 || code === 67) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        showSecurityToast("Sistem Keamanan Aktif", "Akses Inspeksi Elemen diblokir oleh administrator.");
-                        return false;
-                    }
-                }
-
-                // Blokir Ctrl+U ATAU Cmd+U (View Source)
-                if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'U' || e.keyCode === 85)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showSecurityToast("Sistem Keamanan Aktif", "Melihat kode sumber (View Source) tidak diizinkan.");
-                    return false;
-                }
-
-                // Blokir Ctrl+S ATAU Cmd+S (Save Page)
-                if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'S' || e.keyCode === 83)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showSecurityToast("Tindakan Dibatalkan", "Menyimpan halaman web ini (Save) dinonaktifkan.");
-                    return false;
-                }
-
-                // Blokir Ctrl+P ATAU Cmd+P (Print Page / Save as PDF)
-                if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'P' || e.keyCode === 80)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showSecurityToast("Tindakan Dibatalkan", "Fungsi pencetakan (Print) dokumen ini tidak diizinkan.");
-                    return false;
-                }
-
-                // Blokir Ctrl+A ATAU Cmd+A (Select All)
-                if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'A' || e.keyCode === 65)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showSecurityToast("Aksi Terlarang", "Fitur memilih semua teks (Select All) telah dinonaktifkan.");
-                    return false;
-                }
-
-                // Blokir Ctrl+C ATAU Cmd+C (Copy)
-                if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'C' || e.keyCode === 67)) {
-                    if (!e.shiftKey) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        showSecurityToast("Akses Papan Klip Ditolak", "Menyalin teks (Copy) tidak diizinkan pada dokumen ini.");
-                        return false;
-                    }
-                }
-
-            }, { capture: true, passive: false });
-
-        })();
     </script>
 </body>
 </html>
