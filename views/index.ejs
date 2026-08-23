@@ -519,61 +519,50 @@
         .admin-item-card:hover { border-color: var(--color-primary); }
 
         /* ==========================================
-           HUD CURSOR CORE STYLES
+           HUD CURSOR CORE STYLES (ENTERPRISE UI/UX)
            ========================================== */
         @media (hover: hover) and (pointer: fine) {
             body, a, button, input, textarea, select, .link-hover, .btn-pulse, .social-lift, .admin-tab, .bg-swatch, .color-swatch, .theme-btn { 
                 cursor: none !important; 
             }
+            #hud-wrapper, #hud-dot { display: block; }
         }
         
-        #hud-cursor-container {
+        #hud-wrapper, #hud-dot {
             position: fixed; top: 0; left: 0; pointer-events: none; z-index: 999999;
-            mix-blend-mode: screen; will-change: transform;
-            display: none;
-        }
-        
-        @media (hover: hover) and (pointer: fine) {
-            #hud-cursor-container { display: block; }
+            display: none; will-change: transform, width, height; mix-blend-mode: screen;
         }
 
-        .hud-dot {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 4px; height: 4px; background-color: var(--color-primary); border-radius: 50%;
-            box-shadow: 0 0 12px var(--color-primary); transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+        #hud-dot {
+            width: 5px; height: 5px;
+            background-color: var(--color-primary);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 12px var(--color-primary);
         }
 
-        .hud-ring {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 32px; height: 32px; border: 1px dashed var(--color-secondary); border-radius: 50%;
-            animation: hud-spin 5s linear infinite; transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); opacity: 0.4;
+        #hud-brackets {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            will-change: transform, width, height;
         }
 
         .hud-bracket {
-            position: absolute; width: 8px; height: 8px; border-color: var(--color-primary);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: absolute; width: 12px; height: 12px;
+            border-color: var(--color-primary);
+            border-style: solid; opacity: 0.8;
+            transition: border-color 0.4s ease;
         }
-        .hud-tl { top: -14px; left: -14px; border-top: 2px solid; border-left: 2px solid; }
-        .hud-tr { top: -14px; right: -14px; border-top: 2px solid; border-right: 2px solid; }
-        .hud-bl { bottom: -14px; left: -14px; border-bottom: 2px solid; border-left: 2px solid; }
-        .hud-br { bottom: -14px; right: -14px; border-bottom: 2px solid; border-right: 2px solid; }
+        .magnetic-active .hud-bracket {
+            border-color: var(--color-secondary); opacity: 1;
+            box-shadow: 0 0 15px rgba(var(--color-secondary-rgb), 0.4) inset;
+        }
 
-        @keyframes hud-spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-
-        /* HOVER STATES (Magnetic Split) */
-        .hud-hover .hud-dot { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
-        .hud-hover .hud-ring { width: 48px; height: 48px; border: 2px dotted var(--color-secondary); opacity: 0.85; animation-duration: 2s; box-shadow: 0 0 15px rgba(var(--color-secondary-rgb), 0.4) inset; }
-        .hud-hover .hud-tl { top: -22px; left: -22px; border-color: var(--color-secondary); border-width: 3px; }
-        .hud-hover .hud-tr { top: -22px; right: -22px; border-color: var(--color-secondary); border-width: 3px; }
-        .hud-hover .hud-bl { bottom: -22px; left: -22px; border-color: var(--color-secondary); border-width: 3px; }
-        .hud-hover .hud-br { bottom: -22px; right: -22px; border-color: var(--color-secondary); border-width: 3px; }
-
-        /* CLICK STATES (Firing) */
-        .hud-click .hud-ring { width: 20px; height: 20px; border: 2px solid var(--color-primary); opacity: 1; box-shadow: 0 0 20px var(--color-primary); }
-        .hud-click .hud-tl { top: -6px; left: -6px; border-color: var(--color-primary); }
-        .hud-click .hud-tr { top: -6px; right: -6px; border-color: var(--color-primary); }
-        .hud-click .hud-bl { bottom: -6px; left: -6px; border-color: var(--color-primary); }
-        .hud-click .hud-br { bottom: -6px; right: -6px; border-color: var(--color-primary); }
+        /* 4 Siku (Corner Brackets) */
+        .hud-tl { top: 0; left: 0; border-width: 2px 0 0 2px; border-top-left-radius: 3px; }
+        .hud-tr { top: 0; right: 0; border-width: 2px 2px 0 0; border-top-right-radius: 3px; }
+        .hud-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; border-bottom-left-radius: 3px; }
+        .hud-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; border-bottom-right-radius: 3px; }
     </style>
 </head>
 <body class="antialiased selection:bg-[var(--color-primary)] selection:text-black relative">
@@ -1148,14 +1137,15 @@
     </div>
 
     <!-- HUD CURSOR CONTAINER (CHIEF MASTER UI/UX) -->
-    <div id="hud-cursor-container">
-        <div class="hud-ring"></div>
-        <div class="hud-bracket hud-tl"></div>
-        <div class="hud-bracket hud-tr"></div>
-        <div class="hud-bracket hud-bl"></div>
-        <div class="hud-bracket hud-br"></div>
-        <div class="hud-dot"></div>
+    <div id="hud-wrapper">
+        <div id="hud-brackets">
+            <div class="hud-bracket hud-tl"></div>
+            <div class="hud-bracket hud-tr"></div>
+            <div class="hud-bracket hud-bl"></div>
+            <div class="hud-bracket hud-br"></div>
+        </div>
     </div>
+    <div id="hud-dot"></div>
 
     <script>
         function toggleMode() {
@@ -1907,48 +1897,101 @@
         // ==========================================
         // CHIEF MASTER ENTERPRISE UI/UX: SPLIT MAGNETIC HUD CURSOR LOGIC
         // ==========================================
-        const hudCursor = document.getElementById('hud-cursor-container');
-        if (hudCursor) {
-            let cursorX = window.innerWidth / 2;
-            let cursorY = window.innerHeight / 2;
-            let targetX = cursorX;
-            let targetY = cursorY;
+        const hudWrapper = document.getElementById('hud-wrapper');
+        const hudBrackets = document.getElementById('hud-brackets');
+        const hudDot = document.getElementById('hud-dot');
+
+        if (hudWrapper && hudDot && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+            let dotX = mouseX, dotY = mouseY;
+            let bx = mouseX, by = mouseY;
+            let bw = 40, bh = 40; // Idle size
+            let rot = 0;
+            let scale = 1;
+            
+            let isHovering = false;
+            let hoveredEl = null;
 
             document.addEventListener('mousemove', (e) => {
-                targetX = e.clientX;
-                targetY = e.clientY;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
             });
 
-            const renderCursor = () => {
-                cursorX += (targetX - cursorX) * 0.2; // Smooth Lerp Interpolation
-                cursorY += (targetY - cursorY) * 0.2;
-                hudCursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
-                requestAnimationFrame(renderCursor);
-            };
-            requestAnimationFrame(renderCursor);
+            // Handle Click Animation
+            document.addEventListener('mousedown', () => { if(isHovering) scale = 0.85; });
+            document.addEventListener('mouseup', () => scale = 1);
 
-            // Fungsi untuk memasang deteksi Magnetic Hover
-            const initHudInteractions = () => {
+            const renderHUD = () => {
+                // 1. Free-tracking interpolasi dot tengah
+                dotX += (mouseX - dotX) * 0.4;
+                dotY += (mouseY - dotY) * 0.4;
+                hudDot.style.transform = `translate3d(calc(${dotX}px - 50%), calc(${dotY}px - 50%), 0)`;
+
+                let targetBx = mouseX;
+                let targetBy = mouseY;
+                let targetBw = 40;
+                let targetBh = 40;
+                let isMagnetic = false;
+
+                if (isHovering && hoveredEl) {
+                    const rect = hoveredEl.getBoundingClientRect();
+                    // 2. Snap to Bounding Box
+                    targetBx = rect.left + rect.width / 2;
+                    targetBy = rect.top + rect.height / 2;
+                    targetBw = rect.width + 16;  // Memberikan padding bounding box
+                    targetBh = rect.height + 16;
+                    
+                    // 3. Smooth Rotation lock to 0 degrees
+                    rot = rot % 360;
+                    if (rot > 180) rot -= 360;
+                    if (rot < -180) rot += 360;
+                    rot += (0 - rot) * 0.15; 
+                    
+                    hudWrapper.classList.add('magnetic-active');
+                    isMagnetic = true;
+                } else {
+                    // Idle rotation
+                    rot += 1.5; 
+                    hudWrapper.classList.remove('magnetic-active');
+                    scale += (1 - scale) * 0.2; // Return scale to normal
+                }
+
+                if (isMagnetic) {
+                    scale += (1 - scale) * 0.2; // Return scale to normal when releasing click inside button
+                }
+
+                // 4. Lerp perhitungan Bracket
+                const lerpFactor = isMagnetic ? 0.25 : 0.15;
+                bx += (targetBx - bx) * lerpFactor;
+                by += (targetBy - by) * lerpFactor;
+                bw += (targetBw - bw) * lerpFactor;
+                bh += (targetBh - bh) * lerpFactor;
+
+                hudWrapper.style.transform = `translate3d(${bx}px, ${by}px, 0)`;
+                hudBrackets.style.width = `${bw}px`;
+                hudBrackets.style.height = `${bh}px`;
+                hudBrackets.style.transform = `translate(-50%, -50%) rotate(${rot}deg) scale(${scale})`;
+
+                requestAnimationFrame(renderHUD);
+            };
+            requestAnimationFrame(renderHUD);
+
+            const initMagneticHover = () => {
                 const interactables = document.querySelectorAll('a, button, input, textarea, select, .link-hover, .btn-pulse, .social-lift, .admin-tab, .bg-swatch, .color-swatch, .theme-btn');
                 interactables.forEach(el => {
-                    if(!el.dataset.hudBound) {
-                        el.dataset.hudBound = true; // Flag anti multiple bindings
-                        el.addEventListener('mouseenter', () => hudCursor.classList.add('hud-hover'));
-                        el.addEventListener('mouseleave', () => hudCursor.classList.remove('hud-hover'));
+                    if (!el.dataset.hudBound) {
+                        el.dataset.hudBound = true;
+                        el.addEventListener('mouseenter', () => { isHovering = true; hoveredEl = el; });
+                        el.addEventListener('mouseleave', () => { isHovering = false; hoveredEl = null; scale = 1; });
                     }
                 });
             };
 
-            // Inisiasi pertama dan pantau perubahan DOM (Mutations)
-            initHudInteractions();
-            const hudObserver = new MutationObserver(() => {
-                initHudInteractions();
-            });
+            // Inisiasi awal & monitor mutasi DOM Google Apps Script (Dynamic Binding)
+            initMagneticHover();
+            const hudObserver = new MutationObserver(initMagneticHover);
             hudObserver.observe(document.body, { childList: true, subtree: true });
-
-            // Click firing state
-            document.addEventListener('mousedown', () => hudCursor.classList.add('hud-click'));
-            document.addEventListener('mouseup', () => hudCursor.classList.remove('hud-click'));
         }
     </script>
 
