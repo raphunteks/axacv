@@ -19,7 +19,7 @@
     <meta property="og:description" content="<%= meta.desc %>">
     <meta property="og:image" content="<%= baseUrl %><%= meta.ogImage %>">
 
-    <!-- PROTECT DEVTOOLS SCRIPT -->
+    <!-- PROTECT DEVTOOLS SCRIPT (SECURITY LOGIC) -->
     <script src="/protect-devtools.js" defer></script>
 
     <% 
@@ -44,7 +44,7 @@
         const safeDesc = (arsip.desc || '').replace(/"/g, '\\"').replace(/(\r\n|\n|\r)/gm, " ");
         const isFree = arsip.access_type === 'Open Access' ? 'true' : 'false';
 
-        // 🌟 HELPER SITELINKS SEO: Mem-parsing Kategori Dinamis & Artikel Lain (Persiapan Upgrade SERVER.JS Nanti)
+        // 🌟 HELPER SITELINKS SEO: Mem-parsing Kategori Dinamis & Artikel Lain
         const slugify = (text) => text.toString().toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
         const jsonLdItems = typeof arsipData !== 'undefined' ? arsipData.slice(0, 15).map((item, index) => ({
@@ -133,7 +133,7 @@
     <style>
         /* NEUBRUTALISM BASE */
         body { 
-            background-color: #f4f4f0; /* Off-white playful */
+            background-color: #f4f4f0; 
             color: #000; 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             overflow-x: hidden; 
@@ -214,7 +214,7 @@
             top: 0; 
             left: 0; 
             pointer-events: none; 
-            z-index: 2147483647; 
+            z-index: 2147483647; /* Berada di lapisan tertinggi melebihi apa pun */
             opacity: 0; 
             transition: opacity 0.3s ease;
             will-change: transform, width, height, opacity;
@@ -223,7 +223,7 @@
         #hud-dot {
             width: 8px; 
             height: 8px;
-            background-color: #10B981; /* Emerald Green */
+            background-color: #10B981; /* Emerald Green (Sesuai Neubrutalism) */
             border-radius: 50%;
             margin: -4px 0 0 -4px;
             box-shadow: 0 0 10px #10B981, 0 0 20px #10B981;
@@ -252,15 +252,15 @@
         }
         
         .magnetic-active .hud-bracket {
-            border-color: #059669; /* Darker Emerald for active snap */
+            border-color: #059669; /* Warna lebih pekat saat Snap */
             opacity: 1;
         }
 
         /* 4 Siku (Corner Brackets) - Normal Idle */
-        .hud-tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
-        .hud-tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
-        .hud-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
-        .hud-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+        .hud-tl { top: 0; left: 0; border-width: 2px 0 0 2px; border-top-left-radius: 2px; }
+        .hud-tr { top: 0; right: 0; border-width: 2px 2px 0 0; border-top-right-radius: 2px; }
+        .hud-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; border-bottom-left-radius: 2px; }
+        .hud-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; border-bottom-right-radius: 2px; }
         
         /* 4 Siku (Corner Brackets) - Magnetic Locked (Penebalan Garis Siku) */
         .magnetic-active .hud-tl { border-width: 4px 0 0 4px; }
@@ -639,134 +639,136 @@
 
     <!-- UI/UX LOGIC: SPLIT MAGNETIC HUD CURSOR -->
     <script>
-        if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-            const hudWrapper = document.getElementById('hud-wrapper');
-            const hudBrackets = document.getElementById('hud-brackets');
-            const hudDot = document.getElementById('hud-dot');
+        (function() {
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                const hudWrapper = document.getElementById('hud-wrapper');
+                const hudBrackets = document.getElementById('hud-brackets');
+                const hudDot = document.getElementById('hud-dot');
 
-            // Elemen target untuk dikunci (sesuai gaya Neubrutalism)
-            const magneticSelector = '.doc-wrapper, .brutal-btn, .brutal-input, .overlay-center > div, .bg-white.p-2, a, button';
+                // Elemen target untuk dikunci (sesuai gaya Neubrutalism arsipfile)
+                const magneticSelector = '.doc-wrapper, .brutal-btn, .brutal-input, .overlay-center > div, .bg-white.p-2, a, button';
 
-            let mouseX = window.innerWidth / 2;
-            let mouseY = window.innerHeight / 2;
-            let dotX = mouseX, dotY = mouseY;
-            let bx = mouseX, by = mouseY;
-            let bw = 40, bh = 40; 
-            let rot = 0;
-            let scale = 1;
-            
-            let isHovering = false;
-            let hoveredEl = null;
-            let hasMoved = false;
+                let mouseX = window.innerWidth / 2;
+                let mouseY = window.innerHeight / 2;
+                let dotX = mouseX, dotY = mouseY;
+                let bx = mouseX, by = mouseY;
+                let bw = 40, bh = 40; 
+                let rot = 0;
+                let scale = 1;
+                
+                let isHovering = false;
+                let hoveredEl = null;
+                let hasMoved = false;
 
-            // Tracking pergerakan mouse
-            window.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                if (!hasMoved) {
-                    hasMoved = true;
-                    hudWrapper.style.opacity = '1';
-                    hudDot.style.opacity = '1';
-                    dotX = mouseX; dotY = mouseY;
-                    bx = mouseX; by = mouseY;
-                }
-            }, { passive: true });
+                // Tracking pergerakan mouse
+                window.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    if (!hasMoved) {
+                        hasMoved = true;
+                        hudWrapper.style.opacity = '1';
+                        hudDot.style.opacity = '1';
+                        dotX = mouseX; dotY = mouseY;
+                        bx = mouseX; by = mouseY;
+                    }
+                }, { passive: true });
 
-            // Efek mekanikal saat diklik
-            window.addEventListener('mousedown', () => { if(hasMoved) scale = 0.85; }, { passive: true });
-            window.addEventListener('mouseup', () => { if(hasMoved) scale = 1; }, { passive: true });
+                // Efek mekanikal saat diklik
+                window.addEventListener('mousedown', () => { if(hasMoved) scale = 0.85; }, { passive: true });
+                window.addEventListener('mouseup', () => { if(hasMoved) scale = 1; }, { passive: true });
 
-            // Sembunyikan cursor bila keluar dari jendela browser
-            document.addEventListener('mouseleave', () => {
-                hudWrapper.style.opacity = '0';
-                hudDot.style.opacity = '0';
-            });
-            document.addEventListener('mouseenter', () => {
-                if (hasMoved) {
-                    hudWrapper.style.opacity = '1';
-                    hudDot.style.opacity = '1';
-                }
-            });
+                // Sembunyikan cursor bila keluar dari jendela browser
+                document.addEventListener('mouseleave', () => {
+                    hudWrapper.style.opacity = '0';
+                    hudDot.style.opacity = '0';
+                });
+                document.addEventListener('mouseenter', () => {
+                    if (hasMoved) {
+                        hudWrapper.style.opacity = '1';
+                        hudDot.style.opacity = '1';
+                    }
+                });
 
-            // Event Delegation untuk mendeteksi elemen
-            document.addEventListener('mouseover', (e) => {
-                const target = e.target.closest(magneticSelector);
-                if (target) {
-                    isHovering = true;
-                    hoveredEl = target;
-                }
-            }, { passive: true });
-
-            document.addEventListener('mouseout', (e) => {
-                const target = e.target.closest(magneticSelector);
-                if (target) {
-                    const relatedTarget = e.relatedTarget ? e.relatedTarget.closest(magneticSelector) : null;
-                    if (relatedTarget) {
-                        hoveredEl = relatedTarget;
+                // Event Delegation untuk mendeteksi elemen
+                document.addEventListener('mouseover', (e) => {
+                    const target = e.target.closest(magneticSelector);
+                    if (target) {
                         isHovering = true;
-                    } else {
-                        isHovering = false;
-                        hoveredEl = null;
+                        hoveredEl = target;
                     }
-                }
-            }, { passive: true });
+                }, { passive: true });
 
-            // Engine Animasi Berbasis GPU (requestAnimationFrame)
-            const renderHUD = () => {
-                if (hasMoved) {
-                    // 1. FREE TRACKING INNER DOT
-                    dotX += (mouseX - dotX) * 0.35;
-                    dotY += (mouseY - dotY) * 0.35;
-                    hudDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0)`;
-
-                    let targetBx = mouseX;
-                    let targetBy = mouseY;
-                    let targetBw = 40;
-                    let targetBh = 40;
-                    let isMagnetic = false;
-
-                    if (isHovering && hoveredEl && hoveredEl.isConnected) {
-                        // 2. MAGNETIC BOUNDING BOX LOCK
-                        const rect = hoveredEl.getBoundingClientRect();
-                        targetBx = rect.left + rect.width / 2;
-                        targetBy = rect.top + rect.height / 2;
-                        targetBw = rect.width + 12; // Padding Bracket mengunci box
-                        targetBh = rect.height + 12;
-                        
-                        // 3. LOCK ROTASI KE 0 DERAJAT (Rotasi Smooth)
-                        rot = rot % 360;
-                        if (rot > 180) rot -= 360;
-                        if (rot < -180) rot += 360;
-                        rot += (0 - rot) * 0.2; 
-                        
-                        hudWrapper.classList.add('magnetic-active');
-                        isMagnetic = true;
-                    } else {
-                        // 4. ROTATING IDLE STATE (Berputar ketika tidak memegang elemen)
-                        rot += 1.5; 
-                        hudWrapper.classList.remove('magnetic-active');
+                document.addEventListener('mouseout', (e) => {
+                    const target = e.target.closest(magneticSelector);
+                    if (target) {
+                        const relatedTarget = e.relatedTarget ? e.relatedTarget.closest(magneticSelector) : null;
+                        if (relatedTarget) {
+                            hoveredEl = relatedTarget;
+                            isHovering = true;
+                        } else {
+                            isHovering = false;
+                            hoveredEl = null;
+                        }
                     }
+                }, { passive: true });
 
-                    if (isMagnetic) {
-                        scale += (1 - scale) * 0.2; 
+                // Engine Animasi Berbasis GPU (requestAnimationFrame)
+                const renderHUD = () => {
+                    if (hasMoved) {
+                        // 1. FREE TRACKING INNER DOT
+                        dotX += (mouseX - dotX) * 0.35;
+                        dotY += (mouseY - dotY) * 0.35;
+                        hudDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0)`;
+
+                        let targetBx = mouseX;
+                        let targetBy = mouseY;
+                        let targetBw = 40;
+                        let targetBh = 40;
+                        let isMagnetic = false;
+
+                        if (isHovering && hoveredEl && hoveredEl.isConnected) {
+                            // 2. MAGNETIC BOUNDING BOX LOCK
+                            const rect = hoveredEl.getBoundingClientRect();
+                            targetBx = rect.left + rect.width / 2;
+                            targetBy = rect.top + rect.height / 2;
+                            targetBw = rect.width + 12; // Padding Bracket mengunci box
+                            targetBh = rect.height + 12;
+                            
+                            // 3. LOCK ROTASI KE 0 DERAJAT (Rotasi Smooth)
+                            rot = rot % 360;
+                            if (rot > 180) rot -= 360;
+                            if (rot < -180) rot += 360;
+                            rot += (0 - rot) * 0.2; 
+                            
+                            hudWrapper.classList.add('magnetic-active');
+                            isMagnetic = true;
+                        } else {
+                            // 4. ROTATING IDLE STATE (Berputar ketika tidak memegang elemen)
+                            rot += 1.5; 
+                            hudWrapper.classList.remove('magnetic-active');
+                        }
+
+                        if (isMagnetic) {
+                            scale += (1 - scale) * 0.2; 
+                        }
+
+                        // 5. ANIMASI INTERPOLASI (LERP) HALUS
+                        const lerpFactor = isMagnetic ? 0.3 : 0.15;
+                        bx += (targetBx - bx) * lerpFactor;
+                        by += (targetBy - by) * lerpFactor;
+                        bw += (targetBw - bw) * lerpFactor;
+                        bh += (targetBh - bh) * lerpFactor;
+
+                        hudWrapper.style.transform = `translate3d(${bx}px, ${by}px, 0)`;
+                        hudBrackets.style.width = `${bw}px`;
+                        hudBrackets.style.height = `${bh}px`;
+                        hudBrackets.style.transform = `translate(-50%, -50%) rotate(${rot}deg) scale(${scale})`;
                     }
-
-                    // 5. ANIMASI INTERPOLASI (LERP) HALUS
-                    const lerpFactor = isMagnetic ? 0.3 : 0.15;
-                    bx += (targetBx - bx) * lerpFactor;
-                    by += (targetBy - by) * lerpFactor;
-                    bw += (targetBw - bw) * lerpFactor;
-                    bh += (targetBh - bh) * lerpFactor;
-
-                    hudWrapper.style.transform = `translate3d(${bx}px, ${by}px, 0)`;
-                    hudBrackets.style.width = `${bw}px`;
-                    hudBrackets.style.height = `${bh}px`;
-                    hudBrackets.style.transform = `translate(-50%, -50%) rotate(${rot}deg) scale(${scale})`;
-                }
+                    requestAnimationFrame(renderHUD);
+                };
                 requestAnimationFrame(renderHUD);
-            };
-            requestAnimationFrame(renderHUD);
-        }
+            }
+        })();
     </script>
 </body>
 </html>
