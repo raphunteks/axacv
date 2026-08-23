@@ -10,8 +10,15 @@
         e.preventDefault();
     }, { capture: true, passive: false });
 
-    // 2. Cegah berbagai shortcut DevTools, View Source, & Save
+    // 2. Blokir event penyalinan (Copy) secara native dari sistem/menu browser
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+        return false;
+    }, { capture: true, passive: false });
+
+    // 3. Cegah berbagai shortcut DevTools, View Source, Save, Copy, & Select All
     document.addEventListener('keydown', function (e) {
+        
         // Blokir F12
         if (e.key === 'F12' || e.keyCode === 123) {
             e.preventDefault();
@@ -49,6 +56,23 @@
             e.preventDefault();
             e.stopPropagation();
             return false;
+        }
+
+        // Blokir Ctrl+A ATAU Cmd+A (Select All)
+        if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'A' || e.keyCode === 65)) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+
+        // Blokir Ctrl+C ATAU Cmd+C (Copy via Keyboard)
+        if ((e.ctrlKey || e.metaKey) && (e.key.toUpperCase() === 'C' || e.keyCode === 67)) {
+            // Pastikan bukan kombinasi Ctrl+Shift+C (karena sudah diblokir di logic DevTools)
+            if (!e.shiftKey) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
         }
         
     }, { capture: true, passive: false });
