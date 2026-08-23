@@ -415,7 +415,7 @@
         &copy; 2026 drg. M. Aksa Arsyad, S.KG. | ARCHIVED DIGITAL
     </footer>
 
-    <!-- HUD CURSOR CONTAINER (CHIEF MASTER UI/UX) -->
+    <!-- HUD CURSOR CONTAINER -->
     <div id="hud-wrapper">
         <div id="hud-brackets">
             <div class="hud-bracket hud-tl"></div>
@@ -547,7 +547,7 @@
         }
     </script>
 
-    <!-- UI/UX LOGIC: NEUBRUTALISM SECURITY NOTIFICATION (Hanya UI, Pemblokiran di protect-devtools.js) -->
+    <!-- UI/UX LOGIC: NEUBRUTALISM SECURITY NOTIFICATION (Hanya UI Presentasi) -->
     <script>
         (function() {
             'use strict';
@@ -614,8 +614,8 @@
                 }, 3500);
             }
 
-            // MENDENGARKAN EVENT UNTUK MEMUNCULKAN UI NOTIFIKASI
-            // Logika "preventDefault" dan "stopPropagation" diandalkan dari protect-devtools.js
+            // MENDENGARKAN EVENT UNTUK MEMUNCULKAN UI NOTIFIKASI 
+            // Pemblokiran asli (preventing action) tetap di-handle oleh protect-devtools.js
             
             window.addEventListener('contextmenu', function () {
                 showSecurityToast("Aksi Diblokir", "Menu konteks (Klik Kanan) dinonaktifkan pada halaman ini.");
